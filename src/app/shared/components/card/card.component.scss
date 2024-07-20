@@ -1,0 +1,17 @@
+.card {
+  width: 130px;
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 0.75rem;
+}
+
+.card__poster {
+  border-radius: 0.5rem;
+}
+
+.card__title {
+  font-size: 1rem;
+  max-height: calc(2rem * 1.25);
+  line-height: 1.25;
+  overflow: clip;
+}

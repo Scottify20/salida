@@ -1,0 +1,79 @@
+.hero {
+  overflow-x: scroll;
+  scroll-padding-left: 40vw;
+  scrollbar-width: none;
+  scrollbar-color: transparent transparent;
+  margin: 0 -1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 3vw;
+}
+
+.hero__cards-container {
+  overflow-x: auto;
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: 0.5rem;
+
+  scroll-snap-type: x mandatory;
+  // scroll-behavior: smooth;
+  // margin: 0 -45vw;
+}
+
+.hero-card {
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
+
+  flex-shrink: 0;
+  width: 65vw;
+  aspect-ratio: 1/1.5;
+  border-radius: 1rem;
+  overflow: hidden;
+
+  transform-origin: center center;
+  transition: transform 0.15s linear, opacity 0.15s linear;
+
+  .hero-card__poster {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.hero-card-filler {
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+
+  flex-shrink: 0;
+  width: 17vw;
+  aspect-ratio: 1/1.5;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.page-indicator-container {
+  width: 100%;
+  display: flex;
+  flex-flow: row;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  padding: 0.1rem 0;
+}
+
+.dot {
+  background-color: white;
+  width: 0.45rem;
+  aspect-ratio: 1/1;
+  border-radius: 100px;
+  opacity: 50%;
+  transform: scale(1);
+  transition: all ease-in-out 0.3s;
+}
+
+.dot.active {
+  aspect-ratio: 1/1;
+  transform: scale(1.4);
+  opacity: 100%;
+}

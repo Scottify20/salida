@@ -1,0 +1,16 @@
+<div class="nav">
+  <div class="nav__items-container">
+    <div
+      *ngFor="let item of navItems; let i = index"
+      class="nav__item"
+      [routerLink]="item.routerPath"
+      [routerLinkActiveOptions]="{ exact: item.exact }"
+      routerLinkActive="active"
+    >
+      <img [src]="getIconPath(i)" class="nav__item__icon" />
+      <div class="nav__item__label">
+        {{ item.label }}
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,24 @@
+<div class="hero">
+  <div class="hero__cards-container">
+    <div class="hero-card-filler"></div>
+    <ng-container *ngFor="let title of titles; let i = index">
+      <div
+        class="hero-card"
+        [id]="'hero-card--' + i"
+        [attr.data-card-index]="i"
+      >
+        <img class="hero-card__poster" [src]="title.posterUrl" alt="" />
+      </div>
+    </ng-container>
+    <div class="hero-card-filler"></div>
+  </div>
+
+  <div class="page-indicator-container">
+    <div
+      class="dot"
+      *ngFor="let title of titles; let i = index"
+      [id]="'hero-dot--' + i"
+      [ngClass]="indexOfFullyVisibleCard === i ? 'active' : ''"
+    ></div>
+  </div>
+</div>
