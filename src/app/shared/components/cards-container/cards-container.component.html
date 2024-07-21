@@ -23,11 +23,9 @@
     </div>
   </div>
   <div class="subcontainer">
-    <app-card></app-card>
-    <app-card></app-card>
-    <app-card></app-card>
-    <app-card></app-card>
-    <app-card></app-card>
-    <app-card></app-card>
+    <ng-container *ngFor="let entity of entities">
+      <app-card [entity]="entity" [cardShape]="cardSectionOptions.cardShape">
+      </app-card>
+    </ng-container>
   </div>
 </div>

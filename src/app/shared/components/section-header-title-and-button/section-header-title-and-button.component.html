@@ -1,4 +1,22 @@
 <div class="section-header">
-  <h4 class="section-header__title">Title</h4>
-  <div class="section-header__button">See all</div>
+  <h4 class="section-header__title">{{ cardsSectionOptions.sectionTitle }}</h4>
+
+  <ng-container *ngIf="cardsSectionOptions.buttonProps as buttonProps">
+    <div
+      [ngSwitch]="buttonProps.type"
+      class="section-header__button"
+      (click)="buttonProps.callback()"
+    >
+      <!-- if button is a text -->
+      <ng-container *ngSwitchCase="'text'">
+        <div class="text">{{ buttonProps.textOrIconPath }}</div>
+      </ng-container>
+      <ng-container *ngSwitchCase="'icon'">
+        <!-- if button is an icon -->
+        <div class="icon">
+          <img [src]="buttonProps.textOrIconPath" alt="" />
+        </div>
+      </ng-container>
+    </div>
+  </ng-container>
 </div>

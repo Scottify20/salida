@@ -1,17 +1,33 @@
 .card {
-  width: 130px;
+  width: 120px;
   display: flex;
   flex-flow: column nowrap;
   row-gap: 0.75rem;
 }
 
-.card__poster {
+.card__image {
   border-radius: 0.5rem;
+  object-fit: cover;
 }
 
 .card__title {
   font-size: 1rem;
   max-height: calc(2rem * 1.25);
+  height: calc(1rem * 1.25);
   line-height: 1.25;
   overflow: clip;
+}
+
+.card.circle {
+  text-align: center;
+  .card__image-container {
+    width: 100%;
+    aspect-ratio: 1 /1;
+    overflow: hidden;
+    border-radius: 50%;
+    .card__image {
+      margin-top: -10%;
+      width: 100%;
+    }
+  }
 }

@@ -8,6 +8,6 @@
 .home__main {
   display: flex;
   flex-flow: column nowrap;
-  row-gap: 2rem;
-  margin-bottom: calc(var(--navbar-height) + 1rem);
+  row-gap: 2.75rem;
+  margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
 }

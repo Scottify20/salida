@@ -5,8 +5,6 @@ import { Component } from '@angular/core';
   standalone: true,
   imports: [],
   templateUrl: './buttons-header.component.html',
-  styleUrl: './buttons-header.component.scss'
+  styleUrl: './buttons-header.component.scss',
 })
-export class ButtonsHeaderComponent {
-
-}
+export class ButtonsHeaderComponent {}

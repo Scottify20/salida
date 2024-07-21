@@ -1,7 +1,40 @@
 <app-buttons-header></app-buttons-header>
 <div class="home__main">
   <app-hero-cards></app-hero-cards>
-  <app-titles-cards-section></app-titles-cards-section>
-  <app-titles-cards-section></app-titles-cards-section>
-  <app-titles-cards-section></app-titles-cards-section>
+  <app-cards-section
+    [entities]="movies"
+    [cardsSectionOptions]="{
+      sectionTitle: 'Movies',
+      buttonProps: {
+        type: 'text',
+        textOrIconPath: 'See all',
+        callback: sampleCallback
+      }
+    }"
+  ></app-cards-section>
+
+  <app-cards-section
+    [entities]="series"
+    [cardsSectionOptions]="{
+      sectionTitle: 'TV Series',
+      buttonProps: {
+        type: 'text',
+        textOrIconPath: 'See all',
+        callback: sampleCallback
+      }
+    }"
+  ></app-cards-section>
+
+  <app-cards-section
+    [entities]="persons"
+    [cardsSectionOptions]="{
+      sectionTitle: 'People',
+      buttonProps: {
+        type: 'text',
+        textOrIconPath: 'See all',
+        callback: sampleCallback
+      },
+      cardShape: 'circle'
+    }"
+  ></app-cards-section>
 </div>

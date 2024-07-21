@@ -1,8 +1,10 @@
-<div class="card">
-  <img
-    src="../../../../assets/temp/posters/poster.jpg"
-    alt=""
-    class="card__poster"
-  />
-  <p class="card__title">Title fhhriufg rgrhgehr hg hhreg</p>
+<div class="card" [class]="cardShape === 'circle' ? 'circle' : ''">
+  <div class="card__image-container">
+    <img
+      [src]="'https://image.tmdb.org/t/p/w185' + entity.image_path"
+      alt=""
+      class="card__image"
+    />
+  </div>
+  <p class="card__title">{{ entity.name }}</p>
 </div>
