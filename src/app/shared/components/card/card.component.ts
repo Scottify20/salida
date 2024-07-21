@@ -1,4 +1,5 @@
-import { Component, Input } from '@angular/core';
+import { Component } from '@angular/core';
+
 @Component({
   selector: 'app-card',
   standalone: true,
@@ -6,7 +7,4 @@ import { Component, Input } from '@angular/core';
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
 })
-export class Card {
-  @Input() posterUrl: string = '';
-  @Input() title: string = '';
-}
+export class CardPosterAndTitleComponent {}
