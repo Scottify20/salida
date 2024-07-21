@@ -3,9 +3,8 @@
     <div
       *ngFor="let item of navItems; let i = index"
       class="nav__item"
-      [routerLink]="item.routerPath"
-      [routerLinkActiveOptions]="{ exact: item.exact }"
-      routerLinkActive="active"
+      (click)="navigateTo(item.routerPath)"
+      [ngClass]="{ active: router.isActive(item.routerPath, item.exact) }"
     >
       <img [src]="getIconPath(i)" class="nav__item__icon" />
       <div class="nav__item__label">

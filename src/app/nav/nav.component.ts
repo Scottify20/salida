@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -10,7 +10,7 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './nav.component.scss',
 })
 export class NavComponent {
-  constructor(private router: Router) {}
+  constructor(protected router: Router) {}
 
   isActive(route: string): boolean {
     return this.router.url === route;
@@ -23,6 +23,10 @@ export class NavComponent {
     return this.isActive(route)
       ? navItem.iconSvgPathSolid
       : navItem.iconSvgPathOutline;
+  }
+
+  navigateTo(path: string) {
+    this.router.navigateByUrl(path); // Use router.navigateByUrl to trigger navigation
   }
 
   navItems: {
