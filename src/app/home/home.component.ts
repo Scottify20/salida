@@ -1,8 +1,8 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
-
 import { HeroCardsComponent } from './hero-cards/hero-cards.component';
 import { ButtonsHeaderComponent } from '../shared/components/buttons-header/buttons-header.component';
 import { CardsSectionComponent } from '../shared/components/cards-section/cards-section.component';
+import { HeaderButton } from '../shared/components/buttons-header/buttons-header.component';
 
 @Component({
   selector: 'app-home',
@@ -2045,6 +2045,32 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
       },
     ],
   };
+
+  protected headerButtons: HeaderButton[] = [
+    {
+      type: 'icon',
+      iconPath: '../../../../assets/icons/home-header/Github-solid.svg',
+      anchor: {
+        urlType: 'external',
+        path: 'https://github.com/Scottify20/salida',
+        target: '_blank',
+      },
+    },
+    {
+      type: 'text',
+      text: 'Logo',
+      anchor: {
+        urlType: 'internal',
+        path: '/',
+        target: '_self',
+      },
+    },
+    {
+      type: 'icon',
+      iconPath: '../../../../assets/icons/home-header/User-solid.svg',
+      actionCallback: () => console.log('profile clicked'),
+    },
+  ];
 
   protected movies: TmdbEntityForCard[] = this.tmdbEntities.movies.map(
     (movie) => ({

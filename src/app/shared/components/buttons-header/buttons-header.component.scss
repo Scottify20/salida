@@ -6,14 +6,20 @@
 }
 
 .header__button {
+  cursor: pointer;
   width: 2rem;
   aspect-ratio: 1/1;
   font-size: 1.5rem;
 }
 
-.header__text {
+.header__button.header__button--text {
+  text-decoration: none;
+  width: min-content;
+  aspect-ratio: unset;
+  height: 2rem;
   font-size: 1.5rem;
   font-weight: 600;
+  // overflow-wrap: normal;
 }
 
 img {

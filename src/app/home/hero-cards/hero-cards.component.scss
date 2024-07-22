@@ -39,6 +39,12 @@
     height: 100%;
     object-fit: cover;
   }
+
+  // to prevent second hero card from resizing after home page load or reload
+  &:nth-of-type(3) {
+    transform: scale(0.869);
+    opacity: 23%;
+  }
 }
 
 .hero-card-filler {

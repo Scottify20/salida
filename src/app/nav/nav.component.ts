@@ -12,18 +12,7 @@ import { Router, RouterModule } from '@angular/router';
 export class NavComponent {
   constructor(private router: Router) {}
 
-  isActive(route: string): boolean {
-    return this.router.url === route;
-  }
-
-  getIconPath(navItemIndex: number): string {
-    const navItem = this.navItems[navItemIndex];
-    const route = navItem.routerPath;
-
-    return this.isActive(route)
-      ? navItem.iconSvgPathSolid
-      : navItem.iconSvgPathOutline;
-  }
+  routesWhereNavShows: string[] = ['/', '/lists', '/search', '/trending/**'];
 
   navItems: {
     label: string;
@@ -54,4 +43,30 @@ export class NavComponent {
       exact: false,
     },
   ];
+
+  showNavBar(): boolean {
+    const currentUrl = this.router.url;
+    return this.routesWhereNavShows.some((route) => {
+      if (route.endsWith('**')) {
+        // Check for wildcard
+        const baseRoute = route.slice(0, -2); // Remove wildcard
+        return currentUrl.startsWith(baseRoute);
+      } else {
+        return currentUrl === route;
+      }
+    });
+  }
+
+  isActive(route: string): boolean {
+    return this.router.url === route;
+  }
+
+  getIconPath(navItemIndex: number): string {
+    const navItem = this.navItems[navItemIndex];
+    const route = navItem.routerPath;
+
+    return this.isActive(route)
+      ? navItem.iconSvgPathSolid
+      : navItem.iconSvgPathOutline;
+  }
 }

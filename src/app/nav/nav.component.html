@@ -1,4 +1,4 @@
-<div class="nav">
+<div *ngIf="showNavBar()" class="nav">
   <div class="nav__items-container">
     <div
       *ngFor="let item of navItems; let i = index"

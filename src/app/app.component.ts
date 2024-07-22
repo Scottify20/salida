@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
 import { NgIf } from '@angular/common';
+import { routes } from './app.routes';
 
 @Component({
   selector: 'app-root',

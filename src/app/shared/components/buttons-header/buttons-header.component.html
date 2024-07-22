@@ -1,9 +1,41 @@
 <div class="header">
-  <div class="header__button">
-    <img src="../../../../assets/icons/home-header/Github-solid.svg" alt="" />
-  </div>
-  <div class="header__text">Logo</div>
-  <div class="header__button">
-    <img src="../../../../assets/icons/home-header/User-solid.svg" alt="" />
-  </div>
+  <ng-container *ngFor="let button of headerButtons; let buttonIndex = index">
+    <!-- if button opens external link -->
+    <a
+      *ngIf="button.anchor?.urlType === 'external'"
+      [href]="button.anchor?.path"
+      rel="noopener noreferrer"
+      [target]="button.anchor?.target"
+      class="header__button"
+      [class]="button.type === 'text' ? 'header__button--text' : ''"
+    >
+      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      {{ button.text }}
+    </a>
+
+    <!-- if button opens internal link/route -->
+    <a
+      *ngIf="button.anchor?.urlType === 'internal'"
+      [routerLink]="button.anchor?.path"
+      class="header__button"
+      [class]="button.type === 'text' ? 'header__button--text' : ''"
+    >
+      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      {{ button.text }}
+    </a>
+
+    <!-- if button is callback calling button -->
+    <div
+      role="button"
+      *ngIf="button.actionCallback"
+      class="header__button"
+      [class]="button.type === 'text' ? 'header__button--text' : ''"
+      (click)="button.actionCallback()"
+    >
+      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      <p *ngIf="button.type === 'text'">{{ button.text }}</p>
+    </div>
+  </ng-container>
 </div>
+
+<!-- callback action button not implemented yet -->
