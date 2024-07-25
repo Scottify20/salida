@@ -1,14 +1,14 @@
 <div class="hero">
+  <app-scroll-buttons
+    [positionValues]="{ top: '40%', left: '1rem', right: '1rem' }"
+  ></app-scroll-buttons>
   <div class="hero__cards-container">
     <div class="hero-card-filler"></div>
-    <ng-container *ngFor="let title of titles; let i = index">
-      <div
-        class="hero-card"
-        [id]="'hero-card--' + i"
-        [attr.data-card-index]="i"
-      >
-        <img class="hero-card__poster" [src]="title.posterUrl" alt="" />
-      </div>
+    <ng-container *ngFor="let titleDetails of heroTitles; let i = index">
+      <app-hero-card
+        [cardIndex]="i"
+        [titleDetails]="titleDetails"
+      ></app-hero-card>
     </ng-container>
     <div class="hero-card-filler"></div>
   </div>
@@ -16,7 +16,7 @@
   <div class="page-indicator-container">
     <div
       class="dot"
-      *ngFor="let title of titles; let i = index"
+      *ngFor="let title of heroTitles; let i = index"
       [id]="'hero-dot--' + i"
       [ngClass]="indexOfFullyVisibleCard === i ? 'active' : ''"
     ></div>

@@ -12,8 +12,8 @@
 
 .card__title {
   font-size: 1rem;
+  min-height: calc(1rem * 1.25);
   max-height: calc(2rem * 1.25);
-  height: calc(1rem * 1.25);
   line-height: 1.25;
   overflow: clip;
 }

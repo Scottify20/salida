@@ -2,6 +2,18 @@
   position: relative;
 }
 
+.container:hover app-scroll-buttons,
+app-scroll-buttons:hover {
+  opacity: 100%;
+  pointer-events: all;
+}
+
+app-scroll-buttons {
+  transition: all 0.1s ease-in-out;
+  pointer-events: none;
+  opacity: 0%;
+}
+
 .subcontainer {
   display: inline-flex;
   flex-flow: row nowrap;
@@ -10,76 +22,4 @@
   width: 100%;
   scrollbar-color: transparent transparent;
   scrollbar-width: none;
-}
-
-.scroll-buttons-container {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-
-  .scroll-button {
-    width: 2rem;
-    height: 3rem;
-    pointer-events: auto;
-    cursor: pointer;
-    top: 30%;
-    margin-top: calc((var(--scroll-btn-height) / -2));
-    border: none;
-    background-color: #4d4d4ed4;
-    filter: drop-shadow(0 0 5px black);
-    border-radius: 10rem;
-
-    transition: all ease-in-out 0.15s;
-    opacity: 100%;
-
-    &:active {
-      transform: scale(0.7);
-    }
-
-    &:hover {
-      background-color: #605f5f;
-      svg path {
-        fill: rgba(255, 255, 255, 0.805);
-      }
-    }
-
-    svg {
-      aspect-ratio: 1/1;
-      // background-color: black;
-      path {
-        fill: rgba(255, 255, 255, 0.468);
-      }
-    }
-
-    &.hide {
-      opacity: 0;
-    }
-  }
-
-  .scroll-button--left {
-    position: absolute;
-    left: 0;
-    padding: 1rem 0.5rem 0.8rem 0.4rem;
-
-    svg {
-      transform: rotate(90deg);
-    }
-  }
-
-  .scroll-button--right {
-    position: absolute;
-    right: 0;
-    padding: 1rem 0.4rem 0.8rem 0.5rem;
-
-    svg {
-      transform: rotate(-90deg);
-    }
-  }
-}
-
-@media (hover: none) {
-  .scroll-buttons-container {
-    display: none;
-  }
 }

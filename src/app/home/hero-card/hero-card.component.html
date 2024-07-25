@@ -1,0 +1,27 @@
+<div
+  class="hero-card"
+  [class]="windowDimensions.width > 480 ? 'landscape' : ''"
+  [id]="'hero-card--' + titleDetails.id"
+  [attr.data-card-index]="cardIndex"
+>
+  <img
+    *ngIf="getImageSrcBasedOnWidth()"
+    class="hero-card__poster"
+    [src]="getImageSrcBasedOnWidth()"
+    alt=""
+    [attr.data-card-index]="cardIndex"
+  />
+  <div class="hero-card__details">
+    <img
+      [src]="'https://image.tmdb.org/t/p/w500' + titleDetails.logoPath"
+      alt=""
+      class="hero-card__logo"
+    />
+    <div class="hero-card__texts">
+      <h4 class="hero-card__title">{{ titleDetails.title }}</h4>
+      <div class="hero-card__metadata"></div>
+      <p class="hero-card__plot">{{ titleDetails.plot }}</p>
+    </div>
+  </div>
+  <!-- <div class="hero-card__gradient-bg"></div> -->
+</div>

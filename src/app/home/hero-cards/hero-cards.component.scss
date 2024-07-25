@@ -1,4 +1,5 @@
 .hero {
+  position: relative;
   overflow-x: scroll;
   scroll-padding-left: 40vw;
   scrollbar-width: none;
@@ -7,7 +8,18 @@
 
   display: flex;
   flex-flow: column nowrap;
-  row-gap: 3vw;
+  row-gap: 1rem;
+}
+
+.hero:hover app-scroll-buttons {
+  opacity: 100%;
+  pointer-events: all;
+}
+
+app-scroll-buttons {
+  transition: all 0.1s ease-in-out;
+  pointer-events: none;
+  opacity: 0%;
 }
 
 .hero__cards-container {
@@ -15,47 +27,26 @@
   display: flex;
   flex-flow: row nowrap;
   column-gap: 0.5rem;
-
   scroll-snap-type: x mandatory;
-  // scroll-behavior: smooth;
-  // margin: 0 -45vw;
-}
-
-.hero-card {
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
-
-  flex-shrink: 0;
-  width: 65vw;
-  aspect-ratio: 1/1.5;
-  border-radius: 1rem;
-  overflow: hidden;
-
-  transform-origin: center center;
-  transition: transform 0.15s linear, opacity 0.15s linear;
-
-  .hero-card__poster {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-
-  // to prevent second hero card from resizing after home page load or reload
-  &:nth-of-type(3) {
-    transform: scale(0.869);
-    opacity: 23%;
-  }
 }
 
 .hero-card-filler {
-  scroll-snap-align: start;
-  scroll-snap-stop: always;
+  // scroll-snap-align: start;
+  // scroll-snap-stop: always;
 
   flex-shrink: 0;
   width: 17vw;
+  max-height: 20px;
   aspect-ratio: 1/1.5;
   border-radius: 0.5rem;
   overflow: hidden;
+}
+
+.hero-card-filler + .hero-card:has(.landscape) {
+  // scroll-snap-align: start;
+  // scroll-snap-stop: always;
+  width: 10vw;
+  aspect-ratio: 16/9;
 }
 
 .page-indicator-container {
@@ -82,4 +73,13 @@
   aspect-ratio: 1/1;
   transform: scale(1.4);
   opacity: 100%;
+}
+
+@media (min-width: 900px) {
+  .hero {
+    margin: 0 auto;
+  }
+  // .hero__cards-container {
+  //   column-gap: -2em;
+  // }
 }
