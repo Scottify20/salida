@@ -1,6 +1,7 @@
 <div *ngIf="showNavBar()" class="nav">
   <div class="nav__items-container">
     <div
+      role="button"
       *ngFor="let item of navItems; let i = index"
       class="nav__item"
       [routerLink]="item.routerPath"

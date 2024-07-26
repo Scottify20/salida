@@ -11,7 +11,11 @@
     alt=""
     [attr.data-card-index]="cardIndex"
   />
-  <div class="hero-card__details">
+  <div
+    class="hero-card__details"
+    [id]="cardIndex === 0 ? 'hero-card__details--0' : ''"
+    [style]="cardOpacity"
+  >
     <img
       [src]="'https://image.tmdb.org/t/p/w500' + titleDetails.logoPath"
       alt=""

@@ -1,8 +1,9 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { TmdbTitle } from '../hero-cards/hero-cards.component';
 import { WindowResizeService } from '../../shared/services/window-resize.service';
 import { Subscription } from 'rxjs';
-import { NgIf } from '@angular/common';
+import { NgIf, DOCUMENT } from '@angular/common';
+import { PlatformCheckService } from '../../shared/services/platform-check.service';
 
 @Component({
   selector: 'app-hero-card',
@@ -29,8 +30,13 @@ export class HeroCardComponent implements OnInit, OnDestroy {
     logoPath: '',
   };
 
-  constructor(private windowResizeService: WindowResizeService) {}
+  constructor(
+    private windowResizeService: WindowResizeService,
+    private platformCheck: PlatformCheckService,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
   ngOnInit() {
+    this.setOpacityOfCardDetailsOnLoad();
     this.windowDimensions = { width: 0, height: 0 };
 
     this.resizeSubscription =
@@ -45,6 +51,27 @@ export class HeroCardComponent implements OnInit, OnDestroy {
 
     // Ensure the initial values are set
     this.windowResizeService.isResizing();
+  }
+
+  protected cardOpacity = 'opacity: 0%';
+
+  setOpacityOfCardDetailsOnLoad() {
+    if (this.platformCheck.isServer()) {
+      return;
+    }
+
+    const cardDetails = this.document.getElementById(
+      'hero-card__details--0'
+    ) as HTMLDivElement;
+
+    setTimeout(() => {
+      this.cardOpacity = 'opacity: 100%';
+      cardDetails.classList.remove('hidden');
+
+      setTimeout(() => {
+        this.cardOpacity = 'opacity: unset ';
+      }, 100);
+    }, 1);
   }
 
   getImageSrcBasedOnWidth(): string {

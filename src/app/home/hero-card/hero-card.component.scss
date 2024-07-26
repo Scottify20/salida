@@ -49,9 +49,10 @@
 }
 
 .hero-card.landscape .hero-card__details {
+  opacity: 0%;
+  display: grid;
   padding: 1rem;
   max-width: 75%;
-  display: grid;
   place-content: end start;
   z-index: 2;
   content: "";
@@ -76,6 +77,14 @@
       transparent
     );
   }
+}
+
+.hero-card__details {
+  transition: opacity 0.25s ease-in-out;
+}
+
+.hero-card__details.hidden {
+  opacity: 0%;
 }
 
 .hero-card__logo {

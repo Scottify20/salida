@@ -1,5 +1,5 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { CommonModule, DOCUMENT } from '@angular/common';
+import { Component, Renderer2, Inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -10,7 +10,11 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './nav.component.scss',
 })
 export class NavComponent {
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
 
   routesWhereNavShows: string[] = ['/', '/lists', '/search', '/trending/**'];
 
@@ -68,5 +72,22 @@ export class NavComponent {
     return this.isActive(route)
       ? navItem.iconSvgPathSolid
       : navItem.iconSvgPathOutline;
+  }
+
+  ngOnInit() {
+    // Preload icon SVGs on the navbar
+    this.navItems.forEach((item) => {
+      const link = this.renderer.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = item.iconSvgPathSolid;
+      this.renderer.appendChild(this.document.head, link);
+
+      const outlineLink = this.renderer.createElement('link');
+      outlineLink.rel = 'preload';
+      outlineLink.as = 'image';
+      outlineLink.href = item.iconSvgPathOutline;
+      this.renderer.appendChild(this.document.head, outlineLink);
+    });
   }
 }
