@@ -13,4 +13,8 @@ import { CardShape } from '../cards-section/cards-section.component';
 export class CardComponent {
   @Input() cardShape?: CardShape = 'rectangle';
   @Input() entity: TmdbEntityForCard = { name: '', image_path: '' };
+
+  get imageWidth() {
+    return this.cardShape === 'circle' ? '154' : '185';
+  }
 }

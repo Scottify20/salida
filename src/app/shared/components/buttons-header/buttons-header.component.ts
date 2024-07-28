@@ -15,7 +15,7 @@ export class ButtonsHeaderComponent {
 }
 
 export interface HeaderButton {
-  type: 'icon' | 'text';
+  type: 'icon' | 'text' | 'iconWithBG';
   text?: string;
   iconPath?: string;
   anchor?: {

@@ -478,7 +478,7 @@ export class HeroCardsComponent {
           card.style.transform = `scale(${
             0.8 + (1 - 0.8) * intersectRatio + 0.05
           })`;
-          card.style.opacity = `${intersectRatio * 100 + 20}%`;
+          card.style.opacity = `${intersectRatio * 100 + 25}%`;
         }
       });
     };

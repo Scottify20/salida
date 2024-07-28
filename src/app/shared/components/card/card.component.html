@@ -1,10 +1,17 @@
-<div class="card" [class]="cardShape === 'circle' ? 'circle' : ''">
+<div
+  role="button"
+  class="card"
+  [class]="cardShape === 'circle' ? 'circle' : ''"
+>
   <div class="card__image-container">
     <img
-      [src]="'https://image.tmdb.org/t/p/w185' + entity.image_path"
+      [src]="'https://image.tmdb.org/t/p/w154' + entity.image_path"
       alt=""
       class="card__image"
     />
   </div>
-  <p class="card__title">{{ entity.name }}</p>
+  <div class="card__texts">
+    <p class="card__title">{{ entity.name }}</p>
+    <p *ngIf(entity.otherName) class="card__subtitle">{{ entity.otherName }}</p>
+  </div>
 </div>

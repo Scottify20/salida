@@ -10,16 +10,41 @@
   width: 2rem;
   aspect-ratio: 1/1;
   font-size: 1.5rem;
+  display: grid;
+  place-content: center;
+
+  transition: all 0.1s ease-in-out;
+  transform: scale(1);
+  &:hover {
+    transform: scale(1.2);
+    filter: brightness(120%);
+  }
+
+  &:active {
+    filter: brightness(70%);
+    transform: scale(0.9);
+  }
 }
 
-.header__button.header__button--text {
+.header__button--text {
   text-decoration: none;
   width: min-content;
   aspect-ratio: unset;
   height: 2rem;
   font-size: 1.5rem;
   font-weight: 600;
-  // overflow-wrap: normal;
+}
+
+.header__button--icon-with-bg {
+  margin: 0.12rem;
+  background-color: var(--button-bg-color);
+  padding: 0.2em;
+  border-radius: 100px;
+  transform: scale(1.12);
+
+  * {
+    transform: scale(0.8);
+  }
 }
 
 img {

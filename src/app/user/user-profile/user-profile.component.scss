@@ -1,0 +1,71 @@
+.profile {
+  padding-top: 1rem;
+  height: 70vh;
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  row-gap: 2rem;
+}
+
+p {
+  line-height: 1.5;
+  font-weight: 300;
+}
+
+.profile__hero {
+  display: flex;
+  flex-flow: column nowrap;
+  align-items: center;
+  row-gap: 1.5rem;
+}
+
+.profile__user-photo {
+  border-radius: 1000px;
+  width: 130px;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.profile__main-texts {
+  display: flex;
+  flex-flow: column nowrap;
+  text-align: center;
+  row-gap: 0.35rem;
+
+  .profile__name {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+  .profile__username {
+    font-size: 1rem;
+    color: var(--text-color-subtle);
+  }
+}
+
+.profile__bio-and-info-container {
+  width: 100%;
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+  .profile__bio {
+  }
+
+  .profile__section-container {
+    padding: 1rem;
+    background-color: var(--card-bg-color);
+    border-radius: 1rem;
+    display: flex;
+    flex-flow: column nowrap;
+    row-gap: 1.25rem;
+  }
+
+  .profile__info-with-icon-container {
+    display: flex;
+    flex-flow: row nowrap;
+    column-gap: 0.75em;
+    align-items: center;
+    .profile__info-icon {
+      width: 1rem;
+    }
+  }
+}

@@ -66,7 +66,6 @@ export class HeroCardComponent implements OnInit, OnDestroy {
 
     setTimeout(() => {
       this.cardOpacity = 'opacity: 100%';
-      cardDetails.classList.remove('hidden');
 
       setTimeout(() => {
         this.cardOpacity = 'opacity: unset ';

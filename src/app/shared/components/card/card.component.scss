@@ -10,12 +10,21 @@
   object-fit: cover;
 }
 
+.card__texts {
+  overflow-y: hidden;
+  display: grid;
+  row-gap: 0.25rem;
+}
+
 .card__title {
   font-size: 1rem;
-  min-height: calc(1rem * 1.25);
   max-height: calc(2rem * 1.25);
   line-height: 1.25;
-  overflow: clip;
+}
+
+.card__subtitle {
+  font-size: 0.8rem;
+  opacity: 70%;
 }
 
 .card.circle {

@@ -78,13 +78,13 @@ export class NavComponent {
     // Preload icon SVGs on the navbar
     this.navItems.forEach((item) => {
       const link = this.renderer.createElement('link');
-      link.rel = 'preload';
+      link.rel = 'prefetch';
       link.as = 'image';
       link.href = item.iconSvgPathSolid;
       this.renderer.appendChild(this.document.head, link);
 
       const outlineLink = this.renderer.createElement('link');
-      outlineLink.rel = 'preload';
+      outlineLink.rel = 'prefetch';
       outlineLink.as = 'image';
       outlineLink.href = item.iconSvgPathOutline;
       this.renderer.appendChild(this.document.head, outlineLink);

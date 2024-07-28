@@ -6,6 +6,7 @@
       [ngSwitch]="buttonProps.type"
       class="section-header__button"
       (click)="buttonProps.callback()"
+      role="button"
     >
       <!-- if button is a text -->
       <ng-container *ngSwitchCase="'text'">

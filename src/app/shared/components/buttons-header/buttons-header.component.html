@@ -2,25 +2,36 @@
   <ng-container *ngFor="let button of headerButtons; let buttonIndex = index">
     <!-- if button opens external link -->
     <a
-      *ngIf="button.anchor?.urlType === 'external'"
+      *ngIf="button.anchor?.urlType === 'external' && !button.actionCallback"
       [href]="button.anchor?.path"
       rel="noopener noreferrer"
       [target]="button.anchor?.target"
       class="header__button"
       [class]="button.type === 'text' ? 'header__button--text' : ''"
     >
-      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      <img
+        *ngIf="button.type === 'icon' || button.type === 'iconWithBG'"
+        [src]="button.iconPath"
+        alt=""
+      />
       {{ button.text }}
     </a>
 
     <!-- if button opens internal link/route -->
     <a
-      *ngIf="button.anchor?.urlType === 'internal'"
+      *ngIf="button.anchor?.urlType === 'internal' && !button.actionCallback"
       [routerLink]="button.anchor?.path"
       class="header__button"
       [class]="button.type === 'text' ? 'header__button--text' : ''"
+      [ngClass]="
+        button.type === 'iconWithBG' ? 'header__button--icon-with-bg' : ''
+      "
     >
-      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      <img
+        *ngIf="button.type === 'icon' || button.type === 'iconWithBG'"
+        [src]="button.iconPath"
+        alt=""
+      />
       {{ button.text }}
     </a>
 
@@ -29,10 +40,16 @@
       role="button"
       *ngIf="button.actionCallback"
       class="header__button"
-      [class]="button.type === 'text' ? 'header__button--text' : ''"
-      (click)="button.actionCallback()"
+      [ngClass]="
+        button.type === 'iconWithBG' ? 'header__button--icon-with-bg' : ''
+      "
+      (click)="button?.actionCallback()"
     >
-      <img *ngIf="button.type === 'icon'" [src]="button.iconPath" alt="" />
+      <img
+        *ngIf="button.type === 'iconWithBG'"
+        [src]="button.iconPath"
+        alt=""
+      />
       <p *ngIf="button.type === 'text'">{{ button.text }}</p>
     </div>
   </ng-container>

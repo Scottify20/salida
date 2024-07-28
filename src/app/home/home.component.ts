@@ -2085,7 +2085,11 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     {
       type: 'icon',
       iconPath: '../../../../assets/icons/home-header/User-solid.svg',
-      actionCallback: () => console.log('profile clicked'),
+      anchor: {
+        urlType: 'internal',
+        path: '/user',
+        target: '_self',
+      },
     },
   ];
 
@@ -2123,5 +2127,6 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
 export interface TmdbEntityForCard {
   name: string;
+  otherName?: string;
   image_path: string;
 }
