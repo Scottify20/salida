@@ -35,6 +35,10 @@ svg {
   display: block;
   max-width: 100%;
 }
+
+svg {
+  user-select: none;
+}
 /*
   6. Remove built-in form typography styles
 */

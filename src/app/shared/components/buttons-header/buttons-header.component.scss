@@ -1,3 +1,7 @@
+:host.with-padding .header {
+  padding: 1rem;
+}
+
 .header {
   display: flex;
   flex-flow: row nowrap;

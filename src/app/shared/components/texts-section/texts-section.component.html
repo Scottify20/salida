@@ -1,0 +1,16 @@
+<div class="texts-section">
+  <app-section-header-title-and-button
+    [sectionHeaderOptions]="sectionHeaderOptions"
+  ></app-section-header-title-and-button>
+  <div class="texts-section__texts-container">
+    <ng-container *ngFor="let text of textsSectionOptions.texts; let i = index">
+      <p class="texts-section__text">{{ text }}</p>
+      <p
+        *ngIf="i !== textsSectionOptions.texts.length - 1"
+        class="texts-section__dot-separator"
+      >
+        •
+      </p>
+    </ng-container>
+  </div>
+</div>

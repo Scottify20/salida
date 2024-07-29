@@ -1,0 +1,52 @@
+<div class="title">
+  <div class="title__hero">
+    <img src="assets/images/backdrop.png" alt="" class="title__hero-backdrop" />
+    <app-buttons-header
+      class="no-padding"
+      [headerButtons]="headerButtons"
+    ></app-buttons-header>
+    <div class="title__logo-and-play-button-container">
+      <img src="assets/images/logo.png" alt="" class="title__logo" />
+      <div class="title__play-button-container">
+        <div class="title__play-button">
+          <img
+            src="assets/icons/header/title-details/Play.svg"
+            alt=""
+            class="title__play-icon"
+          />
+        </div>
+        <p class="title__play-button__label">Watch Trailer</p>
+      </div>
+    </div>
+    <div class="title__main-details-container">
+      <h4 class="title__title">Dune: Part Two</h4>
+      <div class="title__metadataContainer">
+        <p class="title__metadata">2022</p>
+      </div>
+      <div class="title__genres-container">
+        <div class="title__genre">Action</div>
+        <div class="title__genre">Adventure</div>
+        <div class="title__genre">Drama</div>
+      </div>
+    </div>
+  </div>
+  <app-pill-tabs></app-pill-tabs>
+  <div class="title__details title__section">
+    <app-texts-section [textsSectionOptions]="plotSection"></app-texts-section>
+    <app-texts-section
+      [textsSectionOptions]="directorsSection"
+    ></app-texts-section>
+    <app-texts-section
+      [textsSectionOptions]="writersSection"
+    ></app-texts-section>
+    <app-texts-section
+      [textsSectionOptions]="countriesSection"
+    ></app-texts-section>
+    <app-texts-section
+      [textsSectionOptions]="languagesSection"
+    ></app-texts-section>
+    <app-texts-section
+      [textsSectionOptions]="awardsSection"
+    ></app-texts-section>
+  </div>
+</div>

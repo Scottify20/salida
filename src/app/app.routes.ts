@@ -8,6 +8,16 @@ export const routes: Routes = [
     component: HomeComponent,
   },
   {
+    path: 'series',
+    loadChildren: () =>
+      import('./series/series.module').then((m) => m.SeriesModule),
+  },
+  {
+    path: 'movies',
+    loadChildren: () =>
+      import('./movies/movies.module').then((m) => m.MoviesModule),
+  },
+  {
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
   },

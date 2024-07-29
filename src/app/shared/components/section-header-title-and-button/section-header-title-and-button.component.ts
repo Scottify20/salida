@@ -10,9 +10,19 @@ import { CommonModule } from '@angular/common';
   styleUrl: './section-header-title-and-button.component.scss',
 })
 export class SectionHeaderTitleAndButtonComponent {
-  @Input() cardsSectionOptions: CardsSectionOptions = {
+  @Input() sectionHeaderOptions: SectionHeaderOptions = {
     sectionTitle: 'Section Title',
-    cardShape: 'rectangle',
-    stacking: false,
+    buttonProps: { type: 'text', textOrIconPath: '', callback: () => {} },
   };
 }
+
+export interface SectionHeaderOptions {
+  sectionTitle: string;
+  buttonProps?: SectionButtonProps;
+}
+
+export type SectionButtonProps = {
+  type: 'text' | 'icon';
+  textOrIconPath: string;
+  callback: () => void;
+};

@@ -1,0 +1,30 @@
+.texts-section {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 0.5rem;
+}
+
+.texts-section__texts-container {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+}
+
+.texts-section__text {
+  display: inline;
+  font-size: 1rem;
+  color: var(--text-color-slightly-transparent);
+  font-weight: 300;
+  line-height: 1.55rem;
+  text-wrap: wrap;
+
+  max-height: 3 * 1.5 * 1rem;
+  overflow: hidden;
+}
+
+.texts-section__dot-separator {
+  display: inline;
+  padding: 0 1em;
+  font-size: 0.7rem;
+  color: var(--text-color-disabled);
+}

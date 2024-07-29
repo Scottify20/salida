@@ -1,7 +1,7 @@
 <div class="section-header">
-  <h4 class="section-header__title">{{ cardsSectionOptions.sectionTitle }}</h4>
+  <h4 class="section-header__title">{{ sectionHeaderOptions.sectionTitle }}</h4>
 
-  <ng-container *ngIf="cardsSectionOptions.buttonProps as buttonProps">
+  <ng-container *ngIf="sectionHeaderOptions.buttonProps as buttonProps">
     <div
       [ngSwitch]="buttonProps.type"
       class="section-header__button"
@@ -10,11 +10,13 @@
     >
       <!-- if button is a text -->
       <ng-container *ngSwitchCase="'text'">
-        <div class="text">{{ buttonProps.textOrIconPath }}</div>
+        <div class="section-header__button--text">
+          {{ buttonProps.textOrIconPath }}
+        </div>
       </ng-container>
       <ng-container *ngSwitchCase="'icon'">
         <!-- if button is an icon -->
-        <div class="icon">
+        <div class="section-header__button--icon">
           <img [src]="buttonProps.textOrIconPath" alt="" />
         </div>
       </ng-container>

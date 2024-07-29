@@ -12,6 +12,23 @@
 }
 
 .section-header__button {
+  cursor: pointer;
+  height: 100%;
   color: var(--text-color-subtle);
-  font-size: 1rem;
+
+  &:active {
+    filter: brightness(150%);
+  }
+}
+
+.section-header__button--text {
+  user-select: none;
+  padding: 0.375rem 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-color-subtle);
+  border-radius: 100px;
+
+  &:hover {
+    background-color: var(--card-bg-color);
+  }
 }
