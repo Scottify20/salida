@@ -1,0 +1,18 @@
+<div class="ratings-section">
+  <app-section-header-title-and-button
+    [sectionHeaderOptions]="sectionHeaderOptions"
+  ></app-section-header-title-and-button>
+  <div class="ratings-section__ratings-container">
+    <div
+      *ngFor="let rating of ratingsSectionOptions.ratings"
+      class="ratings-section__rating"
+    >
+      <img
+        [src]="rating.iconPath"
+        [alt]="rating.providerName + '\'s logo'"
+        class="ratings-section__logo"
+      />
+      <p class="ratings-section__rating-value">{{ rating.ratingValue }}</p>
+    </div>
+  </div>
+</div>

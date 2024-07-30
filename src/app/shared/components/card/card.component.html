@@ -5,13 +5,20 @@
 >
   <div class="card__image-container">
     <img
-      [src]="'https://image.tmdb.org/t/p/w154' + entity.image_path"
+      [src]="
+        entity.image_path
+          ? 'https://image.tmdb.org/t/p/w154' + entity.image_path
+          : 'assets/icons/placeholders/Profile.svg'
+      "
       alt=""
       class="card__image"
+      [ngClass]="entity.image_path ? '' : 'no-image'"
     />
   </div>
   <div class="card__texts">
     <p class="card__title">{{ entity.name }}</p>
-    <p *ngIf(entity.otherName) class="card__subtitle">{{ entity.otherName }}</p>
+    <p *ngIf="entity.otherName" class="card__subtitle">
+      {{ entity.otherName }}
+    </p>
   </div>
 </div>

@@ -5,7 +5,7 @@ import {
 } from '../section-header-title-and-button/section-header-title-and-button.component';
 import { CardsContainerComponent } from '../cards-container/cards-container.component';
 import { Input } from '@angular/core';
-import { TmdbEntityForCard } from '../../../home/home.component';
+import { TmdbEntityForCard } from '../card/card.component';
 
 @Component({
   selector: 'app-cards-section',
@@ -15,11 +15,11 @@ import { TmdbEntityForCard } from '../../../home/home.component';
   styleUrl: './cards-section.component.scss',
 })
 export class CardsSectionComponent implements OnChanges {
-  @Input() entities: TmdbEntityForCard[] = [];
   @Input() cardsSectionOptions: CardsSectionOptions = {
     sectionTitle: 'Section Title',
     cardShape: 'rectangle',
     stacking: false,
+    entities: [],
   };
 
   sectionHeaderOptions: SectionHeaderOptions = {
@@ -27,7 +27,7 @@ export class CardsSectionComponent implements OnChanges {
     buttonProps: this.cardsSectionOptions.buttonProps,
   };
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnChanges(): void {
     this.sectionHeaderOptions = {
       sectionTitle: this.cardsSectionOptions.sectionTitle,
       buttonProps: this.cardsSectionOptions.buttonProps,
@@ -38,6 +38,7 @@ export class CardsSectionComponent implements OnChanges {
 export interface CardsSectionOptions extends SectionHeaderOptions {
   cardShape?: CardShape;
   stacking?: boolean;
+  entities: TmdbEntityForCard[];
 }
 
 export type CardShape = 'rectangle' | 'circle';

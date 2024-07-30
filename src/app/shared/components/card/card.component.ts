@@ -1,20 +1,26 @@
 import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { Input } from '@angular/core';
-import { TmdbEntityForCard } from '../../../home/home.component';
 import { CardShape } from '../cards-section/cards-section.component';
 
 @Component({
   selector: 'app-card',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './card.component.html',
   styleUrl: './card.component.scss',
 })
 export class CardComponent {
   @Input() cardShape?: CardShape = 'rectangle';
-  @Input() entity: TmdbEntityForCard = { name: '', image_path: '' };
+  @Input() entity: TmdbEntityForCard = {
+    name: '',
+    image_path: '',
+    otherName: '',
+  };
+}
 
-  // get imageWidth() {
-  //   return this.cardShape === 'circle' ? '154' : '185';
-  // }
+export interface TmdbEntityForCard {
+  name: string;
+  otherName?: string;
+  image_path: string | null;
 }

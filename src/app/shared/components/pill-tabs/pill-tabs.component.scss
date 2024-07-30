@@ -1,4 +1,7 @@
 .tabs-container {
+  position: sticky;
+  top: 0;
+
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
@@ -18,10 +21,15 @@
   border-radius: 100px;
   font-weight: 500;
   color: var(--text-color-disabled);
+  user-select: none;
 
   &.active {
     background-color: white;
     color: rgba(0, 0, 0, 0.9);
     font-weight: 600;
+  }
+
+  &:not(.active) {
+    cursor: pointer;
   }
 }

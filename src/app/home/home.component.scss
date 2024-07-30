@@ -4,4 +4,5 @@
   flex-flow: column nowrap;
   row-gap: 2.75rem;
   margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
+  overflow-x: hidden;
 }

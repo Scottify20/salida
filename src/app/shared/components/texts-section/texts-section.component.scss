@@ -8,6 +8,7 @@
   display: flex;
   flex-flow: row wrap;
   align-items: center;
+  display: relative;
 }
 
 .texts-section__text {
@@ -15,11 +16,7 @@
   font-size: 1rem;
   color: var(--text-color-slightly-transparent);
   font-weight: 300;
-  line-height: 1.55rem;
-  text-wrap: wrap;
-
-  max-height: 3 * 1.5 * 1rem;
-  overflow: hidden;
+  line-height: 1.5rem;
 }
 
 .texts-section__dot-separator {
@@ -27,4 +24,21 @@
   padding: 0 1em;
   font-size: 0.7rem;
   color: var(--text-color-disabled);
+}
+
+:host {
+  --plot-line-height: 1.5;
+  --plot-max-lines: 3;
+}
+
+:host.plot-cutoff .texts-section__text {
+  max-height: calc(var(--plot-max-lines) * 1em * var(--plot-line-height));
+  line-height: var(--plot-line-height);
+
+  display: -webkit-box;
+  overflow: hidden;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--plot-max-lines);
+  line-clamp: var(--plot-max-lines);
 }

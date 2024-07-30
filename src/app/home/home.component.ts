@@ -1,8 +1,12 @@
 import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
 import { HeroCardsComponent } from './hero-cards/hero-cards.component';
 import { ButtonsHeaderComponent } from '../shared/components/buttons-header/buttons-header.component';
-import { CardsSectionComponent } from '../shared/components/cards-section/cards-section.component';
+import {
+  CardsSectionComponent,
+  CardsSectionOptions,
+} from '../shared/components/cards-section/cards-section.component';
 import { HeaderButton } from '../shared/components/buttons-header/buttons-header.component';
+import { TmdbEntityForCard } from '../shared/components/card/card.component';
 
 @Component({
   selector: 'app-home',
@@ -2122,11 +2126,36 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     this.heroCards.stopCardsScrollBasedAnimation();
   }
 
-  sampleCallback() {}
-}
+  trendingMoviesOptions: CardsSectionOptions = {
+    sectionTitle: 'Movies',
+    entities: this.movies,
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: this.sampleCallback,
+    },
+  };
 
-export interface TmdbEntityForCard {
-  name: string;
-  otherName?: string;
-  image_path: string;
+  trendingSeriesOptions: CardsSectionOptions = {
+    sectionTitle: 'TV Series',
+    entities: this.series,
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: this.sampleCallback,
+    },
+  };
+
+  trendingPeopleOptions: CardsSectionOptions = {
+    sectionTitle: 'People',
+    entities: this.persons,
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: this.sampleCallback,
+    },
+    cardShape: 'circle',
+  };
+
+  sampleCallback() {}
 }

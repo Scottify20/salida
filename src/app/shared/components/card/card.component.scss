@@ -18,12 +18,11 @@
 
 .card__title {
   font-size: 1rem;
-  max-height: calc(2rem * 1.25);
-  line-height: 1.25;
 }
 
 .card__subtitle {
   font-size: 0.8rem;
+  line-height: 1.1;
   opacity: 70%;
 }
 
@@ -35,8 +34,47 @@
     overflow: hidden;
     border-radius: 50%;
     .card__image {
-      margin-top: -10%;
       width: 100%;
     }
+
+    .card__image:not(.no-image) {
+      margin-top: -10%;
+    }
   }
+}
+
+:host {
+  --card-title-line-height: 1.25;
+  --card-title-max-lines: 2;
+
+  --card-subtitle-line-height: 1.25;
+  --card-subtitle-max-lines: 2;
+}
+
+.card__title {
+  max-height: calc(
+    var(--card-title-max-lines) * 1em * var(--card-title-line-height)
+  );
+  line-height: var(--card-title-line-height);
+
+  display: -webkit-box;
+  overflow: hidden;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--card-title-max-lines);
+  line-clamp: var(--card-title-max-lines);
+}
+
+.card__subtitle {
+  max-height: calc(
+    var(--card-subtitle-max-lines) * 1em * var(--card-subtitle-line-height)
+  );
+  line-height: var(--card-subtitle-line-height);
+
+  display: -webkit-box;
+  overflow: hidden;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--card-subtitle-max-lines);
+  line-clamp: var(--card-subtitle-max-lines);
 }

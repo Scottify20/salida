@@ -5,40 +5,15 @@
 <div class="home__main">
   <app-hero-cards></app-hero-cards>
   <app-cards-section
-    [entities]="movies"
-    [cardsSectionOptions]="{
-      sectionTitle: 'Movies',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: sampleCallback
-      }
-    }"
+    [cardsSectionOptions]="trendingMoviesOptions"
   ></app-cards-section>
 
   <app-cards-section
-    [entities]="series"
-    [cardsSectionOptions]="{
-      sectionTitle: 'TV Series',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: sampleCallback
-      }
-    }"
+    [cardsSectionOptions]="trendingSeriesOptions"
     routerLink="/user"
   ></app-cards-section>
 
   <app-cards-section
-    [entities]="persons"
-    [cardsSectionOptions]="{
-      sectionTitle: 'People',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: sampleCallback
-      },
-      cardShape: 'circle'
-    }"
+    [cardsSectionOptions]="trendingPeopleOptions"
   ></app-cards-section>
 </div>

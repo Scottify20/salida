@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CardComponent } from '../card/card.component';
-import { TmdbEntityForCard } from '../../../home/home.component';
+import { TmdbEntityForCard } from '../card/card.component';
 import { NgForOf } from '@angular/common';
 import { CardsSectionOptions } from '../cards-section/cards-section.component';
 import { ScrollButtonsComponent } from '../scroll-buttons/scroll-buttons.component';
@@ -17,6 +17,6 @@ export class CardsContainerComponent {
     sectionTitle: 'SectionTitle',
     cardShape: 'rectangle',
     stacking: false,
+    entities: [],
   };
-  @Input() entities: TmdbEntityForCard[] = [];
 }
