@@ -1,6 +1,12 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { TitleDetailsComponent } from './shared/components/title-details/title-details.component';
+import { AdvisoriesComponent } from './shared/components/title-details/advisories/advisories.component';
+import { ReviewsComponent } from './shared/components/title-details/reviews/reviews.component';
+import { MoreDetailsComponent } from './shared/components/title-details/more-details/more-details.component';
+import { SeasonsComponent } from './shared/components/title-details/seasons/seasons.component';
+import { ReleasesComponent } from './shared/components/title-details/releases/releases.component';
 
 export const routes: Routes = [
   {
@@ -8,14 +14,25 @@ export const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'series',
-    loadChildren: () =>
-      import('./series/series.module').then((m) => m.SeriesModule),
+    path: 'series/:id',
+    component: TitleDetailsComponent,
+    children: [
+      { path: 'details', component: MoreDetailsComponent },
+      { path: 'reviews', component: ReviewsComponent },
+      { path: 'seasons', component: SeasonsComponent },
+      { path: 'advisories', component: AdvisoriesComponent },
+      { path: '', redirectTo: 'details', pathMatch: 'full' },
+    ],
   },
   {
-    path: 'movies',
-    loadChildren: () =>
-      import('./movies/movies.module').then((m) => m.MoviesModule),
+    path: 'movies/:id',
+    component: TitleDetailsComponent,
+    children: [
+      { path: 'details', component: MoreDetailsComponent },
+      { path: 'reviews', component: ReviewsComponent },
+      { path: 'releases', component: ReleasesComponent },
+      { path: '', redirectTo: 'details', pathMatch: 'full' }, // Default to details
+    ],
   },
   {
     path: 'user',

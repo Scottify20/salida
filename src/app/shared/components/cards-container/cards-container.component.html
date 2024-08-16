@@ -3,8 +3,16 @@
     [positionValues]="{ top: '30%', left: '0', right: '0' }"
   ></app-scroll-buttons>
   <div class="subcontainer">
-    <ng-container *ngFor="let entity of cardSectionOptions.entities">
-      <app-card [entity]="entity" [cardShape]="cardSectionOptions.cardShape">
+    <ng-container
+      *ngFor="let entity of cardSectionOptions.entities; let i = index"
+    >
+      <app-card
+        [entity]="entity"
+        [cardShape]="cardSectionOptions.cardShape"
+        *ngIf="
+          cardSectionOptions.maxNoOfCards && i < cardSectionOptions.maxNoOfCards
+        "
+      >
       </app-card>
     </ng-container>
   </div>

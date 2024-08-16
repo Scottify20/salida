@@ -1,0 +1,100 @@
+<!-- if the release dates are grouped by release type -->
+<div
+  class="releases release-type"
+  *ngIf="releasesConfig.groupBy == 'release-type'"
+>
+  <ng-container *ngFor="let releaseType of releasesByType | keyvalue">
+    <div *ngIf="releaseType.value[0]" class="releases__type-container">
+      <h4 class="release__type-name">
+        {{ releaseType.key | uppercase }}
+      </h4>
+      <div
+        *ngIf="
+          releasesConfig.dateOrder === 'newest-first' ||
+          releasesConfig.dateOrder === 'oldest-first'
+        "
+        class="releases__releases-container"
+      >
+        <div
+          *ngFor="let release of releaseType.value; let i = index"
+          [ngClass]="
+            isFirstInReleaseDate(release, releaseType.value)
+              ? 'first-release-by-date'
+              : ''
+          "
+          class="release"
+        >
+          <p
+            *ngIf="!isFirstInReleaseDate(release, releaseType.value)"
+            class="release__date-empty-placeholder"
+          ></p>
+
+          <p
+            *ngIf="isFirstInReleaseDate(release, releaseType.value)"
+            class="release__date"
+          >
+            {{ release.release_date | date : "dd MMM yyyy" }}
+          </p>
+          <div class="release__details-container">
+            <img
+              [src]="
+                'https://purecatamphetamine.github.io/country-flag-icons/3x2/' +
+                release.iso_639_1 +
+                '.svg'
+              "
+              alt=""
+              class="release__flag"
+            />
+            <p *ngIf="release.iso_639_1" class="release__country-name">
+              {{ getCountryNameFromCode(release.iso_639_1) }}
+            </p>
+            <p *ngIf="release.certification" class="release__rating">
+              {{ release.certification }}
+            </p>
+            <p *ngIf="release.note" class="release__note">{{ release.note }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-container>
+</div>
+
+<!-- if the release dates are grouped by country -->
+<div class="releases country" *ngIf="releasesConfig.groupBy == 'country'">
+  <div class="releases__type-container">
+    <h4 class="release__type-name">COUNTRY</h4>
+    <div class="releases__countries-container">
+      <div
+        *ngFor="let country of releasesByCountry"
+        class="releases__country-container"
+      >
+        <div class="release__country-name-and-flag-container">
+          <img
+            [src]="
+              'https://purecatamphetamine.github.io/country-flag-icons/3x2/' +
+              country.iso_3166_1 +
+              '.svg'
+            "
+            alt=""
+            class="release__flag"
+          />
+          <p class="release__country-name">
+            {{ getCountryNameFromCode(country.iso_3166_1) }}
+          </p>
+        </div>
+
+        <div class="releases__releases-container">
+          <div *ngFor="let release of country.release_dates" class="release">
+            <p *ngIf="release.release_date" class="release__date">
+              {{ release.release_date | date : "dd MMM yyyy" }}
+            </p>
+            <p *ngIf="release.certification" class="release__rating">
+              {{ release.certification }}
+            </p>
+            <p *ngIf="release.note" class="release__note">{{ release.note }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

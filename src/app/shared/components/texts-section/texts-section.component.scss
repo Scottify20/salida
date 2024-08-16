@@ -13,6 +13,7 @@
 
 .texts-section__text {
   display: inline;
+  text-wrap: nowrap;
   font-size: 1rem;
   color: var(--text-color-slightly-transparent);
   font-weight: 300;
@@ -24,21 +25,4 @@
   padding: 0 1em;
   font-size: 0.7rem;
   color: var(--text-color-disabled);
-}
-
-:host {
-  --plot-line-height: 1.5;
-  --plot-max-lines: 3;
-}
-
-:host.plot-cutoff .texts-section__text {
-  max-height: calc(var(--plot-max-lines) * 1em * var(--plot-line-height));
-  line-height: var(--plot-line-height);
-
-  display: -webkit-box;
-  overflow: hidden;
-
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: var(--plot-max-lines);
-  line-clamp: var(--plot-max-lines);
 }

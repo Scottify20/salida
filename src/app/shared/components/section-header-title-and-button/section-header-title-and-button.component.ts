@@ -11,13 +11,14 @@ import { CommonModule } from '@angular/common';
 })
 export class SectionHeaderTitleAndButtonComponent {
   @Input() sectionHeaderOptions: SectionHeaderOptions = {
-    sectionTitle: 'Section Title',
+    sectionTitle: '-------',
     buttonProps: { type: 'text', textOrIconPath: '', callback: () => {} },
   };
 }
 
 export interface SectionHeaderOptions {
   sectionTitle: string;
+  sectionTitlePlural?: string;
   buttonProps?: SectionButtonProps;
 }
 

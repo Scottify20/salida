@@ -1,6 +1,53 @@
-<div class="tabs-container">
-  <div class="tab active">Details</div>
-  <div class="tab">Seasons</div>
-  <div class="tab">Reviews</div>
-  <div class="tab">Releases</div>
+<div
+  *ngFor="let tabGroup of tabItems | keyvalue"
+  [ngClass]="
+    tabGroup.key == 'mainTabs'
+      ? 'main'
+      : tabGroup.key == 'leftTabsInner'
+      ? 'left-inner'
+      : tabGroup.key == 'leftTabsOuter'
+      ? 'left-outer'
+      : tabGroup.key == 'rightTabsInner'
+      ? 'right-inner'
+      : 'right-outer'
+  "
+  class="tab-group"
+>
+  <ng-container *ngFor="let tabItem of tabGroup.value?.tabs">
+    <ng-container
+      *ngIf="
+        isVisibleOnRoutes(tabItem.visibleOn) &&
+        (!tabItem.visibleIf || isVisibleIf(tabItem.visibleIf))
+      "
+    >
+      <div
+        *ngIf="tabGroup.value?.buttonType === 'text'"
+        [routerLink]="tabItem.routerLinkPath"
+        [routerLinkActive]="'active'"
+        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
+        (click)="handleTabClick(tabItem.callback)"
+        class="tab tab--text"
+      >
+        {{ tabItem.text }}
+      </div>
+
+      <div
+        *ngIf="tabGroup.value?.buttonType === 'icon'"
+        [routerLink]="tabItem.routerLinkPath"
+        [routerLinkActive]="'active'"
+        class="tab tab--icon"
+        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
+        (click)="handleTabClick(tabItem.callback)"
+      >
+        <img
+          [src]="
+            tabItem.isSelected && tabItem.isSelected()
+              ? tabItem.iconPathActive
+              : tabItem.iconPathDisabled
+          "
+          alt=""
+        />
+      </div>
+    </ng-container>
+  </ng-container>
 </div>

@@ -20,6 +20,7 @@ export class CardsSectionComponent implements OnChanges {
     cardShape: 'rectangle',
     stacking: false,
     entities: [],
+    maxNoOfCards: 100,
   };
 
   sectionHeaderOptions: SectionHeaderOptions = {
@@ -39,6 +40,7 @@ export interface CardsSectionOptions extends SectionHeaderOptions {
   cardShape?: CardShape;
   stacking?: boolean;
   entities: TmdbEntityForCard[];
+  maxNoOfCards: number;
 }
 
 export type CardShape = 'rectangle' | 'circle';

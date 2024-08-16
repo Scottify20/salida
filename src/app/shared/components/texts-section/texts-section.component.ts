@@ -15,6 +15,7 @@ import { CommonModule } from '@angular/common';
 export class TextsSectionComponent implements OnChanges {
   @Input() textsSectionOptions: TextsSectionOptions = {
     sectionTitle: '',
+    sectionTitlePlural: '',
     texts: [],
     buttonProps: { type: 'text', textOrIconPath: '', callback: () => {} },
   };
@@ -29,6 +30,16 @@ export class TextsSectionComponent implements OnChanges {
       sectionTitle: this.textsSectionOptions.sectionTitle,
       buttonProps: this.textsSectionOptions.buttonProps,
     };
+
+    const pluralTitle = this.textsSectionOptions.sectionTitlePlural;
+
+    if (
+      pluralTitle &&
+      pluralTitle != '' &&
+      this.textsSectionOptions.texts.length > 1
+    ) {
+      this.sectionHeaderOptions.sectionTitle = pluralTitle;
+    }
   }
 }
 

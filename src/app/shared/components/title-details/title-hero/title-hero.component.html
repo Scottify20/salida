@@ -1,0 +1,59 @@
+<div class="title__hero">
+  <img
+    *ngIf="titleHeroDetails.backdrop_path && getBackropWidth()"
+    [src]="
+      'https://image.tmdb.org/t/p/' +
+      getBackropWidth() +
+      titleHeroDetails.backdrop_path
+    "
+    alt=""
+    class="title__hero-backdrop"
+  />
+  <app-buttons-header
+    class="no-padding"
+    [headerButtons]="headerButtons"
+  ></app-buttons-header>
+  <div class="title__logo-and-play-button-container">
+    <img
+      *ngIf="titleHeroDetails.logo_path != ''"
+      [src]="'https://image.tmdb.org/t/p/w300' + titleHeroDetails.logo_path"
+      alt=""
+      class="title__logo"
+    />
+    <div class="title__play-button-container">
+      <div class="title__play-button">
+        <img
+          src="assets/icons/header/title-details/Play.svg"
+          alt=""
+          class="title__play-icon"
+        />
+      </div>
+      <p class="title__play-button__label">Watch Trailer</p>
+    </div>
+  </div>
+  <div class="title__main-details-container">
+    <h4 class="title__title">{{ titleHeroDetails.title }}</h4>
+    <div class="title__metadataContainer">
+      <p class="title__metadata">
+        <span class="title__metadata--year metadata-text">{{
+          titleHeroDetails.metadata.year
+        }}</span>
+        <span
+          *ngIf="titleHeroDetails.metadata.rating"
+          class="title__metadata--rating metadata-rating metadata-text"
+          >{{ titleHeroDetails.metadata.rating }}</span
+        >
+        <span
+          *ngIf="titleHeroDetails.metadata.runtimeOrSeasons"
+          class="title__metadata--rating metadata-text"
+          >{{ titleHeroDetails.metadata.runtimeOrSeasons }}</span
+        >
+      </p>
+    </div>
+    <div class="title__genres-container">
+      <div *ngFor="let genre of titleHeroDetails.genres" class="title__genre">
+        {{ genre.name }}
+      </div>
+    </div>
+  </div>
+</div>

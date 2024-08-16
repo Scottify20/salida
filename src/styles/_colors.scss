@@ -3,16 +3,23 @@
 
   // colors
   --body-bg-color: #101116;
+  --body-bg-color-below: #000000;
+
   --text-color: white;
-  --text-color-subtle: hsla(0, 0%, 100%, 0.757);
+  --text-color-inverted: rgb(0, 0, 0);
+  --text-color-subtle: hsla(0, 0%, 100%, 0.7);
   --text-color-slightly-transparent: rgba(255, 255, 255, 0.9);
   --text-color-disabled: hsl(0, 0%, 50%);
 
   --icon-color-disabled: hsl(0, 0%, 50%);
 
   --button-bg-color: #5e585a;
-  --button-bg-subtle: hsla(0, 0%, 100%, 0.15);
+  --button-bg-subtle: hsla(0, 0%, 100%, 0.05);
   --card-bg-color: rgba(255, 255, 255, 0.1);
   --card-bg-color-subtle: #1a1b24;
   --divider-color: rgba(255, 255, 255, 0.08);
+
+  --accent-color: #b2bfff;
+  --text-accent-color: #7c92ff;
+  --text-hightlight-accent-color: rgba(152, 169, 255, 0.15);
 }

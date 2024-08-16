@@ -3,10 +3,6 @@
 @use "./styles/reset";
 @use "./styles/variables";
 
-:root {
-  --main-max-width: 900px;
-}
-
 /* ---remove the blue touch highlight for touchscreens--- */
 * {
   -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
@@ -34,4 +30,10 @@ main {
   html {
     font-size: 14px;
   }
+}
+
+.dot-separator {
+  padding: 0 0.5em;
+  font-size: 0.75em;
+  color: var(--text-color-disabled);
 }

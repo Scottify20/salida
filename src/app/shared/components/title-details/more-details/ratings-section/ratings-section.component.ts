@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import {
   SectionHeaderTitleAndButtonComponent,
   SectionHeaderOptions,
-} from '../../section-header-title-and-button/section-header-title-and-button.component';
+} from '../../../section-header-title-and-button/section-header-title-and-button.component';
 import { Input } from '@angular/core';
-import { HeaderBreadCrumbNavigationComponent } from '../../header-bread-crumb-navigation/header-bread-crumb-navigation.component';
+import { HeaderBreadCrumbNavigationComponent } from '../../../header-bread-crumb-navigation/header-bread-crumb-navigation.component';
 
 @Component({
   selector: 'app-ratings-section',

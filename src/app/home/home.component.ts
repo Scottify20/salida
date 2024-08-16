@@ -2119,16 +2119,17 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
 
-  ngAfterViewInit(): void {
+  ngAfterViewInit() {
     this.heroCards.startCardsScrollBasedAnimation();
   }
-  ngOnDestroy(): void {
+  ngOnDestroy() {
     this.heroCards.stopCardsScrollBasedAnimation();
   }
 
   trendingMoviesOptions: CardsSectionOptions = {
     sectionTitle: 'Movies',
     entities: this.movies,
+    maxNoOfCards: 20,
     buttonProps: {
       type: 'text',
       textOrIconPath: 'See all',
@@ -2138,6 +2139,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
 
   trendingSeriesOptions: CardsSectionOptions = {
     sectionTitle: 'TV Series',
+    maxNoOfCards: 20,
     entities: this.series,
     buttonProps: {
       type: 'text',
@@ -2149,6 +2151,7 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
   trendingPeopleOptions: CardsSectionOptions = {
     sectionTitle: 'People',
     entities: this.persons,
+    maxNoOfCards: 20,
     buttonProps: {
       type: 'text',
       textOrIconPath: 'See all',

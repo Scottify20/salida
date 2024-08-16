@@ -6,9 +6,11 @@ import {
 } from '@angular/router';
 import { routes } from './app/app.routes';
 import { withInMemoryScrolling } from '@angular/router';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    provideHttpClient(withFetch()),
     provideRouter(
       routes,
       withEnabledBlockingInitialNavigation(),
