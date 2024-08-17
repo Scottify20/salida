@@ -1,4 +1,4 @@
-import { PillTabItems } from '../pill-tabs/pill-tabs.component';
+import { PillTabsConfig } from '../pill-tabs/pill-tabs.component';
 import { Component } from '@angular/core';
 import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
 import { TextsSectionComponent } from '../texts-section/texts-section.component';
@@ -79,9 +79,10 @@ export class TitleDetailsComponent {
     },
   ];
 
-  tabItems: PillTabItems = {
+  tabItemsConfig: PillTabsConfig = {
     mainTabs: {
-      buttonType: 'text',
+      tabType: 'navigation',
+      buttonContent: 'text',
       tabs: [
         {
           text: 'Details',
@@ -106,8 +107,9 @@ export class TitleDetailsComponent {
       ],
     },
 
-    rightTabsInner: {
-      buttonType: 'icon',
+    rightTabs1: {
+      tabType: 'toggle-switch',
+      buttonContent: 'icon',
       tabs: [
         {
           iconPathActive: 'assets/icons/pill-tabs/Calendar-black.svg',
@@ -160,6 +162,27 @@ export class TitleDetailsComponent {
             );
           },
           visibleOn: ['reviews'],
+        },
+      ],
+    },
+
+    rightTabs2: {
+      tabType: 'toggle-switch',
+      buttonContent: 'dynamic-text-then-icon',
+      tabs: [
+        {
+          iconPathActive: 'assets/icons/pill-tabs/Arrow-black.svg',
+          iconPathDisabled: 'assets/icons/pill-tabs/Arrow-grey.svg',
+          dynamicText: () => {
+            return 'Season 1';
+          },
+          callback: () => {
+            // this.titleDetailsService.config.reviews.reviewsSource = 'tmdb';
+          },
+          isSelected: () => {
+            return true;
+          },
+          visibleOn: ['seasons'],
         },
       ],
     },

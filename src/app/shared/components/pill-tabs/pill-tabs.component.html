@@ -1,53 +1,92 @@
-<div
-  *ngFor="let tabGroup of tabItems | keyvalue"
-  [ngClass]="
-    tabGroup.key == 'mainTabs'
-      ? 'main'
-      : tabGroup.key == 'leftTabsInner'
-      ? 'left-inner'
-      : tabGroup.key == 'leftTabsOuter'
-      ? 'left-outer'
-      : tabGroup.key == 'rightTabsInner'
-      ? 'right-inner'
-      : 'right-outer'
-  "
-  class="tab-group"
->
-  <ng-container *ngFor="let tabItem of tabGroup.value?.tabs">
-    <ng-container
-      *ngIf="
-        isVisibleOnRoutes(tabItem.visibleOn) &&
-        (!tabItem.visibleIf || isVisibleIf(tabItem.visibleIf))
-      "
-    >
+<ng-container *ngFor="let tabGroup of PillTabsConfig | keyvalue">
+  <div
+    [ngClass]="
+      tabGroup.key == 'mainTabs'
+        ? 'main'
+        : tabGroup.key == 'leftTabs1'
+        ? 'left'
+        : tabGroup.key == 'leftTabs2'
+        ? 'left'
+        : tabGroup.key == 'rightTabs1'
+        ? 'right'
+        : 'right'
+    "
+    class="tab-group"
+  >
+    <ng-container *ngFor="let tabItem of tabGroup.value?.tabs">
       <div
-        *ngIf="tabGroup.value?.buttonType === 'text'"
+        class="tab-container"
+        *ngIf="
+          isVisibleOnRoutes(tabItem.visibleOn) &&
+          (!tabItem.visibleIf || isVisibleIf(tabItem.visibleIf))
+        "
+        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
         [routerLink]="tabItem.routerLinkPath"
         [routerLinkActive]="'active'"
-        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
-        (click)="handleTabClick(tabItem.callback)"
-        class="tab tab--text"
-      >
-        {{ tabItem.text }}
-      </div>
-
-      <div
-        *ngIf="tabGroup.value?.buttonType === 'icon'"
-        [routerLink]="tabItem.routerLinkPath"
-        [routerLinkActive]="'active'"
-        class="tab tab--icon"
-        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
         (click)="handleTabClick(tabItem.callback)"
       >
-        <img
-          [src]="
-            tabItem.isSelected && tabItem.isSelected()
-              ? tabItem.iconPathActive
-              : tabItem.iconPathDisabled
+        <div
+          *ngIf="
+            tabGroup.value &&
+            isInTabTypes(['icon'], tabGroup.value.buttonContent)
           "
-          alt=""
-        />
+          class="tab tab--icon"
+        >
+          <img
+            [src]="
+              tabItem.isSelected && tabItem.isSelected()
+                ? tabItem.iconPathActive
+                : tabItem.iconPathDisabled
+            "
+            alt=""
+          />
+        </div>
+
+        <div
+          *ngIf="
+            tabGroup.value &&
+            isInTabTypes(['text'], tabGroup.value.buttonContent)
+          "
+          class="tab tab--text"
+        >
+          {{ tabItem.text }}
+        </div>
+
+        <div
+          *ngIf="
+            tabGroup.value &&
+            isInTabTypes(['dynamic-text'], tabGroup.value.buttonContent)
+          "
+          class="tab tab--text"
+        >
+          {{ tabItem?.dynamicText() }}
+        </div>
+
+        <div
+          class="tab--text-and-icon"
+          *ngIf="
+            tabGroup.value &&
+            isInTabTypes(
+              ['dynamic-text-then-icon', 'icon-then-dynamic-text'],
+              tabGroup.value.buttonContent
+            )
+          "
+        >
+          <div class="tab tab--text">
+            {{ tabItem?.dynamicText() }}
+          </div>
+          <div class="tab tab--icon">
+            <img
+              [src]="
+                tabItem.isSelected && tabItem.isSelected()
+                  ? tabItem.iconPathActive
+                  : tabItem.iconPathDisabled
+              "
+              alt=""
+            />
+          </div>
+        </div>
       </div>
     </ng-container>
-  </ng-container>
-</div>
+  </div>
+</ng-container>

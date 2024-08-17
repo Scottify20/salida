@@ -38,7 +38,7 @@ export class ReleasesComponent {
         .pipe(
           switchMap((data: Country[]) => {
             this.countryCodes = data;
-            return this.tmdbService.getMovieDetails(
+            return this.tmdbService.movies.getMovieDetails(
               this.titleIdFromRoute as number
             );
           })

@@ -9,9 +9,8 @@ import {
   MediaImages,
   Genre,
 } from './All';
-import { Credit } from './Movies';
 
-type EpisodeType = 'Regular' | 'Special' | 'Bonus' | 'finale';
+type EpisodeType = 'Regular' | 'Special' | 'Bonus' | 'finale' | 'standard';
 
 export interface Series extends Media {
   media_type: 'tv'; // Explicitly defines the media type as TV
@@ -79,6 +78,34 @@ interface SeriesExternalIds {
   wikidata_id?: string;
 }
 
+interface EpisodeCastCredit {
+  character: string;
+  credit_id: string;
+  order: number;
+  adult: boolean;
+  gender: number | null;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
+interface EpisodeCrewCredit {
+  job: string;
+  department: string;
+  credit_id: string;
+  adult: boolean;
+  gender: number | null;
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+}
+
 interface SeriesCastCredit {
   roles: Role[];
   adult: boolean;
@@ -134,7 +161,7 @@ interface ContentRating {
   rating: string; //'TV-MA'
 }
 
-interface SeasonSummary {
+export interface SeasonSummary {
   air_date: string | null; //'2019-07-25'
   episode_count: number;
   id: number;
@@ -152,7 +179,7 @@ interface TvNetwork {
   origin_country: string; // sometimes empty string
 }
 
-interface Season {
+export interface Season {
   _id: string;
   air_date: string;
   episodes: Episode[];
@@ -180,8 +207,8 @@ interface Episode {
   still_path: string | null;
   vote_average: number;
   vote_count: number;
-  crew: Credit[];
-  guest_stars: Credit[];
+  crew: EpisodeCrewCredit[];
+  guest_stars: EpisodeCastCredit[];
 }
 
 interface EpisodeToAir {

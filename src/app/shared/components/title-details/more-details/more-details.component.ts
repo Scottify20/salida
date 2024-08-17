@@ -227,7 +227,7 @@ export class MoreDetailsComponent {
       return null;
     }
 
-    return this.tmdbService
+    return this.tmdbService.movies
       .getMovieDetails(this.titleIdFromRoute as number)
       .subscribe({
         next: (data: Movie) => {
@@ -243,7 +243,7 @@ export class MoreDetailsComponent {
     if (!this.isSeries) {
       return null;
     }
-    return this.tmdbService
+    return this.tmdbService.series
       .getSeriesDetails(this.titleIdFromRoute as number)
       .subscribe({
         next: (data: Series) => {

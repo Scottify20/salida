@@ -1,5 +1,7 @@
 import { ElementRef, Injectable, Renderer2, ViewChild } from '@angular/core';
 import { ReleasesConfig } from '../../../components/title-details/releases/releases.component';
+import { ReviewsConfig } from '../../../components/title-details/reviews/reviews.component';
+import { SeasonsConfig } from '../../../components/title-details/seasons/seasons.component';
 
 @Injectable({
   providedIn: 'root',
@@ -10,6 +12,7 @@ export class TitleDetailsService {
     'more-details': {},
     reviews: {
       reviewsSource: 'tmdb',
+      order: 'oldest-first',
     },
     releases: {
       groupBy: 'release-type',
@@ -18,19 +21,17 @@ export class TitleDetailsService {
       localCountryCode: '',
     },
     certifications: {},
-    seasons: {},
+    seasons: {
+      selectedSeason: '',
+      seasons: [],
+    },
   };
 }
-
 interface TitleDetailsConfig {
   hero: {};
   'more-details': {};
   reviews: ReviewsConfig;
   releases: ReleasesConfig;
   certifications: {};
-  seasons: {};
-}
-
-export interface ReviewsConfig {
-  reviewsSource: 'tmdb' | 'salida';
+  seasons: SeasonsConfig;
 }

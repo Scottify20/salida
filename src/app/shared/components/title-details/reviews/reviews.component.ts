@@ -6,14 +6,8 @@ import { Series } from '../../../interfaces/tmdb/Series';
 import { Observable } from 'rxjs';
 import { Review, Reviews } from '../../../interfaces/tmdb/All';
 import { CommonModule } from '@angular/common';
-import {
-  PillTabItems,
-  PillTabsComponent,
-} from '../../pill-tabs/pill-tabs.component';
-import {
-  ReviewsConfig,
-  TitleDetailsService,
-} from '../../../services/component-configs/title-details/title-details.service';
+import { PillTabsComponent } from '../../pill-tabs/pill-tabs.component';
+import { TitleDetailsService } from '../../../services/component-configs/title-details/title-details.service';
 
 @Component({
   selector: 'app-reviews',
@@ -50,7 +44,7 @@ export class ReviewsComponent {
       return null;
     }
 
-    return this.tmdbService
+    return this.tmdbService.movies
       .getMovieDetails(this.titleIdFromRoute as number)
       .subscribe({
         next: (data: Movie) => {
@@ -67,7 +61,7 @@ export class ReviewsComponent {
       return null;
     }
 
-    return this.tmdbService
+    return this.tmdbService.series
       .getSeriesDetails(this.titleIdFromRoute as number)
       .subscribe({
         next: (data: Series) => {
@@ -110,4 +104,9 @@ export class ReviewsComponent {
     this.fetchMovieDetails()?.unsubscribe();
     this.fetchSeriesDetails()?.unsubscribe();
   }
+}
+
+export interface ReviewsConfig {
+  reviewsSource: 'tmdb' | 'salida';
+  order: 'newest-first' | 'oldest-first';
 }

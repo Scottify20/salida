@@ -50,6 +50,21 @@ export interface Movie extends Media {
   };
 }
 
+interface CastCredit {
+  adult: boolean;
+  gender: number | null; // Gender might be unknown
+  id: number;
+  known_for_department: string;
+  name: string;
+  original_name: string;
+  popularity: number;
+  profile_path: string | null;
+  cast_id: number;
+  character: string;
+  credit_id: string;
+  order: number;
+}
+
 export enum ReleaseType {
   Premiere = 1,
   'Theatrical (limited)' = 2,
@@ -84,19 +99,4 @@ export interface Credit {
   original_name: string;
   popularity: number;
   profile_path: string | null;
-}
-
-interface CastCredit {
-  adult: boolean;
-  gender: number | null; // Gender might be unknown
-  id: number;
-  known_for_department: string;
-  name: string;
-  original_name: string;
-  popularity: number;
-  profile_path: string | null;
-  cast_id: number;
-  character: string;
-  credit_id: string;
-  order: number;
 }

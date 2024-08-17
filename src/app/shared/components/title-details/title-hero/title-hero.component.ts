@@ -83,7 +83,7 @@ export class TitleHeroComponent {
     }
 
     if (this.isMovie) {
-      this.movieDetails$ = this.tmdbService.getMovieDetails(
+      this.movieDetails$ = this.tmdbService.movies.getMovieDetails(
         this.titleIdFromRoute as number
       );
 
@@ -114,7 +114,7 @@ export class TitleHeroComponent {
     }
 
     if (this.isSeries) {
-      this.seriesDetails$ = this.tmdbService.getSeriesDetails(
+      this.seriesDetails$ = this.tmdbService.series.getSeriesDetails(
         this.titleIdFromRoute as number
       );
 
