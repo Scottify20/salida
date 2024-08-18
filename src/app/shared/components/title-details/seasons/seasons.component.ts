@@ -4,11 +4,12 @@ import { EpisodeGroupComponent } from './episode-group/episode-group.component';
 import { Season, SeasonSummary, Series } from '../../../interfaces/tmdb/Series';
 import { TmdbService } from '../../../services/tmdb/tmdb.service';
 import { TitleDetailsService } from '../../../services/component-configs/title-details/title-details.service';
+import { PopupOrBottomSheetComponent } from '../../popup-or-bottom-sheet/popup-or-bottom-sheet.component';
 
 @Component({
   selector: 'app-seasons',
   standalone: true,
-  imports: [EpisodeGroupComponent],
+  imports: [EpisodeGroupComponent, PopupOrBottomSheetComponent],
   templateUrl: './seasons.component.html',
   styleUrl: './seasons.component.scss',
 })
