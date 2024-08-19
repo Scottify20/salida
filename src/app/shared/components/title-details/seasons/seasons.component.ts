@@ -1,10 +1,15 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import { EpisodeGroupComponent } from './episode-group/episode-group.component';
 import { Season, SeasonSummary, Series } from '../../../interfaces/tmdb/Series';
 import { TmdbService } from '../../../services/tmdb/tmdb.service';
 import { TitleDetailsService } from '../../../services/component-configs/title-details/title-details.service';
-import { PopupOrBottomSheetComponent } from '../../popup-or-bottom-sheet/popup-or-bottom-sheet.component';
+import {
+  AnchoringInfo,
+  PopupOrBottomSheetComponent,
+} from '../../popup-or-bottom-sheet/popup-or-bottom-sheet.component';
+import { ElementPositionService } from '../../../services/element-position.service';
+import { PlatformCheckService } from '../../../services/platform-check.service';
 
 @Component({
   selector: 'app-seasons',
@@ -17,11 +22,16 @@ export class SeasonsComponent {
   constructor(
     private tmdbService: TmdbService,
     private router: Router,
-    private titleDetailsConfigService: TitleDetailsService
+    private titleDetailsConfigService: TitleDetailsService,
+    private elemPositionService: ElementPositionService,
+    private platformCheck: PlatformCheckService
   ) {}
-
   seasonsSummaries: SeasonSummary[] = [];
   seasonsConfig = this.titleDetailsConfigService;
+
+  anchorElementId = 'season-picker-tab';
+
+  ngAfterViewInit() {}
 
   get isSeries(): boolean {
     return /series/.test(this.router.url);
@@ -47,8 +57,6 @@ export class SeasonsComponent {
         },
       });
   };
-
-  ngOnInit() {}
 }
 
 export interface SeasonsConfig {

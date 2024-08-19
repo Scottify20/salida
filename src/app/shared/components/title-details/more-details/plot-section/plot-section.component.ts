@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
 import { TextsSectionOptions } from '../../../texts-section/texts-section.component';
 import { CommonModule } from '@angular/common';
-import { WindowResizeService } from '../../../../services/window-resize.service';
+import {
+  WindowResizeDimensionService,
+  WindowResizeServiceUser,
+} from '../../../../services/window-resize.service';
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -11,15 +14,15 @@ import { Subscription } from 'rxjs';
   templateUrl: './plot-section.component.html',
   styleUrl: './plot-section.component.scss',
 })
-export class PlotSectionComponent {
+export class PlotSectionComponent implements WindowResizeServiceUser {
   expanded: boolean = false;
 
   isResizing: boolean = false;
   windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
 
-  private resizeSubscription!: Subscription;
-  private isResizingSubscription!: Subscription;
-  constructor(private windowResizeService: WindowResizeService) {}
+  _resizeSubscription!: Subscription;
+  _isResizingSubscription!: Subscription;
+  constructor(private windowResizeService: WindowResizeDimensionService) {}
 
   @Input() plotSectionOptions: PlotSectionOptions = {
     sectionTitle: '',
@@ -47,20 +50,20 @@ export class PlotSectionComponent {
   ngOnInit() {
     this.windowDimensions = { width: 0, height: 0 };
 
-    this.resizeSubscription =
+    this._resizeSubscription =
       this.windowResizeService.windowDimensions$.subscribe((dimensions) => {
         this.windowDimensions = dimensions;
       });
 
-    this.isResizingSubscription =
+    this._isResizingSubscription =
       this.windowResizeService.isResizing$.subscribe((isResizing) => {
         this.isResizing = isResizing;
       });
   }
 
   ngOnDestroy() {
-    this.resizeSubscription.unsubscribe();
-    this.isResizingSubscription.unsubscribe();
+    this._resizeSubscription.unsubscribe();
+    this._isResizingSubscription.unsubscribe();
   }
 }
 

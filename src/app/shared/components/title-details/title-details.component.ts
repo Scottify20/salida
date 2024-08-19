@@ -42,16 +42,8 @@ export class TitleDetailsComponent {
     private titleDetailsService: TitleDetailsService
   ) {}
 
-  ngOnInit() {
-    this.routerSubscription = this.router.events
-      .pipe(filter((event) => event instanceof NavigationEnd))
-      .subscribe(() => {
-        this.scrollPosition = window.scrollY;
-      });
-  }
-
   ngOnDestroy() {
-    this.routerSubscription.unsubscribe();
+    this.routerSubscription?.unsubscribe();
   }
 
   navigateToNewOutlet() {
@@ -171,6 +163,7 @@ export class TitleDetailsComponent {
       buttonContent: 'dynamic-text-then-icon',
       tabs: [
         {
+          id: 'season-picker-tab',
           iconPathActive: 'assets/icons/pill-tabs/Arrow-black.svg',
           iconPathDisabled: 'assets/icons/pill-tabs/Arrow-grey.svg',
           dynamicText: () => {

@@ -101,6 +101,7 @@ export type TabButtonContent =
   | 'icon-then-dynamic-text';
 
 interface TabItem {
+  id?: string;
   dynamicText?: () => string;
   text?: string;
   iconPathActive?: string;

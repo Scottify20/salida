@@ -431,12 +431,11 @@ export class HeroCardsComponent {
   }
 
   get posters(): NodeListOf<Element> | undefined {
-    if (this.platformCheckService.isServer()) {
-      return undefined;
-    } else {
+    if (this.platformCheckService.isBrowser()) {
       const cards = document.querySelectorAll('.hero-card__poster');
       return cards ? cards : undefined;
     }
+    return undefined;
   }
 
   public stopCardsScrollBasedAnimation() {
@@ -451,36 +450,30 @@ export class HeroCardsComponent {
     }
 
     const options = {
-      // threshold: [
-      //   0, 0.1, 0.15, 0.2, 0.25, 0.3, 0.35, 0.4, 0.45, 0.5, 0.55, 0.6, 0.65,
-      //   0.7, 0.75, 0.8, 0.85, 0.9, 0.95, 1,
-      // ],
-
       threshold: [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1],
     };
 
     const intersectionHandlerCallback = (
       entries: IntersectionObserverEntry[]
     ) => {
-      entries.forEach((entry) => {
-        const intersectRatio = entry.intersectionRatio;
-        const card = entry.target as HTMLElement;
-        // const poster = entry.target.querySelector('.hero-card__poster') as HTMLElement;
-        const indexOfCard = parseInt(
-          card.getAttribute('data-card-index') as string
-        );
+      const entry = entries[0];
+      const intersectRatio = entry.intersectionRatio;
+      const card = entry.target as HTMLElement;
+      // const poster = entry.target.querySelector('.hero-card__poster') as HTMLElement;
+      const indexOfCard = parseInt(
+        card.getAttribute('data-card-index') as string
+      );
 
-        if (intersectRatio >= 0.8) {
-          this.indexOfFullyVisibleCard = indexOfCard;
-        }
+      if (intersectRatio >= 0.8) {
+        this.indexOfFullyVisibleCard = indexOfCard;
+      }
 
-        if (this.indexOfFullyVisibleCard !== indexOfCard) {
-          card.style.transform = `scale(${
-            0.8 + (1 - 0.8) * intersectRatio + 0.05
-          })`;
-          card.style.opacity = `${intersectRatio * 100 + 25}%`;
-        }
-      });
+      if (this.indexOfFullyVisibleCard !== indexOfCard) {
+        card.style.transform = `scale(${
+          0.8 + (1 - 0.8) * intersectRatio + 0.05
+        })`;
+        card.style.opacity = `${intersectRatio * 100 + 25}%`;
+      }
     };
 
     if (this.cards) {

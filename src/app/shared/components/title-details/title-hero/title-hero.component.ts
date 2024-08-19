@@ -8,7 +8,10 @@ import { Movie } from '../../../interfaces/tmdb/Movies';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TmdbService } from '../../../services/tmdb/tmdb.service';
 import { CommonModule } from '@angular/common';
-import { WindowResizeService } from '../../../services/window-resize.service';
+import {
+  WindowResizeDimensionService,
+  WindowResizeServiceUser,
+} from '../../../services/window-resize.service';
 import { Series } from '../../../interfaces/tmdb/Series';
 import { Genre, Video } from '../../../interfaces/tmdb/All';
 
@@ -19,19 +22,19 @@ import { Genre, Video } from '../../../interfaces/tmdb/All';
   templateUrl: './title-hero.component.html',
   styleUrl: './title-hero.component.scss',
 })
-export class TitleHeroComponent {
+export class TitleHeroComponent implements WindowResizeServiceUser {
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private tmdbService: TmdbService,
-    private windowResizeService: WindowResizeService
+    private windowResizeService: WindowResizeDimensionService
   ) {}
 
   isResizing: boolean = false;
   windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
 
-  private resizeSubscription!: Subscription;
-  private isResizingSubscription!: Subscription;
+  _resizeSubscription!: Subscription;
+  _isResizingSubscription!: Subscription;
 
   getBackropWidth(): string {
     const devWidth = this.windowDimensions.width;
@@ -61,7 +64,6 @@ export class TitleHeroComponent {
   };
 
   movieDetails$: Observable<Movie> | undefined;
-
   seriesDetails$: Observable<Series> | undefined;
 
   get titleIdFromRoute(): number | null {
@@ -77,48 +79,14 @@ export class TitleHeroComponent {
     return /series/.test(this.router.url);
   }
 
-  ngOnInit(): void {
-    if (!this.titleIdFromRoute) {
-      return;
+  fetchSeriesDetails = (): Subscription | null => {
+    if (!this.isSeries) {
+      return null;
     }
 
-    if (this.isMovie) {
-      this.movieDetails$ = this.tmdbService.movies.getMovieDetails(
-        this.titleIdFromRoute as number
-      );
-
-      this.movieDetails$.subscribe({
-        next: (data: Movie) => {
-          this.titleHeroDetails.title = data.title;
-          this.titleHeroDetails.backdrop_path = data.backdrop_path;
-          this.titleHeroDetails.genres = data.genres;
-
-          const firstEnglishLogoPath = data.images.logos.find(
-            (logo) => logo.iso_639_1 == 'en'
-          )?.file_path;
-
-          if (firstEnglishLogoPath) {
-            this.titleHeroDetails.logo_path = firstEnglishLogoPath;
-          } else {
-            this.titleHeroDetails.logo_path = data.images.logos[0].file_path;
-          }
-
-          this.titleHeroDetails.metadata = this.getTitleMetadata({
-            movieDetails: data,
-          });
-        },
-        error: (err) => {
-          this.router.navigateByUrl('/not-found');
-        },
-      });
-    }
-
-    if (this.isSeries) {
-      this.seriesDetails$ = this.tmdbService.series.getSeriesDetails(
-        this.titleIdFromRoute as number
-      );
-
-      this.seriesDetails$.subscribe({
+    return this.tmdbService.series
+      .getSeriesDetails(this.titleIdFromRoute as number)
+      .subscribe({
         next: (data: Series) => {
           this.titleHeroDetails.title = data.name;
           this.titleHeroDetails.backdrop_path = data.backdrop_path;
@@ -144,19 +112,72 @@ export class TitleHeroComponent {
           this.router.navigateByUrl('/not-found');
         },
       });
+  };
+
+  fetchMovieDetails = (): Subscription | null => {
+    if (!this.isMovie) {
+      return null;
+    }
+
+    return this.tmdbService.movies
+      .getMovieDetails(this.titleIdFromRoute as number)
+      .subscribe({
+        next: (data: Movie) => {
+          this.titleHeroDetails.title = data.title;
+          this.titleHeroDetails.backdrop_path = data.backdrop_path;
+          this.titleHeroDetails.genres = data.genres;
+
+          const firstEnglishLogoPath = data.images.logos.find(
+            (logo) => logo.iso_639_1 == 'en'
+          )?.file_path;
+
+          if (firstEnglishLogoPath) {
+            this.titleHeroDetails.logo_path = firstEnglishLogoPath;
+          } else {
+            this.titleHeroDetails.logo_path = data.images.logos[0].file_path;
+          }
+
+          this.titleHeroDetails.metadata = this.getTitleMetadata({
+            movieDetails: data,
+          });
+        },
+        error: (err) => {
+          this.router.navigateByUrl('/not-found');
+        },
+      });
+  };
+
+  ngOnInit(): void {
+    if (!this.titleIdFromRoute) {
+      return;
+    }
+
+    if (this.isMovie) {
+      this.fetchMovieDetails();
+    }
+
+    if (this.isSeries) {
+      this.fetchSeriesDetails();
     }
 
     this.windowDimensions = { width: 0, height: 0 };
 
-    this.resizeSubscription =
+    this._resizeSubscription =
       this.windowResizeService.windowDimensions$.subscribe((dimensions) => {
         this.windowDimensions = dimensions;
       });
 
-    this.isResizingSubscription =
+    this._isResizingSubscription =
       this.windowResizeService.isResizing$.subscribe((isResizing) => {
         this.isResizing = isResizing;
       });
+  }
+
+  ngOnDestroy() {
+    this._resizeSubscription?.unsubscribe();
+    this._isResizingSubscription?.unsubscribe();
+    this.fetchMovieDetails()?.unsubscribe();
+    this.fetchSeriesDetails()?.unsubscribe();
   }
 
   getLocalReleaseOrFallbackRating(heroOrMovieDetails: {
@@ -295,11 +316,6 @@ export class TitleHeroComponent {
       actionCallback: () => {},
     },
   ];
-
-  ngOnDestroy() {
-    this.resizeSubscription.unsubscribe();
-    this.isResizingSubscription.unsubscribe();
-  }
 }
 
 interface TitleMetadata {

@@ -1,6 +1,9 @@
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { TmdbTitle } from '../hero-cards/hero-cards.component';
-import { WindowResizeService } from '../../shared/services/window-resize.service';
+import {
+  WindowResizeDimensionService,
+  WindowResizeServiceUser,
+} from '../../shared/services/window-resize.service';
 import { Subscription } from 'rxjs';
 import { NgIf, DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../shared/services/platform-check.service';
@@ -12,12 +15,14 @@ import { PlatformCheckService } from '../../shared/services/platform-check.servi
   templateUrl: './hero-card.component.html',
   styleUrl: './hero-card.component.scss',
 })
-export class HeroCardComponent implements OnInit, OnDestroy {
+export class HeroCardComponent
+  implements OnInit, OnDestroy, WindowResizeServiceUser
+{
   isResizing: boolean = false;
   windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
 
-  private resizeSubscription!: Subscription;
-  private isResizingSubscription!: Subscription;
+  _resizeSubscription!: Subscription;
+  _isResizingSubscription!: Subscription;
 
   @Input() cardIndex = 0;
   @Input() titleDetails: TmdbTitle = {
@@ -31,20 +36,21 @@ export class HeroCardComponent implements OnInit, OnDestroy {
   };
 
   constructor(
-    private windowResizeService: WindowResizeService,
+    private windowResizeService: WindowResizeDimensionService,
     private platformCheck: PlatformCheckService,
     @Inject(DOCUMENT) private document: Document
   ) {}
+
   ngOnInit() {
     this.setOpacityOfCardDetailsOnLoad();
     this.windowDimensions = { width: 0, height: 0 };
 
-    this.resizeSubscription =
+    this._resizeSubscription =
       this.windowResizeService.windowDimensions$.subscribe((dimensions) => {
         this.windowDimensions = dimensions;
       });
 
-    this.isResizingSubscription =
+    this._isResizingSubscription =
       this.windowResizeService.isResizing$.subscribe((isResizing) => {
         this.isResizing = isResizing;
       });
@@ -92,12 +98,8 @@ export class HeroCardComponent implements OnInit, OnDestroy {
     }
   }
 
-  // getImageAlt():string {
-
-  // }
-
   ngOnDestroy() {
-    this.resizeSubscription.unsubscribe();
-    this.isResizingSubscription.unsubscribe();
+    this._resizeSubscription.unsubscribe();
+    this._isResizingSubscription.unsubscribe();
   }
 }
