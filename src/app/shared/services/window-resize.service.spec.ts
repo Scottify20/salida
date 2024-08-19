@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { WindowResizeDimensionService } from './window-resize.service';
+import { WindowResizeService } from './window-resize.service';
 
 describe('WindowResizeService', () => {
-  let service: WindowResizeDimensionService;
+  let service: WindowResizeService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(WindowResizeDimensionService);
+    service = TestBed.inject(WindowResizeService);
   });
 
   it('should be created', () => {

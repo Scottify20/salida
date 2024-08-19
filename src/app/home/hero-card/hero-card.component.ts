@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { TmdbTitle } from '../hero-cards/hero-cards.component';
 import {
-  WindowResizeDimensionService,
+  WindowResizeService,
   WindowResizeServiceUser,
 } from '../../shared/services/window-resize.service';
 import { Subscription } from 'rxjs';
@@ -36,7 +36,7 @@ export class HeroCardComponent
   };
 
   constructor(
-    private windowResizeService: WindowResizeDimensionService,
+    private windowResizeService: WindowResizeService,
     private platformCheck: PlatformCheckService,
     @Inject(DOCUMENT) private document: Document
   ) {}

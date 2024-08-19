@@ -1,6 +1,6 @@
 import { ElementRef, Injectable } from '@angular/core';
 import {
-  WindowResizeDimensionService,
+  WindowResizeService,
   WindowResizeServiceUser,
 } from './window-resize.service';
 import { BehaviorSubject, Observable, Subscription } from 'rxjs';
@@ -12,7 +12,7 @@ import { PlatformCheckService } from './platform-check.service';
 export class ElementPositionService {
   constructor(
     private platformCheckService: PlatformCheckService,
-    private windowResizeService: WindowResizeDimensionService
+    private windowResizeService: WindowResizeService
   ) {
     this.windowResizeService.windowDimensions$.subscribe(() => {
       this.updateElementPositions();

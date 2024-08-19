@@ -9,7 +9,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TmdbService } from '../../../services/tmdb/tmdb.service';
 import { CommonModule } from '@angular/common';
 import {
-  WindowResizeDimensionService,
+  WindowResizeService,
   WindowResizeServiceUser,
 } from '../../../services/window-resize.service';
 import { Series } from '../../../interfaces/tmdb/Series';
@@ -27,7 +27,7 @@ export class TitleHeroComponent implements WindowResizeServiceUser {
     private route: ActivatedRoute,
     private router: Router,
     private tmdbService: TmdbService,
-    private windowResizeService: WindowResizeDimensionService
+    private windowResizeService: WindowResizeService
   ) {}
 
   isResizing: boolean = false;

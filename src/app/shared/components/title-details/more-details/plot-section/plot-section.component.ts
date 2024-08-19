@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { TextsSectionOptions } from '../../../texts-section/texts-section.component';
 import { CommonModule } from '@angular/common';
 import {
-  WindowResizeDimensionService,
+  WindowResizeService,
   WindowResizeServiceUser,
 } from '../../../../services/window-resize.service';
 import { Subscription } from 'rxjs';
@@ -22,7 +22,7 @@ export class PlotSectionComponent implements WindowResizeServiceUser {
 
   _resizeSubscription!: Subscription;
   _isResizingSubscription!: Subscription;
-  constructor(private windowResizeService: WindowResizeDimensionService) {}
+  constructor(private windowResizeService: WindowResizeService) {}
 
   @Input() plotSectionOptions: PlotSectionOptions = {
     sectionTitle: '',

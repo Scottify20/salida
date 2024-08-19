@@ -18,7 +18,7 @@ import { PlatformCheckService } from './platform-check.service';
 @Injectable({
   providedIn: 'root',
 })
-export class WindowResizeDimensionService {
+export class WindowResizeService {
   constructor(private platformCheck: PlatformCheckService) {
     if (this.platformCheck.isBrowser()) {
       fromEvent(window, 'resize')
