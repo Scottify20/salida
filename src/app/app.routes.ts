@@ -7,6 +7,7 @@ import { ReviewsComponent } from './shared/components/title-details/reviews/revi
 import { MoreDetailsComponent } from './shared/components/title-details/more-details/more-details.component';
 import { SeasonsComponent } from './shared/components/title-details/seasons/seasons.component';
 import { ReleasesComponent } from './shared/components/title-details/releases/releases.component';
+import { PopupOrBottomSheetComponent } from './shared/components/popup-or-bottom-sheet/popup-or-bottom-sheet.component';
 
 export const routes: Routes = [
   {
@@ -19,7 +20,11 @@ export const routes: Routes = [
     children: [
       { path: 'details', component: MoreDetailsComponent },
       { path: 'reviews', component: ReviewsComponent },
-      { path: 'seasons', component: SeasonsComponent },
+      {
+        path: 'seasons',
+        component: SeasonsComponent,
+        children: [{ path: 'picker', component: PopupOrBottomSheetComponent }],
+      },
       { path: 'advisories', component: AdvisoriesComponent },
       { path: '', redirectTo: 'details', pathMatch: 'full' },
     ],

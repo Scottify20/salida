@@ -3,16 +3,15 @@
     [sectionHeaderOptions]="sectionHeaderOptions"
   ></app-section-header-title-and-button>
   <div class="ratings-section__ratings-container">
-    <div
-      *ngFor="let rating of ratingsSectionOptions.ratings"
-      class="ratings-section__rating"
-    >
-      <img
-        [src]="rating.iconPath"
-        [alt]="rating.providerName + '\'s logo'"
-        class="ratings-section__logo"
-      />
-      <p class="ratings-section__rating-value">{{ rating.ratingValue }}</p>
-    </div>
+    <ng-container *ngFor="let rating of ratingsSectionOptions.ratings">
+      <div class="ratings-section__rating" *ngIf="rating.ratingValue">
+        <img
+          [src]="rating.iconPath"
+          [alt]="rating.providerName + '\'s logo'"
+          class="ratings-section__logo"
+        />
+        <p class="ratings-section__rating-value">{{ rating.ratingValue }}</p>
+      </div>
+    </ng-container>
   </div>
 </div>

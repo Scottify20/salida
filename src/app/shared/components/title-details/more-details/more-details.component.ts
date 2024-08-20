@@ -455,22 +455,22 @@ export class MoreDetailsComponent {
     ratings: [
       {
         iconPath: 'assets/icons/ratings/Imdb.svg',
-        ratingValue: '8.6',
+        ratingValue: '8.4',
         providerName: 'Internet Movie Database (IMDb)',
       },
       {
         iconPath: 'assets/icons/ratings/RottenTomatoes.svg',
-        ratingValue: '92%',
+        ratingValue: '',
         providerName: 'Rotten Tomatoes',
       },
       {
         iconPath: 'assets/icons/ratings/Tmdb.svg',
-        ratingValue: '92%',
+        ratingValue: '84%',
         providerName: 'The Movie Database (TMDB)',
       },
       {
         iconPath: 'assets/icons/ratings/Metacritic.svg',
-        ratingValue: '79',
+        ratingValue: '',
         providerName: 'Metacritic',
       },
     ],

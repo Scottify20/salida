@@ -1,4 +1,7 @@
 .dialog {
+  display: none;
+  position: fixed;
+  inset: 0;
   border: none;
   background-color: transparent;
   width: 100%;
@@ -57,6 +60,12 @@ li.dialog__item {
   list-style-type: none;
   text-align: center;
   color: var(--text-color-disabled);
+  cursor: pointer;
+
+  &:hover {
+    background-color: var(--card-bg-color);
+    color: var(--text-color-subtle);
+  }
 
   &.selected {
     font-weight: 700;
@@ -65,13 +74,13 @@ li.dialog__item {
   }
 }
 
-@media (min-width: 480px) {
+@media (min-width: 768px) {
   .dialog {
     width: 100%;
   }
 
   .dialog__backrop {
-    background-color: transparent;
+    background-color: rgba(0, 0, 0, 0.471);
     position: fixed;
     width: 100%;
     height: 100%;
@@ -90,7 +99,7 @@ li.dialog__item {
     transition: all ease-in-out 0.2s;
 
     .dialog__popup-pointer {
-      top: -1.25rem;
+      top: -1.2rem;
       left: 50%;
       margin-left: calc(-1.25rem / 1.2395);
       display: grid;

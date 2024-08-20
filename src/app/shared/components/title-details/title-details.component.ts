@@ -14,7 +14,7 @@ import { PlotSectionComponent } from './more-details/plot-section/plot-section.c
 import { TitleHeroComponent } from './title-hero/title-hero.component';
 import { MoreDetailsComponent } from './more-details/more-details.component';
 import { TitleDetailsService } from '../../services/component-configs/title-details/title-details.service';
-import { filter, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-title-details',
@@ -167,10 +167,10 @@ export class TitleDetailsComponent {
           iconPathActive: 'assets/icons/pill-tabs/Arrow-black.svg',
           iconPathDisabled: 'assets/icons/pill-tabs/Arrow-grey.svg',
           dynamicText: () => {
-            return 'Season 1';
+            return this.titleDetailsService.config.seasons.selectedSeason;
           },
           callback: () => {
-            // this.titleDetailsService.config.reviews.reviewsSource = 'tmdb';
+            this.titleDetailsService.config.seasons.pickerShown = true;
           },
           isSelected: () => {
             return true;

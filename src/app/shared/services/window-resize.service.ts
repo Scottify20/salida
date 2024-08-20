@@ -31,7 +31,9 @@ export class WindowResizeService {
           ),
           shareReplay(1)
         )
-        .subscribe(this.resizeSubject);
+        .subscribe(() => {
+          this.emitResizeEvent();
+        });
     }
   }
 
@@ -50,6 +52,27 @@ export class WindowResizeService {
   private isResizingSubject = new BehaviorSubject<boolean>(false);
   isResizing$ = this.isResizingSubject.asObservable();
   private resizeTimer: any;
+
+  private emitResizeEvent() {
+    if (this.platformCheck.isBrowser()) {
+      this.isResizingSubject.next(true);
+
+      clearTimeout(this.resizeTimer);
+
+      this.resizeTimer = setTimeout(() => {
+        const newDimensions = {
+          width: window.innerWidth,
+          height: window.innerHeight,
+        };
+        this.resizeSubject.next(newDimensions);
+        this.isResizingSubject.next(false);
+      }, 0);
+    }
+  }
+
+  triggerResize() {
+    this.emitResizeEvent();
+  }
 
   isResizing() {
     if (this.platformCheck.isBrowser()) {
@@ -78,32 +101,3 @@ export interface WindowResizeServiceUser {
   ngOnInit(): void;
   ngOnDestroy(): void;
 }
-
-// components using this service must have these properties and methods
-
-/*{
-
-  isResizing: boolean = false;
-  windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
-  _resizeSubscription!: Subscription;
-  _isResizingSubscription!: Subscription;
-
-  ngOnInit() {
-    this._resizeSubscription =
-      this.windowResizeService.windowDimensions$.subscribe((dimensions) => {
-        this.windowDimensions = dimensions;
-      });
-
-    this._isResizingSubscription =
-      this.windowResizeService.isResizing$.subscribe((isResizing) => {
-        this.isResizing = isResizing;
-      });
-    this.windowResizeService.isResizing();
-  }
-
-  ngOnDestroy() {
-    this._resizeSubscription?.unsubscribe();
-    this._isResizingSubscription?.unsubscribe();
-  }
-
-} */

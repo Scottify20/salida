@@ -1,5 +1,5 @@
-<dialog #dialog class="dialog fullscreen-dialog">
-  <div class="dialog__backrop" (click)="hideDialog()"></div>
+<div #dialog class="dialog fullscreen-dialog">
+  <div class="dialog__backrop"></div>
 
   <div class="dialog__arrow-and-items-container">
     <img
@@ -13,8 +13,14 @@
       class="dialog__arrow-down-button"
     />
     <ul class="dialog__items-container">
-      <li class="dialog__item selected">Season 1</li>
-      <li class="dialog__item">Season 2</li>
+      <li
+        (click)="item.callback()"
+        *ngFor="let item of popupOrBottomSheetConfig.items"
+        class="dialog__item"
+        [ngClass]="item.isSelected() ? 'selected' : ''"
+      >
+        {{ item.textContent }}
+      </li>
     </ul>
   </div>
-</dialog>
+</div>

@@ -15,11 +15,12 @@ import {
   ElementPositionService,
   ElementPositionServiceUser,
 } from '../../services/element-position.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-popup-or-bottom-sheet',
   standalone: true,
-  imports: [],
+  imports: [CommonModule],
   templateUrl: './popup-or-bottom-sheet.component.html',
   styleUrl: './popup-or-bottom-sheet.component.scss',
 })
@@ -29,6 +30,65 @@ export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
     private elemPositionService: ElementPositionService,
     private windowResizeService: WindowResizeService
   ) {}
+  @Input() popupOrBottomSheetConfig: PopupOrBottomSheetConfig = {
+    anchorElementId: '',
+    itemsType: 'texts',
+    items: [],
+  };
+
+  @ViewChild('dialog') dialogElementRef!: ElementRef;
+  dialogElement!: HTMLDialogElement;
+  dialogPopupElement!: HTMLDivElement;
+
+  anchorElementPosition$: Observable<DOMRect> | undefined;
+  popupElementPosition$: Observable<DOMRect> | undefined;
+
+  ngAfterViewInit() {
+    this.dialogElement = this.dialogElementRef.nativeElement;
+    this.dialogPopupElement = this.dialogElement.querySelector(
+      '.dialog__arrow-and-items-container'
+    ) as HTMLDivElement;
+
+    this.trackAnchorElement();
+  }
+
+  trackAnchorElement() {
+    setTimeout(() => {
+      const anchorElementRef = this.elemPositionService.getElementRefById(
+        this.popupOrBottomSheetConfig.anchorElementId
+      );
+
+      if (anchorElementRef) {
+        this.anchorElementPosition$ =
+          this.elemPositionService.trackElementPosition(
+            this.popupOrBottomSheetConfig.anchorElementId,
+            anchorElementRef
+          );
+
+        this.anchorElementPosition$.subscribe((position) => {
+          const popup = this.dialogPopupElement.getBoundingClientRect();
+
+          if (this.windowDimensions.width < 768) {
+            this.dialogPopupElement.style.top = 'unset';
+            this.dialogPopupElement.style.bottom = '0';
+            this.dialogPopupElement.style.left = 'unset';
+            return;
+          }
+          const diff = (popup.width - position.width) / 2;
+
+          this.dialogPopupElement.style.top = '33.25rem';
+          this.dialogPopupElement.style.bottom = 'unset';
+          this.dialogPopupElement.style.left =
+            (position.left - diff).toString() + 'px';
+        });
+      } else {
+        console.log(
+          'anchor element ref does not exist',
+          this.popupOrBottomSheetConfig.anchorElementId
+        );
+      }
+    }, 50);
+  }
 
   isResizing = false;
   windowDimensions: { width: number; height: number } = {
@@ -51,77 +111,25 @@ export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
     this.windowResizeService.isResizing();
   }
 
-  anchorElementPosition$: Observable<DOMRect> | undefined;
-  popupElementPosition$: Observable<DOMRect> | undefined;
-
-  @Input() anchorElementId: string = '';
-
-  @ViewChild('dialog') dialogElementRef!: ElementRef;
-  dialogElement!: HTMLDialogElement;
-  dialogPopupElement!: HTMLDivElement;
-
-  ngAfterViewInit() {
-    this.dialogElement = this.dialogElementRef.nativeElement;
-    this.dialogPopupElement = this.dialogElement.querySelector(
-      '.dialog__arrow-and-items-container'
-    ) as HTMLDivElement;
-
-    this.trackAnchorElement();
-    this.showDialog();
-  }
-
-  trackAnchorElement() {
-    setTimeout(() => {
-      const anchorElementRef = this.elemPositionService.getElementRefById(
-        this.anchorElementId
-      );
-
-      if (anchorElementRef) {
-        this.anchorElementPosition$ =
-          this.elemPositionService.trackElementPosition(
-            this.anchorElementId,
-            anchorElementRef
-          );
-
-        this.anchorElementPosition$.subscribe((position) => {
-          const popup = this.dialogPopupElement.getBoundingClientRect();
-
-          if (this.windowDimensions.width <= 480) {
-            this.dialogPopupElement.style.top = 'unset';
-            this.dialogPopupElement.style.bottom = '0';
-            this.dialogPopupElement.style.left = 'unset';
-            return;
-          }
-          const diff = (popup.width - position.width) / 2;
-
-          this.dialogPopupElement.style.top = '33.25rem';
-          this.dialogPopupElement.style.bottom = 'unset';
-          this.dialogPopupElement.style.left =
-            (position.left - diff).toString() + 'px';
-        });
-      } else {
-        console.log('anchor element ref does not exist', this.anchorElementId);
-      }
-    }, 50);
-  }
-
   ngOnDestroy(): void {
-    this.elemPositionService.untrackElementPosition(this.anchorElementId);
+    this.elemPositionService.untrackElementPosition(
+      this.popupOrBottomSheetConfig.anchorElementId
+    );
     this._resizeSubscription?.unsubscribe();
     this._isResizingSubscription?.unsubscribe();
   }
+}
 
-  showDialog() {
-    if (this.platformCheck.isBrowser()) {
-      this.dialogElement.showModal();
-    }
-  }
+export interface PopupOrBottomSheetConfig {
+  anchorElementId: string;
+  itemsType: 'texts' | 'icon-grid';
+  items: PopupItemType[];
+}
 
-  hideDialog() {
-    if (this.platformCheck.isBrowser()) {
-      this.dialogElement.remove();
-    }
-  }
+export interface PopupItemType {
+  textContent: string;
+  callback: () => void;
+  isSelected: () => boolean;
 }
 
 export interface AnchoringInfo {

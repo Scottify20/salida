@@ -116,6 +116,9 @@
 }
 
 .title__logo-and-play-button-container {
+  display: grid;
+  position: relative;
+
   &:not(:hover) .title__play-button-container {
     opacity: 0%;
     pointer-events: none;
@@ -125,8 +128,6 @@
     opacity: 0%;
   }
 
-  display: grid;
-  position: relative;
   .title__logo {
     opacity: 100%;
     top: 50%;

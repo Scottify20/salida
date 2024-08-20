@@ -193,7 +193,7 @@ export interface Season {
   images: MediaImages;
 }
 
-interface Episode {
+export interface Episode {
   air_date: string;
   episode_number: number;
   episode_type: EpisodeType;

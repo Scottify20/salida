@@ -1,0 +1,16 @@
+title details season selection
+title details (ratings - omdb, watch providers)
+seasons - popup being cut off in the right side
+tabs - main tab staying on center
+
+seasons section
+season details
+episode details
+search/discover section
+
+title hero card and homescreen update
+
+user profile
+firebase authentication
+firestore user (data, lists, preferences)
+firestore title (reviews, likes? may not be good for privacy)
