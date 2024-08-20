@@ -102,8 +102,8 @@ export interface WindowResizeServiceUser {
   }
 
   ngOnDestroy() {
-    this._resizeSubscription.unsubscribe();
-    this._isResizingSubscription.unsubscribe();
+    this._resizeSubscription?.unsubscribe();
+    this._isResizingSubscription?.unsubscribe();
   }
 
 } */
