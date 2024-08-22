@@ -216,12 +216,6 @@ export class MoreDetailsComponent {
     return matchedId ? parseInt(matchedId[0]) : undefined;
   }
 
-  get titleTypeFromRoute(): string | undefined {
-    const matchedTitleType = this.router.url.match(/movies|series/);
-    // return movies or series
-    return matchedTitleType ? matchedTitleType[0] : undefined;
-  }
-
   fetchMovieDetails = () => {
     if (!this.isMovie) {
       return null;
@@ -487,6 +481,9 @@ export class MoreDetailsComponent {
             name: crew.name,
             image_path: crew.profile_path,
             otherName: crew.job,
+            callback: () => {
+              this.router.navigate(['/people/', crew.id, 'details']);
+            },
           })),
         ...this.movieDetails.credits.crew
           .filter((crew) => !crew.profile_path)
@@ -494,6 +491,9 @@ export class MoreDetailsComponent {
             name: crew.name,
             image_path: crew.profile_path,
             otherName: crew.job,
+            callback: () => {
+              this.router.navigate(['/people/', crew.id, 'details']);
+            },
           })),
       ];
     }
@@ -506,6 +506,9 @@ export class MoreDetailsComponent {
             name: crew.name,
             image_path: crew.profile_path,
             otherName: crew.jobs.map((job) => job.job).join(' / '),
+            callback: () => {
+              this.router.navigate(['/people/', crew.id, 'details']);
+            },
           })),
         ...this.seriesDetails.aggregate_credits.crew
           .filter((crew) => !crew.profile_path)
@@ -513,6 +516,9 @@ export class MoreDetailsComponent {
             name: crew.name,
             image_path: crew.profile_path,
             otherName: crew.jobs.join(' / '),
+            callback: () => {
+              this.router.navigate(['/people/', crew.id, 'details']);
+            },
           })),
       ];
     }
@@ -542,6 +548,9 @@ export class MoreDetailsComponent {
               name: cast.name,
               image_path: cast.profile_path,
               otherName: cast.character,
+              callback: () => {
+                this.router.navigate(['/people/', cast.id, 'details']);
+              },
             })
           ),
         ...this.movieDetails.credits.cast
@@ -551,6 +560,9 @@ export class MoreDetailsComponent {
               name: cast.name,
               image_path: cast.profile_path,
               otherName: cast.character,
+              callback: () => {
+                this.router.navigate(['/people/', cast.id, 'details']);
+              },
             })
           ),
       ];
@@ -565,6 +577,9 @@ export class MoreDetailsComponent {
               name: cast.name,
               image_path: cast.profile_path,
               otherName: cast.roles[0].character,
+              callback: () => {
+                this.router.navigate(['/people/', cast.id, 'details']);
+              },
             })
           ),
         ...this.seriesDetails.aggregate_credits.cast
@@ -574,6 +589,9 @@ export class MoreDetailsComponent {
               name: cast.name,
               image_path: cast.profile_path,
               otherName: cast.roles[0].character,
+              callback: () => {
+                this.router.navigate(['/people/', cast.id, 'details']);
+              },
             })
           ),
       ];

@@ -7,6 +7,7 @@ import { Country } from '../../interfaces/tmdb/All';
 import { TmdbConfigService } from './tmdb-config.service';
 import { SeriesService } from './series.service';
 import { MovieService } from './movie.service';
+import { PeopleService } from './people.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,7 +23,8 @@ export class TmdbService {
     private http: HttpClient,
     private tmdbConfig: TmdbConfigService,
     public series: SeriesService,
-    public movies: MovieService
+    public movies: MovieService,
+    public people: PeopleService
   ) {}
 
   baseUrl = this.tmdbConfig.baseUrl;

@@ -1,9 +1,10 @@
-<div class="title">
+<div class="title-details">
   <app-title-hero></app-title-hero>
   <app-pill-tabs
-    (click)="navigateToNewOutlet()"
     id="title-details__pill-tabs"
     [PillTabsConfig]="tabItemsConfig"
   ></app-pill-tabs>
-  <router-outlet></router-outlet>
+  <div title-pill-tab-transition="router-outlet-transition">
+    <router-outlet></router-outlet>
+  </div>
 </div>

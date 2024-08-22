@@ -17,7 +17,7 @@
   row-gap: 1rem;
   column-gap: 0.75rem;
 
-  &::after {
+  &::after:not(:last-of-type) {
     grid-area: dv;
     content: "";
     display: block;

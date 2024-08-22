@@ -28,6 +28,7 @@ import {
 import { ElementPositionService } from '../../../services/element-position.service';
 import { WindowResizeService } from '../../../services/window-resize.service';
 import { EpisodeCardComponent } from './episode-card/episode-card.component';
+import { ScrollDisablerService } from '../../../services/scroll-disabler.service';
 
 @Component({
   selector: 'app-seasons',
@@ -49,7 +50,8 @@ export class SeasonsComponent {
     private router: Router,
     private titleDetailsConfigService: TitleDetailsService,
     private elemPositionService: ElementPositionService,
-    private windowResizeService: WindowResizeService
+    private windowResizeService: WindowResizeService,
+    private scrollDisabler: ScrollDisablerService
   ) {}
 
   seasonSummaries: SeasonSummary[] = [];
@@ -63,16 +65,26 @@ export class SeasonsComponent {
     items: [],
   };
 
-  ngOnInit() {
-    this.route.paramMap.subscribe((params) => {
+  getSeasonId() {
+    return this.route.paramMap.subscribe((params) => {
       const id = params.get('id');
       if (id) {
         this.seasonId = parseInt(id);
       }
     });
+  }
 
+  ngOnInit() {
+    this.getSeasonId();
     this.fetchSeasonsSummaries();
     this.initializeResizeSubscriptions();
+  }
+
+  ngOnDestroy() {
+    this.getSeasonId()?.unsubscribe;
+    this.fetchSeasonsSummaries()?.unsubscribe;
+    this.titleDetailsConfigService.config.seasons.pickerShown = false;
+    this.untrackAndUnsubscribe();
   }
 
   fetchSeasonsSummaries = () => {
@@ -113,13 +125,6 @@ export class SeasonsComponent {
       });
   };
 
-  ngOnDestroy() {
-    this.fetchSeasonsSummaries()?.unsubscribe;
-    this.titleDetailsConfigService.config.seasons.pickerShown = false;
-
-    this.untrackAndUnsubscribe();
-  }
-
   get isSeries(): boolean {
     return /series/.test(this.router.url);
   }
@@ -139,6 +144,7 @@ export class SeasonsComponent {
   showDialog() {
     this.dialogElement.classList.remove('hide');
     this.dialogElement.classList.add('shown');
+    // this.scrollDisabler.disableScroll();
   }
 
   hideDialog() {
@@ -146,6 +152,7 @@ export class SeasonsComponent {
     this.dialogElement.classList.remove('shown');
     this.seasonsConfig.pickerShown = false;
     this.windowResizeService.triggerResize();
+    this.scrollDisabler.enableScroll();
   }
 
   ngAfterViewInit() {
@@ -186,7 +193,8 @@ export class SeasonsComponent {
           }
           const diff = (popup.width - position.width) / 2;
 
-          this.dialogPopupElement.style.top = '33.25rem';
+          this.dialogPopupElement.style.top =
+            (position.top + (position.height + 32)).toString() + 'px';
           this.dialogPopupElement.style.bottom = 'unset';
           this.dialogPopupElement.style.left =
             (position.left - diff).toString() + 'px';

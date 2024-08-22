@@ -1,5 +1,5 @@
-import { Component, ElementRef, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, ElementRef, Inject, Input, Renderer2 } from '@angular/core';
+import { CommonModule, DOCUMENT, ViewportScroller } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 @Component({
@@ -10,6 +10,13 @@ import { Router, RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './pill-tabs.component.scss',
 })
 export class PillTabsComponent {
+  constructor(
+    private router: Router,
+    public elementRef: ElementRef,
+    private viewportScroller: ViewportScroller,
+    @Inject(DOCUMENT) private document: Document
+  ) {}
+
   @Input() PillTabsConfig: PillTabsConfig = {
     mainTabs: {
       tabType: 'navigation',
@@ -18,7 +25,7 @@ export class PillTabsComponent {
     },
   };
 
-  constructor(private router: Router, public elementRef: ElementRef) {}
+  activeTabIndex = 0;
 
   // returns true if at least one of the string routes defined inside the routesVisibleIn array matches the current router URL
   // returns false if there are not matches
@@ -35,29 +42,6 @@ export class PillTabsComponent {
     });
   }
 
-  //    *ngIf="isAtLeastOneTabIsVisible(tabGroup.value)"
-  // isAtLeastOneTabIsVisible(tabGroup: PillTabGroup | undefined): boolean {
-  //   if (tabGroup == undefined) {
-  //     return false;
-  //   }
-
-  //   return tabGroup.tabs.some((tabItem) => {
-  //     if (tabItem.visibleIf && tabItem.visibleOn) {
-  //       return tabItem.visibleIf() && this.isVisibleOnRoutes(tabItem.visibleOn);
-  //     }
-
-  //     if (tabItem.visibleIf && !tabItem.visibleOn) {
-  //       return tabItem.visibleIf();
-  //     }
-
-  //     if (tabItem.visibleOn && !tabItem.visibleIf) {
-  //       return this.isVisibleOnRoutes(tabItem.visibleOn);
-  //     }
-
-  //     return false;
-  //   });
-  // }
-
   isVisibleIf(callback: () => boolean): boolean {
     return callback();
   }
@@ -69,7 +53,57 @@ export class PillTabsComponent {
     return tabTypes.indexOf(tabType) != -1 ? true : false;
   }
 
-  handleTabClick(callback: (() => void) | undefined) {
+  scrollToPillTab() {
+    setTimeout(() => {
+      const pillTabsElement = this.elementRef.nativeElement;
+      this.viewportScroller.scrollToPosition([
+        0,
+        pillTabsElement.offsetTop - 16,
+      ]);
+    }, 0);
+  }
+
+  scrollToTop() {
+    setTimeout(() => {
+      this.document.defaultView?.scrollTo(0, 0);
+    }, 0);
+  }
+
+  handleTabClick(
+    callback: (() => void) | undefined,
+    tabIndex: number,
+    isMainTab: boolean
+  ) {
+    if (isMainTab) {
+      const previousIndex = this.activeTabIndex;
+
+      if (tabIndex != 0) {
+        this.scrollToPillTab();
+      }
+      if (tabIndex === previousIndex) {
+        return;
+      }
+
+      this.activeTabIndex = tabIndex;
+
+      const direction = tabIndex > previousIndex ? 'right' : 'left';
+      const animationClass =
+        direction === 'right' ? 'slide-in-from-right' : 'slide-in-from-left';
+
+      const routerOutletContainer = this.elementRef.nativeElement
+        .closest('.title-details')
+        .querySelector('[title-pill-tab-transition]');
+      if (routerOutletContainer) {
+        routerOutletContainer.classList.add(animationClass);
+
+        setTimeout(() => {
+          routerOutletContainer.classList.remove(animationClass);
+        }, 300);
+
+        return;
+      }
+    }
+
     if (callback) {
       callback();
     }

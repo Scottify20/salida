@@ -17,10 +17,17 @@ export class CardComponent {
     image_path: '',
     otherName: '',
   };
+
+  runCallbackOnClick(callback?: () => void) {
+    if (callback) {
+      callback();
+    }
+  }
 }
 
 export interface TmdbEntityForCard {
   name: string;
   otherName?: string;
   image_path: string | null;
+  callback?: () => void;
 }

@@ -7,7 +7,7 @@ import { Observable, Subscription } from 'rxjs';
 import { Movie } from '../../../interfaces/tmdb/Movies';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TmdbService } from '../../../services/tmdb/tmdb.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import {
   WindowResizeService,
   WindowResizeServiceUser,
@@ -27,7 +27,8 @@ export class TitleHeroComponent implements WindowResizeServiceUser {
     private route: ActivatedRoute,
     private router: Router,
     private tmdbService: TmdbService,
-    private windowResizeService: WindowResizeService
+    private windowResizeService: WindowResizeService,
+    private location: Location
   ) {}
 
   isResizing: boolean = false;
@@ -62,6 +63,33 @@ export class TitleHeroComponent implements WindowResizeServiceUser {
     logo_path: '',
     genres: [],
   };
+
+  navigateToLastNonMoviesSeriesRoute() {
+    const avoidRoutes = ['/movies', '/series'];
+    const history = window.history.state.navigationId;
+    const currentUrl = this.router.url;
+
+    if (avoidRoutes.some((route) => currentUrl.startsWith(route))) {
+      let stepsBack = 1;
+      let foundDifferentRoute = false;
+
+      while (stepsBack <= history && !foundDifferentRoute) {
+        window.history.go(-stepsBack);
+        const previousUrl = this.router.url;
+
+        if (!avoidRoutes.some((route) => previousUrl.startsWith(route))) {
+          foundDifferentRoute = true;
+          this.router.navigateByUrl(previousUrl);
+        } else {
+          stepsBack++;
+        }
+      }
+
+      if (!foundDifferentRoute) {
+        this.router.navigate(['/']);
+      }
+    }
+  }
 
   movieDetails$: Observable<Movie> | undefined;
   seriesDetails$: Observable<Series> | undefined;
@@ -307,7 +335,9 @@ export class TitleHeroComponent implements WindowResizeServiceUser {
     {
       type: 'iconWithBG',
       iconPath: 'assets/icons/header/Back.svg',
-      actionCallback: () => {},
+      actionCallback: () => {
+        this.navigateToLastNonMoviesSeriesRoute();
+      },
     },
 
     {

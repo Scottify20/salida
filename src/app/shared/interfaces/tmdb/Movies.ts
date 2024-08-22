@@ -4,6 +4,7 @@ import {
   Keyword,
   Media,
   MediaImages,
+  MediaSummary,
   ProductionCompany,
   ProductionCountry,
   ReleaseDate,
@@ -48,6 +49,20 @@ export interface Movie extends Media {
     total_pages: number;
     total_results: number;
   };
+}
+
+export interface TrendingMovies {
+  page: number;
+  results: MovieSummary[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface MovieSummary extends MediaSummary {
+  original_title: string;
+  title: string;
+  release_date: string;
+  video: boolean;
 }
 
 interface CastCredit {

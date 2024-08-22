@@ -125,19 +125,22 @@
     }
 
     .title-runtime-and-date-container {
-      row-gap: 0.75em;
+      row-gap: 0.5rem;
 
       .episode__title {
-        font-size: 1.2rem;
+        font-size: 1.125rem;
         font-weight: 600;
+        line-height: 1.2;
+        max-height: calc(1.125rem * 1.2 * 2);
       }
 
       .episode__date-and-runtime {
+        font-size: 0.9rem;
+
         span {
           color: var(--text-color-subtle);
           font-weight: 300;
         }
-        font-size: 1rem;
       }
     }
   }

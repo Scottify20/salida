@@ -1,8 +1,13 @@
 import { Injectable } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
-import { Movie } from '../../interfaces/tmdb/Movies';
+import {
+  Movie,
+  MovieSummary,
+  TrendingMovies,
+} from '../../interfaces/tmdb/Movies';
 import { HttpClient } from '@angular/common/http';
+import { TmdbTimeWindow } from '../../interfaces/tmdb/All';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +19,7 @@ export class MovieService {
   ) {}
 
   private cachedMovies: { [key: string]: Observable<Movie> } = {};
+  private cachedTrendingMovies!: Observable<TrendingMovies>;
 
   getMovieDetails(movieId: number): Observable<Movie> {
     const movieIdString = movieId.toString();
@@ -32,5 +38,23 @@ export class MovieService {
         );
     }
     return this.cachedMovies[movieIdString];
+  }
+
+  getTrendingMovies(timeWindow: TmdbTimeWindow): Observable<TrendingMovies> {
+    if (!this.cachedTrendingMovies) {
+      this.cachedTrendingMovies = this.http
+        .get<TrendingMovies>(
+          `${this.tmdbConfig.baseUrl}/trending/movie/${timeWindow}`
+        )
+        .pipe(
+          retry(2),
+          shareReplay(1),
+          tap((result: TrendingMovies) => {
+            // Store the fetched trending movies in the cache.
+            this.cachedTrendingMovies = of(result); // Wrap in of()
+          })
+        );
+    }
+    return this.cachedTrendingMovies;
   }
 }

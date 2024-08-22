@@ -2,6 +2,8 @@ import { ReleaseType } from './Movies';
 
 type MediaType = 'movie' | 'tv';
 
+export type TmdbTimeWindow = 'day' | 'week';
+
 type VideoType =
   | 'Trailer'
   | 'Teaser'
@@ -11,7 +13,7 @@ type VideoType =
   | 'Opening Credits'
   | 'Blooper Reel';
 
-interface MediaSummary {
+export interface MediaSummary {
   media_type: MediaType;
   backdrop_path: string | null;
   id: number;

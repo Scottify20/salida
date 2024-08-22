@@ -13,7 +13,7 @@
     "
     class="tab-group"
   >
-    <ng-container *ngFor="let tabItem of tabGroup.value?.tabs">
+    <ng-container *ngFor="let tabItem of tabGroup.value?.tabs; let i = index">
       <div
         [id]="tabItem.id ? tabItem.id : ''"
         class="tab-container"
@@ -24,7 +24,9 @@
         [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
         [routerLink]="tabItem.routerLinkPath"
         [routerLinkActive]="'active'"
-        (click)="handleTabClick(tabItem.callback)"
+        (click)="
+          handleTabClick(tabItem.callback, i, tabGroup.key === 'mainTabs')
+        "
       >
         <div
           *ngIf="

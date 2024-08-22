@@ -1,6 +1,6 @@
 import { PillTabsConfig } from '../pill-tabs/pill-tabs.component';
 import { Component } from '@angular/core';
-import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { NavigationStart, Router, RouterOutlet } from '@angular/router';
 import { TextsSectionComponent } from '../texts-section/texts-section.component';
 import {
   HeaderButton,
@@ -14,7 +14,9 @@ import { PlotSectionComponent } from './more-details/plot-section/plot-section.c
 import { TitleHeroComponent } from './title-hero/title-hero.component';
 import { MoreDetailsComponent } from './more-details/more-details.component';
 import { TitleDetailsService } from '../../services/component-configs/title-details/title-details.service';
-import { Subscription } from 'rxjs';
+import { filter } from 'rxjs';
+import { ScrollDisablerService } from '../../services/scroll-disabler.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-title-details',
@@ -34,22 +36,25 @@ import { Subscription } from 'rxjs';
   styleUrl: './title-details.component.scss',
 })
 export class TitleDetailsComponent {
-  private scrollPosition = 0;
-  private routerSubscription!: Subscription;
-
   constructor(
     protected router: Router,
-    private titleDetailsService: TitleDetailsService
-  ) {}
-
-  ngOnDestroy() {
-    this.routerSubscription?.unsubscribe();
+    private titleDetailsService: TitleDetailsService,
+    private scrollDisabler: ScrollDisablerService
+  ) {
+    this.scrollToTopOnNavigationStart();
+    this.titleDetailsService.config.seasons.selectedSeason = 'Season 1';
   }
 
-  navigateToNewOutlet() {
-    setTimeout(() => {
-      window.scrollTo(0, this.scrollPosition);
-    }, 50);
+  scrollToTopOnNavigationStart() {
+    return this.router.events
+      .pipe(filter((event) => event instanceof NavigationStart))
+      .subscribe(() => {
+        window.scrollTo(0, 0);
+      });
+  }
+
+  ngOnDestroy() {
+    this.scrollToTopOnNavigationStart()?.unsubscribe;
   }
 
   get titleIdFromRoute(): number | undefined {
@@ -170,6 +175,7 @@ export class TitleDetailsComponent {
             return this.titleDetailsService.config.seasons.selectedSeason;
           },
           callback: () => {
+            this.scrollDisabler.disableScroll();
             this.titleDetailsService.config.seasons.pickerShown = true;
           },
           isSelected: () => {

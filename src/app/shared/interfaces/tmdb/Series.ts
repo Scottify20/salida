@@ -8,6 +8,7 @@ import {
   Review,
   MediaImages,
   Genre,
+  MediaSummary,
 } from './All';
 
 type EpisodeType = 'Regular' | 'Special' | 'Bonus' | 'finale' | 'standard';
@@ -68,6 +69,20 @@ export interface Series extends Media {
     total_pages: number;
     total_results: number;
   };
+}
+
+export interface TrendingSeries {
+  page: number;
+  results: SeriesSummary[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface SeriesSummary extends MediaSummary {
+  first_air_date: string;
+  name: string;
+  original_name: string;
+  origin_country: string[];
 }
 
 interface SeriesExternalIds {
