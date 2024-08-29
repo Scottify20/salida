@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnDestroy, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
 import { HeroCardsComponent } from './hero-cards/hero-cards.component';
 import { ButtonsHeaderComponent } from '../shared/components/buttons-header/buttons-header.component';
 import {
@@ -6,24 +6,56 @@ import {
   CardsSectionOptions,
 } from '../shared/components/cards-section/cards-section.component';
 import { HeaderButton } from '../shared/components/buttons-header/buttons-header.component';
-import { TmdbEntityForCard } from '../shared/components/card/card.component';
 import { Router } from '@angular/router';
 import { TmdbService } from '../shared/services/tmdb/tmdb.service';
-import { Movie, TrendingMovies } from '../shared/interfaces/tmdb/Movies';
-import { Series, TrendingSeries } from '../shared/interfaces/tmdb/Series';
+import { MovieSummary, TrendingMovies } from '../shared/interfaces/tmdb/Movies';
+import {
+  SeriesSummary,
+  TrendingSeries,
+} from '../shared/interfaces/tmdb/Series';
 import { TrendingPeople } from '../shared/interfaces/tmdb/People';
+import { MediaSummary, TrendingTitles } from '../shared/interfaces/tmdb/All';
+import { Subscription } from 'rxjs';
+import { SeriesDetailsService } from '../details/series-details/data-access/series-details.service';
+import { MovieDetailsService } from '../details/movie-details/data-access/movie-details.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   templateUrl: './home.component.html',
-  styleUrl: './home.component.scss',
+  styleUrls: ['./home.component.scss'],
   imports: [ButtonsHeaderComponent, HeroCardsComponent, CardsSectionComponent],
 })
-export class HomeComponent implements AfterViewInit, OnDestroy {
+export class HomeComponent implements OnInit, OnDestroy {
+  constructor(
+    private router: Router,
+    private tmdbService: TmdbService,
+    private seriesDetailService: SeriesDetailsService,
+    private movieDetailsService: MovieDetailsService
+  ) {}
+
+  @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
+
   protected userPhoto: string = '';
 
-  constructor(private router: Router, private tmdbService: TmdbService) {}
+  private trendingTitlesSubscription!: Subscription;
+  private trendingMoviesSubscription!: Subscription;
+  private trendingSeriesSubscription!: Subscription;
+  private trendingPeopleSubscription!: Subscription;
+
+  ngOnInit(): void {
+    // this.fetchTrendingTitles();
+    this.fetchTrendingMovies();
+    this.fetchTrendingSeries();
+    this.fetchTrendingPeople();
+  }
+
+  ngOnDestroy() {
+    this.trendingTitlesSubscription?.unsubscribe();
+    this.trendingMoviesSubscription?.unsubscribe();
+    this.trendingSeriesSubscription?.unsubscribe();
+    this.trendingPeopleSubscription?.unsubscribe();
+  }
 
   headerButtons: HeaderButton[] = [
     {
@@ -73,122 +105,160 @@ export class HomeComponent implements AfterViewInit, OnDestroy {
     total_pages: 0,
     total_results: 0,
   };
+  trendingTitles: TrendingTitles = {
+    page: 0,
+    results: [],
+    total_pages: 0,
+    total_results: 0,
+  };
 
-  get movies(): TmdbEntityForCard[] {
-    return this.trendingMovies.results.map((movie) => ({
-      name: movie.title,
-      image_path: movie.poster_path || '',
-      callback: () => {
-        this.router.navigate(['/movies/', movie.id, 'details']);
-      },
-    }));
-  }
-  get series(): TmdbEntityForCard[] {
-    return this.trendingSeries.results.map((series) => ({
-      name: series.name,
-      image_path: series.poster_path || '',
-      callback: () => {
-        this.router.navigate(['/series/', series.id, 'details']);
-      },
-    }));
-  }
-  get persons(): TmdbEntityForCard[] {
-    return this.trendingPeople.results.map((person) => ({
-      name: person.name,
-      image_path: person.profile_path,
-      callback: () => {
-        this.router.navigate(['/people/', person.id, 'details']);
-      },
-    }));
-  }
-
-  @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
-
-  ngAfterViewInit() {
-    this.heroCards.startCardsScrollBasedAnimation();
-  }
-
-  get trendingMoviesOptions(): CardsSectionOptions {
-    return {
-      sectionTitle: 'Movies',
-      entities: this.movies,
-      maxNoOfCards: 20,
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: this.sampleCallback,
-      },
-    };
-  }
-  get trendingSeriesOptions(): CardsSectionOptions {
-    return {
-      sectionTitle: 'TV Series',
-      maxNoOfCards: 20,
-      entities: this.series,
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: this.sampleCallback,
-      },
-    };
-  }
-  get trendingPeopleOptions(): CardsSectionOptions {
-    return {
-      sectionTitle: 'People',
-      entities: this.persons,
-      maxNoOfCards: 20,
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: this.sampleCallback,
-      },
-      cardShape: 'circle',
-    };
-  }
+  trendingMoviesOptions: CardsSectionOptions = {
+    sectionTitle: 'Movies',
+    entities: [],
+    maxNoOfCards: 20,
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: () => {},
+    },
+  };
+  trendingSeriesOptions: CardsSectionOptions = {
+    sectionTitle: 'TV Series',
+    maxNoOfCards: 20,
+    entities: [],
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: () => {},
+    },
+  };
+  trendingPeopleOptions: CardsSectionOptions = {
+    sectionTitle: 'People',
+    entities: [],
+    maxNoOfCards: 20,
+    buttonProps: {
+      type: 'text',
+      textOrIconPath: 'See all',
+      callback: () => {},
+    },
+    cardShape: 'circle',
+  };
 
   fetchTrendingMovies = () => {
-    return this.tmdbService.movies.getTrendingMovies('day').subscribe({
-      next: (data: TrendingMovies) => {
-        this.trendingMovies = data;
-      },
-      error: (err) => {
-        this.router.navigateByUrl('/not-found');
-      },
-    });
+    this.trendingMoviesSubscription = this.tmdbService.movies
+      .getTrendingMovies('day')
+      .subscribe({
+        next: (data: TrendingMovies) => {
+          // push the first 3 movies to the trending titles
+          this.pushToTrendingTitles('movie', data.results.slice(0, 3));
+
+          // filters off the first 3 movies then pushes to trending movies section
+          this.trendingMoviesOptions.entities = data.results
+            .filter((movie, index) => [0, 1, 3].indexOf(index) == -1)
+            .map((movie: MovieSummary) => ({
+              name: movie.title,
+              image_path: movie.poster_path || '',
+              callback: () => {
+                this.movieDetailsService.viewMovieDetails(movie.id);
+              },
+            }));
+        },
+        error: (err) => {
+          console.log('failed to fetch trending movies');
+          console.log(err);
+        },
+      });
   };
+
   fetchTrendingSeries = () => {
-    return this.tmdbService.series.getTrendingSeries('day').subscribe({
-      next: (data: TrendingSeries) => {
-        this.trendingSeries = data;
-      },
-      error: (err) => {
-        this.router.navigateByUrl('/not-found');
-      },
-    });
+    this.trendingSeriesSubscription = this.tmdbService.series
+      .getTrendingSeries('day')
+      .subscribe({
+        next: (data: TrendingSeries) => {
+          // push the first 2 series to the trending titles
+          this.pushToTrendingTitles('series', data.results.slice(0, 2));
+
+          // filters off the first 2 series then pushes to trending movies section
+          this.trendingSeriesOptions.entities = data.results
+            .filter((series, index) => [0, 1].indexOf(index) == -1)
+            .map((series: SeriesSummary) => ({
+              name: series.name,
+              image_path: series.poster_path || '',
+              callback: () => {
+                this.seriesDetailService.viewSeriesDetails(series.id);
+              },
+            }));
+        },
+        error: (err) => {
+          console.log('failed to fetch trending series');
+          console.log(err);
+        },
+      });
   };
+
   fetchTrendingPeople = () => {
-    return this.tmdbService.people.getTrendingPeople('day').subscribe({
-      next: (data: TrendingPeople) => {
-        this.trendingPeople = data;
-      },
-      error: (err) => {
-        this.router.navigateByUrl('/not-found');
-      },
-    });
+    this.trendingPeopleSubscription = this.tmdbService.people
+      .getTrendingPeople('day')
+      .subscribe({
+        next: (data: TrendingPeople) => {
+          this.trendingPeopleOptions.entities = data.results.map((person) => ({
+            name: person.name,
+            image_path: person.profile_path,
+            callback: () => {
+              this.router.navigate(['/people/', person.id, 'details']);
+            },
+          }));
+        },
+        error: (err) => {
+          console.log('failed to fetch trending people');
+          console.log(err);
+        },
+      });
   };
 
-  ngOnInit(): void {
-    this.fetchTrendingMovies();
-    this.fetchTrendingSeries();
-    this.fetchTrendingPeople();
-  }
+  pushToTrendingTitles(mediaType: 'movie' | 'series', results: MediaSummary[]) {
+    // push the mapped first 3 movies to the trending titles
+    // this adds a callback function to each movie that views the movie's details when the hero card of the movie is clicked
+    if (mediaType == 'movie') {
+      const mappedMovies = results.map((movie) => ({
+        ...movie,
+        callback: () => {
+          this.movieDetailsService.viewMovieDetails(movie.id);
+        },
+      }));
 
-  ngOnDestroy() {
-    this.fetchTrendingMovies()?.unsubscribe;
-    this.fetchTrendingSeries()?.unsubscribe;
-    this.fetchTrendingPeople()?.unsubscribe;
-    this.heroCards.stopCardsScrollBasedAnimation();
-  }
+      this.trendingTitles.results = [
+        ...this.trendingTitles.results,
+        ...mappedMovies,
+      ];
+    }
 
-  sampleCallback() {}
+    // push the mapped first 2 series to the trending titles
+    // this adds a callback function to each series that views the series's details when the hero card of the series is clicked
+    if (mediaType === 'series') {
+      const mappedSeries = results.map((series) => ({
+        ...series,
+        title: series.name,
+        callback: () => {
+          this.seriesDetailService.viewSeriesDetails(series.id);
+        },
+      }));
+
+      this.trendingTitles.results = [
+        ...this.trendingTitles.results,
+        ...mappedSeries,
+      ];
+    }
+
+    // check if the pushed movies and series are already at least 5 and that their properties have values
+    if (
+      this.trendingTitles.results.length >= 5 &&
+      this.trendingTitles.results.every((title) => title.backdrop_path)
+    ) {
+      // starts the scroll-based animation on the cards of the hero section
+      setTimeout(() => {
+        this.heroCards?.startCardsScrollBasedAnimation();
+      }, 0);
+    }
+  }
 }

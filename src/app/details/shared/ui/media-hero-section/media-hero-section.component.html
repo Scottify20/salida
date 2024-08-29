@@ -1,0 +1,63 @@
+<div class="title__hero" [ngClass]="isLoading ? 'loading' : ''">
+  <img
+    [src]="
+      'https://image.tmdb.org/t/p/' +
+      getBackropWidth() +
+      heroSectionData.backdrop_path
+    "
+    alt=""
+    class="title__hero-backdrop"
+  />
+
+  <app-buttons-header
+    class="no-padding"
+    [headerButtons]="headerButtons"
+  ></app-buttons-header>
+
+  <div class="title__play-button-parent-container">
+    <div class="title__play-button-container">
+      <div class="title__play-button">
+        <img
+          src="assets/icons/header/title-details/Play.svg"
+          alt=""
+          class="title__play-icon"
+        />
+      </div>
+      <p class="title__play-button__label">Watch Trailer</p>
+    </div>
+    <div class="title__logo-container">
+      <img
+        [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.logo_path"
+        alt=""
+        class="title__logo"
+      />
+    </div>
+  </div>
+  <div class="title__main-details-container">
+    <h4 class="title__title">{{ heroSectionData.title }}</h4>
+    <div class="title__metadataContainer">
+      <p class="title__metadata">
+        <span
+          *ngIf="heroSectionData.metadata.year"
+          class="title__metadata--year metadata-text"
+          >{{ heroSectionData.metadata.year }}</span
+        >
+        <span
+          *ngIf="heroSectionData.metadata.rating"
+          class="title__metadata--rating metadata-rating metadata-text"
+          >{{ heroSectionData.metadata.rating }}</span
+        >
+        <span
+          *ngIf="heroSectionData.metadata.runtimeOrSeasons"
+          class="title__metadata--rating metadata-text"
+          >{{ heroSectionData.metadata.runtimeOrSeasons }}</span
+        >
+      </p>
+    </div>
+    <div *ngIf="heroSectionData.genres[0]" class="title__genres-container">
+      <div *ngFor="let genre of heroSectionData.genres" class="title__genre">
+        {{ genre.name }}
+      </div>
+    </div>
+  </div>
+</div>

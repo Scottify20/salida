@@ -65,7 +65,7 @@ export interface MovieSummary extends MediaSummary {
   video: boolean;
 }
 
-interface CastCredit {
+export interface CastCredit {
   adult: boolean;
   gender: number | null; // Gender might be unknown
   id: number;

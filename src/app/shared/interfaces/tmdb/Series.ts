@@ -121,7 +121,7 @@ interface EpisodeCrewCredit {
   profile_path: string | null;
 }
 
-interface SeriesCastCredit {
+export interface SeriesCastCredit {
   roles: Role[];
   adult: boolean;
   gender: number;
@@ -135,7 +135,7 @@ interface SeriesCastCredit {
   order: number;
 }
 
-interface SeriesCrewCredit {
+export interface SeriesCrewCredit {
   adult: boolean;
   gender: number;
   id: number;

@@ -1,0 +1,102 @@
+.title-details {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+  min-height: 200vh;
+}
+
+router-outlet > * {
+  /* Target the direct child of router-outlet */
+  display: block; /* Ensure the content is displayed as a block element */
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.2s ease-in-out;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.2s ease-in-out;
+}
+
+.slide-out-to-left {
+  animation: slideOutToLeft 0.2s ease-in-out;
+}
+
+.slide-out-to-right {
+  animation: slideOutToRight 0.2s ease-in-out;
+}
+
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-50px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  from {
+    transform: translateX(50px);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50px);
+  }
+}
+
+@keyframes slideOutToRight {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(50px);
+  }
+}
+
+[title-pill-tab-transition="router-outlet-transition"]
+  ::view-transition-old(root) {
+  opacity: 0;
+  animation: slideOutToLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    fadeOut 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  animation-delay: 0.1s;
+  animation-fill-mode: forwards;
+  animation-timeline: routerOutletTransition;
+  z-index: 1;
+}
+
+[title-pill-tab-transition="router-outlet-transition"]
+  ::view-transition-new(root) {
+  opacity: 100%;
+  animation: slideInFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+    fadeIn 0.25s ease-in-out;
+  animation-delay: 0.1s;
+  animation-fill-mode: forwards;
+  animation-timeline: routerOutletTransition;
+}
+
+@keyframes fadeIn {
+  20% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  80% {
+    opacity: 0;
+  }
+}

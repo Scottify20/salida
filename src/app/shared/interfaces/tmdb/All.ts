@@ -1,6 +1,7 @@
-import { ReleaseType } from './Movies';
+import { MovieSummary, ReleaseType } from './Movies';
+import { SeriesSummary } from './Series';
 
-type MediaType = 'movie' | 'tv';
+export type MediaType = 'movie' | 'tv';
 
 export type TmdbTimeWindow = 'day' | 'week';
 
@@ -12,6 +13,13 @@ type VideoType =
   | 'Behind the Scenes'
   | 'Opening Credits'
   | 'Blooper Reel';
+
+export interface TrendingTitles {
+  page: number;
+  results: MediaSummary[];
+  total_pages: number;
+  total_results: number;
+}
 
 export interface MediaSummary {
   media_type: MediaType;
@@ -34,6 +42,8 @@ export interface MediaSummary {
   name?: string; // For series
   original_name?: string; // For series
   origin_country?: string[]; // For series
+  callback?: () => void; // to be used for homescreen hero section cards
+  [key: string]: any;
 }
 
 export interface Media {
@@ -58,7 +68,7 @@ export interface Media {
   };
 }
 
-interface Image {
+export interface Image {
   aspect_ratio: number;
   height: number;
   iso_639_1: string | null;
@@ -161,15 +171,6 @@ export interface ProductionCountry {
   name: string;
 }
 
-interface Image {
-  aspect_ratio: number;
-  height: number;
-  iso_639_1: string | null;
-  file_path: string;
-  vote_average: number;
-  vote_count: number;
-  width: number;
-}
 export interface Country {
   iso_3166_1: string;
   english_name: string;

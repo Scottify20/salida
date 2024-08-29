@@ -18,7 +18,48 @@ export class CardsContainerComponent {
     sectionTitle: 'SectionTitle',
     cardShape: 'rectangle',
     stacking: false,
-    entities: [],
+    entities: [
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+      {
+        name: '',
+        image_path: '',
+      },
+    ],
     maxNoOfCards: 100,
   };
 }

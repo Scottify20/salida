@@ -1,0 +1,89 @@
+<div class="title__details">
+  <app-collapsible-text-section
+    *ngIf="plotSection.texts[0]"
+    class="title__section single"
+    [plotSectionOptions]="plotSection"
+  ></app-collapsible-text-section>
+
+  <!-- <app-ratings-section
+    class="title__section single"
+    [ratingsSectionOptions]="ratingsSection"
+  ></app-ratings-section> -->
+
+  <div
+    class="title__section-two-columns-container"
+    [ngClass]="
+      isTextsSectionDoubleColumn(writersSection, directorsSection)
+        ? 'double'
+        : ''
+    "
+    *ngIf="writersSection.texts[0] || directorsSection.texts[0]"
+  >
+    <app-texts-section
+      *ngIf="directorsSection.texts[0]"
+      class="title__section"
+      [textsSectionOptions]="directorsSection"
+    ></app-texts-section>
+
+    <app-texts-section
+      *ngIf="writersSection.texts[0]"
+      class="title__section"
+      [textsSectionOptions]="writersSection"
+    ></app-texts-section>
+  </div>
+
+  <app-cards-section
+    *ngIf="castSection.entities[0]"
+    class="title__section"
+    [cardsSectionOptions]="castSection"
+  ></app-cards-section>
+
+  <app-cards-section
+    *ngIf="crewSection.entities[0]"
+    class="title__section"
+    [cardsSectionOptions]="crewSection"
+  ></app-cards-section>
+
+  <div
+    class="title__section-two-columns-container"
+    [ngClass]="
+      isTextsSectionDoubleColumn(languagesSection, countriesSection)
+        ? 'double'
+        : ''
+    "
+    *ngIf="languagesSection.texts[0] || countriesSection.texts[0]"
+  >
+    <app-texts-section
+      *ngIf="languagesSection.texts[0]"
+      class="title__section"
+      [textsSectionOptions]="languagesSection"
+    ></app-texts-section>
+    <app-texts-section
+      class="title__section"
+      *ngIf="countriesSection.texts[0]"
+      [textsSectionOptions]="countriesSection"
+    ></app-texts-section>
+  </div>
+
+  <div
+    class="title__section-two-columns-container"
+    [ngClass]="
+      isTextsSectionDoubleColumn(awardsSection, boxOfficeSection)
+        ? 'double'
+        : ''
+    "
+    *ngIf="boxOfficeSection.texts[0] || awardsSection.texts[0]"
+  >
+    <app-texts-section
+      *ngIf="awardsSection.texts[0]"
+      class="title__section"
+      [textsSectionOptions]="awardsSection"
+    ></app-texts-section>
+
+    <app-texts-section
+      *ngIf="boxOfficeSection.texts[0] != '0'"
+      class="title__section"
+      [textsSectionOptions]="boxOfficeSection"
+    ></app-texts-section>
+  </div>
+</div>

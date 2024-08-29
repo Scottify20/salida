@@ -2,7 +2,7 @@
   padding: 0 0.5rem;
   margin: 0 auto;
   display: grid;
-  grid-template-areas: "left main right";
+  grid-template-areas: "left nav right";
   grid-template-columns: 1fr min-content 1fr;
   overflow: hidden;
 
@@ -11,8 +11,8 @@
     grid-area: left;
   }
 
-  .tab-group.main {
-    grid-area: main;
+  .tab-group.nav {
+    grid-area: nav;
     margin: 0 0.5rem;
   }
 

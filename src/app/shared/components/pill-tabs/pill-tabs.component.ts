@@ -1,6 +1,7 @@
 import { Component, ElementRef, Inject, Input, Renderer2 } from '@angular/core';
 import { CommonModule, DOCUMENT, ViewportScroller } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
+import { PlatformCheckService } from '../../services/dom/platform-check.service';
 
 @Component({
   selector: 'app-pill-tabs',
@@ -13,17 +14,26 @@ export class PillTabsComponent {
   constructor(
     private router: Router,
     public elementRef: ElementRef,
-    private viewportScroller: ViewportScroller,
-    @Inject(DOCUMENT) private document: Document
+    private platformCheck: PlatformCheckService
   ) {}
 
   @Input() PillTabsConfig: PillTabsConfig = {
-    mainTabs: {
+    navTabs: {
       tabType: 'navigation',
       buttonContent: 'text',
       tabs: [],
     },
   };
+
+  getTruncatedText(text: string | null): string | null {
+    return text && text.length < 12
+      ? text
+      : text
+      ? text.slice(0, 7).replace(/\s$/, '') +
+        '...' +
+        text.slice(-3).replace(/^\s/, '')
+      : null;
+  }
 
   activeTabIndex = 0;
 
@@ -56,16 +66,19 @@ export class PillTabsComponent {
   scrollToPillTab() {
     setTimeout(() => {
       const pillTabsElement = this.elementRef.nativeElement;
-      this.viewportScroller.scrollToPosition([
-        0,
-        pillTabsElement.offsetTop - 16,
-      ]);
+      window.scrollTo({
+        top: pillTabsElement.offsetTop - 16,
+        left: 0,
+        behavior: 'smooth',
+      });
     }, 0);
   }
 
   scrollToTop() {
     setTimeout(() => {
-      this.document.defaultView?.scrollTo(0, 0);
+      if (this.platformCheck.isBrowser()) {
+        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+      }
     }, 0);
   }
 
@@ -77,10 +90,18 @@ export class PillTabsComponent {
     if (isMainTab) {
       const previousIndex = this.activeTabIndex;
 
+      if (tabIndex == 0) {
+        // scrolls to top if the tab clicked is the first tab
+        this.scrollToTop();
+      }
+
       if (tabIndex != 0) {
+        // scrolls to top if the tab clicked is the second or subsequent tabs
         this.scrollToPillTab();
       }
-      if (tabIndex === previousIndex) {
+
+      if (tabIndex == previousIndex) {
+        // disables animation when tab is already click and active
         return;
       }
 
@@ -111,9 +132,9 @@ export class PillTabsComponent {
 }
 
 export interface PillTabsConfig {
+  navTabs: PillTabGroup;
   leftTabs2?: PillTabGroup;
   leftTabs1?: PillTabGroup;
-  mainTabs: PillTabGroup;
   rightTabs1?: PillTabGroup;
   rightTabs2?: PillTabGroup;
   [key: string]: PillTabGroup | undefined;
@@ -136,13 +157,13 @@ export type TabButtonContent =
 
 interface TabItem {
   id?: string;
-  dynamicText?: () => string;
+  dynamicText?: () => string | null;
   text?: string;
   iconPathActive?: string;
   iconPathDisabled?: string;
   routerLinkPath?: string;
   callback?: () => void;
-  visibleOn: string[] | ['all']; // 'all' | 'movies' | 'series' | 'movies\\d+/releases' | etc.
+  visibleOn: string[] | ['all']; // 'all' | 'movie' | 'series' | 'movie\\d+/releases' | etc.
   visibleIf?: () => boolean;
   isSelected?: () => boolean;
 }

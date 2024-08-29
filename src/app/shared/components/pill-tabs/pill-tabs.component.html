@@ -1,8 +1,8 @@
 <ng-container *ngFor="let tabGroup of PillTabsConfig | keyvalue">
   <div
     [ngClass]="
-      tabGroup.key == 'mainTabs'
-        ? 'main'
+      tabGroup.key == 'navTabs'
+        ? 'nav'
         : tabGroup.key == 'leftTabs1'
         ? 'left'
         : tabGroup.key == 'leftTabs2'
@@ -25,7 +25,7 @@
         [routerLink]="tabItem.routerLinkPath"
         [routerLinkActive]="'active'"
         (click)="
-          handleTabClick(tabItem.callback, i, tabGroup.key === 'mainTabs')
+          handleTabClick(tabItem.callback, i, tabGroup.key === 'navTabs')
         "
       >
         <div
@@ -58,11 +58,12 @@
         <div
           *ngIf="
             tabGroup.value &&
-            isInTabTypes(['dynamic-text'], tabGroup.value.buttonContent)
+            isInTabTypes(['dynamic-text'], tabGroup.value.buttonContent) &&
+            tabItem.dynamicText
           "
           class="tab tab--text"
         >
-          {{ tabItem?.dynamicText() }}
+          {{ getTruncatedText(tabItem.dynamicText()) }}
         </div>
 
         <div
@@ -72,11 +73,12 @@
             isInTabTypes(
               ['dynamic-text-then-icon', 'icon-then-dynamic-text'],
               tabGroup.value.buttonContent
-            )
+            ) &&
+            tabItem.dynamicText
           "
         >
           <div class="tab tab--text">
-            {{ tabItem?.dynamicText() }}
+            {{ getTruncatedText(tabItem.dynamicText()) }}
           </div>
           <div class="tab tab--icon">
             <img

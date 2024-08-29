@@ -1,13 +1,9 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { TitleDetailsComponent } from './shared/components/title-details/title-details.component';
-import { AdvisoriesComponent } from './shared/components/title-details/advisories/advisories.component';
-import { ReviewsComponent } from './shared/components/title-details/reviews/reviews.component';
-import { MoreDetailsComponent } from './shared/components/title-details/more-details/more-details.component';
-import { SeasonsComponent } from './shared/components/title-details/seasons/seasons.component';
-import { ReleasesComponent } from './shared/components/title-details/releases/releases.component';
-import { PopupOrBottomSheetComponent } from './shared/components/popup-or-bottom-sheet/popup-or-bottom-sheet.component';
+import { movieDetailsRoutes } from './details/movie-details/feature/movie-details.routes';
+import { seriesDetailsRoutes } from './details/series-details/feature/series-details.routes';
+import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
 
 export const routes: Routes = [
   {
@@ -15,30 +11,14 @@ export const routes: Routes = [
     component: HomeComponent,
   },
   {
-    path: 'series/:id',
-    component: TitleDetailsComponent,
-    children: [
-      { path: 'details', component: MoreDetailsComponent },
-      { path: 'reviews', component: ReviewsComponent },
-      {
-        path: 'seasons',
-        component: SeasonsComponent,
-        children: [{ path: 'picker', component: PopupOrBottomSheetComponent }],
-      },
-      { path: 'advisories', component: AdvisoriesComponent },
-      { path: '', redirectTo: 'details', pathMatch: 'full' },
-    ],
+    path: 'movie/:id',
+    children: movieDetailsRoutes,
   },
   {
-    path: 'movies/:id',
-    component: TitleDetailsComponent,
-    children: [
-      { path: 'details', component: MoreDetailsComponent },
-      { path: 'reviews', component: ReviewsComponent },
-      { path: 'releases', component: ReleasesComponent },
-      { path: '', redirectTo: 'details', pathMatch: 'full' }, // Default to details
-    ],
+    path: 'series/:id',
+    children: seriesDetailsRoutes,
   },
+  { path: 'people/:id', children: personDetailsRoutes },
   {
     path: 'user',
     loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
@@ -60,3 +40,57 @@ export const routes: Routes = [
   },
   { path: '**', component: NotFoundComponent },
 ];
+
+// REFERENCE STRUCTURE
+
+// src/
+//   app/
+//     shared/
+//       components/
+//         tab-group/
+//           tab-group.component.ts
+//           tab-group.component.html
+//           tab-group.component.css
+//         secondary-tabs/
+//           secondary-tabs.component.ts
+//           secondary-tabs.component.html
+//           secondary-tabs.component.css
+//       services/
+//         secondary-tab.service.ts
+//       ...
+//     core/
+//       store/
+//         ...
+//     detail-pages/
+//       movie-details/
+//         feature/
+//           movie-details.component.ts
+//         data-access/
+//           movie.service.ts
+//         ui/
+//           movie-details/
+//             movie-details.component.html
+//             movie-details.component.css
+//             overview/
+//               overview.component.ts
+//               overview.component.html
+//               overview.component.css
+//             cast/
+//               cast.component.ts
+//               cast.component.html
+//               cast.component.css
+//             reviews/
+//               reviews.component.ts
+//               reviews.component.html
+//               reviews.component.css
+//       series-details/
+//         // Similar structure to movie-details
+//       shared/
+//         ui/
+//           shared.module.ts
+//           components/
+//             star-rating/
+//               star-rating.component.ts
+//               star-rating.component.html
+//               star-rating.component.css
+//   ...

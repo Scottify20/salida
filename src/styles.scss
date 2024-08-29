@@ -2,6 +2,7 @@
 @use "./styles/colors";
 @use "./styles/reset";
 @use "./styles/variables";
+@use "./styles/_animations";
 
 /* ---remove the blue touch highlight for touchscreens--- */
 * {
@@ -9,10 +10,10 @@
   -webkit-tap-highlight-color: transparent;
 }
 
-html:has(.title-details) {
-  font-size: 16px;
-  scroll-behavior: smooth;
-}
+// html:has(.title-details) {
+//   font-size: 16px;
+//   scroll-behavior: smooth;
+// }
 
 * {
   color: var(--text-color);

@@ -1,21 +1,18 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   Input,
-  Renderer2,
+  OnDestroy,
+  OnInit,
   ViewChild,
 } from '@angular/core';
-import { PlatformCheckService } from '../../services/platform-check.service';
-import {
-  WindowResizeService,
-  WindowResizeServiceUser,
-} from '../../services/window-resize.service';
-import { Observable, Subscription } from 'rxjs';
-import {
-  ElementPositionService,
-  ElementPositionServiceUser,
-} from '../../services/element-position.service';
+import { PlatformCheckService } from '../../services/dom/platform-check.service';
+import { WindowResizeService } from '../../services/dom/window-resize.service';
+import { Observable, of, Subscription, tap } from 'rxjs';
+import { ElementPositionService } from '../../services/dom/element-position.service';
 import { CommonModule } from '@angular/common';
+import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 
 @Component({
   selector: 'app-popup-or-bottom-sheet',
@@ -24,17 +21,34 @@ import { CommonModule } from '@angular/common';
   templateUrl: './popup-or-bottom-sheet.component.html',
   styleUrl: './popup-or-bottom-sheet.component.scss',
 })
-export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
+export class PopupOrBottomSheetComponent
+  implements OnInit, OnDestroy, AfterViewInit
+{
   constructor(
-    private platformCheck: PlatformCheckService,
     private elemPositionService: ElementPositionService,
-    private windowResizeService: WindowResizeService
+    private windowResizeService: WindowResizeService,
+    private scrollDisabler: ScrollDisablerService,
+    private platformCheckService: PlatformCheckService
   ) {}
-  @Input() popupOrBottomSheetConfig: PopupOrBottomSheetConfig = {
-    anchorElementId: '',
+
+  @Input() popUpOrBottomSheetConfig: PopupOrBottomSheetConfig = {
+    anchorElementId: null,
     itemsType: 'texts',
     items: [],
+    isPopupShown$: of(false),
   };
+
+  private isPopUpShownSubscription!: Subscription;
+  isPopUpShown: boolean = false;
+
+  ngOnInit() {
+    this.initializeResizeSubscriptions();
+  }
+
+  ngOnDestroy() {
+    this.isPopUpShownSubscription?.unsubscribe();
+    this.untrackAndUnsubscribe();
+  }
 
   @ViewChild('dialog') dialogElementRef!: ElementRef;
   dialogElement!: HTMLDialogElement;
@@ -43,7 +57,42 @@ export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
   anchorElementPosition$: Observable<DOMRect> | undefined;
   popupElementPosition$: Observable<DOMRect> | undefined;
 
+  showDialog() {
+    setTimeout(() => {
+      this.dialogElement.classList.remove('hide');
+      this.dialogElement.classList.add('shown');
+    }, 0);
+  }
+
+  hideDialog() {
+    this.elemPositionService.triggerManualUpdate();
+    this.dialogElement.classList.add('hide');
+    this.dialogElement.classList.remove('shown');
+    this.windowResizeService.triggerResize();
+    this.scrollDisabler.enableScroll();
+  }
+
   ngAfterViewInit() {
+    if (!this.platformCheckService.isBrowser()) {
+      return;
+    }
+
+    this.isPopUpShownSubscription = this.popUpOrBottomSheetConfig.isPopupShown$
+      .pipe(
+        tap((isPopupShown) => {
+          isPopupShown == null
+            ? ''
+            : isPopupShown
+            ? this.showDialog()
+            : this.hideDialog();
+        })
+      )
+      .subscribe();
+    this.startSeasonPickerDialogPositioner();
+    this.trackAnchorElement();
+  }
+
+  startSeasonPickerDialogPositioner() {
     this.dialogElement = this.dialogElementRef.nativeElement;
     this.dialogPopupElement = this.dialogElement.querySelector(
       '.dialog__arrow-and-items-container'
@@ -52,42 +101,78 @@ export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
     this.trackAnchorElement();
   }
 
+  private anchorElementPositionSubscription: Subscription | undefined;
+
   trackAnchorElement() {
-    setTimeout(() => {
+    // Unsubscribe from the previous subscription if it exists
+    if (this.anchorElementPositionSubscription) {
+      this.anchorElementPositionSubscription.unsubscribe();
+    }
+
+    // Use PlatformCheckService to determine the scheduling function
+    const scheduleFn = this.platformCheckService.isBrowser()
+      ? requestAnimationFrame
+      : setTimeout;
+
+    scheduleFn(() => {
+      if (!this.popUpOrBottomSheetConfig.anchorElementId) {
+        console.log('anchor element id not set');
+        return;
+      }
       const anchorElementRef = this.elemPositionService.getElementRefById(
-        this.popupOrBottomSheetConfig.anchorElementId
+        this.popUpOrBottomSheetConfig.anchorElementId
       );
 
       if (anchorElementRef) {
         this.anchorElementPosition$ =
           this.elemPositionService.trackElementPosition(
-            this.popupOrBottomSheetConfig.anchorElementId,
+            this.popUpOrBottomSheetConfig.anchorElementId,
             anchorElementRef
           );
 
-        this.anchorElementPosition$.subscribe((position) => {
-          const popup = this.dialogPopupElement.getBoundingClientRect();
+        this.anchorElementPositionSubscription =
+          this.anchorElementPosition$.subscribe((position) => {
+            const popup = this.dialogPopupElement.getBoundingClientRect();
 
-          if (this.windowDimensions.width < 768) {
-            this.dialogPopupElement.style.top = 'unset';
-            this.dialogPopupElement.style.bottom = '0';
-            this.dialogPopupElement.style.left = 'unset';
-            return;
-          }
-          const diff = (popup.width - position.width) / 2;
+            if (this.windowDimensions?.width <= 600) {
+              // Optional chaining for safety
+              this.dialogPopupElement.style.top = 'unset';
+              this.dialogPopupElement.style.bottom = '0';
+              this.dialogPopupElement.style.left = 'unset';
+              return;
+            }
+            const diff = (popup.width - position.width) / 2;
 
-          this.dialogPopupElement.style.top = '33.25rem';
-          this.dialogPopupElement.style.bottom = 'unset';
-          this.dialogPopupElement.style.left =
-            (position.left - diff).toString() + 'px';
-        });
-      } else {
-        console.log(
-          'anchor element ref does not exist',
-          this.popupOrBottomSheetConfig.anchorElementId
-        );
+            this.dialogPopupElement.style.top =
+              (position.top + (position.height + 32)).toString() + 'px';
+            this.dialogPopupElement.style.bottom = 'unset';
+            this.dialogPopupElement.style.left =
+              (position.left - diff).toString() + 'px';
+          });
       }
-    }, 50);
+    });
+  }
+
+  initializeResizeSubscriptions() {
+    // Subscribe to the combined windowResizeState$ observable
+    this._resizeSubscription =
+      this.windowResizeService.windowResizeState$.subscribe((state) => {
+        this.isResizing = state.isResizing;
+        this.windowDimensions = state.dimensions;
+      });
+  }
+
+  untrackAndUnsubscribe() {
+    if (!this.popUpOrBottomSheetConfig.anchorElementId) {
+      console.log('anchor element id not set');
+      return;
+    }
+
+    this.elemPositionService.untrackElementPosition(
+      this.popUpOrBottomSheetConfig.anchorElementId
+    );
+    this._resizeSubscription?.unsubscribe();
+    this.anchorElementPositionSubscription?.unsubscribe();
   }
 
   isResizing = false;
@@ -96,37 +181,16 @@ export class PopupOrBottomSheetComponent implements WindowResizeServiceUser {
     height: 0,
   };
   _resizeSubscription!: Subscription;
-  _isResizingSubscription!: Subscription;
-
-  ngOnInit(): void {
-    this._resizeSubscription =
-      this.windowResizeService.windowDimensions$.subscribe((dimensions) => {
-        this.windowDimensions = dimensions;
-      });
-
-    this._isResizingSubscription =
-      this.windowResizeService.isResizing$.subscribe((isResizing) => {
-        this.isResizing = isResizing;
-      });
-    this.windowResizeService.isResizing();
-  }
-
-  ngOnDestroy(): void {
-    this.elemPositionService.untrackElementPosition(
-      this.popupOrBottomSheetConfig.anchorElementId
-    );
-    this._resizeSubscription?.unsubscribe();
-    this._isResizingSubscription?.unsubscribe();
-  }
 }
 
 export interface PopupOrBottomSheetConfig {
-  anchorElementId: string;
+  anchorElementId: string | null;
   itemsType: 'texts' | 'icon-grid';
-  items: PopupItemType[];
+  items: PopupItem[];
+  isPopupShown$: Observable<boolean | null>;
 }
 
-export interface PopupItemType {
+export interface PopupItem {
   textContent: string;
   callback: () => void;
   isSelected: () => boolean;

@@ -33,9 +33,6 @@ app-scroll-buttons {
 }
 
 .hero-card-filler {
-  // scroll-snap-align: start;
-  // scroll-snap-stop: always;
-
   flex-shrink: 0;
   width: 17vw;
   max-height: 20px;
@@ -45,8 +42,6 @@ app-scroll-buttons {
 }
 
 .hero-card-filler + .hero-card:has(.landscape) {
-  // scroll-snap-align: start;
-  // scroll-snap-stop: always;
   width: 10vw;
   aspect-ratio: 16/9;
 }

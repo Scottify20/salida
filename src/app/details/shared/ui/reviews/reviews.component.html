@@ -1,0 +1,92 @@
+<!-- if the shown are set to tmdb -->
+<div
+  *ngIf="reviewsConfig.reviewsSource === 'tmdb'"
+  class="reviews"
+  [ngClass]="isLoading ? 'loading' : ''"
+>
+  <div class="review" *ngFor="let review of tmdbReviewsData.results.reverse()">
+    <img
+      *ngIf="review.author_details.avatar_path"
+      [src]="
+        'https://image.tmdb.org/t/p/w185' + review.author_details.avatar_path
+      "
+      alt=""
+      class="review__profile-photo"
+    />
+    <img
+      *ngIf="!review.author_details.avatar_path"
+      src="assets/icons/placeholders/Profile.svg"
+      alt=""
+      class="review__profile-photo"
+    />
+    <div class="review__header-texts">
+      <h4 class="review__username">{{ review.author }}</h4>
+      <div class="review__rating-and-date-container">
+        <div
+          *ngIf="review.author_details.rating"
+          class="review__rating-container"
+        >
+          <img
+            src="assets/icons/ratings/Star.svg"
+            alt=""
+            class="review__rating_star"
+          />
+          <p class="review__rating-value">
+            {{ review.author_details.rating }}0%
+          </p>
+        </div>
+        <p class="review_date">
+          {{ review.created_at | date : "MMM dd, yyyy" }}
+        </p>
+      </div>
+    </div>
+    <p [data]="review.content" markdown class="review__body"></p>
+  </div>
+</div>
+
+<!-- if the shown are set to salida -->
+
+<div
+  *ngIf="reviewsConfig.reviewsSource === 'salida'"
+  class="reviews"
+  [ngClass]="isLoading ? 'loading' : ''"
+>
+  <div class="review" *ngFor="let review of salidaReviews.results.reverse()">
+    <img
+      *ngIf="review.author_details.avatar_path"
+      [src]="
+        'https://image.tmdb.org/t/p/w185' + review.author_details.avatar_path
+      "
+      alt=""
+      class="review__profile-photo"
+    />
+    <img
+      *ngIf="!review.author_details.avatar_path"
+      src="assets/icons/placeholders/Profile.svg"
+      alt=""
+      class="review__profile-photo"
+    />
+    <div class="review__header-texts">
+      <h4 class="review__username">{{ review.author }}</h4>
+      <div class="review__rating-and-date-container">
+        <div
+          *ngIf="review.author_details.rating"
+          class="review__rating-container"
+        >
+          <img
+            src="assets/icons/ratings/Star.svg"
+            alt=""
+            class="review__rating_star"
+          />
+          <p class="review__rating-value">
+            {{ review.author_details.rating }}0%
+          </p>
+        </div>
+        <p class="review_date">
+          {{ review.created_at | date : "MMM dd, yyyy" }}
+        </p>
+      </div>
+    </div>
+    <p [data]="review.content" markdown class="review__body"></p>
+  </div>
+</div>

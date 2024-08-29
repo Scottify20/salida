@@ -1,0 +1,53 @@
+// cards state animations (apply class on container to apply animations on children)
+
+@media (hover: hover) {
+  .clickable-cards {
+    & > * {
+      transition: filter 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    & > *.big-card {
+      transition: transform 0.15s ease-in-out;
+    }
+
+    &:hover > * {
+      cursor: pointer;
+      filter: brightness(100%);
+      transform: scale(1);
+
+      &:hover {
+        transform: scale(0.95);
+      }
+
+      &:hover.big-card {
+        transform: scale(0.98);
+      }
+
+      &:not(:hover):not(.big-card) {
+        filter: brightness(80%);
+      }
+
+      &:active {
+        transform: scale(0.75);
+      }
+    }
+  }
+}
+
+@media (hover: none) {
+  .clickable-cards {
+    & > * {
+      transition: filter 0.3s ease-in-out, transform 0.2s ease-in-out;
+    }
+
+    & > *.big-card {
+      transition: transform 0.15s ease-in-out;
+    }
+
+    & > * {
+      &:active {
+        transform: scale(0.75);
+      }
+    }
+  }
+}

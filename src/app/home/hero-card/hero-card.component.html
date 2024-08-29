@@ -4,6 +4,7 @@
   [class]="windowDimensions.width > 480 ? 'landscape' : ''"
   [id]="'hero-card--' + titleDetails.id"
   [attr.data-card-index]="cardIndex"
+  (click)="runCallbackOnClick(titleDetails.callback)"
 >
   <img
     *ngIf="getImageSrcBasedOnWidth()"
@@ -17,16 +18,15 @@
     [id]="cardIndex === 0 ? 'hero-card__details--0' : ''"
     [style]="cardOpacity"
   >
-    <img
-      [src]="'https://image.tmdb.org/t/p/w500' + titleDetails.logoPath"
+    <!-- <img
+      [src]="'https://image.tmdb.org/t/p/w500' + titleDetails"
       alt=""
       class="hero-card__logo"
-    />
+    /> -->
     <div class="hero-card__texts">
       <h4 class="hero-card__title">{{ titleDetails.title }}</h4>
       <div class="hero-card__metadata"></div>
-      <p class="hero-card__plot">{{ titleDetails.plot }}</p>
+      <p class="hero-card__plot">{{ titleDetails.overview }}</p>
     </div>
   </div>
-  <!-- <div class="hero-card__gradient-bg"></div> -->
 </div>

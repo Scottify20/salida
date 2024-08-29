@@ -22,17 +22,12 @@ export class SeriesService {
   getSeasonDetails(seriesId: number, seasonNumber: number): Observable<Season> {
     const seriesIdString = seriesId.toString();
     const seasonNumberString = seasonNumber.toString();
-    this.cachedSeriesSeasons[seriesIdString] = {};
 
-    const seasonExists = (): boolean => {
-      return this.cachedSeriesSeasons &&
-        this.cachedSeriesSeasons[seriesIdString] &&
-        this.cachedSeriesSeasons[seriesIdString][seasonNumberString]
-        ? true
-        : false;
-    };
+    if (!this.cachedSeriesSeasons[seriesIdString]) {
+      this.cachedSeriesSeasons[seriesIdString] = {};
+    }
 
-    if (!seasonExists()) {
+    if (!this.cachedSeriesSeasons[seriesIdString][seasonNumberString]) {
       this.cachedSeriesSeasons[seriesIdString][seasonNumberString] = this.http
         .get<Season>(
           `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}/season/${seasonNumberString}`

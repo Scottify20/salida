@@ -1,5 +1,9 @@
-<div #dialog class="dialog fullscreen-dialog">
-  <div class="dialog__backrop"></div>
+<div
+  #dialog
+  class="picker-dialog fullscreen-dialog"
+  [ngClass]="this.isPopUpShown ? 'shown' : ''"
+>
+  <div class="dialog__backrop" (click)="hideDialog()"></div>
 
   <div class="dialog__arrow-and-items-container">
     <img
@@ -11,11 +15,12 @@
       src="assets/icons/Arrow.svg"
       alt=""
       class="dialog__arrow-down-button"
+      (click)="hideDialog()"
     />
     <ul class="dialog__items-container">
       <li
-        (click)="item.callback()"
-        *ngFor="let item of popupOrBottomSheetConfig.items"
+        (click)="item.callback(); hideDialog()"
+        *ngFor="let item of popUpOrBottomSheetConfig.items"
         class="dialog__item"
         [ngClass]="item.isSelected() ? 'selected' : ''"
       >

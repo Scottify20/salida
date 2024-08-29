@@ -1,0 +1,50 @@
+:host {
+  --episode-global-padding: 0.75rem;
+  --episode-thumbnail-height: 148px;
+}
+
+.episode-group {
+  padding: 0 1rem;
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+}
+
+.epsode-group__header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+
+  .episode-group__main-info-container {
+    display: flex;
+    flex-flow: row nowrap;
+    column-gap: 0.75rem;
+    align-items: center;
+
+    .epsode-group__season-title {
+      font-size: 1.2rem;
+    }
+
+    .episode-group__numbers-of-episodes {
+      text-wrap: nowrap;
+      font-size: calc(0.9rem);
+      padding: 0.36em 0.5em;
+      border-radius: 100px;
+    }
+
+    .episode-group__numbers-of-episodes {
+      color: var(--text-accent-color);
+      background-color: var(--text-hightlight-accent-color);
+    }
+  }
+
+  .episode-group-arrow-icon {
+    grid-area: arr;
+  }
+}
+
+.episode-group__episode-cards-container {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+}

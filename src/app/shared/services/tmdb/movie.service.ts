@@ -1,11 +1,7 @@
 import { Injectable } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
-import {
-  Movie,
-  MovieSummary,
-  TrendingMovies,
-} from '../../interfaces/tmdb/Movies';
+import { Movie, TrendingMovies } from '../../interfaces/tmdb/Movies';
 import { HttpClient } from '@angular/common/http';
 import { TmdbTimeWindow } from '../../interfaces/tmdb/All';
 
