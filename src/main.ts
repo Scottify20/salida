@@ -8,6 +8,10 @@ import { routes } from './app/app.routes';
 import { withInMemoryScrolling } from '@angular/router';
 import { provideHttpClient, withFetch } from '@angular/common/http';
 
+import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
+import { getAuth, provideAuth } from '@angular/fire/auth';
+import { firebaseConfig } from './environments/environment';
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(withFetch()),
@@ -16,5 +20,7 @@ bootstrapApplication(AppComponent, {
       withEnabledBlockingInitialNavigation(),
       withInMemoryScrolling({ scrollPositionRestoration: 'disabled' })
     ),
+    [provideFirebaseApp(() => initializeApp(firebaseConfig))],
+    provideAuth(() => getAuth()),
   ],
 }).catch((err) => console.error(err));

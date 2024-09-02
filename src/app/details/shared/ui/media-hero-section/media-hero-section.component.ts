@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  ViewChild,
+} from '@angular/core';
 import { Genre, Image } from '../../../../shared/interfaces/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';

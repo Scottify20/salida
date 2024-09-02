@@ -1,5 +1,6 @@
 <div class="title__hero" [ngClass]="isLoading ? 'loading' : ''">
   <img
+    #backdrop
     [src]="
       'https://image.tmdb.org/t/p/' +
       getBackropWidth() +

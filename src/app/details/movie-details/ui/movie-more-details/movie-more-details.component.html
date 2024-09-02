@@ -67,18 +67,13 @@
 
   <div
     class="title__section-two-columns-container"
-    [ngClass]="
-      isTextsSectionDoubleColumn(awardsSection, boxOfficeSection)
-        ? 'double'
-        : ''
-    "
-    *ngIf="boxOfficeSection.texts[0] || awardsSection.texts[0]"
+    *ngIf="boxOfficeSection.texts[0]"
   >
-    <app-texts-section
+    <!-- <app-texts-section
       *ngIf="awardsSection.texts[0]"
       class="title__section"
       [textsSectionOptions]="awardsSection"
-    ></app-texts-section>
+    ></app-texts-section> -->
 
     <app-texts-section
       *ngIf="boxOfficeSection.texts[0] != '0'"

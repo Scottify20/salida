@@ -159,7 +159,10 @@ export class HomeComponent implements OnInit, OnDestroy {
               name: movie.title,
               image_path: movie.poster_path || '',
               callback: () => {
-                this.movieDetailsService.viewMovieDetails(movie.id);
+                this.movieDetailsService.viewMovieDetails(
+                  movie.id,
+                  movie.title
+                );
               },
             }));
         },
@@ -185,7 +188,10 @@ export class HomeComponent implements OnInit, OnDestroy {
               name: series.name,
               image_path: series.poster_path || '',
               callback: () => {
-                this.seriesDetailService.viewSeriesDetails(series.id);
+                this.seriesDetailService.viewSeriesDetails(
+                  series.id,
+                  series.name
+                );
               },
             }));
         },
@@ -223,7 +229,10 @@ export class HomeComponent implements OnInit, OnDestroy {
       const mappedMovies = results.map((movie) => ({
         ...movie,
         callback: () => {
-          this.movieDetailsService.viewMovieDetails(movie.id);
+          this.movieDetailsService.viewMovieDetails(
+            movie.id,
+            movie.title as string
+          );
         },
       }));
 
@@ -240,7 +249,10 @@ export class HomeComponent implements OnInit, OnDestroy {
         ...series,
         title: series.name,
         callback: () => {
-          this.seriesDetailService.viewSeriesDetails(series.id);
+          this.seriesDetailService.viewSeriesDetails(
+            series.id,
+            series.name as string
+          );
         },
       }));
 

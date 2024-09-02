@@ -71,6 +71,7 @@
 }
 
 .title__metadataContainer {
+  position: relative;
   margin-bottom: 0.75rem;
   opacity: 90%;
   display: flex;
@@ -81,11 +82,11 @@
   .title__metadata {
     .metadata-text {
       color: var(--text-color-subtle);
+      position: relative;
     }
 
     .metadata-text.metadata-rating {
       height: 1rem;
-      position: relative;
       font-size: 0.7rem;
       border: 1px solid var(--text-color-subtle);
       width: min-content;
@@ -98,24 +99,26 @@
       margin-left: 0;
     }
 
-    .metadata-text:not(:first-of-type) {
-      &::before {
-        position: absolute;
-        display: inline-block;
-        transform: scale(0.6);
-        content: "•";
-        padding: 0 0.25em;
-        color: var(--text-color-disabled);
-        top: 7.5%;
-      }
+    // .metadata-text:not(:first-of-type) {
+    //   &::before {
+    //     font-size: 0.8333rem;
+    //     position: absolute;
+    //     display: inline-block;
+    //     transform: scale(0.6);
+    //     content: "•";
+    //     padding: 0 0.25em;
+    //     color: var(--text-color-disabled);
+    //     top: 7.5%;
+    //   }
 
-      &::before {
-        left: -0.9rem;
-      }
-    }
+    //   &::before {
+    //     left: -0.9rem;
+    //   }
+    // }
 
     .metadata-text:not(:last-of-type) {
       &::after {
+        font-size: 0.8333rem;
         position: absolute;
         display: inline-block;
         transform: scale(0.6);

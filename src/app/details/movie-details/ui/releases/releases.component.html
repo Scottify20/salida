@@ -61,7 +61,11 @@
 </div>
 
 <!-- if the release dates are grouped by country -->
-<div class="releases country" *ngIf="releasesPreferences.groupBy == 'country'">
+<div
+  [ngClass]="isLoading ? 'loading' : ''"
+  class="releases country"
+  *ngIf="releasesPreferences.groupBy == 'country'"
+>
   <div class="releases__type-container">
     <h4 class="release__type-name">COUNTRY</h4>
     <div class="releases__countries-container">

@@ -30,8 +30,8 @@
 }
 
 .review__profile-photo {
-  position: sticky;
-  top: 0;
+  // position: sticky;
+  // top: 0;
   width: 55px;
   aspect-ratio: 1/1;
   object-fit: cover;
@@ -40,8 +40,8 @@
 }
 
 .review__header-texts {
-  position: sticky;
-  top: 0;
+  // position: sticky;
+  // top: 0;
   grid-area: hd;
   display: grid;
   align-items: center;

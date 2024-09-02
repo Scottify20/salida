@@ -19,16 +19,20 @@ export class MovieDetailsService {
   }
 
   idFromRoute: IdFromRoute = null;
+  fetchedMovieId: number | null = null;
   private fetchedSeriesId: number | null = null;
 
   private _movieData$ = new BehaviorSubject<Movie | null>(null);
   movieData$: Observable<Movie | null> = this._movieData$.asObservable();
 
-  viewMovieDetails(id: number) {
-    this.router.navigateByUrl(`/movie/${id}/details`);
+  viewMovieDetails(id: number, title: string) {
+    const titleSlugified = ('-' + title)
+      .replace(/[^\p{L}\p{N}-]/giu, '-')
+      .replace(/-{2}/, '-')
+      .toLowerCase();
+    this._movieData$.next(null);
+    this.router.navigateByUrl(`/movie/${id}${titleSlugified}/details`);
   }
-
-  fetchedMovieId: number | null = null;
 
   get isMovieRoute(): boolean {
     return /\/movie\//.test(this.router.url);
@@ -36,7 +40,7 @@ export class MovieDetailsService {
 
   private updateCurrentMovie() {
     const urlSegments = this.router.url.split('/');
-    const titleId = parseInt(urlSegments[2], 10);
+    const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
 
     if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {

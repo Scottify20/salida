@@ -7,7 +7,7 @@ import {
   PillTabsConfig,
 } from '../../../shared/components/pill-tabs/pill-tabs.component';
 import {
-  Preferences,
+  UserPreferences,
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { Subscription, tap } from 'rxjs';
@@ -36,7 +36,7 @@ export class MovieDetailsComponent {
       .subscribe();
   }
 
-  private userPreferences!: Preferences;
+  private userPreferences!: UserPreferences;
   private userPreferencesSubscriptions: Subscription | null = null;
   ngOnDestroy() {
     this.userPreferencesSubscriptions?.unsubscribe();

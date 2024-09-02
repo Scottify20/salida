@@ -1,6 +1,6 @@
 title details season selection
 title details (ratings - omdb, watch providers)
-seasons - popup being cut off in the right side
+seasons - popup being cut off in the right side and on the bottom when in mobile landscape mode
 tabs - main tab staying on center
 
 seasons section
@@ -8,7 +8,7 @@ season details
 episode details
 search/discover section
 
-title hero card and homescreen update
+title hero card and homescreen refactor and redesign
 
 user profile
 firebase authentication

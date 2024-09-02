@@ -4,11 +4,16 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { movieDetailsRoutes } from './details/movie-details/feature/movie-details.routes';
 import { seriesDetailsRoutes } from './details/series-details/feature/series-details.routes';
 import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
+import { LoginSignUpPageComponent } from './test/login-sign-up-page/login-sign-up-page.component';
 
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
+  },
+  {
+    path: 'login',
+    component: LoginSignUpPageComponent,
   },
   {
     path: 'movie/:id',

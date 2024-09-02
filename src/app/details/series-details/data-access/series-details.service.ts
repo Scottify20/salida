@@ -15,9 +15,6 @@ import {
   SeasonSummary,
   Series,
 } from '../../../shared/interfaces/tmdb/Series';
-import { HeroSectionData } from '../../shared/ui/media-hero-section/media-hero-section.component';
-import { Image } from '../../../shared/interfaces/tmdb/All';
-import { TmdbConfigService } from '../../../shared/services/tmdb/tmdb-config.service';
 
 @Injectable({
   providedIn: 'root',
@@ -69,8 +66,8 @@ export class SeriesDetailsService {
   seasonsSummary: SeasonSummary[] = [];
   selectedSeasonSummary: SeasonSummary | null = null;
 
-  private _seriesData = new BehaviorSubject<Series | null>(null);
-  seriesData$: Observable<Series | null> = this._seriesData.asObservable();
+  private _seriesData$ = new BehaviorSubject<Series | null>(null);
+  seriesData$: Observable<Series | null> = this._seriesData$.asObservable();
 
   selectedSeasonData$: Observable<Season | null> =
     this.selectedSeasonSummary$.pipe(
@@ -90,8 +87,13 @@ export class SeriesDetailsService {
       })
     );
 
-  viewSeriesDetails(id: number) {
-    this.router.navigateByUrl(`/series/${id}/details`);
+  viewSeriesDetails(id: number, title: string) {
+    const titleSlugified = ('-' + title)
+      .replace(/[^\p{L}\p{N}-]/giu, '-')
+      .replace(/-{2}/, '-')
+      .toLowerCase();
+    this._seriesData$.next(null);
+    this.router.navigateByUrl(`/series/${id}${titleSlugified}/details`);
   }
 
   get isSeriesRoute(): boolean {
@@ -100,7 +102,7 @@ export class SeriesDetailsService {
 
   private updateCurrentSeries() {
     const urlSegments = this.router.url.split('/');
-    const titleId = parseInt(urlSegments[2], 10);
+    const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
 
     if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {
@@ -110,7 +112,7 @@ export class SeriesDetailsService {
     if (!isNaN(titleId) && this.isSeriesRoute) {
       this.fetchCurrentSeriesData();
     } else {
-      this._seriesData.next(null);
+      this._seriesData$.next(null);
     }
   }
 
@@ -128,12 +130,12 @@ export class SeriesDetailsService {
         this.seasonsSummary$.next(
           series.seasons.filter((season) => season.episode_count > 0)
         );
-        this._seriesData.next(series);
+        this._seriesData$.next(series);
         this.fetchedSeriesId = series.id;
       },
       error: (error) => {
         console.error('Error fetching series details:', error);
-        this._seriesData.next(null);
+        this._seriesData$.next(null);
       },
     });
   }

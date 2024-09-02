@@ -5,14 +5,18 @@ import { BehaviorSubject, Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class TemporaryUserPreferencesService {
-  private _preferences = new BehaviorSubject<Preferences>(
+  private _preferences = new BehaviorSubject<UserPreferences>(
     this.defaultPreferences
   );
 
-  preferences$: Observable<Preferences> = this._preferences.asObservable();
+  preferences$: Observable<UserPreferences> = this._preferences.asObservable();
 
-  private get defaultPreferences(): Preferences {
+  private get defaultPreferences(): UserPreferences {
     return {
+      theme: {
+        colorScheme: 'dark',
+        accentColor: '#FFFFFF',
+      },
       details: {
         movieAndSeriesDetails: {
           reviews: {
@@ -59,18 +63,23 @@ export class TemporaryUserPreferencesService {
     }));
   }
 
-  private updatePreferences(updater: (prev: Preferences) => Preferences) {
+  private updatePreferences(
+    updater: (prev: UserPreferences) => UserPreferences
+  ) {
     this._preferences.next(updater(this._preferences.value));
   }
 }
 
-export interface Preferences {
+export interface UserPreferences {
+  theme: { colorScheme: ThemeColorScheme; accentColor: string };
   details: {
     movieAndSeriesDetails: MovieAndSeriesDetailsOverlapPreferences;
     movieDetails: MovieDetailsSpecificPreferences;
     personDetails: PersonDetailsPreferences;
   };
 }
+
+type ThemeColorScheme = 'dark' | 'light' | 'system';
 
 export interface MovieDetailsPreferences
   extends MovieDetailsSpecificPreferences,
