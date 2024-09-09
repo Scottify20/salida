@@ -1,0 +1,165 @@
+<div class="login">
+  <div class="login__header">
+    <app-buttons-header [headerButtons]="headerButtons"></app-buttons-header>
+  </div>
+
+  <div class="login__main">
+    <div class="login__header-container">
+      <h1 class="login__title">Create your xxxxxx account</h1>
+      <img
+        src="assets/icons/login/illustration-temp.svg"
+        alt=""
+        width="130px"
+        height="130px"
+        class="login__illustration"
+      />
+    </div>
+
+    <div class="divider-with-title">
+      <span class="divider__left divider"></span
+      ><span class="divider__title">SIGN UP WITH</span>
+      <span class="divider__right divider"></span>
+    </div>
+
+    <app-socials-sign-in></app-socials-sign-in>
+
+    <div class="divider-with-title">
+      <span class="divider__left divider"></span
+      ><span class="divider__title">OR</span>
+      <span class="divider__right divider"></span>
+    </div>
+    <form
+      class="login__section login__form-container"
+      [formGroup]="signupForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="field">
+        <label for="email" class="label">EMAIL</label>
+        <input
+          tabindex="1"
+          placeholder="Example: name@example.com"
+          type="text"
+          class="input"
+          formControlName="email"
+        />
+        <div
+          [class]="shakeError ? 'shake-error' : ''"
+          class="form__error-messages-container"
+        >
+          <p
+            [class]="isEmailInvalid() ? '' : 'no-error'"
+            *ngFor="let error of emailErrorMessages()"
+            class="form__error-message"
+          >
+            {{ error }}
+          </p>
+          <p class="form__error-message">
+            {{ firebaseAuthEmailErrorMessageSignal() }}
+          </p>
+        </div>
+      </div>
+
+      <p>{{ firebaseAuthGeneralErrorMessageSignal() }}</p>
+
+      <div class="field">
+        <label for="password" class="label">PASSWORD</label>
+        <div class="password-input-and-toggle-container">
+          <input
+            #passwordInput
+            autocomplete="on"
+            appCapsLockDetector
+            tabindex="1"
+            placeholder="Create a strong password"
+            [type]="passwordInputType"
+            class="input password"
+            formControlName="password"
+            [style]="
+              passwordInputType == 'text'
+                ? 'color: transparent; caret-color: white'
+                : ''
+            "
+          />
+
+          <div
+            class="login__password-invalid-character-checker"
+            [style]="
+              passwordInputType == 'text' ? 'opacity: 100%' : 'opacity: 0%'
+            "
+          >
+            <p>
+              <span
+                class="login__password-char"
+                *ngFor="let charCheck of passwordValidCharactersCheck()"
+                [ngClass]="charCheck.invalid ? 'invalid' : ''"
+                >{{ charCheck.char }}</span
+              >
+            </p>
+            <p class="chars-right-padding"></p>
+          </div>
+
+          <div
+            tabindex="1"
+            role="button"
+            class="login__password-visibility-toggle"
+            (click)="togglePasswordVisibility()"
+            (click)="passwordInput.focus()"
+          >
+            <img
+              [src]="
+                passwordInputType == 'password'
+                  ? 'assets/icons/login/eye-closed.svg'
+                  : 'assets/icons/login/eye-open.svg'
+              "
+              height="24px"
+              alt=""
+              class="password-visibility-toggle-icon"
+            />
+          </div>
+        </div>
+        <div
+          class="form__error-messages-container"
+          [class]="shakeError ? 'shake-error' : ''"
+        >
+          <p
+            [class]="isPasswordInvalid() ? '' : 'no-error'"
+            *ngFor="let error of passwordErrorMessages()"
+            class="form__error-message"
+          >
+            {{ error }}
+          </p>
+          <p class="form__error-message">
+            {{ firebaseAuthPasswordErrorMessageSignal() }}
+          </p>
+        </div>
+      </div>
+
+      <div class="field">
+        <button
+          [class]="
+            isEmailInvalid() ||
+            isPasswordInvalid() ||
+            firebaseAuthEmailErrorMessageSignal() ||
+            firebaseAuthPasswordErrorMessageSignal()
+              ? 'disabled'
+              : ''
+          "
+          tabindex="1"
+          type="submit"
+          class="login-button"
+        >
+          Create Account
+        </button>
+      </div>
+    </form>
+
+    <div class="login__other-links-container">
+      <p
+        tabindex="1"
+        [routerLink]="['/auth/login']"
+        class="login__other-link login__other-link--primary"
+      >
+        Already have an account?
+      </p>
+    </div>
+  </div>
+</div>

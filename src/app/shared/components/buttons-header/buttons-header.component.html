@@ -2,6 +2,7 @@
   <ng-container *ngFor="let button of headerButtons; let buttonIndex = index">
     <!-- if button opens external link -->
     <a
+      tabindex="1"
       *ngIf="button.anchor?.urlType === 'external' && !button.actionCallback"
       [href]="button.anchor?.path"
       rel="noopener noreferrer"
@@ -21,6 +22,7 @@
 
     <!-- if button opens internal link/route -->
     <a
+      tabindex="1"
       *ngIf="button.anchor?.urlType === 'internal' && !button.actionCallback"
       [routerLink]="button.anchor?.path"
       class="header__button"
@@ -41,6 +43,7 @@
 
     <!-- if button is callback calling button -->
     <div
+      tabindex="1"
       role="button"
       *ngIf="button.actionCallback"
       class="header__button"

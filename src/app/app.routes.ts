@@ -4,16 +4,29 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { movieDetailsRoutes } from './details/movie-details/feature/movie-details.routes';
 import { seriesDetailsRoutes } from './details/series-details/feature/series-details.routes';
 import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
-import { LoginSignUpPageComponent } from './test/login-sign-up-page/login-sign-up-page.component';
-
 export const routes: Routes = [
   {
     path: '',
     component: HomeComponent,
   },
   {
-    path: 'login',
-    component: LoginSignUpPageComponent,
+    path: 'auth',
+    children: [
+      {
+        path: 'login',
+        loadComponent: () =>
+          import('./auth/login/feature/login-page.component').then(
+            (m) => m.LoginPageComponent
+          ),
+      },
+      {
+        path: 'signup',
+        loadComponent: () =>
+          import('./auth/signup/feature/sign-up-page.component').then(
+            (m) => m.SignUpPageComponent
+          ),
+      },
+    ],
   },
   {
     path: 'movie/:id',

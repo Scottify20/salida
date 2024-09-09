@@ -1,7 +1,0 @@
-<div class="container">
-  <button (click)="onSignInWithGoogleClick()">Sign in with Google</button>
-  <button (click)="onSignOutClick()">Sign Out</button>
-  <div *ngIf="userService.user$ | async">
-    <p>Logged in with google</p>
-  </div>
-</div>

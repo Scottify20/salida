@@ -5,6 +5,8 @@ import { UserInFireStore } from '../../shared/interfaces/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FirebaseAuthService } from '../auth/firebase-auth.service';
 
+import { sendEmailVerification } from '@angular/fire/auth';
+
 @Injectable({
   providedIn: 'root',
 })
@@ -27,6 +29,7 @@ export class UserService {
     const userCopy: { [key: string]: any } = { ...user };
 
     const userToFirestore: UserInFireStore = {
+      isAnonymous: false,
       uid: '',
       password: undefined,
       email: undefined,
@@ -79,11 +82,15 @@ export class UserService {
     if (this.user$) {
       this.user$
         .pipe(
-          tap((user) => {
+          tap(async (user) => {
             if (!user) {
               return;
             }
             console.log(user);
+
+            if (!user.emailVerified) {
+              await sendEmailVerification(user);
+            }
           })
         )
         .subscribe();

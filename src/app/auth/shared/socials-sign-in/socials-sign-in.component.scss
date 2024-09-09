@@ -1,0 +1,45 @@
+.login__socials-container {
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: 1rem;
+
+  .login__social-login-button {
+    cursor: pointer;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    column-gap: 0.5rem;
+    background-color: rgba(255, 255, 255, 0.15);
+    padding: 0.5rem;
+    border-radius: 100px;
+    transform: scale(1);
+    transition: all ease-in-out 0.2s;
+    user-select: none;
+
+    &.disabled {
+      pointer-events: none;
+      opacity: 50%;
+    }
+
+    &:hover {
+      background-color: rgba(255, 255, 255, 0.25);
+    }
+
+    &:focus {
+      outline: 2px solid var(--accent-color);
+      border: transparent;
+    }
+
+    &:active {
+      transform: scale(0.8);
+    }
+
+    .login__button-logo {
+      width: 1.5rem;
+      aspect-ratio: 1;
+    }
+    .login__button-label {
+      margin-right: 0.25rem;
+    }
+  }
+}

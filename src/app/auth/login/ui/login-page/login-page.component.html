@@ -1,0 +1,156 @@
+<app-modal></app-modal>
+
+<div class="login">
+  <div class="login__header">
+    <app-buttons-header [headerButtons]="headerButtons"></app-buttons-header>
+  </div>
+
+  <div class="login__main">
+    <div class="login__header-container">
+      <h1 class="login__title">Login to XXXXXXX</h1>
+      <img
+        src="assets/icons/login/illustration-temp.svg"
+        alt=""
+        width="130px"
+        height="130px"
+        class="login__illustration"
+      />
+    </div>
+
+    <div class="divider-with-title">
+      <span class="divider__left divider"></span
+      ><span class="divider__title">LOGIN WITH</span>
+      <span class="divider__right divider"></span>
+    </div>
+
+    <app-socials-sign-in></app-socials-sign-in>
+
+    <div class="divider-with-title">
+      <span class="divider__left divider"></span
+      ><span class="divider__title">OR</span>
+      <span class="divider__right divider"></span>
+    </div>
+
+    <form
+      class="login__section login__form-container"
+      [formGroup]="loginForm"
+      (ngSubmit)="onSubmit()"
+    >
+      <div class="field">
+        <label for="email" class="label">USERNAME / EMAIL</label>
+        <input
+          tabindex="1"
+          placeholder="Enter username or email"
+          type="text"
+          class="input"
+          formControlName="email"
+          [class.invalid]="isEmailOrUsernameInvalid"
+        />
+        <div
+          class="form__error-messages-container"
+          [class]="shakeError ? 'shake-error' : ''"
+        >
+          <p
+            [class]="isEmailOrUsernameInvalid() ? '' : 'no-error'"
+            *ngFor="let error of emailOrUsernameErrorMessages()"
+            class="form__error-message"
+          >
+            {{ error }}
+          </p>
+          <p class="form__error-message">
+            {{ firebaseAuthEmailErrorMessageSignal() }}
+          </p>
+        </div>
+      </div>
+
+      <p>{{ firebaseAuthGeneralErrorMessageSignal() }}</p>
+
+      <div class="field">
+        <label for="password" class="label">PASSWORD</label>
+        <div class="password-input-and-toggle-container">
+          <input
+            appCapsLockDetector
+            tabindex="1"
+            placeholder="Enter password"
+            [type]="passwordInputType"
+            class="input"
+            formControlName="password"
+            [class.invalid]="isPasswordInvalid"
+          />
+          <div
+            tabindex="1"
+            role="button"
+            class="login__password-visibility-toggle"
+            (click)="togglePasswordVisibility()"
+          >
+            <img
+              [src]="
+                passwordInputType == 'password'
+                  ? 'assets/icons/login/eye-closed.svg'
+                  : 'assets/icons/login/eye-open.svg'
+              "
+              height="24px"
+              alt=""
+              class="password-visibility-toggle-icon"
+            />
+          </div>
+        </div>
+        <div
+          class="form__error-messages-container"
+          [class]="shakeError ? 'shake-error' : ''"
+        >
+          <p
+            [class]="isPasswordInvalid() ? '' : 'no-error'"
+            *ngFor="let error of passwordErrorMessages()"
+            class="form__error-message"
+          >
+            {{ error }}
+          </p>
+          <p class="form__error-message">
+            {{ firebaseAuthPasswordErrorMessageSignal() }}
+          </p>
+        </div>
+      </div>
+      <!-- 
+      <div class="form__input--keep-logged-in">
+        <input tabindex="1" type="checkbox" formControlName="keepLoggedIn" />
+        <label for="keep-logged-in">Keep me logged in</label>
+      </div> -->
+
+      <div class="field">
+        <button
+          [class]="
+            isEmailOrUsernameInvalid() ||
+            isPasswordInvalid() ||
+            (firebaseAuthEmailErrorMessageSignal() &&
+              firebaseAuthPasswordErrorMessageSignal())
+              ? 'disabled'
+              : ''
+          "
+          tabindex="1"
+          type="submit"
+          class="login-button"
+        >
+          Login
+        </button>
+      </div>
+    </form>
+
+    <div class="login__other-links-container">
+      <p
+        [routerLink]="['/auth/signup']"
+        tabindex="1"
+        class="login__other-link login__other-link--primary"
+      >
+        Create an Account
+      </p>
+      <p
+        [routerLink]="['/auth/forgot-password']"
+        tabindex="1"
+        class="login__other-link login__other-link--secondary"
+      >
+        Forgot Password?
+      </p>
+    </div>
+  </div>
+</div>
