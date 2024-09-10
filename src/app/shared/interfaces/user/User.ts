@@ -8,6 +8,7 @@ export type UserInFireStore = {
   password?: string;
   email?: string;
   displayName?: string;
+  username?: string;
   photoURL?: string;
   phoneNumber?: string;
   providerData: SignInProvider[];

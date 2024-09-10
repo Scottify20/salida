@@ -1,9 +1,8 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { Observable, Subscription, take, tap } from 'rxjs';
+import { Observable, take, tap } from 'rxjs';
 import { UserInFireStore } from '../../shared/interfaces/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { FirebaseAuthService } from '../auth/firebase-auth.service';
 
 import { sendEmailVerification } from '@angular/fire/auth';
 
@@ -36,6 +35,7 @@ export class UserService {
       displayName: undefined,
       photoURL: undefined,
       phoneNumber: undefined,
+      username: undefined,
       providerData: [],
       preferences: undefined,
       role: 'user',
@@ -63,7 +63,7 @@ export class UserService {
 
     this.http
       .post<UserRegistrationResponse>(
-        `${this.baseUrl}/register`,
+        `${this.baseUrl}/make-permanent`,
         userToFirestore,
         { headers }
       )

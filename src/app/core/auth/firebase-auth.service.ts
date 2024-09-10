@@ -94,11 +94,10 @@ export class FirebaseAuthService {
   }
 
   getFirebaseAuthErrorMessage(errorCode: string): {
-    errorSource: string;
+    errorSource: FirebaseAuthErrorSource;
     message: string;
   } {
-    let errorSource: 'general' | 'password' | 'email' | 'email-and-password' =
-      'general';
+    let errorSource: FirebaseAuthErrorSource = 'general';
     let message = 'Unexpected error. Try again or contact the developer.';
 
     switch (errorCode) {
@@ -122,14 +121,14 @@ export class FirebaseAuthService {
         break;
       case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
         message = 'The email or password you entered in incorrect.';
-        errorSource = 'email-and-password';
+        errorSource = 'emailAndPassword';
         break;
       case AuthErrorCodes.POPUP_BLOCKED:
         message = 'Please allow popups.';
         break;
       case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
         message =
-          'Too many failed attempts. Reset your password or again later';
+          'Too many failed attempts. Reset your password or try again later';
         break;
       case AuthErrorCodes.USER_DELETED:
         message = "Couldn't find your account.";
@@ -139,3 +138,13 @@ export class FirebaseAuthService {
     return { errorSource, message };
   }
 }
+
+export type FirebaseAuthErrorSource =
+  | 'general'
+  | 'password'
+  | 'email'
+  | 'emailAndPassword';
+
+export type FirebaseAuthErrors = {
+  [key in FirebaseAuthErrorSource]?: string | null;
+};

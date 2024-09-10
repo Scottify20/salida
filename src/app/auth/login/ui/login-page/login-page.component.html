@@ -1,4 +1,4 @@
-<app-modal></app-modal>
+<app-dialog></app-dialog>
 
 <div class="login">
   <div class="login__header">
@@ -43,27 +43,22 @@
           placeholder="Enter username or email"
           type="text"
           class="input"
-          formControlName="email"
-          [class.invalid]="isEmailOrUsernameInvalid"
+          formControlName="emailOrUsername"
         />
-        <div
-          class="form__error-messages-container"
-          [class]="shakeError ? 'shake-error' : ''"
-        >
+        <div class="form__error-messages-container">
           <p
-            [class]="isEmailOrUsernameInvalid() ? '' : 'no-error'"
             *ngFor="let error of emailOrUsernameErrorMessages()"
             class="form__error-message"
           >
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthEmailErrorMessageSignal() }}
+            {{ firebaseAuthErrorMessagesSignal().email }}
           </p>
         </div>
       </div>
 
-      <p>{{ firebaseAuthGeneralErrorMessageSignal() }}</p>
+      <p>{{ firebaseAuthErrorMessagesSignal().general }}</p>
 
       <div class="field">
         <label for="password" class="label">PASSWORD</label>
@@ -75,7 +70,6 @@
             [type]="passwordInputType"
             class="input"
             formControlName="password"
-            [class.invalid]="isPasswordInvalid"
           />
           <div
             tabindex="1"
@@ -95,19 +89,15 @@
             />
           </div>
         </div>
-        <div
-          class="form__error-messages-container"
-          [class]="shakeError ? 'shake-error' : ''"
-        >
+        <div class="form__error-messages-container">
           <p
-            [class]="isPasswordInvalid() ? '' : 'no-error'"
             *ngFor="let error of passwordErrorMessages()"
             class="form__error-message"
           >
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthPasswordErrorMessageSignal() }}
+            {{ firebaseAuthErrorMessagesSignal().password }}
           </p>
         </div>
       </div>
@@ -119,14 +109,7 @@
 
       <div class="field">
         <button
-          [class]="
-            isEmailOrUsernameInvalid() ||
-            isPasswordInvalid() ||
-            (firebaseAuthEmailErrorMessageSignal() &&
-              firebaseAuthPasswordErrorMessageSignal())
-              ? 'disabled'
-              : ''
-          "
+          [class]="isLoginButtonDisabled() ? 'disabled' : ''"
           tabindex="1"
           type="submit"
           class="login-button"

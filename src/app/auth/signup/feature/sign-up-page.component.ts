@@ -110,7 +110,7 @@ export class SignUpPageComponent {
               this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
 
             switch (errorSource) {
-              case 'email-and-password':
+              case 'emailAndPassword':
                 this.firebaseAuthEmailErrorMessageSignal.set(errorMessage);
                 this.firebaseAuthPasswordErrorMessageSignal.set(errorMessage);
                 this.firebaseAuthGeneralErrorMessageSignal.set(null);
