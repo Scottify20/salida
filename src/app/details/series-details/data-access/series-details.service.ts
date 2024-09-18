@@ -14,7 +14,7 @@ import {
   Season,
   SeasonSummary,
   Series,
-} from '../../../shared/interfaces/tmdb/Series';
+} from '../../../shared/interfaces/models/tmdb/Series';
 
 @Injectable({
   providedIn: 'root',

@@ -1,13 +1,13 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Movie } from '../../interfaces/tmdb/Movies';
+import { Movie } from '../../interfaces/models/tmdb/Movies';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
-import { Series } from '../../interfaces/tmdb/Series';
+import { Series } from '../../interfaces/models/tmdb/Series';
 import {
   Country,
   TmdbTimeWindow,
   TrendingTitles,
-} from '../../interfaces/tmdb/All';
+} from '../../interfaces/models/tmdb/All';
 import { TmdbConfigService } from './tmdb-config.service';
 import { SeriesService } from './series.service';
 import { MovieService } from './movie.service';

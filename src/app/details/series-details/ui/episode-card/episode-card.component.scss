@@ -152,43 +152,43 @@
   }
 }
 
-.episode-card.no-plot {
-  --episode-thumbnail-height: 85px;
-  .episode__poster-and-mini-number-container {
-    .episode__mini-number {
-      display: grid;
-    }
-  }
+// .episode-card.no-plot {
+//   --episode-thumbnail-height: 85px;
+//   .episode__poster-and-mini-number-container {
+//     .episode__mini-number {
+//       display: grid;
+//     }
+//   }
 
-  .episode-card__header {
-    column-gap: 0;
+//   .episode-card__header {
+//     column-gap: 0;
 
-    .episode__number {
-      display: none;
-    }
+//     .episode__number {
+//       display: none;
+//     }
 
-    .title-runtime-and-date-container {
-      row-gap: 0.5rem;
+//     .title-runtime-and-date-container {
+//       row-gap: 0.5rem;
 
-      .episode__title {
-        font-size: 1.125rem;
-        font-weight: 600;
-        line-height: 1.2;
-        max-height: calc(1.125rem * 1.2 * 2);
-      }
+//       .episode__title {
+//         font-size: 1.125rem;
+//         font-weight: 600;
+//         line-height: 1.2;
+//         max-height: calc(1.125rem * 1.2 * 2);
+//       }
 
-      .episode__date-and-runtime {
-        font-size: 0.9rem;
+//       .episode__date-and-runtime {
+//         font-size: 0.9rem;
 
-        span {
-          color: var(--text-color-subtle);
-          font-weight: 300;
-        }
-      }
-    }
-  }
+//         span {
+//           color: var(--text-color-subtle);
+//           font-weight: 300;
+//         }
+//       }
+//     }
+//   }
 
-  .episode__plot {
-    display: none;
-  }
-}
+//   .episode__plot {
+//     display: none;
+//   }
+// }

@@ -1,9 +1,13 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
 import { HttpClient, HttpParams } from '@angular/common/http';
-import { Season, Series, TrendingSeries } from '../../interfaces/tmdb/Series';
+import {
+  Season,
+  Series,
+  TrendingSeries,
+} from '../../interfaces/models/tmdb/Series';
 import { TmdbConfigService } from './tmdb-config.service';
-import { TmdbTimeWindow } from '../../interfaces/tmdb/All';
+import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
 
 @Injectable({
   providedIn: 'root',

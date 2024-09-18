@@ -117,13 +117,18 @@
   }
 
   button[type="submit"] {
+    // padding: unset;
     cursor: pointer;
     // margin-top: 2rem;
-    color: var(--text-color-inverted);
     background-color: white;
     font-weight: 600;
     border: 2px solid white;
     transform: scale(1);
+
+    & * {
+      color: var(--text-color-inverted);
+      transform: translateY(-0.15em);
+    }
 
     &.disabled {
       pointer-events: none;

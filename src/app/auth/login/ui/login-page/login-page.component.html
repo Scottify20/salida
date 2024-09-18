@@ -7,7 +7,7 @@
 
   <div class="login__main">
     <div class="login__header-container">
-      <h1 class="login__title">Login to XXXXXXX</h1>
+      <h1 class="login__title">Login to Salida</h1>
       <img
         src="assets/icons/login/illustration-temp.svg"
         alt=""
@@ -53,12 +53,10 @@
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthErrorMessagesSignal().email }}
+            {{ authErrorMessagesSig().emailOrUsername }}
           </p>
         </div>
       </div>
-
-      <p>{{ firebaseAuthErrorMessagesSignal().general }}</p>
 
       <div class="field">
         <label for="password" class="label">PASSWORD</label>
@@ -97,7 +95,7 @@
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthErrorMessagesSignal().password }}
+            {{ authErrorMessagesSig().password }}
           </p>
         </div>
       </div>
@@ -114,7 +112,8 @@
           type="submit"
           class="login-button"
         >
-          Login
+          <p *ngIf="!isSubmitActioninProgress">Login</p>
+          <app-loading-dots *ngIf="isSubmitActioninProgress"></app-loading-dots>
         </button>
       </div>
     </form>

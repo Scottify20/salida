@@ -8,13 +8,19 @@ import {
 import { HeaderButton } from '../shared/components/buttons-header/buttons-header.component';
 import { Router } from '@angular/router';
 import { TmdbService } from '../shared/services/tmdb/tmdb.service';
-import { MovieSummary, TrendingMovies } from '../shared/interfaces/tmdb/Movies';
+import {
+  MovieSummary,
+  TrendingMovies,
+} from '../shared/interfaces/models/tmdb/Movies';
 import {
   SeriesSummary,
   TrendingSeries,
-} from '../shared/interfaces/tmdb/Series';
-import { TrendingPeople } from '../shared/interfaces/tmdb/People';
-import { MediaSummary, TrendingTitles } from '../shared/interfaces/tmdb/All';
+} from '../shared/interfaces/models/tmdb/Series';
+import { TrendingPeople } from '../shared/interfaces/models/tmdb/People';
+import {
+  MediaSummary,
+  TrendingTitles,
+} from '../shared/interfaces/models/tmdb/All';
 import { Subscription } from 'rxjs';
 import { SeriesDetailsService } from '../details/series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../details/movie-details/data-access/movie-details.service';

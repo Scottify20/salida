@@ -1,4 +1,4 @@
-import { UserPreferences } from '../../services/preferences/temporary-user-preferences-service';
+import { UserPreferences } from '../../../services/preferences/temporary-user-preferences-service';
 
 export type UserInFireStore = {
   [key: string]: any;

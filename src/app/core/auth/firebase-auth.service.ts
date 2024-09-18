@@ -14,7 +14,16 @@ import {
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 import { UserService } from '../user/user.service';
-import { catchError, from, map, Observable, of } from 'rxjs';
+import {
+  catchError,
+  from,
+  map,
+  Observable,
+  shareReplay,
+  switchMap,
+} from 'rxjs';
+import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
+import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
 
 @Injectable({
   providedIn: 'root',
@@ -61,19 +70,54 @@ export class FirebaseAuthService {
     );
   }
 
-  loginUserWithEmailAndPassword$(
+  loginWithEmailAndPassword$(
     email: string,
     password: string
   ): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((userCredential) => userCredential.user),
       catchError((error) => {
+        // console.log(error.name, error.code, 'firebase auth service');
         throw error;
       })
     );
   }
 
-  registerUserWithEmailAndPasswordToAuth$(
+  loginWithUsernameAndPassword$(
+    username: string,
+    password: string
+  ): Observable<User> {
+    return this.userService.getUserEmailsByUsername$(username).pipe(
+      switchMap((response) => {
+        const emails = (response as SalidaEmailsResponse).data
+          ?.emails[0] as string;
+
+        return this.loginWithEmailAndPassword$(emails, password);
+      }),
+      catchError((err) => {
+        if (err.name === 'FirebaseError') {
+          throw err;
+        }
+
+        if (err.status == 0) {
+          throw new SalidaAuthError(
+            "Can't connect to server.",
+            'auth/cannot-connect-to-server',
+            'general'
+          );
+        }
+
+        // if error comes from fetching user's emails
+        throw new SalidaAuthError(
+          err.error.message,
+          err.error.code,
+          err.error.source
+        );
+      })
+    );
+  }
+
+  registerWithEmailAndPasswordToAuth$(
     email: string,
     password: string
   ): Observable<User> {
@@ -127,13 +171,16 @@ export class FirebaseAuthService {
         message = 'Please allow popups.';
         break;
       case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
-        message =
-          'Too many failed attempts. Reset your password or try again later';
+        errorSource = 'email';
+        message = 'Too many failed attempts. Please try again later';
         break;
       case AuthErrorCodes.USER_DELETED:
         message = "Couldn't find your account.";
         errorSource = 'email';
         break;
+      case AuthErrorCodes.INTERNAL_ERROR:
+        message =
+          'An internal error has occured. Check your internet connection or contact the developer.';
     }
     return { errorSource, message };
   }

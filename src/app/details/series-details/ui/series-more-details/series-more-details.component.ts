@@ -11,7 +11,7 @@ import {
   Series,
   SeriesCastCredit,
   SeriesCrewCredit,
-} from '../../../../shared/interfaces/tmdb/Series';
+} from '../../../../shared/interfaces/models/tmdb/Series';
 import { Subscription } from 'rxjs';
 import { SeriesDetailsService } from '../../data-access/series-details.service';
 import { Router } from '@angular/router';

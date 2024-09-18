@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Episode } from '../../../../shared/interfaces/tmdb/Series';
+import { Episode } from '../../../../shared/interfaces/models/tmdb/Series';
 import { CommonModule, DatePipe } from '@angular/common';
 
 @Component({

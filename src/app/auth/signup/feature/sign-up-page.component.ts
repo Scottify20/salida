@@ -98,7 +98,7 @@ export class SignUpPageComponent {
       const password = this.signupForm.get('password')?.getRawValue();
       // try to register user to auth
       this.registrationSubscription = this.firebaseAuthService
-        .registerUserWithEmailAndPasswordToAuth$(email, password)
+        .registerWithEmailAndPasswordToAuth$(email, password)
         .pipe(
           tap(),
           catchError((error) => {

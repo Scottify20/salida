@@ -3,7 +3,7 @@ import { Component, Renderer2, Inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
-  selector: 'nav',
+  selector: 'app-nav',
   standalone: true,
   imports: [CommonModule, RouterModule],
   templateUrl: './nav.component.html',

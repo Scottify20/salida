@@ -2,4 +2,6 @@
   --navbar-height: calc((0.625 * 2rem) + 3rem);
   --navbar-bottom: 0.5rem;
   --main-max-width: 900px;
+
+  --toasts-padding-bottom: calc(var(--navbar-height) + 1rem);
 }

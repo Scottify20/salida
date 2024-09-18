@@ -4,7 +4,7 @@ import {
   ElementRef,
   ViewChild,
 } from '@angular/core';
-import { Genre, Image } from '../../../../shared/interfaces/tmdb/All';
+import { Genre, Image } from '../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
@@ -14,9 +14,9 @@ import {
   HeaderButton,
   ButtonsHeaderComponent,
 } from '../../../../shared/components/buttons-header/buttons-header.component';
-import { Series } from '../../../../shared/interfaces/tmdb/Series';
+import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
-import { Movie } from '../../../../shared/interfaces/tmdb/Movies';
+import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
 
 @Component({
   selector: 'app-media-hero-section',

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../shared/services/tmdb/tmdb.service';
 import { BehaviorSubject, filter, Observable } from 'rxjs';
-import { Movie } from '../../../shared/interfaces/tmdb/Movies';
+import { Movie } from '../../../shared/interfaces/models/tmdb/Movies';
 
 @Injectable({
   providedIn: 'root',

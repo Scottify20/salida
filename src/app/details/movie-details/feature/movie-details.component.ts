@@ -55,7 +55,7 @@ export class MovieDetailsComponent {
         {
           text: 'Releases',
           routerLinkPath: 'releases',
-          visibleOn: ['movie/\\d+/'],
+          visibleOn: ['movie/\\d+.*/'],
         },
         {
           text: 'Reviews',
@@ -89,7 +89,7 @@ export class MovieDetailsComponent {
               'release-type'
             );
           },
-          visibleOn: ['movie/\\d+/releases'],
+          visibleOn: ['movie/\\d+.*/releases'],
         },
         {
           iconPathActive: 'assets/icons/pill-tabs/Globe-black.svg',
@@ -104,7 +104,7 @@ export class MovieDetailsComponent {
               'country'
             );
           },
-          visibleOn: ['movie/\\d+/releases'],
+          visibleOn: ['movie/\\d+.*/releases'],
         },
       ],
     },

@@ -2,15 +2,15 @@ import { Component } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
-import { Reviews } from '../../../../shared/interfaces/tmdb/All';
+import { Reviews } from '../../../../shared/interfaces/models/tmdb/All';
 import { CommonModule } from '@angular/common';
 import {
   ReviewsPreferences,
   TemporaryUserPreferencesService,
 } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
-import { Movie } from '../../../../shared/interfaces/tmdb/Movies';
-import { Series } from '../../../../shared/interfaces/tmdb/Series';
+import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
+import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 
 @Component({
   selector: 'app-reviews',

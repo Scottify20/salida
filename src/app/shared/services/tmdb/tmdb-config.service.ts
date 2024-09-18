@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
-import { Country } from '../../interfaces/tmdb/All';
+import { Country } from '../../interfaces/models/tmdb/All';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 
@@ -10,7 +10,7 @@ import { environment } from '../../../../environments/environment';
 export class TmdbConfigService {
   constructor(private http: HttpClient) {}
 
-  baseUrl = environment.TMDB_API_BASE_URL;
+  baseUrl = `${environment.SALIDA_API_BASE_URL}/api/v1/public/tmdb`;
 
   localCountryCode = 'PH';
   private cachedCountries: Country[] = [];

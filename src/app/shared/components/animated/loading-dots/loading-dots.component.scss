@@ -1,0 +1,42 @@
+.dots-loading-animation {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: center;
+  transform: translateY(-15%);
+  column-gap: 0px;
+
+  & * {
+    // color: var(--accent-color);
+    color: var(--text-color-inverted);
+  }
+
+  @for $i from 1 through 5 {
+    .dot-#{$i} {
+      animation: LoadingDot 1s ease-in-out infinite;
+      animation-delay: ($i - 1) *
+        0.075s; // Reduced delay for smoother transition
+    }
+  }
+}
+
+@keyframes LoadingDot {
+  0% {
+    transform: translateY(0);
+  }
+
+  25% {
+    transform: translateY(0.4em);
+  }
+
+  50% {
+    transform: translateY(-0.4em);
+  }
+
+  75% {
+    transform: translateY(0.2em);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}

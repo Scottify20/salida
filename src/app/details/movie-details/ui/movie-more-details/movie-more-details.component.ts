@@ -4,7 +4,7 @@ import {
   CastCredit,
   Credit,
   Movie,
-} from '../../../../shared/interfaces/tmdb/Movies';
+} from '../../../../shared/interfaces/models/tmdb/Movies';
 import { Subscription } from 'rxjs';
 import {
   TextsSectionOptions,
@@ -14,7 +14,7 @@ import {
   CollapsibleTextSectionOptions,
   CollapsibleTextSectionComponent,
 } from '../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
-import { SeriesCrewCredit } from '../../../../shared/interfaces/tmdb/Series';
+import { SeriesCrewCredit } from '../../../../shared/interfaces/models/tmdb/Series';
 import {
   CardsSectionOptions,
   CardsSectionComponent,

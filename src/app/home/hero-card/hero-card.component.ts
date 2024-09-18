@@ -3,7 +3,10 @@ import { WindowResizeService } from '../../shared/services/dom/window-resize.ser
 import { Subscription } from 'rxjs';
 import { NgIf, DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { MediaSummary, TrendingTitles } from '../../shared/interfaces/tmdb/All';
+import {
+  MediaSummary,
+  TrendingTitles,
+} from '../../shared/interfaces/models/tmdb/All';
 
 @Component({
   selector: 'app-hero-card',

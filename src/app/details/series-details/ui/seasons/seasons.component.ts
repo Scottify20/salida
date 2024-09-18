@@ -1,5 +1,5 @@
 import { Component, ViewChild } from '@angular/core';
-import { Season } from '../../../../shared/interfaces/tmdb/Series';
+import { Season } from '../../../../shared/interfaces/models/tmdb/Series';
 
 import { catchError, map, of, Subscription, switchMap, tap } from 'rxjs';
 import { SeriesDetailsService } from '../../data-access/series-details.service';

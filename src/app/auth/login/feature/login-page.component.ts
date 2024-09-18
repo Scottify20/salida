@@ -11,12 +11,24 @@ import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sig
 import { RouterModule } from '@angular/router';
 import { catchError, distinctUntilChanged, of, Subscription, tap } from 'rxjs';
 import {
-  FirebaseAuthErrors,
+  FirebaseAuthErrorSource,
   FirebaseAuthService,
 } from '../../../core/auth/firebase-auth.service';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { AuthError } from 'firebase/auth';
+import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
+import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
+import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
+
+interface LoginErrorMessages {
+  emailOrUsername: string | null;
+  password: string | null;
+  // general: string | null;
+  [key: string]: string | null;
+}
 
 @Component({
   selector: 'app-login-page',
@@ -30,6 +42,7 @@ import { AuthError } from 'firebase/auth';
     RouterModule,
     ModalComponent,
     DialogComponent,
+    LoadingDotsComponent,
   ],
   templateUrl: '../ui/login-page/login-page.component.html',
   styleUrl: '../ui/login-page/login-page.component.scss',
@@ -37,26 +50,27 @@ import { AuthError } from 'firebase/auth';
 export class LoginPageComponent {
   constructor(
     private fb: FormBuilder,
-    private firebaseAuthService: FirebaseAuthService
+    private firebaseAuthService: FirebaseAuthService,
+    private salidaAuthService: SalidaAuthService,
+    private toastsService: ToastsService
   ) {}
 
   passwordInputType: 'text' | 'password' = 'password';
-
   isSubmittedAtleastOnce = false;
-  shakeError = false;
+  isSubmitActioninProgress = false;
 
-  firebaseAuthErrorMessagesSignal = signal<FirebaseAuthErrors>({
-    email: null,
+  authErrorMessagesSig = signal<LoginErrorMessages>({
+    emailOrUsername: null,
     password: null,
-    general: null,
+    // general: null,
   });
 
-  firebaseLoginSubscription: Subscription | null = null;
-  loginFormValuesSubscription: Subscription | null = null;
+  private firebaseLoginSubscription: Subscription | null = null;
+  private loginFormValuesSubscription: Subscription | null = null;
 
   loginForm = this.fb.group({
-    emailOrUsername: ['', [Validators.required]],
-    password: ['', [Validators.required]],
+    emailOrUsername: ['', { validators: [Validators.required] }],
+    password: ['', { validators: [Validators.required] }],
   });
   // loginForm = this.fb.group({
   //   email: ['', [Validators.required]],
@@ -64,28 +78,18 @@ export class LoginPageComponent {
   //   keepLoggedIn: [false],
   // });
 
-  ngAfterViewInit() {
+  ngOnInit(): void {
     this.loginFormValuesSubscription = this.loginForm.valueChanges
       .pipe(
-        distinctUntilChanged((prev, curr) => {
-          return JSON.stringify(prev) === JSON.stringify(curr);
-        }),
+        distinctUntilChanged(
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+        ),
         tap((changedValues) => {
-          const currentErrors = Object(this.firebaseAuthErrorMessagesSignal());
-          console.log(currentErrors);
-
-          const updatedErrors = Object.assign({}, currentErrors) as {
-            [key: string]: string | null;
-          };
+          const updatedErrors = { ...this.authErrorMessagesSig() };
           for (const key in changedValues) {
-            if (key === 'emailOrUsername') {
-              updatedErrors['email'] = null;
-            } else {
-              updatedErrors[key] = null;
-            }
+            updatedErrors[key] = null;
           }
-
-          this.firebaseAuthErrorMessagesSignal.set(updatedErrors);
+          this.authErrorMessagesSig.set(updatedErrors);
         })
       )
       .subscribe();
@@ -97,26 +101,26 @@ export class LoginPageComponent {
   }
 
   isEmailOrUsernamePatternInvalid(): boolean {
-    return this.loginForm.get('emailOrUsername')?.invalid &&
-      (this.loginForm.get('emailOrUsername')?.dirty ||
-        this.loginForm.get('emailOrUsername')?.touched ||
-        this.isSubmittedAtleastOnce)
-      ? true
-      : false;
+    const control = this.loginForm.get('emailOrUsername');
+    return (
+      !!control &&
+      control.invalid &&
+      (control.dirty || control.touched || this.isSubmittedAtleastOnce)
+    );
   }
 
   isPasswordPatternInvalid(): boolean {
-    return this.loginForm.get('password')?.invalid &&
-      (this.loginForm.get('password')?.dirty ||
-        this.loginForm.get('password')?.touched ||
-        this.isSubmittedAtleastOnce)
-      ? true
-      : false;
+    const control = this.loginForm.get('password');
+    return (
+      !!control &&
+      control.invalid &&
+      (control.dirty || control.touched || this.isSubmittedAtleastOnce)
+    );
   }
 
   isLoginButtonDisabled(): boolean {
     const { password: firebasePasswordError, email: firebaseEmailError } =
-      this.firebaseAuthErrorMessagesSignal();
+      this.authErrorMessagesSig();
 
     return (
       this.isEmailOrUsernamePatternInvalid() ||
@@ -142,8 +146,8 @@ export class LoginPageComponent {
     const errorMessages: string[] = [];
 
     if (
-      this.loginForm.get('password')?.hasError('required') &&
-      this.isPasswordPatternInvalid()
+      this.isPasswordPatternInvalid() &&
+      this.loginForm.get('password')?.hasError('required')
     ) {
       errorMessages.push('Password is required.');
     }
@@ -152,84 +156,139 @@ export class LoginPageComponent {
 
   onSubmit(): void {
     this.isSubmittedAtleastOnce = true;
-    // shake the errors if user tried to submit while errors still persist
-    // will need to add shake error class to the error containers
 
-    if (this.loginForm.valid) {
-      const email = this.loginForm.get('emailOrUsername')?.getRawValue();
-      const password = this.loginForm.get('password')?.getRawValue();
-      this.loginWithEmailAndPassword(email, password);
+    if (!this.loginForm.valid) {
+      return;
     }
+
+    const emailOrUsername = this.loginForm
+      .get('emailOrUsername')
+      ?.getRawValue();
+    const password = this.loginForm.get('password')?.getRawValue();
+
+    const emailRegex =
+      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+
+    if (emailRegex.test(emailOrUsername)) {
+      this.loginWithEmailAndPassword(emailOrUsername, password);
+      return;
+    }
+
+    this.loginWithUsernameAndPassword(emailOrUsername, password);
   }
 
-  loginWithEmailAndPassword(email: string, password: string) {
-    // try to register user to auth
-    this.firebaseLoginSubscription = this.firebaseAuthService
-      .loginUserWithEmailAndPassword$(email, password)
-      .pipe(
-        tap(),
-        catchError((error) => {
-          // if firebase errors occured error message will be shown on the component
-          if (error.name != 'FirebaseError' && !/auth/.test(error.code)) {
-            return of(null);
-          }
+  private loginWithEmailAndPassword(email: string, password: string) {
+    this.isSubmitActioninProgress = true;
 
-          this.setFirebaseAuthErrorMessages(error);
+    this.firebaseLoginSubscription = this.firebaseAuthService
+      .loginWithEmailAndPassword$(email, password)
+      .pipe(
+        tap((user) => {
+          this.handleLoginSuccess(user?.email || 'your account');
+        }),
+        catchError((error) => {
+          this.setAuthErrorMessages(error);
           return of(null);
         })
       )
-      .subscribe();
+      .subscribe(() => {
+        this.isSubmitActioninProgress = false;
+      });
   }
 
-  loginWithUsernameAndPassword(email: string, password: string) {}
+  private loginWithUsernameAndPassword(username: string, password: string) {
+    this.isSubmitActioninProgress = true;
 
-  setFirebaseAuthErrorMessages(error: AuthError) {
-    const { errorSource, message: errorMessage } =
-      this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-
-    const nullErrorMessages: FirebaseAuthErrors = {
-      email: null,
-      password: null,
-      general: null,
-    };
-
-    switch (errorSource) {
-      case 'emailAndPassword':
-        this.firebaseAuthErrorMessagesSignal.set({
-          ...nullErrorMessages,
-          email: errorMessage,
-          password: errorMessage,
-        });
-        break;
-
-      case 'email':
-        this.firebaseAuthErrorMessagesSignal.set({
-          ...nullErrorMessages,
-          email: errorMessage,
-        });
-        break;
-
-      case 'password':
-        this.firebaseAuthErrorMessagesSignal.set({
-          ...nullErrorMessages,
-          password: errorMessage,
-        });
-        break;
-
-      case 'general':
-        this.firebaseAuthErrorMessagesSignal.set({
-          ...nullErrorMessages,
-          general: errorMessage,
-        });
-    }
+    this.firebaseLoginSubscription = this.firebaseAuthService
+      .loginWithUsernameAndPassword$(username, password)
+      .pipe(
+        catchError((error) => {
+          this.setAuthErrorMessages(error);
+          return of(null);
+        })
+      )
+      .subscribe(() => {
+        this.isSubmitActioninProgress = false;
+      });
   }
 
-  togglePasswordVisibility() {
-    if (this.passwordInputType == 'password') {
-      this.passwordInputType = 'text';
-    } else {
-      this.passwordInputType = 'password';
+  private handleLoginSuccess(accountIdentifier: string) {
+    const successMessage = `Successfully logged in with ${accountIdentifier}.`;
+    this.toastsService.addToast({
+      text: successMessage,
+      scope: 'route',
+      duration: 8000,
+      iconPath: 'assets/icons/toast/success.svg',
+      actionButton: {
+        type: 'success',
+        callback: () => {
+          console.log('success login toast');
+        },
+        label: 'Proceed',
+      },
+    });
+  }
+
+  private setAuthErrorMessages(
+    error: Error | AuthError | SalidaAuthError | any
+  ) {
+    let errorSource:
+      | SalidaAuthErrorSource
+      | FirebaseAuthErrorSource
+      | undefined = undefined;
+    let errorMessage: string | undefined = undefined;
+
+    if (error instanceof SalidaAuthError) {
+      const salidaAuthError =
+        this.salidaAuthService.getSalidAuthErrorMessage(error);
+      errorSource = salidaAuthError.errorSource;
+      errorMessage = salidaAuthError.message;
+    } else if (
+      error.name === 'FirebaseError' &&
+      error.hasOwnProperty('code') &&
+      /auth/.test(error.code)
+    ) {
+      const firebaseAuthError =
+        this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
+      errorSource = firebaseAuthError.errorSource;
+      errorMessage = firebaseAuthError.message;
     }
+
+    if (!errorSource || !errorMessage) {
+      this.authErrorMessagesSig.set({
+        ...this.authErrorMessagesSig(),
+        general: 'An unexpected error has occurred.',
+      });
+      return;
+    }
+
+    if (errorSource == 'general') {
+      this.toastsService.addToast({
+        iconPath: '/assets/icons/toast/error.svg',
+        text: errorMessage,
+        scope: 'route',
+        duration: 0,
+      });
+    }
+
+    this.authErrorMessagesSig.set({
+      emailOrUsername:
+        errorSource === 'email' ||
+        errorSource === 'username' ||
+        errorSource === 'emailAndPassword'
+          ? errorMessage
+          : null,
+      password:
+        errorSource === 'password' || errorSource === 'emailAndPassword'
+          ? errorMessage
+          : null,
+      // general: errorSource === 'general' ? errorMessage : null,
+    });
+  }
+
+  togglePasswordVisibility(): void {
+    this.passwordInputType =
+      this.passwordInputType === 'password' ? 'text' : 'password';
   }
 
   headerButtons: HeaderButton[] = [

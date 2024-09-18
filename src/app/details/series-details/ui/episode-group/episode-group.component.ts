@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { Season } from '../../../../shared/interfaces/tmdb/Series';
+import { Season } from '../../../../shared/interfaces/models/tmdb/Series';
 import { EpisodeCardComponent } from '../episode-card/episode-card.component';
 import { CommonModule } from '@angular/common';
 

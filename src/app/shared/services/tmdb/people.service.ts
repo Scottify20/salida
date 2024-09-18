@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
-import { Person, TrendingPeople } from '../../interfaces/tmdb/People';
+import { Person, TrendingPeople } from '../../interfaces/models/tmdb/People';
 import { Observable, of, retry, shareReplay, tap } from 'rxjs';
 import { HttpClient } from '@angular/common/http';
-import { TmdbTimeWindow } from '../../interfaces/tmdb/All';
+import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
 
 @Injectable({
   providedIn: 'root',

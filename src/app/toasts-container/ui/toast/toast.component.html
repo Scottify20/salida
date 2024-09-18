@@ -1,0 +1,59 @@
+<div
+  class="toast"
+  [class]="toastProps.actionButton?.type"
+  [class]="closed ? 'closed' : ''"
+  [attr.id]="toastProps.idBasedOnContent"
+>
+  <img
+    *ngIf="toastProps.iconPath"
+    [src]="toastProps.iconPath"
+    alt=""
+    width="24px"
+    height="24px"
+    class="toast__icon"
+  />
+  <div class="toast__text">
+    {{ toastProps.text }}
+  </div>
+
+  <!-- if button no action button is specified a close button is added by default-->
+  <div
+    *ngIf="!toastProps.actionButton"
+    role="button"
+    tabindex="1"
+    (click)="closeToast()"
+    class="toast__action-button--icon toast__action-button"
+  >
+    <img
+      src="/assets/icons/toast/close.svg"
+      alt=""
+      class="action-button--icon"
+    />
+  </div>
+
+  <ng-container *ngIf="toastProps.actionButton as button">
+    <!-- if button is a text labelled button -->
+    <div
+      *ngIf="button.label"
+      role="button"
+      tabindex="1"
+      (click)="button.callback ? button.callback() : ''"
+      class="toast__action-button--text toast__action-button"
+      [class]="button.type"
+    >
+      {{ button.label }}
+    </div>
+
+    <!-- if button is a custom icon button -->
+    <div
+      role="button"
+      tabindex="1"
+      (click)="button.callback ? button.callback() : ''"
+      class="toast__action-button--icon toast__action-button"
+      *ngIf="button.iconPath"
+      [class]="button.type"
+    >
+      <img [src]="button.iconPath" alt="" class="action-button--icon" />
+    </div>
+  </ng-container>
+</div>

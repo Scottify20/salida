@@ -1,0 +1,143 @@
+.toast {
+  pointer-events: all;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+  margin: 0 auto;
+  width: fit-content;
+
+  background-color: var(--toast-bg-color);
+  border-radius: 1rem;
+  color: var(--text-color-slightly-transparent);
+
+  padding: 0.5rem;
+  font-size: 0.8333rem;
+  column-gap: 0.5rem;
+
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.5));
+
+  animation: SlideInFromBottom 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+
+  &.closed {
+    animation: FadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}
+
+.toast__icon {
+  width: 1.65rem;
+  height: 1.65rem;
+}
+
+.toast:has(.toast__action-button) {
+  grid-template-columns: auto 1fr auto;
+}
+
+.toast:not(:has(.toast__action-button)) {
+  grid-template-columns: auto 1fr;
+}
+
+.toast__text {
+  line-height: 1.5;
+}
+
+.toast__action-button {
+  border-radius: 1000px;
+  transform: scale(1);
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+
+  &:active {
+    transform: scale(0.9);
+  }
+}
+
+.toast__action-button--text {
+  color: var(--text-color-inverted);
+  padding: 0.5em 0.75em;
+  border-radius: 1000px;
+  outline-offset: 3px;
+
+  transform: scale(1);
+  transition: all 0.15s ease-in-out;
+
+  background-color: var(--bg-color);
+
+  &:active {
+    transform: scale(0.9);
+  }
+
+  &:hover {
+    filter: brightness(130%);
+  }
+
+  &.neutral:hover {
+    filter: brightness(70%);
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 3px;
+    outline-style: dotted;
+  }
+
+  &.accent {
+    --bg-color: var(--accent-color);
+  }
+
+  &.neutral {
+    --bg-color: var(--text-color);
+  }
+
+  &.danger {
+    --bg-color: var(--text-color-danger);
+  }
+
+  &.success {
+    --bg-color: var(--text-color-success);
+  }
+
+  &.warning {
+    --bg-color: var(--text-color-warning);
+  }
+}
+
+.toast__action-button--icon {
+  outline-offset: 3px;
+  opacity: 70%;
+
+  &:hover {
+    opacity: 100%;
+  }
+
+  &:focus {
+    outline: 2px solid var(--accent-color);
+    outline-style: dotted;
+  }
+}
+
+@keyframes SlideInFromBottom {
+  0% {
+    opacity: 0%;
+    transform: translateY(200%);
+  }
+
+  30% {
+    pointer-events: all;
+    opacity: 0%;
+  }
+
+  100% {
+    transform: translateY(0%);
+    opacity: 100%;
+  }
+}
+
+@keyframes FadeOut {
+  0% {
+    opacity: 100%;
+  }
+
+  100% {
+    opacity: 0;
+  }
+}

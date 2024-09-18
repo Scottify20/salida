@@ -1,17 +1,20 @@
 import { Component } from '@angular/core';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
-import { Country, ReleaseDate } from '../../../../shared/interfaces/tmdb/All';
+import {
+  Country,
+  ReleaseDate,
+} from '../../../../shared/interfaces/models/tmdb/All';
 import { filter, map, of, Subscription, switchMap } from 'rxjs';
 import {
   Movie,
   ReleasesOfCountry,
-} from '../../../../shared/interfaces/tmdb/Movies';
+} from '../../../../shared/interfaces/models/tmdb/Movies';
 import {
   MovieReleasesPreferences,
   TemporaryUserPreferencesService,
 } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import { MovieDetailsService } from '../../data-access/movie-details.service';
-import { ReleaseType } from '../../../../shared/interfaces/tmdb/Movies';
+import { ReleaseType } from '../../../../shared/interfaces/models/tmdb/Movies';
 import { CommonModule } from '@angular/common';
 
 @Component({
