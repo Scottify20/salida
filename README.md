@@ -1,27 +1,49 @@
-# Salida
+# Salida: Your Gateway to the World of Movies and TV
 
-This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.8.
+**Discover, explore, and organize your favorite movies, TV shows, actors, and more with Salida!** 
 
-## Development server
+Salida is a web application that taps into the vast library of the TMDB API, providing an engaging experience for film and television enthusiasts. 
 
-Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
+## Features
 
-## Code scaffolding
+**In Development:**
 
-Run `ng generate component component-name` to generate a new component. You can also use `ng generate directive|pipe|service|class|guard|interface|enum|module`.
+- **Dive Deep:** Explore detailed information about movies and TV shows.
+- **Personalize Your Experience:** Create a profile and curate lists of your favorite movies, TV shows, actors, and more.
+- **Catch the Buzz:** Stay updated on trending movies and TV series right from the homepage.
+- **Seamless Login:** Enjoy secure user authentication and data storage using Firebase Authentication and Firestore.
 
-## Build
+**Planned:**
 
-Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
+- **Search with Ease:**  Effortlessly find movies, TV shows, actors, and crews using powerful search and filter options.
+- **Share Your Thoughts:**  Read and write reviews to share your opinions.
+- **Never Miss a Premiere:**  Set reminders for upcoming movie and TV show releases.
+- **Enhanced Experience:** Enjoy the convenience and reliability of Salida as a Progressive Web App (PWA).
+- **Discover New Favorites:** Explore curated lists of the latest releases, popular picks, and genre-specific recommendations.
+- **Track Your Journey:**  Keep a record of the movies and series you've watched. 
 
-## Running unit tests
+**Not Planned:**
+- **Streaming Integration:** Unlikely be added due to complexity, legality, and time constraints.
 
-Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
+## Technologies Used
 
-## Running end-to-end tests
+**Frontend:**
 
-Run `ng e2e` to execute the end-to-end tests via a platform of your choice. To use this command, you need to first add a package that implements end-to-end testing capabilities.
+- Angular (SSR)
+- TypeScript
+- Sass (SCSS)
+- Firebase Auth with [AngularFire](https://github.com/angular/angularfire)
+- [ngx-markdown](https://www.npmjs.com/package/ngx-markdown)
+- [Country Flag Icons](https://www.npmjs.com/package/country-flag-icons)
+- Design & Prototyping: Figma, Adobe Illustrator
 
-## Further help
+**Backend ([View Repo](https://github.com/Scottify20/salida-backend)):**
 
-To get more help on the Angular CLI use `ng help` or go check out the [Angular CLI Overview and Command Reference](https://angular.io/cli) page.
+- [TMDB API](https://developer.themoviedb.org/reference/intro/getting-started)
+- Node.js & Express.js
+- Firebase Admin SDK & Firestore
+- Additional Libraries: Morgan, CORS, Helmet JS, etc.
+
+## Design Files
+
+- **[Figma Design File](https://www.figma.com/design/8oLDfqUUl9YMUOe9J3LzDL/Salida?node-id=0-1&t=hZclNeLNEPj6oQ2l-1)**
