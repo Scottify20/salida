@@ -11,7 +11,7 @@ Salida is a web application that taps into the vast library of the TMDB API, pro
 - **Dive Deep:** Explore detailed information about movies and TV shows.
 - **Personalize Your Experience:** Create a profile and curate lists of your favorite movies, TV shows, actors, and more.
 - **Catch the Buzz:** Stay updated on trending movies and TV series right from the homepage.
-- **Seamless Login:** Enjoy secure user authentication and data storage using Firebase Authentication and Firestore.
+- **Seamless Login:** Enjoy secure user authentication and data storage with Firebase Authentication and Firestore.
 
 **Planned:**
 
