@@ -35,12 +35,10 @@ export class ToastComponent {
 
   closed = false;
 
-  closeToast() {
+  async closeToast() {
     const props = this.toastProps;
     if (props.idBasedOnContent) {
-      this.toastsService.removeToast(props.idBasedOnContent);
+      await this.toastsService.removeToast(props.idBasedOnContent);
     }
-
-    console.log('closing ' + props.idBasedOnContent);
   }
 }

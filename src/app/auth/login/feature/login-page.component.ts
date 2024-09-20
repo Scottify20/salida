@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, signal } from '@angular/core';
+import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import {
@@ -8,8 +8,16 @@ import {
 } from '../../../shared/components/buttons-header/buttons-header.component';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sign-in.component';
-import { RouterModule } from '@angular/router';
-import { catchError, distinctUntilChanged, of, Subscription, tap } from 'rxjs';
+import { Router, RouterModule } from '@angular/router';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  fromEvent,
+  of,
+  Subscription,
+  tap,
+} from 'rxjs';
 import {
   FirebaseAuthErrorSource,
   FirebaseAuthService,
@@ -26,7 +34,6 @@ import { LoadingDotsComponent } from '../../../shared/components/animated/loadin
 interface LoginErrorMessages {
   emailOrUsername: string | null;
   password: string | null;
-  // general: string | null;
   [key: string]: string | null;
 }
 
@@ -52,8 +59,11 @@ export class LoginPageComponent {
     private fb: FormBuilder,
     private firebaseAuthService: FirebaseAuthService,
     private salidaAuthService: SalidaAuthService,
-    private toastsService: ToastsService
+    private toastsService: ToastsService,
+    private router: Router
   ) {}
+
+  @ViewChild('loginButton') loginButton!: ElementRef;
 
   passwordInputType: 'text' | 'password' = 'password';
   isSubmittedAtleastOnce = false;
@@ -67,6 +77,7 @@ export class LoginPageComponent {
 
   private firebaseLoginSubscription: Subscription | null = null;
   private loginFormValuesSubscription: Subscription | null = null;
+  private loginButtonClickSubscription: Subscription | null = null;
 
   loginForm = this.fb.group({
     emailOrUsername: ['', { validators: [Validators.required] }],
@@ -95,9 +106,24 @@ export class LoginPageComponent {
       .subscribe();
   }
 
+  ngAfterViewInit() {
+    this.loginButtonClickSubscription = fromEvent(
+      this.loginButton.nativeElement,
+      'click'
+    )
+      .pipe(
+        debounceTime(500),
+        tap(() => {
+          this.onSubmit();
+        })
+      )
+      .subscribe();
+  }
+
   ngOnDestroy() {
     this.firebaseLoginSubscription?.unsubscribe();
     this.loginFormValuesSubscription?.unsubscribe();
+    this.loginButtonClickSubscription?.unsubscribe();
   }
 
   isEmailOrUsernamePatternInvalid(): boolean {
@@ -154,7 +180,7 @@ export class LoginPageComponent {
     return errorMessages;
   }
 
-  onSubmit(): void {
+  private onSubmit(): void {
     this.isSubmittedAtleastOnce = true;
 
     if (!this.loginForm.valid) {
@@ -202,6 +228,9 @@ export class LoginPageComponent {
     this.firebaseLoginSubscription = this.firebaseAuthService
       .loginWithUsernameAndPassword$(username, password)
       .pipe(
+        tap((user) => {
+          this.handleLoginSuccess(user?.email || 'your account');
+        }),
         catchError((error) => {
           this.setAuthErrorMessages(error);
           return of(null);
@@ -222,7 +251,7 @@ export class LoginPageComponent {
       actionButton: {
         type: 'success',
         callback: () => {
-          console.log('success login toast');
+          this.router.navigateByUrl('/');
         },
         label: 'Proceed',
       },
@@ -282,7 +311,6 @@ export class LoginPageComponent {
         errorSource === 'password' || errorSource === 'emailAndPassword'
           ? errorMessage
           : null,
-      // general: errorSource === 'general' ? errorMessage : null,
     });
   }
 

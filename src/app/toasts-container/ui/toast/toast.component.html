@@ -34,10 +34,10 @@
   <ng-container *ngIf="toastProps.actionButton as button">
     <!-- if button is a text labelled button -->
     <div
-      *ngIf="button.label"
+      *ngIf="button.label && button.callback"
       role="button"
       tabindex="1"
-      (click)="button.callback ? button.callback() : ''"
+      (click)="closeToast().then(); button.callback()"
       class="toast__action-button--text toast__action-button"
       [class]="button.type"
     >
@@ -48,7 +48,7 @@
     <div
       role="button"
       tabindex="1"
-      (click)="button.callback ? button.callback() : ''"
+      (click)="closeToast()"
       class="toast__action-button--icon toast__action-button"
       *ngIf="button.iconPath"
       [class]="button.type"

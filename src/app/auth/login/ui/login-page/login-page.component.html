@@ -31,11 +31,7 @@
       <span class="divider__right divider"></span>
     </div>
 
-    <form
-      class="login__section login__form-container"
-      [formGroup]="loginForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form class="login__section login__form-container" [formGroup]="loginForm">
       <div class="field">
         <label for="email" class="label">USERNAME / EMAIL</label>
         <input
@@ -107,6 +103,7 @@
 
       <div class="field">
         <button
+          #loginButton
           [class]="isLoginButtonDisabled() ? 'disabled' : ''"
           tabindex="1"
           type="submit"

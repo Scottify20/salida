@@ -1,8 +1,8 @@
-# Salida: Your Gateway to the World of Movies and TV
+# Salida
 
-**Discover, explore, and organize your favorite movies, TV shows, actors, and more with Salida!** 
+**Discover, explore, and organize your favorite movies, TV shows, actors, and more with Salida!**
 
-Salida is a web application that taps into the vast library of the TMDB API, providing an engaging experience for film and television enthusiasts. 
+Salida is a web application that taps into the vast library of the TMDB API, providing an engaging experience for film and television enthusiasts.
 
 ## Features
 
@@ -15,14 +15,15 @@ Salida is a web application that taps into the vast library of the TMDB API, pro
 
 **Planned:**
 
-- **Search with Ease:**  Effortlessly find movies, TV shows, actors, and crews using powerful search and filter options.
-- **Share Your Thoughts:**  Read and write reviews to share your opinions.
-- **Never Miss a Premiere:**  Set reminders for upcoming movie and TV show releases.
+- **Search with Ease:** Effortlessly find movies, TV shows, actors, and crews using powerful search and filter options.
+- **Share Your Thoughts:** Read and write reviews to share your opinions.
+- **Never Miss a Premiere:** Set reminders for upcoming movie and TV show releases.
 - **Enhanced Experience:** Enjoy the convenience and reliability of Salida as a Progressive Web App (PWA).
 - **Discover New Favorites:** Explore curated lists of the latest releases, popular picks, and genre-specific recommendations.
-- **Track Your Journey:**  Keep a record of the movies and series you've watched. 
+- **Track Your Journey:** Keep a record of the movies and series you've watched.
 
 **Not Planned:**
+
 - **Streaming Integration:** Unlikely be added due to complexity, legality, and time constraints.
 
 ## Technologies Used

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, map, Observable, of, take, tap, timeout } from 'rxjs';
+import { catchError, debounceTime, map, Observable, take, tap } from 'rxjs';
 import { UserInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 

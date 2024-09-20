@@ -28,11 +28,7 @@
       ><span class="divider__title">OR</span>
       <span class="divider__right divider"></span>
     </div>
-    <form
-      class="login__section login__form-container"
-      [formGroup]="signupForm"
-      (ngSubmit)="onSubmit()"
-    >
+    <form class="login__section login__form-container" [formGroup]="signupForm">
       <div class="field">
         <label for="email" class="label">EMAIL</label>
         <input
@@ -42,24 +38,19 @@
           class="input"
           formControlName="email"
         />
-        <div
-          [class]="shakeError ? 'shake-error' : ''"
-          class="form__error-messages-container"
-        >
+        <div class="form__error-messages-container">
           <p
-            [class]="isEmailInvalid() ? '' : 'no-error'"
+            [class]="isEmailPatternInvalid() ? '' : 'no-error'"
             *ngFor="let error of emailErrorMessages()"
             class="form__error-message"
           >
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthEmailErrorMessageSignal() }}
+            {{ authErrorMessagesSig().email }}
           </p>
         </div>
       </div>
-
-      <p>{{ firebaseAuthGeneralErrorMessageSignal() }}</p>
 
       <div class="field">
         <label for="password" class="label">PASSWORD</label>
@@ -116,33 +107,24 @@
             />
           </div>
         </div>
-        <div
-          class="form__error-messages-container"
-          [class]="shakeError ? 'shake-error' : ''"
-        >
+        <div class="form__error-messages-container">
           <p
-            [class]="isPasswordInvalid() ? '' : 'no-error'"
+            [class]="isPasswordPatternInvalid() ? '' : 'no-error'"
             *ngFor="let error of passwordErrorMessages()"
             class="form__error-message"
           >
             {{ error }}
           </p>
           <p class="form__error-message">
-            {{ firebaseAuthPasswordErrorMessageSignal() }}
+            {{ authErrorMessagesSig().password }}
           </p>
         </div>
       </div>
 
       <div class="field">
         <button
-          [class]="
-            isEmailInvalid() ||
-            isPasswordInvalid() ||
-            firebaseAuthEmailErrorMessageSignal() ||
-            firebaseAuthPasswordErrorMessageSignal()
-              ? 'disabled'
-              : ''
-          "
+          #signupButton
+          [class]="isSignupButtonDisabled() ? 'disabled' : ''"
           tabindex="1"
           type="submit"
           class="login-button"

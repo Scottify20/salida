@@ -4,6 +4,7 @@ import { AsyncPipe, CommonModule } from '@angular/common';
 import { UserService } from '../../../core/user/user.service';
 import { catchError, of, Subject, Subscription, tap } from 'rxjs';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-socials-sign-in',
@@ -15,7 +16,8 @@ import { ToastsService } from '../../../toasts-container/data-access/toasts.serv
 export class SocialsSignInComponent {
   constructor(
     private firebaseAuthService: FirebaseAuthService,
-    private toastsService: ToastsService
+    private toastsService: ToastsService,
+    private router: Router
   ) {}
 
   socialLoginSubscription: Subscription | null = null;
@@ -49,7 +51,7 @@ export class SocialsSignInComponent {
             actionButton: {
               type: 'success',
               callback: () => {
-                console.log('success login toast');
+                this.router.navigateByUrl('/');
               },
               label: 'Proceed',
             },

@@ -1,10 +1,5 @@
-import {
-  Component,
-  ElementRef,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
-import { ToastComponent, ToastItem } from '../ui/toast/toast.component';
+import { Component, ViewChild, ViewContainerRef } from '@angular/core';
+import { ToastComponent } from '../ui/toast/toast.component';
 import { CommonModule } from '@angular/common';
 import { ToastsService } from '../data-access/toasts.service';
 
@@ -23,14 +18,5 @@ export class ToastsContainerComponent {
 
   ngAfterViewInit() {
     this.toastsService.toastsContainerRef = this.container;
-
-    // 'kkkkkkk'.split('').forEach((item, index) => {
-    //   setTimeout(() => {
-    //     this.toastsService.addToast({
-    //       text: 'gergregregregrgergreewfe ewfwef ewfe wefe wfewf wefew f few wef ewfwe wef ewfewfewfwefef wefwe feg',
-    //       scope: 'route',
-    //     });
-    //   }, 300 * index);
-    // });
   }
 }

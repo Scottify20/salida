@@ -11,11 +11,32 @@ import {
   passwordValidator,
   validPasswordCharRegex,
 } from '../../validators/password-validator';
-import { RouterModule } from '@angular/router';
-import { FirebaseAuthService } from '../../../core/auth/firebase-auth.service';
-import { BehaviorSubject, catchError, of, Subscription, tap } from 'rxjs';
-import { AuthError, AuthErrorCodes } from 'firebase/auth';
+import { Router, RouterModule } from '@angular/router';
+import {
+  FirebaseAuthErrorSource,
+  FirebaseAuthService,
+} from '../../../core/auth/firebase-auth.service';
+import {
+  catchError,
+  debounceTime,
+  distinctUntilChanged,
+  fromEvent,
+  of,
+  Subscription,
+  tap,
+} from 'rxjs';
+import { AuthError } from 'firebase/auth';
 import { ModalComponent } from '../../../shared/components/modal/modal.component';
+import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
+import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
+
+interface SignupErrorMessages {
+  email: string | null;
+  password: string | null;
+  [key: string]: string | null;
+}
 
 @Component({
   selector: 'app-sign-up-page',
@@ -26,8 +47,8 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
     ButtonsHeaderComponent,
     CapsLockDetectorDirective,
     SocialsSignInComponent,
-    RouterModule,
     ModalComponent,
+    RouterModule,
   ],
   templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
   styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
@@ -35,45 +56,63 @@ import { ModalComponent } from '../../../shared/components/modal/modal.component
 export class SignUpPageComponent {
   constructor(
     private fb: FormBuilder,
-    private firebaseAuthService: FirebaseAuthService
+    private firebaseAuthService: FirebaseAuthService,
+    private toastsService: ToastsService,
+    private salidaAuthService: SalidaAuthService,
+    private router: Router
   ) {}
-  firebaseAuthGeneralErrorMessageSignal = signal<null | string>(null);
-  firebaseAuthEmailErrorMessageSignal = signal<null | string>(null);
-  firebaseAuthPasswordErrorMessageSignal = signal<null | string>(null);
+  @ViewChild('signupButton') signupButton!: ElementRef;
 
-  firebaseEmailErrorMessagesResetSubscription: Subscription | null = null;
-  firebasePasswordErrorMessagesResetSubscription: Subscription | null = null;
+  passwordInputType: 'text' | 'password' = 'password';
+  isSubmittedAtleastOnce = false;
+  isSubmitActioninProgress = false;
+
+  authErrorMessagesSig = signal<SignupErrorMessages>({
+    email: null,
+    password: null,
+  });
+
+  private signupFormValuesSubscription: Subscription | null = null;
+  private signupButtonClickSubscription: Subscription | null = null;
 
   registrationSubscription: Subscription | null = null;
-
   isSubmitted = false;
-  shakeError = false;
-  passwordInputType: 'text' | 'password' = 'password';
+
+  ngOnInit() {
+    this.signupFormValuesSubscription = this.signupForm.valueChanges
+      .pipe(
+        distinctUntilChanged(
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+        ),
+        tap((changedValues) => {
+          const updatedErrors = { ...this.authErrorMessagesSig() };
+          for (const key in changedValues) {
+            updatedErrors[key] = null;
+          }
+          this.authErrorMessagesSig.set(updatedErrors);
+        })
+      )
+      .subscribe();
+  }
 
   ngAfterViewInit() {
-    this.firebaseEmailErrorMessagesResetSubscription =
-      this.signupForm.controls.email.valueChanges
-        .pipe(
-          tap((email) => {
-            this.firebaseAuthEmailErrorMessageSignal.set(null);
-          })
-        )
-        .subscribe();
-
-    this.firebasePasswordErrorMessagesResetSubscription =
-      this.signupForm.controls.password.valueChanges
-        .pipe(
-          tap((email) => {
-            this.firebaseAuthPasswordErrorMessageSignal.set(null);
-          })
-        )
-        .subscribe();
+    this.signupButtonClickSubscription = fromEvent(
+      this.signupButton.nativeElement,
+      'click'
+    )
+      .pipe(
+        debounceTime(500),
+        tap(() => {
+          this.onSubmit();
+        })
+      )
+      .subscribe();
   }
 
   ngOnDestroy() {
     this.registrationSubscription?.unsubscribe();
-    this.firebaseEmailErrorMessagesResetSubscription?.unsubscribe();
-    this.firebasePasswordErrorMessagesResetSubscription?.unsubscribe();
+    this.signupFormValuesSubscription?.unsubscribe();
+    this.signupButtonClickSubscription?.unsubscribe();
   }
 
   signupForm = this.fb.group({
@@ -84,15 +123,6 @@ export class SignUpPageComponent {
   onSubmit() {
     this.isSubmitted = true;
 
-    // shake the errors if user tried to submit while errors still persist
-    if (this.signupForm.invalid) {
-      this.shakeError = true;
-
-      setTimeout(() => {
-        this.shakeError = false;
-      }, 750);
-    }
-
     if (this.signupForm.valid) {
       const email = this.signupForm.get('email')?.getRawValue();
       const password = this.signupForm.get('password')?.getRawValue();
@@ -100,46 +130,93 @@ export class SignUpPageComponent {
       this.registrationSubscription = this.firebaseAuthService
         .registerWithEmailAndPasswordToAuth$(email, password)
         .pipe(
-          tap(),
+          tap((user) => {
+            this.handleSignupSuccess(user?.email);
+          }),
           catchError((error) => {
-            // if firebase errors occured error message will be shown on the component
-            if (error.name != 'FirebaseError' && !/auth/.test(error.code)) {
-              return of(null);
-            }
-            const { errorSource, message: errorMessage } =
-              this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-
-            switch (errorSource) {
-              case 'emailAndPassword':
-                this.firebaseAuthEmailErrorMessageSignal.set(errorMessage);
-                this.firebaseAuthPasswordErrorMessageSignal.set(errorMessage);
-                this.firebaseAuthGeneralErrorMessageSignal.set(null);
-                break;
-
-              case 'email':
-                this.firebaseAuthEmailErrorMessageSignal.set(errorMessage);
-                this.firebaseAuthGeneralErrorMessageSignal.set(null);
-                this.firebaseAuthPasswordErrorMessageSignal.set(null);
-                break;
-
-              case 'password':
-                this.firebaseAuthPasswordErrorMessageSignal.set(errorMessage);
-                this.firebaseAuthGeneralErrorMessageSignal.set(null);
-                this.firebaseAuthEmailErrorMessageSignal.set(null);
-                break;
-
-              case 'general':
-                this.firebaseAuthGeneralErrorMessageSignal.set(errorMessage);
-                this.firebaseAuthPasswordErrorMessageSignal.set(null);
-                this.firebaseAuthEmailErrorMessageSignal.set(null);
-                break;
-            }
-
+            // if errors occured error message will be shown on the component
+            this.setAuthErrorMessages(error);
             return of(null);
           })
         )
         .subscribe();
     }
+  }
+
+  private handleSignupSuccess(accountIdentifier: string | null) {
+    let successMessage = `Successfully created account.`;
+
+    if (accountIdentifier) {
+      successMessage = `Successfully created account with ${accountIdentifier}.`;
+    }
+
+    this.toastsService.addToast({
+      text: successMessage,
+      scope: 'route',
+      duration: 8000,
+      iconPath: 'assets/icons/toast/success.svg',
+      actionButton: {
+        type: 'success',
+        callback: () => {
+          this.router.navigateByUrl('/');
+        },
+        label: 'Proceed',
+      },
+    });
+  }
+
+  private setAuthErrorMessages(
+    error: Error | AuthError | SalidaAuthError | any
+  ) {
+    let errorSource:
+      | SalidaAuthErrorSource
+      | FirebaseAuthErrorSource
+      | undefined = undefined;
+    let errorMessage: string | undefined = undefined;
+
+    if (error instanceof SalidaAuthError) {
+      const salidaAuthError =
+        this.salidaAuthService.getSalidAuthErrorMessage(error);
+      errorSource = salidaAuthError.errorSource;
+      errorMessage = salidaAuthError.message;
+    } else if (
+      error.name === 'FirebaseError' &&
+      error.hasOwnProperty('code') &&
+      /auth/.test(error.code)
+    ) {
+      const firebaseAuthError =
+        this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
+      errorSource = firebaseAuthError.errorSource;
+      errorMessage = firebaseAuthError.message;
+    }
+
+    if (!errorSource || !errorMessage) {
+      this.authErrorMessagesSig.set({
+        ...this.authErrorMessagesSig(),
+        general: 'An unexpected error has occurred.',
+      });
+      return;
+    }
+
+    if (errorSource == 'general') {
+      this.toastsService.addToast({
+        iconPath: '/assets/icons/toast/error.svg',
+        text: errorMessage,
+        scope: 'route',
+        duration: 0,
+      });
+    }
+
+    this.authErrorMessagesSig.set({
+      email:
+        errorSource === 'email' || errorSource === 'emailAndPassword'
+          ? errorMessage
+          : null,
+      password:
+        errorSource === 'password' || errorSource === 'emailAndPassword'
+          ? errorMessage
+          : null,
+    });
   }
 
   togglePasswordVisibility() {
@@ -150,7 +227,19 @@ export class SignUpPageComponent {
     }
   }
 
-  isEmailInvalid(): boolean {
+  isSignupButtonDisabled(): boolean {
+    const { password: firebasePasswordError, email: firebaseEmailError } =
+      this.authErrorMessagesSig();
+
+    return (
+      this.isEmailPatternInvalid() ||
+      this.isPasswordPatternInvalid() ||
+      !!firebaseEmailError ||
+      !!firebasePasswordError
+    );
+  }
+
+  isEmailPatternInvalid(): boolean {
     return this.signupForm.get('email')?.invalid &&
       (this.signupForm.get('email')?.dirty ||
         this.signupForm.get('email')?.touched ||
@@ -159,7 +248,7 @@ export class SignUpPageComponent {
       : false;
   }
 
-  isPasswordInvalid(): boolean {
+  isPasswordPatternInvalid(): boolean {
     return this.signupForm.get('password')?.invalid &&
       (this.signupForm.get('password')?.dirty ||
         this.signupForm.get('password')?.touched ||
@@ -223,11 +312,8 @@ export class SignUpPageComponent {
 
   passwordValidCharactersCheck(): { char: string; invalid: boolean }[] {
     const rawPassword = this.signupForm.get('password')?.getRawValue() || '';
-
     const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
-
     const segments = segmenter.segment(rawPassword);
-
     const characters = Array.from(segments).map((segment) => segment.segment);
 
     return characters.map((char) => {

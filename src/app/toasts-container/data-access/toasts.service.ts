@@ -1,6 +1,7 @@
 import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { ToastComponent, ToastItem } from '../ui/toast/toast.component';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
+import { time } from 'node:console';
 
 @Injectable({
   providedIn: 'root',
@@ -18,7 +19,7 @@ export class ToastsService {
     }
 
     //create stringified id based on the props
-    const id = JSON.stringify(toastProps);
+    const id = JSON.stringify(toastProps) + Date.now;
     toastProps.idBasedOnContent = id;
 
     // create component ref, pass the props to the ref, and then push it to toastRefs
@@ -38,15 +39,19 @@ export class ToastsService {
 
   async removeToast(id: string, duration: number = 0) {
     // the default value of 0 is for immediate removal of the toast
-    await new Promise((resolve) => setTimeout(resolve, duration));
+    await new Promise((resolve) => {
+      const timeout = setTimeout(resolve, duration);
+      return timeout;
+    });
 
     // get the index of the toast
     const toastIndex = this.toastRefs.findIndex((toast) => toast.id === id);
 
-    // if the toast exists remove it from the dom
+    // if the toast exists remove it from the dom and remove its timeout reference
     if (toastIndex !== -1) {
       const componentRef = this.toastRefs[toastIndex].componentRef;
       componentRef.instance.closed = true;
+
       setTimeout(() => {
         componentRef.destroy();
       }, 150); // 150 is the time to wait for the slide out or fade animation
