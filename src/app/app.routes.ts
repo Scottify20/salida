@@ -1,9 +1,10 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { movieDetailsRoutes } from './details/movie-details/feature/movie-details.routes';
 import { seriesDetailsRoutes } from './details/series-details/feature/series-details.routes';
 import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
+import { HomeComponent } from './home/feature/home.component';
+
 export const routes: Routes = [
   {
     path: '',
@@ -43,13 +44,17 @@ export const routes: Routes = [
   },
   {
     path: 'lists',
-    loadChildren: () =>
-      import('./lists/lists.module').then((m) => m.ListsModule),
+    loadComponent: () =>
+      import('./lists/feature/lists-home.component').then(
+        (m) => m.ListsHomeComponent
+      ),
   },
   {
     path: 'search',
-    loadChildren: () =>
-      import('./search/search.module').then((m) => m.SearchModule),
+    loadComponent: () =>
+      import('./search/feature/search-home.component').then(
+        (m) => m.SearchHomeComponent
+      ),
   },
   {
     path: 'trending',

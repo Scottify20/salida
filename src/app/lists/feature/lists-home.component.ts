@@ -4,7 +4,7 @@ import { Component } from '@angular/core';
   selector: 'app-lists-home',
   standalone: true,
   imports: [],
-  templateUrl: './lists-home.component.html',
-  styleUrl: './lists-home.component.scss',
+  templateUrl: '../ui/lists-home/lists-home.component.html',
+  styleUrl: '../ui/lists-home/lists-home.component.scss',
 })
 export class ListsHomeComponent {}

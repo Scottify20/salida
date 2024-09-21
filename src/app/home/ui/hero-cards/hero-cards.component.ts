@@ -1,13 +1,11 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
-import { IntersectionObserverService } from '../../shared/services/dom/intersection-observer.service';
-import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { getGenreNames } from '../../../assets/api-response/tmdb/Genres';
+import { IntersectionObserverService } from '../../../shared/services/dom/intersection-observer.service';
+import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
+import { getGenreNames } from '../../../../assets/api-response/tmdb/Genres';
+import { ScrollButtonsComponent } from '../../../shared/components/scroll-buttons/scroll-buttons.component';
+import { TrendingTitles } from '../../../shared/interfaces/models/tmdb/All';
 import { HeroCardComponent } from '../hero-card/hero-card.component';
-import { ScrollButtonsComponent } from '../../shared/components/scroll-buttons/scroll-buttons.component';
-import { TrendingTitles } from '../../shared/interfaces/models/tmdb/All';
-import { TrendingMovies } from '../../shared/interfaces/models/tmdb/Movies';
-import { TrendingSeries } from '../../shared/interfaces/models/tmdb/Series';
 
 @Component({
   selector: 'app-hero-cards',

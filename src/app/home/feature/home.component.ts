@@ -1,35 +1,35 @@
 import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
-import { HeroCardsComponent } from './hero-cards/hero-cards.component';
-import { ButtonsHeaderComponent } from '../shared/components/buttons-header/buttons-header.component';
+import { HeroCardsComponent } from '.././ui/hero-cards/hero-cards.component';
+import { ButtonsHeaderComponent } from '../../shared/components/buttons-header/buttons-header.component';
 import {
   CardsSectionComponent,
   CardsSectionOptions,
-} from '../shared/components/cards-section/cards-section.component';
-import { HeaderButton } from '../shared/components/buttons-header/buttons-header.component';
+} from '../../shared/components/cards-section/cards-section.component';
+import { HeaderButton } from '../../shared/components/buttons-header/buttons-header.component';
 import { Router } from '@angular/router';
-import { TmdbService } from '../shared/services/tmdb/tmdb.service';
+import { TmdbService } from '../../shared/services/tmdb/tmdb.service';
 import {
   MovieSummary,
   TrendingMovies,
-} from '../shared/interfaces/models/tmdb/Movies';
+} from '../../shared/interfaces/models/tmdb/Movies';
 import {
   SeriesSummary,
   TrendingSeries,
-} from '../shared/interfaces/models/tmdb/Series';
-import { TrendingPeople } from '../shared/interfaces/models/tmdb/People';
+} from '../../shared/interfaces/models/tmdb/Series';
+import { TrendingPeople } from '../../shared/interfaces/models/tmdb/People';
 import {
   MediaSummary,
   TrendingTitles,
-} from '../shared/interfaces/models/tmdb/All';
+} from '../../shared/interfaces/models/tmdb/All';
 import { Subscription } from 'rxjs';
-import { SeriesDetailsService } from '../details/series-details/data-access/series-details.service';
-import { MovieDetailsService } from '../details/movie-details/data-access/movie-details.service';
+import { SeriesDetailsService } from '../../details/series-details/data-access/series-details.service';
+import { MovieDetailsService } from '../../details/movie-details/data-access/movie-details.service';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  templateUrl: './home.component.html',
-  styleUrls: ['./home.component.scss'],
+  templateUrl: '../ui/home/home.component.html',
+  styleUrls: ['../ui/home/home.component.scss'],
   imports: [ButtonsHeaderComponent, HeroCardsComponent, CardsSectionComponent],
 })
 export class HomeComponent implements OnInit, OnDestroy {

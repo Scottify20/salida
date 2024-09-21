@@ -112,7 +112,7 @@ export class LoginPageComponent {
       'click'
     )
       .pipe(
-        debounceTime(500),
+        debounceTime(1000),
         tap(() => {
           this.onSubmit();
         })

@@ -23,20 +23,24 @@
   color: var(--text-color);
 }
 
+html,
+body,
+app-root,
+main {
+  min-height: 100%;
+}
+
 body {
   background-color: var(--body-bg-color);
-  height: 100%;
 }
 
 app-root {
   display: block;
-  height: 100%;
 }
 
 main {
   max-width: var(--main-max-width);
   margin: 0 auto;
-  height: 100%;
 }
 
 @media (max-width: 360px) {

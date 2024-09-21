@@ -1,12 +1,12 @@
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
-import { WindowResizeService } from '../../shared/services/dom/window-resize.service';
+import { WindowResizeService } from '../../../shared/services/dom/window-resize.service';
 import { Subscription } from 'rxjs';
 import { NgIf, DOCUMENT } from '@angular/common';
-import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
+import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
 import {
   MediaSummary,
   TrendingTitles,
-} from '../../shared/interfaces/models/tmdb/All';
+} from '../../../shared/interfaces/models/tmdb/All';
 
 @Component({
   selector: 'app-hero-card',

@@ -1,12 +1,14 @@
 :host {
   display: grid;
   place-content: center;
+  height: 100vh;
 }
 
 .login {
   padding: 1rem;
   background-color: rgba(255, 255, 255, 0.04);
   border-radius: 2rem;
+  margin: 1rem;
 }
 
 .login__header {
@@ -15,7 +17,6 @@
 }
 
 .login__main {
-  margin: auto;
   display: flex;
   flex-flow: column nowrap;
   justify-items: center;
@@ -377,8 +378,12 @@
   }
 }
 
-@media (max-width: 480px) {
+@media (max-width: 600px) and (hover: none) {
+  :host {
+    height: auto;
+  }
   .login {
+    margin: 0;
     width: 100vw;
     background-color: transparent;
   }
