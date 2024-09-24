@@ -28,7 +28,7 @@ export class ElementPositionService {
   constructor(
     private platformCheckService: PlatformCheckService,
     private windowResizeService: WindowResizeService,
-    private scrollDectectorService: ScrollDetectorService
+    private scrollDectectorService: ScrollDetectorService,
   ) {
     // Subscribe to the combined windowResizeState$ observable and store the subscription
     this._resizeSubscription =
@@ -47,35 +47,39 @@ export class ElementPositionService {
     this._subscriptions.push(
       this.manualUpdateSubject.subscribe(() => {
         this.updateElementPositions();
-      })
+      }),
     );
   }
 
   getElementRefById(id: string): ElementRef | null {
     if (this.platformCheckService.isBrowser()) {
       const element = document.getElementById(id);
-      if (element) {
-        return new ElementRef(element);
+
+      if (!element) {
+        console.log('Element not found, check if the id is correct.');
+        return null;
       }
+
+      return new ElementRef(element);
     }
     return null;
   }
 
-  trackElementPosition(
+  trackElementPosition$(
     key: string,
-    elementRef: ElementRef
+    elementRef: ElementRef,
   ): Observable<DOMRect> {
     this.untrackElementPosition(key);
 
     const position$ = new BehaviorSubject<DOMRect>(
-      elementRef.nativeElement.getBoundingClientRect()
+      elementRef.nativeElement.getBoundingClientRect(),
     );
 
     // Subscribe to windowResizeState$ instead of windowDimensions$
     const subscription = this.windowResizeService.windowResizeState$.subscribe(
       () => {
         this.updateElementPosition(key);
-      }
+      },
     );
 
     this._subscriptions.push(subscription);
@@ -113,7 +117,7 @@ export class ElementPositionService {
   untrackElementPosition(key: string): void {
     if (this.trackedElements[key]) {
       this.trackedElements[key].subscriptions.forEach((subscription) =>
-        subscription.unsubscribe()
+        subscription.unsubscribe(),
       );
       this.trackedElements[key].position$.complete();
       delete this.trackedElements[key];

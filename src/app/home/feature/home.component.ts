@@ -24,20 +24,29 @@ import {
 import { Subscription } from 'rxjs';
 import { SeriesDetailsService } from '../../details/series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../details/movie-details/data-access/movie-details.service';
+import {
+  PopoverComponent,
+  PopoverConfig,
+} from '../../shared/components/popover/popover.component';
 
 @Component({
   selector: 'app-home',
   standalone: true,
   templateUrl: '../ui/home/home.component.html',
   styleUrls: ['../ui/home/home.component.scss'],
-  imports: [ButtonsHeaderComponent, HeroCardsComponent, CardsSectionComponent],
+  imports: [
+    ButtonsHeaderComponent,
+    HeroCardsComponent,
+    CardsSectionComponent,
+    PopoverComponent,
+  ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
   constructor(
     private router: Router,
     private tmdbService: TmdbService,
     private seriesDetailService: SeriesDetailsService,
-    private movieDetailsService: MovieDetailsService
+    private movieDetailsService: MovieDetailsService,
   ) {}
 
   @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
@@ -83,15 +92,42 @@ export class HomeComponent implements OnInit, OnDestroy {
       },
     },
     {
+      id: 'user-button',
       type: 'icon',
       iconPath: '../../../../assets/icons/home-header/User-solid.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/user',
-        target: '_self',
-      },
     },
   ];
+
+  userActionsMenuPopoverConfig: PopoverConfig = {
+    popoverId: 'user-actions-menu-popover',
+    anchoringConfig: {
+      anchorElementId: 'user-button',
+      position: 'bottom-end',
+    },
+    layout: 'list',
+    itemSectionsConfig: [
+      {
+        contentType: 'icon-and-text',
+        sectionName: 'section1',
+        items: [
+          { text: 'User', iconPath: 'assets/icons/popover/user.svg' },
+          {
+            text: 'Notifications',
+            iconPath: 'assets/icons/popover/notifications.svg',
+          },
+        ],
+      },
+      {
+        contentType: 'icon-and-text',
+        sectionName: 'section2',
+        items: [
+          { text: 'Settings', iconPath: 'assets/icons/popover/settings.svg' },
+          { text: 'Logout', iconPath: 'assets/icons/popover/logout.svg' },
+        ],
+      },
+    ],
+    backdrop: 'mobile-only',
+  };
 
   trendingMovies: TrendingMovies = {
     page: 0,
@@ -167,7 +203,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               callback: () => {
                 this.movieDetailsService.viewMovieDetails(
                   movie.id,
-                  movie.title
+                  movie.title,
                 );
               },
             }));
@@ -196,7 +232,7 @@ export class HomeComponent implements OnInit, OnDestroy {
               callback: () => {
                 this.seriesDetailService.viewSeriesDetails(
                   series.id,
-                  series.name
+                  series.name,
                 );
               },
             }));
@@ -237,7 +273,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         callback: () => {
           this.movieDetailsService.viewMovieDetails(
             movie.id,
-            movie.title as string
+            movie.title as string,
           );
         },
       }));
@@ -257,7 +293,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         callback: () => {
           this.seriesDetailService.viewSeriesDetails(
             series.id,
-            series.name as string
+            series.name as string,
           );
         },
       }));

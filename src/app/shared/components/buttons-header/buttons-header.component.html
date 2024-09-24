@@ -2,6 +2,7 @@
   <ng-container *ngFor="let button of headerButtons; let buttonIndex = index">
     <!-- if button opens external link -->
     <a
+      [id]="button.id"
       tabindex="1"
       *ngIf="button.anchor?.urlType === 'external' && !button.actionCallback"
       [href]="button.anchor?.path"
@@ -22,6 +23,7 @@
 
     <!-- if button opens internal link/route -->
     <a
+      [id]="button.id"
       tabindex="1"
       *ngIf="button.anchor?.urlType === 'internal' && !button.actionCallback"
       [routerLink]="button.anchor?.path"
@@ -43,6 +45,7 @@
 
     <!-- if button is callback calling button -->
     <div
+      [id]="button.id"
       tabindex="1"
       role="button"
       *ngIf="button.actionCallback"
@@ -53,7 +56,28 @@
       (click)="button?.actionCallback()"
     >
       <img
-        *ngIf="button.type === 'iconWithBG'"
+        *ngIf="button.type === 'iconWithBG' || button.type === 'icon'"
+        [src]="button.iconPath"
+        alt=""
+      />
+      <p class="header__button-label-text" *ngIf="button.type === 'text'">
+        {{ button.text }}
+      </p>
+    </div>
+
+    <!-- if button is not a callback or routerlink button -->
+    <div
+      [id]="button.id"
+      tabindex="1"
+      role="button"
+      *ngIf="!button.actionCallback && !button.anchor"
+      class="header__button"
+      [ngClass]="
+        button.type === 'iconWithBG' ? 'header__button--icon-with-bg' : ''
+      "
+    >
+      <img
+        *ngIf="button.type === 'iconWithBG' || button.type === 'icon'"
         [src]="button.iconPath"
         alt=""
       />
@@ -63,5 +87,3 @@
     </div>
   </ng-container>
 </div>
-
-<!-- callback action button not implemented yet -->

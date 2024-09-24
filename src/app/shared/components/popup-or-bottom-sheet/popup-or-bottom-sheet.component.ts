@@ -28,7 +28,7 @@ export class PopupOrBottomSheetComponent
     private elemPositionService: ElementPositionService,
     private windowResizeService: WindowResizeService,
     private scrollDisabler: ScrollDisablerService,
-    private platformCheckService: PlatformCheckService
+    private platformCheckService: PlatformCheckService,
   ) {}
 
   @Input() popUpOrBottomSheetConfig: PopupOrBottomSheetConfig = {
@@ -69,7 +69,7 @@ export class PopupOrBottomSheetComponent
     this.dialogElement.classList.add('hide');
     this.dialogElement.classList.remove('shown');
     this.windowResizeService.triggerResize();
-    this.scrollDisabler.enableScroll();
+    this.scrollDisabler.enableBodyScroll('season-picker-popup-or-bottom-sheet');
   }
 
   ngAfterViewInit() {
@@ -83,9 +83,9 @@ export class PopupOrBottomSheetComponent
           isPopupShown == null
             ? ''
             : isPopupShown
-            ? this.showDialog()
-            : this.hideDialog();
-        })
+              ? this.showDialog()
+              : this.hideDialog();
+        }),
       )
       .subscribe();
     this.startSeasonPickerDialogPositioner();
@@ -95,7 +95,7 @@ export class PopupOrBottomSheetComponent
   startSeasonPickerDialogPositioner() {
     this.dialogElement = this.dialogElementRef.nativeElement;
     this.dialogPopupElement = this.dialogElement.querySelector(
-      '.dialog__arrow-and-items-container'
+      '.dialog__arrow-and-items-container',
     ) as HTMLDivElement;
 
     this.trackAnchorElement();
@@ -120,14 +120,14 @@ export class PopupOrBottomSheetComponent
         return;
       }
       const anchorElementRef = this.elemPositionService.getElementRefById(
-        this.popUpOrBottomSheetConfig.anchorElementId
+        this.popUpOrBottomSheetConfig.anchorElementId,
       );
 
       if (anchorElementRef) {
         this.anchorElementPosition$ =
-          this.elemPositionService.trackElementPosition(
+          this.elemPositionService.trackElementPosition$(
             this.popUpOrBottomSheetConfig.anchorElementId,
-            anchorElementRef
+            anchorElementRef,
           );
 
         this.anchorElementPositionSubscription =
@@ -169,7 +169,7 @@ export class PopupOrBottomSheetComponent
     }
 
     this.elemPositionService.untrackElementPosition(
-      this.popUpOrBottomSheetConfig.anchorElementId
+      this.popUpOrBottomSheetConfig.anchorElementId,
     );
     this._resizeSubscription?.unsubscribe();
     this.anchorElementPositionSubscription?.unsubscribe();

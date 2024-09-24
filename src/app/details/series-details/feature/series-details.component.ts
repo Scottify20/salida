@@ -24,14 +24,14 @@ export class SeriesDetailsComponent {
   constructor(
     private seriesDetailsService: SeriesDetailsService,
     private scrollDisablerService: ScrollDisablerService,
-    private preferencesService: TemporaryUserPreferencesService
+    private preferencesService: TemporaryUserPreferencesService,
   ) {
     this.reviewsPreferencesSubscription = this.preferencesService.preferences$
       .pipe(
         tap((preferences) => {
           this.reviewsPreferences =
             preferences.details.movieAndSeriesDetails.reviews;
-        })
+        }),
       )
       .subscribe();
   }
@@ -84,7 +84,9 @@ export class SeriesDetailsComponent {
             return this.seriesDetailsService.selectedSeason;
           },
           callback: () => {
-            this.scrollDisablerService.disableScroll();
+            this.scrollDisablerService.disableBodyScroll(
+              'season-picker-popup-or-bottom-sheet',
+            );
             this.seriesDetailsService.isSeriesPickerShown$.next(true);
           },
           isSelected: () => {
@@ -115,7 +117,7 @@ export class SeriesDetailsComponent {
                 reviews: {
                   reviewsSource: 'salida',
                 },
-              }
+              },
             );
           },
           isSelected: () => {
@@ -132,7 +134,7 @@ export class SeriesDetailsComponent {
                 reviews: {
                   reviewsSource: 'tmdb',
                 },
-              }
+              },
             );
           },
           isSelected: () => {

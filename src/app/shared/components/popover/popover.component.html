@@ -1,0 +1,57 @@
+@if (popoverConfig.itemSectionsConfig; as itemsConfig) {
+  <div
+    #popover
+    class="popover scroll-lock"
+    [ngClass]="isOpenSig() ? 'open' : 'closed'"
+  >
+    <div #popoverArrow class="popover__arrow"></div>
+    <div #popoverSectionsContainer class="popover__sections-container">
+      @for (section of popoverConfig.itemSectionsConfig; track section) {
+        <ul class="popover__items-section">
+          @for (item of section.items; track item) {
+            @if (section.contentType == "icon") {
+              <li
+                class="popover__item--icon"
+                [class]="isActiveClass(item.isActive)"
+              >
+                <div class="icon-container">
+                  <img
+                    [src]="item.iconPath"
+                    height="18px"
+                    width="18px"
+                    alt=""
+                  />
+                </div>
+              </li>
+            }
+            @if (section.contentType == "text") {
+              <li
+                class="popover__item--text"
+                [class]="isActiveClass(item.isActive)"
+              >
+                >
+                <p>{{ item.text }}</p>
+              </li>
+            }
+            @if (section.contentType == "icon-and-text") {
+              <li
+                class="popover__item--icon-and-text"
+                [class]="isActiveClass(item.isActive)"
+              >
+                <div class="icon-container">
+                  <img
+                    [src]="item.iconPath"
+                    height="18px"
+                    width="18px"
+                    alt=""
+                  />
+                </div>
+                <p>{{ item.text }}</p>
+              </li>
+            }
+          }
+        </ul>
+      }
+    </div>
+  </div>
+}
