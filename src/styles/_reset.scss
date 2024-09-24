@@ -67,3 +67,14 @@ h6 {
 #__next {
   isolation: isolate;
 }
+
+// dialogs
+dialog,
+dialog:modal,
+dialog:-internal-dialog-in-top-layer {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  max-width: unset;
+  max-height: unset;
+}

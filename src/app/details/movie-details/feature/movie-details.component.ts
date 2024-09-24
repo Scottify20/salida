@@ -11,18 +11,24 @@ import {
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { Subscription, tap } from 'rxjs';
+import { NgScrollbarModule } from 'ngx-scrollbar';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [RouterOutlet, MediaHeroSectionComponent, PillTabsComponent],
+  imports: [
+    RouterOutlet,
+    MediaHeroSectionComponent,
+    PillTabsComponent,
+    NgScrollbarModule,
+  ],
   templateUrl: '../ui/movie-details/movie-details.component.html',
   styleUrl: '../ui/movie-details/movie-details.component.scss',
 })
 export class MovieDetailsComponent {
   constructor(
     private preferencesService: TemporaryUserPreferencesService,
-    private movieDetailsService: MovieDetailsService
+    private movieDetailsService: MovieDetailsService,
   ) {
     this.userPreferencesSubscriptions = this.preferencesService.preferences$
       .pipe(
@@ -31,7 +37,7 @@ export class MovieDetailsComponent {
             return;
           }
           this.userPreferences = preferences;
-        })
+        }),
       )
       .subscribe();
   }
@@ -122,7 +128,7 @@ export class MovieDetailsComponent {
                 reviews: {
                   reviewsSource: 'salida',
                 },
-              }
+              },
             );
           },
           isSelected: () => {
@@ -142,7 +148,7 @@ export class MovieDetailsComponent {
                 reviews: {
                   reviewsSource: 'tmdb',
                 },
-              }
+              },
             );
           },
           isSelected: () => {

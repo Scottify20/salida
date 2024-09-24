@@ -65,7 +65,8 @@ router-outlet > * {
 [title-pill-tab-transition="router-outlet-transition"]
   ::view-transition-old(root) {
   opacity: 0;
-  animation: slideOutToLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+  animation:
+    slideOutToLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     fadeOut 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   animation-delay: 0.1s;
   animation-fill-mode: forwards;
@@ -76,7 +77,8 @@ router-outlet > * {
 [title-pill-tab-transition="router-outlet-transition"]
   ::view-transition-new(root) {
   opacity: 100%;
-  animation: slideInFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1),
+  animation:
+    slideInFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1),
     fadeIn 0.25s ease-in-out;
   animation-delay: 0.1s;
   animation-fill-mode: forwards;

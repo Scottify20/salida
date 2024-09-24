@@ -1,7 +1,9 @@
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import {
   Component,
   ElementRef,
+  inject,
+  Inject,
   Input,
   signal,
   Signal,
@@ -60,8 +62,6 @@ export class PopoverComponent {
   constructor(
     private elementPositionService: ElementPositionService,
     private scrollDisablerService: ScrollDisablerService,
-    private platformCheckService: PlatformCheckService,
-    private elementRef: ElementRef,
   ) {}
   @Input() popoverConfig: PopoverConfig = {
     popoverId: '',
@@ -73,17 +73,19 @@ export class PopoverComponent {
     itemSectionsConfig: [],
     backdrop: 'none',
   };
+  private document = inject(DOCUMENT);
 
   @ViewChild('popoverSectionsContainer ') popoverSectionsContainer!: ElementRef;
   @ViewChild('popoverArrow ') popoverArrow!: ElementRef;
 
   isOpenSig = signal(false);
-
-  anchorElementClickSubscription: Subscription | null = null;
-
   elementTrackingSubscription: Subscription | null = null;
 
+  anchorElementClickSubscription: Subscription | null = null;
+  clickedOutsidePopoverSubscription: Subscription | null = null;
+
   ngAfterViewInit() {
+    const popoverElement = this.popoverSectionsContainer.nativeElement;
     const anchorElement = this.elementPositionService.getElementRefById(
       this.popoverConfig.anchoringConfig.anchorElementId,
     )?.nativeElement as HTMLElement;
@@ -91,11 +93,22 @@ export class PopoverComponent {
     if (!anchorElement) {
       return;
     }
+
     this.anchorElementClickSubscription = fromEvent(anchorElement, 'click')
       .pipe(
         tap((e) => {
           this.isOpenSig.set(!this.isOpenSig());
           this.isOpenSig() ? this.openPopover() : this.closePopover();
+        }),
+      )
+      .subscribe();
+
+    this.clickedOutsidePopoverSubscription = fromEvent(this.document, 'click')
+      .pipe(
+        tap((e) => {
+          if (e.target != popoverElement && e.target != anchorElement) {
+            this.closePopover();
+          }
         }),
       )
       .subscribe();
@@ -105,10 +118,12 @@ export class PopoverComponent {
     this.closePopover();
     this.untrackAchorElement();
     this.elementTrackingSubscription?.unsubscribe();
+    this.clickedOutsidePopoverSubscription?.unsubscribe();
   }
 
   closePopover() {
     this.scrollDisablerService.enableBodyScroll(this.popoverConfig.popoverId);
+    this.isOpenSig.set(false);
   }
 
   openPopover() {

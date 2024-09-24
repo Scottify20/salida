@@ -30,6 +30,12 @@
   }
 }
 
+.header__button {
+  * {
+    pointer-events: none;
+  }
+}
+
 .header__button--text {
   text-decoration: none;
   width: min-content;

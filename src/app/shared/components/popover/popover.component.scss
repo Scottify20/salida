@@ -36,16 +36,16 @@
 }
 
 .popover__items-section > * {
+  cursor: pointer;
   background-color: var(--popover-item-bg-color);
-}
 
-.popover__items-section > *:active {
-  // opacity: 50%;
-  background-color: var(--popover-item-bg-clicked);
-}
+  &:hover:not(:active) {
+    background-color: var(--popover-item-bg-hovered);
+  }
 
-.popover__items-section > *:active {
-  filter: brightness(80%);
+  &:active {
+    background-color: var(--popover-item-bg-clicked);
+  }
 }
 
 .popover__item--text {
