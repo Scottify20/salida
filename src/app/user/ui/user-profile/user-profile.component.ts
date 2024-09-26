@@ -1,8 +1,6 @@
 import { Component } from '@angular/core';
-import {
-  ButtonsHeaderComponent,
-  HeaderButton,
-} from '../../shared/components/buttons-header/buttons-header.component';
+import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
+import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
 import { Navigation } from '@angular/router';
 import { Location } from '@angular/common';
 

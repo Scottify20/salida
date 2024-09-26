@@ -32,7 +32,7 @@ interface ItemsConfigSection {
 
 export interface PopoverItem {
   iconPath?: string;
-  text?: string;
+  text?: string | Signal<string | null | undefined> | (() => string);
   isActive?: () => boolean; // refer to the isActiveClass() method on the end of this component's class
   isVisibleIf?: () => boolean | Signal<boolean | null | undefined>; // shows the item if true, hide otherwise // always show if this fn is not defined
   onClickCallback?: () => void;

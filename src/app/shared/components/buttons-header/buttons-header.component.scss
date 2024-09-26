@@ -17,22 +17,25 @@
   display: grid;
   place-content: center;
 
+  border-radius: 500px;
+  overflow: hidden;
+
   transition: all 0.1s ease-in-out;
   transform: scale(1);
+
+  user-select: none;
+  * {
+    pointer-events: none;
+  }
+
   &:hover {
-    transform: scale(1.2);
+    // transform: scale(1.125);
     filter: brightness(120%);
   }
 
   &:active {
     filter: brightness(70%);
     transform: scale(0.9);
-  }
-}
-
-.header__button {
-  * {
-    pointer-events: none;
   }
 }
 

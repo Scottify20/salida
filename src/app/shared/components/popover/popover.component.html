@@ -1,64 +1,52 @@
-@if (popoverConfig.itemSectionsConfig; as itemsConfig) {
-  <div
-    #popover
-    class="popover scroll-lock"
-    [ngClass]="isOpenSig() ? 'open' : 'closed'"
-  >
-    <div #popoverArrow class="popover__arrow"></div>
-    <div #popoverSectionsContainer class="popover__sections-container">
-      @for (section of popoverConfig.itemSectionsConfig; track section) {
-        <ul class="popover__items-section">
-          @for (item of section.items; track item) {
-            <!-- if the item only has an icon -->
-            @if (section.contentType == "icon" && itemIsVisibe(item)) {
-              <li
-                class="popover__item--icon"
-                [class]="isActiveClass(item.isActive)"
-                (click)="item.onClickCallback ? item.onClickCallback() : ''"
-              >
-                <div class="icon-container">
-                  <img
-                    [src]="item.iconPath"
-                    height="18px"
-                    width="18px"
-                    alt=""
-                  />
-                </div>
-              </li>
-            }
+<div
+  #popover
+  class="popover scroll-lock"
+  [ngClass]="isOpenSig() ? 'open' : 'closed'"
+>
+  <div #popoverArrow class="popover__arrow"></div>
 
-            <!-- if the item only has a text -->
-            @if (section.contentType == "text" && itemIsVisibe(item)) {
-              <li
-                class="popover__item--text"
-                [class]="isActiveClass(item.isActive)"
-                (click)="item.onClickCallback ? item.onClickCallback() : ''"
-              >
-                >
-                <p>{{ item.text }}</p>
-              </li>
-            }
-            <!-- if the item only has both text and icon -->
-            @if (section.contentType == "icon-and-text" && itemIsVisibe(item)) {
-              <li
-                class="popover__item--icon-and-text"
-                [class]="isActiveClass(item.isActive)"
-                (click)="item.onClickCallback ? item.onClickCallback() : ''"
-              >
-                <div class="icon-container">
-                  <img
-                    [src]="item.iconPath"
-                    height="18px"
-                    width="18px"
-                    alt=""
-                  />
-                </div>
-                <p>{{ item.text }}</p>
-              </li>
-            }
-          }
-        </ul>
-      }
-    </div>
+  <div #popoverSectionsContainer class="popover__sections-container">
+    <ng-container *ngFor="let section of popoverConfig.itemSectionsConfig">
+      <ul class="popover__items-section" *ngIf="section.items.length > 0">
+        <ng-container *ngFor="let item of section.items">
+          <!-- Icon Only Item -->
+          <li
+            *ngIf="section.contentType === 'icon' && itemIsVisible(item)"
+            class="popover__item popover__item--icon"
+            [class.active]="isActiveClass(item.isActive)"
+            (click)="item.onClickCallback ? item.onClickCallback() : null"
+          >
+            <div class="icon-container">
+              <img [src]="item.iconPath" height="18" width="18" alt="" />
+            </div>
+          </li>
+
+          <!-- Text Only Item -->
+          <li
+            *ngIf="section.contentType === 'text' && itemIsVisible(item)"
+            class="popover__item popover__item--text"
+            [class.active]="isActiveClass(item.isActive)"
+            (click)="item.onClickCallback ? item.onClickCallback() : null"
+          >
+            <p>{{ getItemText(item.text) }}</p>
+          </li>
+
+          <!-- Icon and Text Item -->
+          <li
+            *ngIf="
+              section.contentType === 'icon-and-text' && itemIsVisible(item)
+            "
+            class="popover__item popover__item--icon-and-text"
+            [class.active]="isActiveClass(item.isActive)"
+            (click)="item.onClickCallback ? item.onClickCallback() : null"
+          >
+            <div class="icon-container">
+              <img [src]="item.iconPath" height="18" width="18" alt="" />
+            </div>
+            <p>{{ getItemText(item.text) }}</p>
+          </li>
+        </ng-container>
+      </ul>
+    </ng-container>
   </div>
-}
+</div>

@@ -1,9 +1,7 @@
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  ButtonsHeaderComponent,
-  HeaderButton,
-} from '../../../shared/components/buttons-header/buttons-header.component';
+import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
+import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sign-in.component';
@@ -21,8 +19,11 @@ import {
   debounceTime,
   distinctUntilChanged,
   fromEvent,
+  merge,
   of,
+  skip,
   Subscription,
+  take,
   tap,
 } from 'rxjs';
 import { AuthError } from 'firebase/auth';
@@ -59,7 +60,7 @@ export class SignUpPageComponent {
     private firebaseAuthService: FirebaseAuthService,
     private toastsService: ToastsService,
     private salidaAuthService: SalidaAuthService,
-    private router: Router
+    private router: Router,
   ) {}
   @ViewChild('signupButton') signupButton!: ElementRef;
 
@@ -82,7 +83,7 @@ export class SignUpPageComponent {
     this.signupFormValuesSubscription = this.signupForm.valueChanges
       .pipe(
         distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
         ),
         tap((changedValues) => {
           const updatedErrors = { ...this.authErrorMessagesSig() };
@@ -90,21 +91,26 @@ export class SignUpPageComponent {
             updatedErrors[key] = null;
           }
           this.authErrorMessagesSig.set(updatedErrors);
-        })
+        }),
       )
       .subscribe();
   }
 
   ngAfterViewInit() {
-    this.signupButtonClickSubscription = fromEvent(
+    const firstClick$ = fromEvent(
       this.signupButton.nativeElement,
-      'click'
-    )
+      'click',
+    ).pipe(take(1));
+    const subsequentClicks$ = fromEvent(
+      this.signupButton.nativeElement,
+      'click',
+    ).pipe(skip(1), debounceTime(1000));
+
+    this.signupButtonClickSubscription = merge(firstClick$, subsequentClicks$)
       .pipe(
-        debounceTime(500),
         tap(() => {
           this.onSubmit();
-        })
+        }),
       )
       .subscribe();
   }
@@ -137,7 +143,7 @@ export class SignUpPageComponent {
             // if errors occured error message will be shown on the component
             this.setAuthErrorMessages(error);
             return of(null);
-          })
+          }),
         )
         .subscribe();
     }
@@ -166,7 +172,7 @@ export class SignUpPageComponent {
   }
 
   private setAuthErrorMessages(
-    error: Error | AuthError | SalidaAuthError | any
+    error: Error | AuthError | SalidaAuthError | any,
   ) {
     let errorSource:
       | SalidaAuthErrorSource
@@ -235,7 +241,8 @@ export class SignUpPageComponent {
       this.isEmailPatternInvalid() ||
       this.isPasswordPatternInvalid() ||
       !!firebaseEmailError ||
-      !!firebasePasswordError
+      !!firebasePasswordError ||
+      this.isSubmitActioninProgress
     );
   }
 
@@ -304,7 +311,7 @@ export class SignUpPageComponent {
       passwordErrors.containsWhitespace ? 'Spaces not allowed.' : null,
       passwordErrors.invalidCharacter
         ? 'Some characters are not allowed.'
-        : null
+        : null,
     );
 
     return errorMessages;
@@ -320,8 +327,8 @@ export class SignUpPageComponent {
       return this.passwordInputType === 'password'
         ? { char: '•', invalid: false }
         : validPasswordCharRegex.test(char)
-        ? { char: char, invalid: false }
-        : { char: char, invalid: true };
+          ? { char: char, invalid: false }
+          : { char: char, invalid: true };
     });
   }
 

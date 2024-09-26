@@ -6,18 +6,23 @@ import {
   FacebookAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword,
-  AuthError,
-  UserCredential,
   signInWithEmailAndPassword,
   User,
   AuthErrorCodes,
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 import { UserService } from '../user/user.service';
-import { catchError, from, map, Observable, switchMap, tap } from 'rxjs';
+import {
+  catchError,
+  from,
+  map,
+  Observable,
+  Subscription,
+  switchMap,
+  tap,
+} from 'rxjs';
 import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
 import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
-import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -27,15 +32,31 @@ export class FirebaseAuthService {
     private platformCheckService: PlatformCheckService,
     private userService: UserService,
   ) {
-    if (this.platformCheckService.isBrowser()) {
-      this.auth = inject(Auth);
-      this.userService.userSig = toSignal(authState(this.auth));
-    }
+    this.setUserAuthStateToUserSignal();
   }
 
   auth!: Auth;
+  userAuthStateSubscription: Subscription | null = null;
 
-  async getToken(): Promise<string | undefined> {
+  setUserAuthStateToUserSignal() {
+    if (this.platformCheckService.isBrowser()) {
+      this.auth = inject(Auth);
+
+      this.userAuthStateSubscription = authState(this.auth)
+        .pipe(
+          tap((user) => {
+            this.userService.userSig.set(user);
+          }),
+        )
+        .subscribe();
+    }
+  }
+
+  ngOnDestroy() {
+    this.userAuthStateSubscription?.unsubscribe();
+  }
+
+  private async getToken(): Promise<string | undefined> {
     return await this.auth.currentUser?.getIdToken(true);
   }
 
@@ -127,6 +148,7 @@ export class FirebaseAuthService {
   signOut(): void {
     if (this.auth) {
       this.auth.signOut();
+      window.location.reload();
     }
   }
 

@@ -1,6 +1,6 @@
-import { Injectable, signal, Signal } from '@angular/core';
+import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, map, Observable, of, take, tap } from 'rxjs';
+import { catchError, map, Observable, take, tap } from 'rxjs';
 import { UserInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
@@ -13,7 +13,15 @@ import { environment } from '../../../environments/environment';
 })
 export class UserService {
   constructor(private http: HttpClient) {}
-  userSig: Signal<User | null | undefined> = signal(undefined); // the auth state of the user
+  userSig: WritableSignal<User | null | undefined> = signal(null); // the auth state of the user
+
+  userDisplayNameSig = computed(() => this.userSig()?.displayName);
+  userEmailSig = computed(() => this.userSig()?.email);
+  userPhotoUrlSig = computed(() =>
+    this.userSig()?.photoURL
+      ? this.userSig()?.photoURL
+      : '../../../../assets/icons/home-header/User-solid.svg',
+  );
 
   private baseUrlProtected = `${environment.SALIDA_API_BASE_URL}/api/v1/protected/users`;
   private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;

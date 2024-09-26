@@ -1,9 +1,8 @@
-import { Injectable, ElementRef, Inject } from '@angular/core';
-import { fromEvent, Subscription } from 'rxjs';
-import { tap } from 'rxjs/operators';
+import { Injectable, ElementRef, Inject, signal } from '@angular/core';
+import { fromEvent, Subject, Subscription } from 'rxjs';
+import { tap, takeUntil } from 'rxjs/operators'; // Import takeUntil
 import { DOCUMENT } from '@angular/common';
 
-// Import your custom services for element position tracking and scroll disabling
 import { ElementPositionService } from '../../services/dom/element-position.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 import { PopoverConfig, PopoverItem } from './popover.model';
@@ -14,6 +13,8 @@ export class PopoverService {
   private elementTrackingSubscription: Subscription | null = null;
   private anchorElementClickSubscription: Subscription | null = null;
   private clickedOutsidePopoverSubscription: Subscription | null = null;
+  // A Subject to signal when the popover is closed
+  private destroy$ = new Subject<void>();
 
   constructor(
     private elementPositionService: ElementPositionService,
@@ -23,43 +24,46 @@ export class PopoverService {
     this.document = document;
   }
 
+  // Create a signal to manage the isOpen state
+  isOpen = signal(false);
+
   // Method to open the popover
   openPopover(
     popoverConfig: PopoverConfig,
     popoverSectionsContainer: ElementRef,
-    isOpen: { value: boolean },
   ) {
-    this.trackAnchorElement(popoverConfig, popoverSectionsContainer, isOpen);
+    this.trackAnchorElement(popoverConfig, popoverSectionsContainer);
     this.scrollDisablerService.disableBodyScroll(popoverConfig.popoverId);
-    isOpen.value = true;
+    this.isOpen.set(true);
   }
 
   // Method to close the popover
-  closePopover(popoverConfig: PopoverConfig, isOpen: { value: boolean }) {
+  closePopover(popoverConfig: PopoverConfig) {
     this.scrollDisablerService.enableBodyScroll(popoverConfig.popoverId);
     this.untrackAnchorElement(popoverConfig);
-    this.unsubscribeSubscriptions();
-    isOpen.value = false;
+    this.isOpen.set(false);
+    this.destroy$.next(); // Emit a value to complete the subscriptions
   }
 
   // Method to start listening for clicks on the anchor element
   listenToAnchorClicks(
     anchorElement: HTMLElement,
     popoverConfig: PopoverConfig,
-    isOpen: { value: boolean },
-    popoverSectionsContainer: ElementRef, // Pass the reference here!
+    popoverSectionsContainer: ElementRef,
   ) {
     this.anchorElementClickSubscription = fromEvent(anchorElement, 'click')
       .pipe(
         tap(() => {
-          isOpen.value = !isOpen.value;
+          this.isOpen.update((prev) => !prev); // Toggle isOpen signal
 
-          if (isOpen.value) {
-            this.openPopover(popoverConfig, popoverSectionsContainer, isOpen); // Pass to openPopover
+          if (this.isOpen()) {
+            this.openPopover(popoverConfig, popoverSectionsContainer);
           } else {
-            this.closePopover(popoverConfig, isOpen);
+            this.closePopover(popoverConfig);
           }
         }),
+        // Complete the subscription when the popover is closed
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }
@@ -68,7 +72,6 @@ export class PopoverService {
   private trackAnchorElement(
     popoverConfig: PopoverConfig,
     popoverSectionsContainer: ElementRef,
-    isOpen: { value: boolean },
   ) {
     const anchorElementId = popoverConfig.anchoringConfig.anchorElementId;
     const anchorElementRef =
@@ -78,41 +81,43 @@ export class PopoverService {
       console.error(
         'Anchor element not found! Popover might not work as expected.',
       );
-      return; // Exit if anchor element is not found
+      return;
     }
 
     const popover = popoverSectionsContainer.nativeElement as HTMLDivElement;
     const popoverWidth = popover.offsetWidth;
     const popoverHeight = popover.offsetHeight;
 
-    // Subscribe to changes in the anchor element's position
+    // **Using takeUntil for Subscription Management**
     this.elementTrackingSubscription = this.elementPositionService
       .trackElementPosition$(anchorElementId, anchorElementRef)
       .pipe(
         tap((domrect) => {
           const popoverPositioning = popoverConfig.anchoringConfig.position;
 
-          // Position the popover based on the configured position
           switch (popoverPositioning) {
             case 'bottom-end':
-              popover.style.left = `${domrect.left - popoverWidth + domrect.width}px`;
-              popover.style.top = `${Math.abs(domrect.top) + domrect.height + 8}px`;
+              popover.style.left = `${
+                domrect.left - popoverWidth + domrect.width
+              }px`;
+              popover.style.top = `${
+                Math.abs(domrect.top) + domrect.height + 8
+              }px`;
               break;
-            // Add cases for other positions (e.g., 'bottom-start', 'top-left', etc.)
+            // Add cases for other positions as needed
             default:
               console.warn(
                 `Popover position of ${popoverPositioning} is not handled yet!`,
               );
           }
         }),
+        takeUntil(this.destroy$), // Complete when destroy$ emits
       )
       .subscribe();
 
-    // Subscribe to outside clicks after positioning the popover
     this.subscribeToOutsideClicks(
       popoverSectionsContainer.nativeElement,
       anchorElementRef.nativeElement,
-      isOpen,
       popoverConfig,
     );
   }
@@ -121,20 +126,21 @@ export class PopoverService {
   private subscribeToOutsideClicks(
     popoverElement: HTMLElement,
     anchorElement: HTMLElement,
-    isOpen: { value: boolean },
     popoverConfig: PopoverConfig,
   ) {
     this.clickedOutsidePopoverSubscription = fromEvent(this.document, 'click')
       .pipe(
         tap((e) => {
           if (
-            isOpen.value &&
+            this.isOpen() &&
             e.target !== popoverElement &&
             e.target !== anchorElement
           ) {
-            this.closePopover(popoverConfig, isOpen);
+            this.closePopover(popoverConfig);
           }
         }),
+        // Complete the subscription when the popover is closed
+        takeUntil(this.destroy$),
       )
       .subscribe();
   }

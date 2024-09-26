@@ -2,10 +2,8 @@ import { CommonModule } from '@angular/common';
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
-import {
-  ButtonsHeaderComponent,
-  HeaderButton,
-} from '../../../shared/components/buttons-header/buttons-header.component';
+import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
+import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sign-in.component';
 import { Router, RouterModule } from '@angular/router';
@@ -14,8 +12,11 @@ import {
   debounceTime,
   distinctUntilChanged,
   fromEvent,
+  merge,
   of,
+  skip,
   Subscription,
+  take,
   tap,
 } from 'rxjs';
 import {
@@ -60,14 +61,14 @@ export class LoginPageComponent {
     private firebaseAuthService: FirebaseAuthService,
     private salidaAuthService: SalidaAuthService,
     private toastsService: ToastsService,
-    private router: Router
+    private router: Router,
   ) {}
 
   @ViewChild('loginButton') loginButton!: ElementRef;
 
   passwordInputType: 'text' | 'password' = 'password';
   isSubmittedAtleastOnce = false;
-  isSubmitActioninProgress = false;
+  isLoginActioninProgress = false;
 
   authErrorMessagesSig = signal<LoginErrorMessages>({
     emailOrUsername: null,
@@ -93,7 +94,7 @@ export class LoginPageComponent {
     this.loginFormValuesSubscription = this.loginForm.valueChanges
       .pipe(
         distinctUntilChanged(
-          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr)
+          (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
         ),
         tap((changedValues) => {
           const updatedErrors = { ...this.authErrorMessagesSig() };
@@ -101,21 +102,25 @@ export class LoginPageComponent {
             updatedErrors[key] = null;
           }
           this.authErrorMessagesSig.set(updatedErrors);
-        })
+        }),
       )
       .subscribe();
   }
 
   ngAfterViewInit() {
-    this.loginButtonClickSubscription = fromEvent(
+    const firstClick$ = fromEvent(this.loginButton.nativeElement, 'click').pipe(
+      take(1),
+    );
+    const subsequentClicks$ = fromEvent(
       this.loginButton.nativeElement,
-      'click'
-    )
+      'click',
+    ).pipe(skip(1), debounceTime(1000));
+
+    this.loginButtonClickSubscription = merge(firstClick$, subsequentClicks$)
       .pipe(
-        debounceTime(1000),
         tap(() => {
           this.onSubmit();
-        })
+        }),
       )
       .subscribe();
   }
@@ -152,7 +157,8 @@ export class LoginPageComponent {
       this.isEmailOrUsernamePatternInvalid() ||
       this.isPasswordPatternInvalid() ||
       !!firebaseEmailError ||
-      !!firebasePasswordError
+      !!firebasePasswordError ||
+      this.isLoginActioninProgress
     );
   }
 
@@ -204,7 +210,7 @@ export class LoginPageComponent {
   }
 
   private loginWithEmailAndPassword(email: string, password: string) {
-    this.isSubmitActioninProgress = true;
+    this.isLoginActioninProgress = true;
 
     this.firebaseLoginSubscription = this.firebaseAuthService
       .loginWithEmailAndPassword$(email, password)
@@ -215,15 +221,15 @@ export class LoginPageComponent {
         catchError((error) => {
           this.setAuthErrorMessages(error);
           return of(null);
-        })
+        }),
       )
       .subscribe(() => {
-        this.isSubmitActioninProgress = false;
+        this.isLoginActioninProgress = false;
       });
   }
 
   private loginWithUsernameAndPassword(username: string, password: string) {
-    this.isSubmitActioninProgress = true;
+    this.isLoginActioninProgress = true;
 
     this.firebaseLoginSubscription = this.firebaseAuthService
       .loginWithUsernameAndPassword$(username, password)
@@ -234,10 +240,10 @@ export class LoginPageComponent {
         catchError((error) => {
           this.setAuthErrorMessages(error);
           return of(null);
-        })
+        }),
       )
       .subscribe(() => {
-        this.isSubmitActioninProgress = false;
+        this.isLoginActioninProgress = false;
       });
   }
 
@@ -259,7 +265,7 @@ export class LoginPageComponent {
   }
 
   private setAuthErrorMessages(
-    error: Error | AuthError | SalidaAuthError | any
+    error: Error | AuthError | SalidaAuthError | any,
   ) {
     let errorSource:
       | SalidaAuthErrorSource

@@ -13,7 +13,7 @@
     >
       <img
         *ngIf="button.type === 'icon' || button.type === 'iconWithBG'"
-        [src]="button.iconPath"
+        [src]="getIconPath(button.iconPath)"
         alt=""
       />
       <p class="header__button-label-text" *ngIf="button.type === 'text'">
@@ -35,7 +35,7 @@
     >
       <img
         *ngIf="button.type === 'icon' || button.type === 'iconWithBG'"
-        [src]="button.iconPath"
+        [src]="getIconPath(button.iconPath)"
         alt=""
       />
       <p class="header__button-label-text" *ngIf="button.type === 'text'">
@@ -57,7 +57,7 @@
     >
       <img
         *ngIf="button.type === 'iconWithBG' || button.type === 'icon'"
-        [src]="button.iconPath"
+        [src]="getIconPath(button.iconPath)"
         alt=""
       />
       <p class="header__button-label-text" *ngIf="button.type === 'text'">
@@ -78,7 +78,7 @@
     >
       <img
         *ngIf="button.type === 'iconWithBG' || button.type === 'icon'"
-        [src]="button.iconPath"
+        [src]="getIconPath(button.iconPath)"
         alt=""
       />
       <p class="header__button-label-text" *ngIf="button.type === 'text'">

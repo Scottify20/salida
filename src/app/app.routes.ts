@@ -17,14 +17,14 @@ export const routes: Routes = [
         path: 'login',
         loadComponent: () =>
           import('./auth/login/feature/login-page.component').then(
-            (m) => m.LoginPageComponent
+            (m) => m.LoginPageComponent,
           ),
       },
       {
         path: 'signup',
         loadComponent: () =>
           import('./auth/signup/feature/sign-up-page.component').then(
-            (m) => m.SignUpPageComponent
+            (m) => m.SignUpPageComponent,
           ),
       },
     ],
@@ -40,20 +40,29 @@ export const routes: Routes = [
   { path: 'people/:id', children: personDetailsRoutes },
   {
     path: 'user',
-    loadChildren: () => import('./user/user.module').then((m) => m.UserModule),
+    children: [
+      {
+        path: ':username',
+        loadComponent: () =>
+          import('./user/ui/user-profile/user-profile.component').then(
+            (m) => m.UserProfileComponent,
+          ),
+      },
+      { path: '', redirectTo: ':username', pathMatch: 'full' },
+    ],
   },
   {
     path: 'lists',
     loadComponent: () =>
       import('./lists/feature/lists-home.component').then(
-        (m) => m.ListsHomeComponent
+        (m) => m.ListsHomeComponent,
       ),
   },
   {
     path: 'search',
     loadComponent: () =>
       import('./search/feature/search-home.component').then(
-        (m) => m.SearchHomeComponent
+        (m) => m.SearchHomeComponent,
       ),
   },
   {

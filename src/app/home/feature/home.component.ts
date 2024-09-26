@@ -11,7 +11,7 @@ import {
   CardsSectionComponent,
   CardsSectionOptions,
 } from '../../shared/components/cards-section/cards-section.component';
-import { HeaderButton } from '../../shared/components/buttons-header/buttons-header.component';
+import { HeaderButton } from '../../shared/components/buttons-header/buttons-header.model';
 import { Router } from '@angular/router';
 import { TmdbService } from '../../shared/services/tmdb/tmdb.service';
 import {
@@ -34,6 +34,7 @@ import { PopoverConfig } from '../../shared/components/popover/popover.model';
 import { UserService } from '../../core/user/user.service';
 import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
+import { JsonPipe } from '@angular/common';
 
 @Component({
   selector: 'app-home',
@@ -45,6 +46,7 @@ import { PopoverComponent } from '../../shared/components/popover/popover.compon
     HeroCardsComponent,
     CardsSectionComponent,
     PopoverComponent,
+    JsonPipe,
   ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -58,8 +60,6 @@ export class HomeComponent implements OnInit, OnDestroy {
   ) {}
 
   @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
-
-  protected userPhoto: string = '';
 
   private trendingTitlesSubscription!: Subscription;
   private trendingMoviesSubscription!: Subscription;
@@ -102,7 +102,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     {
       id: 'user-button',
       type: 'icon',
-      iconPath: '../../../../assets/icons/home-header/User-solid.svg',
+      iconPath: this.userService.userPhotoUrlSig,
     },
   ];
 
@@ -144,10 +144,29 @@ export class HomeComponent implements OnInit, OnDestroy {
         contentType: 'icon-and-text',
         sectionName: 'section1',
         items: [
-          { text: 'User', iconPath: 'assets/icons/popover/user.svg' },
+          {
+            text: this.userService.userDisplayNameSig,
+            iconPath: 'assets/icons/popover/user.svg',
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? true : false;
+            }),
+            // need to change ---------------------------------------------
+            onClickCallback: () => {
+              this.router.navigateByUrl(
+                `/user/${this.userService.userDisplayNameSig()?.toLocaleLowerCase()}`,
+              );
+            },
+          },
           {
             text: 'Notifications',
             iconPath: 'assets/icons/popover/notifications.svg',
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? true : false;
+            }),
+            // need to change -----------------------------------------------
+            onClickCallback: () => {
+              this.router.navigateByUrl(`/notifications`);
+            },
           },
         ],
       },
@@ -155,7 +174,17 @@ export class HomeComponent implements OnInit, OnDestroy {
         contentType: 'icon-and-text',
         sectionName: 'section2',
         items: [
-          { text: 'Settings', iconPath: 'assets/icons/popover/settings.svg' },
+          {
+            text: 'Settings',
+            iconPath: 'assets/icons/popover/settings.svg',
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? true : false;
+            }),
+            // need to change -----------------------------------------------
+            onClickCallback: () => {
+              this.router.navigateByUrl(`/settings`);
+            },
+          },
           {
             text: 'Logout',
             iconPath: 'assets/icons/popover/logout.svg',

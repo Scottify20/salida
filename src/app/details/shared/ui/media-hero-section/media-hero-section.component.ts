@@ -10,10 +10,8 @@ import { MovieDetailsService } from '../../../movie-details/data-access/movie-de
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { WindowResizeService } from '../../../../shared/services/dom/window-resize.service';
-import {
-  HeaderButton,
-  ButtonsHeaderComponent,
-} from '../../../../shared/components/buttons-header/buttons-header.component';
+import { ButtonsHeaderComponent } from '../../../../shared/components/buttons-header/buttons-header.component';
+import { HeaderButton } from '../../../../shared/components/buttons-header/buttons-header.model';
 import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
 import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
@@ -30,7 +28,7 @@ export class MediaHeroSectionComponent {
     private seriesDetailsService: SeriesDetailsService,
     private moviesDetailsService: MovieDetailsService,
     private windowResizeService: WindowResizeService,
-    private tmdbConfigService: TmdbConfigService
+    private tmdbConfigService: TmdbConfigService,
   ) {
     if (this.moviesDetailsService.isMovieRoute) {
       this.heroSectionDataSubscription = this.moviesDetailsService.movieData$
@@ -57,7 +55,7 @@ export class MediaHeroSectionComponent {
           }),
           tap((heroSectionData) => {
             heroSectionData ? (this.heroSectionData = heroSectionData) : '';
-          })
+          }),
         )
         .subscribe();
     }
@@ -77,7 +75,7 @@ export class MediaHeroSectionComponent {
                 year: this.getSeriesYearOrYearRange(
                   series.first_air_date,
                   series.status,
-                  series.last_air_date
+                  series.last_air_date,
                 ),
                 rating: this.getLocalReleaseOrFallbackRating(series, 'tv'),
                 runtimeOrSeasons: this.getSeasonsText(series.number_of_seasons),
@@ -100,7 +98,7 @@ export class MediaHeroSectionComponent {
           catchError((err) => {
             console.log('failed to fetch series hero section data', err);
             return of(null);
-          })
+          }),
         )
         .subscribe();
     }
@@ -173,7 +171,7 @@ export class MediaHeroSectionComponent {
 
   private getFirstEnglishLogoPath(logos: Image[]): string | null {
     const firstEnglishLogoPath = logos?.find(
-      (logo) => logo.iso_639_1 === 'en'
+      (logo) => logo.iso_639_1 === 'en',
     )?.file_path;
 
     if (firstEnglishLogoPath) {
@@ -187,7 +185,7 @@ export class MediaHeroSectionComponent {
 
   getLocalReleaseOrFallbackRating(
     mediaData: Series | Movie,
-    mediaType: 'movie' | 'tv'
+    mediaType: 'movie' | 'tv',
   ): string | null {
     const countryCode = this.tmdbConfigService.localCountryCode;
     const fallbackCountryCode = 'US';
@@ -199,13 +197,13 @@ export class MediaHeroSectionComponent {
       // set local rating if a local rating is found
       seriesRatingString =
         seriesData.content_ratings.results.find(
-          (rating) => rating.iso_3166_1 === countryCode
+          (rating) => rating.iso_3166_1 === countryCode,
         )?.rating || null;
 
       // set the rating to the US rating if no local rating is found
       if (!seriesRatingString) {
         const usRating = seriesData?.content_ratings.results.find(
-          (rating) => rating.iso_3166_1 === fallbackCountryCode
+          (rating) => rating.iso_3166_1 === fallbackCountryCode,
         )?.rating;
 
         if (usRating) {
@@ -216,7 +214,7 @@ export class MediaHeroSectionComponent {
       // set the first rating it finds if no local or US rating is found
       if (!seriesRatingString) {
         const ratingFound = seriesData?.content_ratings.results.find(
-          (rating) => rating.rating
+          (rating) => rating.rating,
         );
 
         seriesRatingString = ratingFound
@@ -234,13 +232,13 @@ export class MediaHeroSectionComponent {
       // set local rating if a local rating is found
       moviesRatingString =
         movieData.release_dates.results.find(
-          (release) => release.iso_3166_1 === countryCode
+          (release) => release.iso_3166_1 === countryCode,
         )?.release_dates[0].certification || null;
 
       // set the rating to the US rating if no local rating is found
       if (!moviesRatingString) {
         const usRating = movieData.release_dates.results.find(
-          (release) => release.iso_3166_1 === fallbackCountryCode
+          (release) => release.iso_3166_1 === fallbackCountryCode,
         )?.release_dates[0].certification;
 
         if (moviesRatingString) {
@@ -273,7 +271,7 @@ export class MediaHeroSectionComponent {
   private getSeriesYearOrYearRange(
     first_air_date: string,
     status: string,
-    last_air_date: string
+    last_air_date: string,
   ): string {
     const hasEndedOrCancelled = (): boolean => {
       return (
@@ -284,7 +282,7 @@ export class MediaHeroSectionComponent {
 
     const firstAirYear = `${String(first_air_date).replace(
       /-\d{2}-\d{2}$/,
-      ''
+      '',
     )}`;
 
     const lastAirYear = (): string | null => {
@@ -297,10 +295,10 @@ export class MediaHeroSectionComponent {
     return !firstAirYear && !lastAirYear()
       ? ''
       : hasEndedOrCancelled() && lastAirYear
-      ? `${firstAirYear} - ${lastAirYear()}`
-      : !lastAirYear()
-      ? firstAirYear
-      : '';
+        ? `${firstAirYear} - ${lastAirYear()}`
+        : !lastAirYear()
+          ? firstAirYear
+          : '';
   }
 
   private getMovieYear(release_date: string) {
@@ -324,8 +322,8 @@ export class MediaHeroSectionComponent {
     return no_of_seasons > 1
       ? `${no_of_seasons} Seasons`
       : no_of_seasons == 1
-      ? `${no_of_seasons} Seasons`
-      : '';
+        ? `${no_of_seasons} Seasons`
+        : '';
   }
 }
 

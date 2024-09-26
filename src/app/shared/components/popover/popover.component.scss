@@ -17,6 +17,10 @@
   background-color: var(--popover-bg-color);
 }
 
+.popover.closed .popover__sections-container {
+  pointer-events: none;
+}
+
 .popover__sections-container {
   pointer-events: all;
   display: flex;
@@ -49,6 +53,13 @@
 
   &:active {
     background-color: var(--popover-item-bg-clicked);
+  }
+}
+
+.popover__item {
+  p,
+  img {
+    user-select: none;
   }
 }
 

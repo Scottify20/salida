@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
-import {
-  SalidaAuthErrorCode,
-  SalidaAuthErrorSource,
-} from '../../shared/interfaces/types/api-response/SalidaErrors';
+import { SalidaAuthErrorSource } from '../../shared/interfaces/types/api-response/SalidaErrors';
 import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
 
 @Injectable({
