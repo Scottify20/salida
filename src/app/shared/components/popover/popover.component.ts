@@ -3,17 +3,14 @@ import {
   Component,
   ElementRef,
   inject,
-  Inject,
   Input,
-  signal,
   Signal,
+  signal,
   ViewChild,
-  WritableSignal,
 } from '@angular/core';
 import { ElementPositionService } from '../../services/dom/element-position.service';
-import { BehaviorSubject, fromEvent, Subscription, tap } from 'rxjs';
+import { fromEvent, Subscription, tap } from 'rxjs';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
-import { PlatformCheckService } from '../../services/dom/platform-check.service';
 
 export interface PopoverConfig {
   popoverId: string;
@@ -48,7 +45,9 @@ interface ItemsConfigSection {
 interface PopoverItem {
   iconPath?: string;
   text?: string;
-  isActive?: () => boolean;
+  isActive?: () => boolean; // refer to the isActiveClass() method on the end of this component's class
+  isVisibleIf?: () => boolean | Signal<boolean | null | undefined>; // shows the item if true, hide otherwise // always show if this fn is not defined
+  onClickCallback?: () => void;
 }
 
 @Component({
@@ -79,8 +78,8 @@ export class PopoverComponent {
   @ViewChild('popoverArrow ') popoverArrow!: ElementRef;
 
   isOpenSig = signal(false);
-  elementTrackingSubscription: Subscription | null = null;
 
+  elementTrackingSubscription: Subscription | null = null;
   anchorElementClickSubscription: Subscription | null = null;
   clickedOutsidePopoverSubscription: Subscription | null = null;
 
@@ -94,6 +93,7 @@ export class PopoverComponent {
       return;
     }
 
+    // listens for clicks in the achor element and then toggles the visibility of the popover
     this.anchorElementClickSubscription = fromEvent(anchorElement, 'click')
       .pipe(
         tap((e) => {
@@ -103,10 +103,15 @@ export class PopoverComponent {
       )
       .subscribe();
 
+    // listens for clicks outside the popover and then closes the popover
     this.clickedOutsidePopoverSubscription = fromEvent(this.document, 'click')
       .pipe(
         tap((e) => {
-          if (e.target != popoverElement && e.target != anchorElement) {
+          if (
+            this.isOpenSig() &&
+            e.target !== popoverElement &&
+            e.target !== anchorElement
+          ) {
             this.closePopover();
           }
         }),
@@ -140,20 +145,26 @@ export class PopoverComponent {
       return;
     }
 
-    const anchorElement = anchorElementRef?.nativeElement as HTMLDivElement;
-
     const popover = this.popoverSectionsContainer
       .nativeElement as HTMLDivElement;
 
-    const anchorHeight = anchorElement.offsetHeight;
-    const anchorWidth = anchorElement.offsetWidth;
     const popoverWidth = popover.offsetWidth;
     const popoverHeight = popover.offsetHeight;
 
+    // tracks the achor element's position and then sets it as the popover's position
     this.elementTrackingSubscription = this.elementPositionService
       .trackElementPosition$(anchorElementId, anchorElementRef)
       .pipe(
         tap((domrect) => {
+          const popoverPositioning =
+            this.popoverConfig.anchoringConfig.position;
+
+          if (popoverPositioning !== 'bottom-end') {
+            // the popover positionings other than left-end are not handled yet.
+            console.log(
+              `Popover position of ${popoverPositioning} is not handled yet!`,
+            );
+          }
           popover.style.left =
             (domrect.left - popoverWidth + domrect.width).toString() + 'px';
           popover.style.top =
@@ -170,6 +181,12 @@ export class PopoverComponent {
     );
   }
 
+  itemIsVisibe(item: PopoverItem) {
+    return !item.isVisibleIf || item.isVisibleIf() ? true : false;
+  }
+
+  // puts the active class to the item if its isActive() fn returns true otherwise false
+  // also still puts the active class when the the item does not have defined isActive() fn
   isActiveClass(isActiveCallback: (() => boolean) | undefined): string {
     return !isActiveCallback || isActiveCallback() ? 'active' : '';
   }

@@ -17,13 +17,13 @@ export class WindowResizeService {
     if (this.platformCheck.isBrowser()) {
       fromEvent(window, 'resize')
         .pipe(
-          debounceTime(250),
+          debounceTime(150),
           map(() => ({ width: window.innerWidth, height: window.innerHeight })),
           distinctUntilChanged(
             (prev, curr) =>
-              prev.width === curr.width && prev.height === curr.height
+              prev.width === curr.width && prev.height === curr.height,
           ),
-          shareReplay(1)
+          shareReplay(1),
         )
         .subscribe(() => {
           this.emitResizeEvent();
@@ -42,7 +42,7 @@ export class WindowResizeService {
       startWith(
         this.platformCheck.isBrowser()
           ? { width: window.innerWidth, height: window.innerHeight }
-          : { width: 0, height: 0 }
+          : { width: 0, height: 0 },
       ),
       map((dimensions) => ({
         dimensions,
@@ -52,9 +52,9 @@ export class WindowResizeService {
         (prev, curr) =>
           prev.dimensions.width === curr.dimensions.width &&
           prev.dimensions.height === curr.dimensions.height &&
-          prev.isResizing === curr.isResizing
+          prev.isResizing === curr.isResizing,
       ),
-      shareReplay(1)
+      shareReplay(1),
     );
 
   private emitResizeEvent() {
@@ -90,7 +90,7 @@ export class WindowResizeService {
           height: window.innerHeight,
         });
         this.isResizingSubject.next(false);
-      }, 250);
+      }, 150);
     }
   }
 }

@@ -1,4 +1,10 @@
-import { Component, ViewChild, OnInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  OnInit,
+  OnDestroy,
+  computed,
+} from '@angular/core';
 import { HeroCardsComponent } from '.././ui/hero-cards/hero-cards.component';
 import { ButtonsHeaderComponent } from '../../shared/components/buttons-header/buttons-header.component';
 import {
@@ -24,10 +30,10 @@ import {
 import { Subscription } from 'rxjs';
 import { SeriesDetailsService } from '../../details/series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../details/movie-details/data-access/movie-details.service';
-import {
-  PopoverComponent,
-  PopoverConfig,
-} from '../../shared/components/popover/popover.component';
+import { PopoverConfig } from '../../shared/components/popover/popover.model';
+import { UserService } from '../../core/user/user.service';
+import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
+import { PopoverComponent } from '../../shared/components/popover/popover.component';
 
 @Component({
   selector: 'app-home',
@@ -47,6 +53,8 @@ export class HomeComponent implements OnInit, OnDestroy {
     private tmdbService: TmdbService,
     private seriesDetailService: SeriesDetailsService,
     private movieDetailsService: MovieDetailsService,
+    private userService: UserService,
+    private firebaseAuthService: FirebaseAuthService,
   ) {}
 
   @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
@@ -108,6 +116,32 @@ export class HomeComponent implements OnInit, OnDestroy {
     itemSectionsConfig: [
       {
         contentType: 'icon-and-text',
+        sectionName: 'auth',
+        items: [
+          {
+            text: 'Create Account',
+            iconPath: 'assets/icons/popover/user.svg',
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? false : true;
+            }),
+            onClickCallback: () => {
+              this.router.navigateByUrl('/auth/signup');
+            },
+          },
+          {
+            text: 'Log in',
+            iconPath: 'assets/icons/popover/user.svg',
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? false : true;
+            }),
+            onClickCallback: () => {
+              this.router.navigateByUrl('/auth/login');
+            },
+          },
+        ],
+      },
+      {
+        contentType: 'icon-and-text',
         sectionName: 'section1',
         items: [
           { text: 'User', iconPath: 'assets/icons/popover/user.svg' },
@@ -122,7 +156,16 @@ export class HomeComponent implements OnInit, OnDestroy {
         sectionName: 'section2',
         items: [
           { text: 'Settings', iconPath: 'assets/icons/popover/settings.svg' },
-          { text: 'Logout', iconPath: 'assets/icons/popover/logout.svg' },
+          {
+            text: 'Logout',
+            iconPath: 'assets/icons/popover/logout.svg',
+            onClickCallback: () => {
+              this.firebaseAuthService.signOut();
+            },
+            isVisibleIf: computed(() => {
+              return this.userService.userSig() ? true : false;
+            }),
+          },
         ],
       },
     ],

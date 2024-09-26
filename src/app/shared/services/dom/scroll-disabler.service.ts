@@ -24,7 +24,7 @@ export class ScrollDisablerService {
 
     const body = this.document.body;
     if (!this.scrollLockingElementIDs[0]) {
-      body.style.overflow = '';
+      body.style.overflow = 'auto';
     }
   }
 

@@ -206,7 +206,7 @@
       }
     }
 
-    .login__password-invalid-character-checker {
+    .login__password-character-checker {
       pointer-events: none;
       position: absolute;
       inset: 0;
@@ -251,10 +251,10 @@
           content: "";
           inset: 0;
           position: absolute;
-          width: 100%;
+          width: 75%;
           height: 100%;
           padding: 0 1px;
-          border-bottom: 1.5px dotted var(--text-color-danger);
+          border-bottom: 1.75px solid var(--text-color-danger);
         }
       }
     }
@@ -278,69 +278,6 @@
 
     &.no-error {
       opacity: 0%;
-    }
-  }
-}
-
-.form__error-messages-container.shake-error {
-  animation: ShakeError 750ms linear;
-}
-
-@keyframes ShakeError {
-  0%,
-  20%,
-  40%,
-  60%,
-  80% {
-    transform: translateX(5px);
-  }
-
-  10%,
-  30%,
-  50%,
-  70%,
-  90% {
-    transform: translateX(-5px);
-  }
-  100% {
-    transform: translateX(0);
-  }
-}
-
-.form__input--keep-logged-in {
-  display: flex;
-  flex-flow: row nowrap;
-  column-gap: 0.5rem;
-  margin-bottom: 2rem;
-
-  input[type="checkbox"] {
-    position: relative;
-    cursor: pointer;
-    width: 1.14rem;
-    aspect-ratio: 1;
-    appearance: none;
-    border-radius: 25%;
-
-    &::after {
-      display: grid;
-      place-content: center;
-      border-radius: 25%;
-      position: absolute;
-      inset: 0;
-      content: "";
-      outline: 2px solid rgba(255, 255, 255, 0.5);
-      outline-offset: -2px;
-    }
-
-    &:hover::after,
-    &:focus {
-      outline: 2px solid var(--accent-color);
-    }
-
-    &:checked::after {
-      content: url("../../../../../assets/icons/login/check.svg");
-      background-color: var(--accent-color);
-      outline: 2px solid var(--accent-color);
     }
   }
 }

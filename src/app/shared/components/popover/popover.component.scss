@@ -33,6 +33,10 @@
 .popover__items-section {
   border-radius: 0.75rem;
   overflow: hidden;
+
+  &:not(:has(li)) {
+    display: none;
+  }
 }
 
 .popover__items-section > * {

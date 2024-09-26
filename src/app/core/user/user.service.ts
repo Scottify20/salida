@@ -1,12 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, Signal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, debounceTime, map, Observable, take, tap } from 'rxjs';
+import { catchError, map, Observable, of, take, tap } from 'rxjs';
 import { UserInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
 import { SalidaResponse } from '../../shared/interfaces/types/api-response/SalidaResponse';
-
 import { environment } from '../../../environments/environment';
 
 @Injectable({
@@ -14,8 +13,7 @@ import { environment } from '../../../environments/environment';
 })
 export class UserService {
   constructor(private http: HttpClient) {}
-  user$: Observable<User | null> | undefined = undefined;
-  user: User | null | undefined = undefined;
+  userSig: Signal<User | null | undefined> = signal(undefined); // the auth state of the user
 
   private baseUrlProtected = `${environment.SALIDA_API_BASE_URL}/api/v1/protected/users`;
   private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
@@ -24,7 +22,7 @@ export class UserService {
 
   async registerUserInfoToFirestore(
     user: User | null | undefined,
-    idToken: string | undefined
+    idToken: string | undefined,
   ) {
     if (!user || !idToken) {
       return;
@@ -69,37 +67,18 @@ export class UserService {
       .post<SalidaResponse>(
         `${this.baseUrlProtected}/make-permanent`,
         userToFirestore,
-        { headers }
+        { headers },
       )
       .pipe(
         tap((response) => {
           this.saveUserInfoResponse = response;
         }),
-        take(1)
+        take(1),
       )
       .subscribe();
   }
 
   saveUserPreferencesToFireStore() {}
-
-  startUserDataSubscription() {
-    if (this.user$) {
-      this.user$
-        .pipe(
-          tap(async (user) => {
-            if (!user) {
-              return;
-            }
-            // console.log(user);
-
-            // if (!user.emailVerified) {
-            //   await sendEmailVerification(user);
-            // }
-          })
-        )
-        .subscribe();
-    }
-  }
 
   getUserEmailsByUsername$(username: string): Observable<SalidaEmailsResponse> {
     return this.http
@@ -111,23 +90,9 @@ export class UserService {
         catchError((error) => {
           // console.log(error);
           throw error;
-        })
+        }),
       );
   }
 
   // getUserDataFromFireStoreWith
 }
-
-// interface SalidaApiResponse {
-//   message: string;
-//   data?: any;
-// }
-
-// interface UserRegistrationResponse extends SalidaApiResponse {
-//   message: string;
-// }
-
-// interface GetEmailByUsernameResponse extends SalidaApiResponse {
-//   message: string;
-//   data?: string[];
-// }

@@ -14,16 +14,10 @@ import {
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 import { UserService } from '../user/user.service';
-import {
-  catchError,
-  from,
-  map,
-  Observable,
-  shareReplay,
-  switchMap,
-} from 'rxjs';
+import { catchError, from, map, Observable, switchMap, tap } from 'rxjs';
 import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
 import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -31,16 +25,15 @@ import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response
 export class FirebaseAuthService {
   constructor(
     private platformCheckService: PlatformCheckService,
-    private userService: UserService
+    private userService: UserService,
   ) {
     if (this.platformCheckService.isBrowser()) {
       this.auth = inject(Auth);
-      this.userService.user$ = authState(this.auth);
-      this.userService.startUserDataSubscription();
+      this.userService.userSig = toSignal(authState(this.auth));
     }
   }
 
-  private auth!: Auth;
+  auth!: Auth;
 
   async getToken(): Promise<string | undefined> {
     return await this.auth.currentUser?.getIdToken(true);
@@ -54,7 +47,7 @@ export class FirebaseAuthService {
       map((userCredential) => userCredential.user),
       catchError((error) => {
         throw error;
-      })
+      }),
     );
   }
 
@@ -66,26 +59,26 @@ export class FirebaseAuthService {
       map((userCredential) => userCredential.user),
       catchError((error) => {
         throw error;
-      })
+      }),
     );
   }
 
   loginWithEmailAndPassword$(
     email: string,
-    password: string
+    password: string,
   ): Observable<User> {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((userCredential) => userCredential.user),
       catchError((error) => {
         // console.log(error.name, error.code, 'firebase auth service');
         throw error;
-      })
+      }),
     );
   }
 
   loginWithUsernameAndPassword$(
     username: string,
-    password: string
+    password: string,
   ): Observable<User> {
     return this.userService.getUserEmailsByUsername$(username).pipe(
       switchMap((response) => {
@@ -103,7 +96,7 @@ export class FirebaseAuthService {
           throw new SalidaAuthError(
             "Can't connect to server.",
             'auth/cannot-connect-to-server',
-            'general'
+            'general',
           );
         }
 
@@ -111,23 +104,23 @@ export class FirebaseAuthService {
         throw new SalidaAuthError(
           err.error.message,
           err.error.code,
-          err.error.source
+          err.error.source,
         );
-      })
+      }),
     );
   }
 
   registerWithEmailAndPasswordToAuth$(
     email: string,
-    password: string
+    password: string,
   ): Observable<User> {
     return from(
-      createUserWithEmailAndPassword(this.auth, email, password)
+      createUserWithEmailAndPassword(this.auth, email, password),
     ).pipe(
       map((userCredential) => userCredential.user),
       catchError((error) => {
         throw error;
-      })
+      }),
     );
   }
 
