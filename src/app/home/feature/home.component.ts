@@ -120,7 +120,7 @@ export class HomeComponent implements OnInit, OnDestroy {
         items: [
           {
             text: 'Create Account',
-            iconPath: 'assets/icons/popover/user.svg',
+            iconPath: 'assets/icons/popover/create_account.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? false : true;
             }),
@@ -130,7 +130,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           },
           {
             text: 'Log in',
-            iconPath: 'assets/icons/popover/user.svg',
+            iconPath: 'assets/icons/popover/login.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? false : true;
             }),

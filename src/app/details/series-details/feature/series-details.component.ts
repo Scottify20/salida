@@ -12,6 +12,7 @@ import {
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { Subscription, tap } from 'rxjs';
+import { ElementPositionService } from '../../../shared/services/dom/element-position.service';
 
 @Component({
   selector: 'app-series-details',
@@ -25,6 +26,7 @@ export class SeriesDetailsComponent {
     private seriesDetailsService: SeriesDetailsService,
     private scrollDisablerService: ScrollDisablerService,
     private preferencesService: TemporaryUserPreferencesService,
+    private elementPositionService: ElementPositionService,
   ) {
     this.reviewsPreferencesSubscription = this.preferencesService.preferences$
       .pipe(

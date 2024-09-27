@@ -24,7 +24,9 @@
         class="dialog__item"
         [ngClass]="item.isSelected() ? 'selected' : ''"
       >
-        {{ item.textContent }}
+        <p>
+          {{ item.textContent }}
+        </p>
       </li>
     </ul>
   </div>

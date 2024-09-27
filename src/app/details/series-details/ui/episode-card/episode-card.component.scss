@@ -81,6 +81,7 @@
       font-size: 0.833rem;
 
       span {
+        width: max-content;
         text-wrap: nowrap;
         color: var(--text-color-disabled);
       }
