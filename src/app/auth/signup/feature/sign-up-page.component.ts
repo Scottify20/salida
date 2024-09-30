@@ -27,7 +27,6 @@ import {
   tap,
 } from 'rxjs';
 import { AuthError } from 'firebase/auth';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
 import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
@@ -48,7 +47,6 @@ interface SignupErrorMessages {
     ButtonsHeaderComponent,
     CapsLockDetectorDirective,
     SocialsSignInComponent,
-    ModalComponent,
     RouterModule,
   ],
   templateUrl: '../ui/sign-up-page/sign-up-page.component.html',

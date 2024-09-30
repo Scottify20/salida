@@ -6,6 +6,7 @@ import { PlatformCheckService } from './shared/services/dom/platform-check.servi
 import { CommonModule } from '@angular/common';
 import { NavigationTabsComponent } from './shared/components/pill-tabs/navigation-tabs/navigation-tabs.component';
 import { FirebaseAuthService } from './core/auth/firebase-auth.service';
+import { DialogComponent } from './dialogs/ui/dialog/dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -16,6 +17,7 @@ import { FirebaseAuthService } from './core/auth/firebase-auth.service';
     ToastsContainerComponent,
     CommonModule,
     NavigationTabsComponent,
+    DialogComponent,
   ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',

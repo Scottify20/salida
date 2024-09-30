@@ -23,8 +23,6 @@ import {
   FirebaseAuthErrorSource,
   FirebaseAuthService,
 } from '../../../core/auth/firebase-auth.service';
-import { ModalComponent } from '../../../shared/components/modal/modal.component';
-import { DialogComponent } from '../../../shared/components/dialog/dialog.component';
 import { AuthError } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
@@ -48,8 +46,6 @@ interface LoginErrorMessages {
     CapsLockDetectorDirective,
     SocialsSignInComponent,
     RouterModule,
-    ModalComponent,
-    DialogComponent,
     LoadingDotsComponent,
   ],
   templateUrl: '../ui/login-page/login-page.component.html',

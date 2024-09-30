@@ -1,22 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { ToastsService } from '../../data-access/toasts.service';
-
-type ActionButtonType = 'accent' | 'danger' | 'warning' | 'success' | 'neutral';
-
-export interface ToastItem {
-  idBasedOnContent?: string;
-  iconPath?: string;
-  text: string;
-  actionButton?: {
-    type: ActionButtonType;
-    callback?: () => void;
-    label?: string;
-    iconPath?: string;
-  };
-  scope: 'global' | 'route';
-  duration?: number;
-}
+import { ToastItem } from '../../feature/toast.model';
 
 @Component({
   selector: 'app-toast',

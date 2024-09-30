@@ -1,7 +1,7 @@
 import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
-import { ToastComponent, ToastItem } from '../ui/toast/toast.component';
+import { ToastComponent } from '../ui/toast/toast.component';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { time } from 'node:console';
+import { ToastItem } from '../feature/toast.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +14,7 @@ export class ToastsService {
   toastRefs: { id: string; componentRef: ComponentRef<ToastComponent> }[] = [];
 
   addToast(toastProps: ToastItem) {
-    if (!this.platformCheckService.isBrowser() || !this.toastsContainerRef) {
+    if (this.platformCheckService.isServer() || !this.toastsContainerRef) {
       return;
     }
 
@@ -47,7 +47,7 @@ export class ToastsService {
     // get the index of the toast
     const toastIndex = this.toastRefs.findIndex((toast) => toast.id === id);
 
-    // if the toast exists remove it from the dom and remove its timeout reference
+    // if the toast exists remove it from the dom (destroy it)
     if (toastIndex !== -1) {
       const componentRef = this.toastRefs[toastIndex].componentRef;
       componentRef.instance.closed = true;
@@ -55,9 +55,9 @@ export class ToastsService {
       setTimeout(() => {
         componentRef.destroy();
       }, 150); // 150 is the time to wait for the slide out or fade animation
-    }
 
-    // remove the componentRef from the array
-    this.toastRefs.splice(toastIndex, 1);
+      // remove the componentRef from the array
+      this.toastRefs.splice(toastIndex, 1);
+    }
   }
 }

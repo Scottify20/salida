@@ -25,6 +25,7 @@ app-scroll-buttons {
 .hero__cards-container {
   position: relative;
   overflow-x: auto;
+  overflow-y: hidden;
 
   display: flex;
   flex-flow: row nowrap;
