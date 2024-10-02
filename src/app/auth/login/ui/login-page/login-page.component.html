@@ -15,19 +15,11 @@
       />
     </div>
 
-    <div class="divider-with-title">
-      <span class="divider__left divider"></span
-      ><span class="divider__title">LOGIN WITH</span>
-      <span class="divider__right divider"></span>
-    </div>
+    <app-divider-with-title>CONTINUE WITH</app-divider-with-title>
 
     <app-socials-sign-in></app-socials-sign-in>
 
-    <div class="divider-with-title">
-      <span class="divider__left divider"></span
-      ><span class="divider__title">OR</span>
-      <span class="divider__right divider"></span>
-    </div>
+    <app-divider-with-title>OR</app-divider-with-title>
 
     <form class="login__section login__form-container" [formGroup]="loginForm">
       <div class="field">
@@ -60,7 +52,7 @@
             tabindex="1"
             placeholder="Enter password"
             [type]="passwordInputType"
-            class="input"
+            class="input password"
             formControlName="password"
           />
           <div

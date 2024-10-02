@@ -1,11 +1,14 @@
 <div class="login">
   <div class="login__header">
     <app-buttons-header [headerButtons]="headerButtons"></app-buttons-header>
+    <app-progress-indicator
+      [progressIndicatorProps]="progressIndicatorProps"
+    ></app-progress-indicator>
   </div>
 
   <div class="login__main">
     <div class="login__header-container">
-      <h1 class="login__title">Create your xxxxxx account</h1>
+      <h1 class="login__title">Create your Salida account</h1>
       <img
         src="assets/icons/login/illustration-temp.svg"
         alt=""
@@ -15,19 +18,12 @@
       />
     </div>
 
-    <div class="divider-with-title">
-      <span class="divider__left divider"></span
-      ><span class="divider__title">SIGN UP WITH</span>
-      <span class="divider__right divider"></span>
-    </div>
+    <app-divider-with-title>CONTINUE WITH</app-divider-with-title>
 
     <app-socials-sign-in></app-socials-sign-in>
 
-    <div class="divider-with-title">
-      <span class="divider__left divider"></span
-      ><span class="divider__title">OR</span>
-      <span class="divider__right divider"></span>
-    </div>
+    <app-divider-with-title>OR</app-divider-with-title>
+
     <form class="login__section login__form-container" [formGroup]="signupForm">
       <div class="field">
         <label for="email" class="label">EMAIL</label>

@@ -1,0 +1,73 @@
+@if (dialogProps.config.isBackdropEnabled) {
+  <div
+    #backdrop
+    class="dialog__backdrop"
+    [class]="
+      dialogProps.config.isOpenSig() == null
+        ? ''
+        : dialogProps.config.isOpenSig()
+          ? 'open'
+          : 'closed'
+    "
+  ></div>
+}
+
+<div
+  #dialog
+  class="dialog"
+  [class]="
+    dialogProps.config.isOpenSig() == null
+      ? ''
+      : dialogProps.config.isOpenSig()
+        ? 'open'
+        : 'closed'
+  "
+>
+  <div class="dialog__main-content-container">
+    @if (dialogProps.mainContent.iconPath; as iconPath) {
+      <img [src]="iconPath" alt="" class="dialog__icon" />
+    }
+    <h4 class="dialog__title">
+      {{ getTextFromTextItem(dialogProps.mainContent.title) }}
+    </h4>
+
+    @if (dialogProps.mainContent.textItems; as textItems) {
+      <ul class="dialog__text-items-container">
+        @for (textItem of textItems; track textItem) {
+          <li class="dialog__text-item">
+            @if (textItems.length > 1) {
+              <div class="dialog__text-item-bullet">•</div>
+            }
+            <p class="dialog__text-item-text">
+              {{ getTextFromTextItem(textItem) }}
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+  <div class="dialog__buttons-container">
+    @if (dialogProps.buttons.secondary; as secondaryButton) {
+      <div
+        #secondaryButton
+        tabindex="1"
+        class="dialog__button secondary"
+        (click)="closeDialog(); secondaryButton.onClickCallback()"
+      >
+        {{ getTextFromTextItem(secondaryButton.label) }}
+      </div>
+    }
+
+    @if (dialogProps.buttons.primary; as primaryButton) {
+      <div
+        #primaryButton
+        tabindex="1"
+        class="dialog__button primary"
+        [class]="primaryButton.type"
+        (click)="closeDialog(); primaryButton.onClickCallback()"
+      >
+        {{ getTextFromTextItem(primaryButton.label) }}
+      </div>
+    }
+  </div>
+</div>

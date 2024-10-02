@@ -1,9 +1,9 @@
 import { Component, signal } from '@angular/core';
-import { FirebaseAuthService } from '../../../core/auth/firebase-auth.service';
+import { FirebaseAuthService } from '../../../../core/auth/firebase-auth.service';
 import { AsyncPipe, CommonModule } from '@angular/common';
-import { UserService } from '../../../core/user/user.service';
+import { UserService } from '../../../../core/user/user.service';
 import { catchError, of, Subject, Subscription, tap } from 'rxjs';
-import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../../../toasts-container/data-access/toasts.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -17,7 +17,7 @@ export class SocialsSignInComponent {
   constructor(
     private firebaseAuthService: FirebaseAuthService,
     private toastsService: ToastsService,
-    private router: Router
+    private router: Router,
   ) {}
 
   socialLoginSubscription: Subscription | null = null;
@@ -70,7 +70,7 @@ export class SocialsSignInComponent {
 
           const errorMessage =
             this.firebaseAuthService.getFirebaseAuthErrorMessage(
-              error.code
+              error.code,
             ).message;
 
           this.toastsService.addToast({
@@ -81,7 +81,7 @@ export class SocialsSignInComponent {
           });
 
           return of(null);
-        })
+        }),
       )
       .subscribe();
   }

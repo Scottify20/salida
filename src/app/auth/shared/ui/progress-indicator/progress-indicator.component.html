@@ -1,0 +1,23 @@
+<div class="progress-indicator-container">
+  @if (progressIndicatorProps; as props) {
+    <div
+      class="progress__indicatior-text-container"
+      [style]="getGridTemplateColumnsStyle()"
+    >
+      <p class="progress__indicatior-text" [style]="getGridColumnStyle()">
+        {{ props.visitedSteps }} of {{ props.steps }}
+      </p>
+    </div>
+    <div
+      class="progress__indicatior-bars-container"
+      [style]="getGridTemplateColumnsStyle()"
+    >
+      @for (step of trackingArray(); let i = $index; track step) {
+        <div
+          class="progress__indicatior-bar"
+          [class]="i < props.visitedSteps ? 'visited' : ''"
+        ></div>
+      }
+    </div>
+  }
+</div>

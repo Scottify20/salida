@@ -1,7 +1,7 @@
 import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
 import { ToastComponent } from '../ui/toast/toast.component';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { ToastItem } from '../feature/toast.model';
+import { ToastItem } from './toast.model';
 
 @Injectable({
   providedIn: 'root',

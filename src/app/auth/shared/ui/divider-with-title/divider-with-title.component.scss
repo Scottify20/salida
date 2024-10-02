@@ -1,0 +1,37 @@
+:host {
+  width: 100%;
+}
+
+.divider-with-title {
+  overflow: clip;
+  width: 100%;
+  display: grid;
+  grid-template-areas: " dl tt dr";
+  grid-template-columns: 1fr auto 1fr;
+  padding: 1rem 0;
+
+  span.divider__title {
+    grid-area: tt;
+    color: var(--accent-color);
+    font-size: 0.875rem;
+    font-weight: 600;
+    padding: 0 0.5rem;
+    align-items: center;
+  }
+
+  span.divider {
+    margin: auto 0;
+    content: "";
+    height: 2px;
+    background-color: var(--divider-color);
+    display: inline;
+  }
+
+  span.divider__left {
+    grid-area: dl;
+  }
+
+  span.divider__right {
+    grid-area: dr;
+  }
+}

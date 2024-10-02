@@ -4,7 +4,7 @@ import { ButtonsHeaderComponent } from '../../../shared/components/buttons-heade
 import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
-import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sign-in.component';
+import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
 import {
   passwordValidator,
   validPasswordCharRegex,
@@ -31,6 +31,9 @@ import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
+import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
+import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
+import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -48,6 +51,8 @@ interface SignupErrorMessages {
     CapsLockDetectorDirective,
     SocialsSignInComponent,
     RouterModule,
+    ProgressIndicatorComponent,
+    DividerWithTitleComponent,
   ],
   templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
   styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
@@ -330,6 +335,11 @@ export class SignUpPageComponent {
     });
   }
 
+  progressIndicatorProps: ProgressIndicatorProps = {
+    visitedSteps: 1,
+    steps: 2,
+  };
+
   headerButtons: HeaderButton[] = [
     {
       type: 'iconWithBG',
@@ -340,14 +350,14 @@ export class SignUpPageComponent {
         target: '_self',
       },
     },
-    {
-      type: 'iconWithBG',
-      iconPath: 'assets/icons/header/Question.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/auth/login',
-        target: '_self',
-      },
-    },
+    // {
+    //   type: 'iconWithBG',
+    //   iconPath: 'assets/icons/header/Question.svg',
+    //   anchor: {
+    //     urlType: 'internal',
+    //     path: '/auth/login',
+    //     target: '_self',
+    //   },
+    // },
   ];
 }

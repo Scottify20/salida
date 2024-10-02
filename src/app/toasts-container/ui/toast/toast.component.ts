@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input } from '@angular/core';
 import { ToastsService } from '../../data-access/toasts.service';
-import { ToastItem } from '../../feature/toast.model';
+import { ToastItem } from '../../data-access/toast.model';
 
 @Component({
   selector: 'app-toast',

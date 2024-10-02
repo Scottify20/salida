@@ -5,7 +5,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
 import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
-import { SocialsSignInComponent } from '../../shared/socials-sign-in/socials-sign-in.component';
+import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
 import { Router, RouterModule } from '@angular/router';
 import {
   catchError,
@@ -29,6 +29,7 @@ import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-resp
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
+import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 
 interface LoginErrorMessages {
   emailOrUsername: string | null;
@@ -47,6 +48,7 @@ interface LoginErrorMessages {
     SocialsSignInComponent,
     RouterModule,
     LoadingDotsComponent,
+    DividerWithTitleComponent,
   ],
   templateUrl: '../ui/login-page/login-page.component.html',
   styleUrl: '../ui/login-page/login-page.component.scss',
@@ -331,14 +333,14 @@ export class LoginPageComponent {
         target: '_self',
       },
     },
-    {
-      type: 'iconWithBG',
-      iconPath: 'assets/icons/header/Question.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/auth/login',
-        target: '_self',
-      },
-    },
+    // {
+    //   type: 'iconWithBG',
+    //   iconPath: 'assets/icons/header/Question.svg',
+    //   anchor: {
+    //     urlType: 'internal',
+    //     path: '/auth/login',
+    //     target: '_self',
+    //   },
+    // },
   ];
 }

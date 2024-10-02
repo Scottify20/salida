@@ -27,6 +27,13 @@ export const routes: Routes = [
             (m) => m.SignUpPageComponent,
           ),
       },
+      {
+        path: 'set-username',
+        loadComponent: () =>
+          import(
+            './auth/signup/ui/username-setting-page/username-setting-page.component'
+          ).then((m) => m.UsernameSettingPageComponent),
+      },
     ],
   },
   {
