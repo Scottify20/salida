@@ -1,4 +1,3 @@
-import { CommonModule } from '@angular/common';
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -30,6 +29,7 @@ import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
+import { PageTransitionService } from '../../../shared/services/navigation/page-transition.service';
 
 interface LoginErrorMessages {
   emailOrUsername: string | null;
@@ -42,7 +42,6 @@ interface LoginErrorMessages {
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    CommonModule,
     ButtonsHeaderComponent,
     CapsLockDetectorDirective,
     SocialsSignInComponent,

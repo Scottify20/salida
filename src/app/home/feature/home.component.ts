@@ -35,6 +35,8 @@ import { UserService } from '../../core/user/user.service';
 import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
 import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { JsonPipe } from '@angular/common';
+import { RouteScrollPositionService } from '../../shared/services/navigation/route-scroll-position.service';
+import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 
 @Component({
   selector: 'app-home',

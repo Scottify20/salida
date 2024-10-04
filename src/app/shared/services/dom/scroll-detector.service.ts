@@ -33,12 +33,10 @@ export class ScrollDetectorService {
       startWith(
         this.platformCheck.isBrowser()
           ? {
-              scrollTop:
-                window.pageYOffset || document.documentElement.scrollTop,
-              scrollLeft:
-                window.pageXOffset || document.documentElement.scrollLeft,
+              scrollTop: window.scrollY || document.documentElement.scrollTop,
+              scrollLeft: window.screenX || document.documentElement.scrollLeft,
             }
-          : { scrollTop: 0, scrollLeft: 0 }
+          : { scrollTop: 0, scrollLeft: 0 },
       ),
       map((position) => ({
         position,
@@ -48,9 +46,9 @@ export class ScrollDetectorService {
         (prev, curr) =>
           prev.position.scrollTop === curr.position.scrollTop &&
           prev.position.scrollLeft === curr.position.scrollLeft &&
-          prev.isScrolling === curr.isScrolling
+          prev.isScrolling === curr.isScrolling,
       ),
-      shareReplay(1)
+      shareReplay(1),
     );
 
   private _subscriptions: Subscription[] = []; // To store all subscriptions
@@ -61,16 +59,15 @@ export class ScrollDetectorService {
         .pipe(
           debounceTime(100),
           map(() => ({
-            scrollTop: window.pageYOffset || document.documentElement.scrollTop,
-            scrollLeft:
-              window.pageXOffset || document.documentElement.scrollLeft,
+            scrollTop: window.scrollY || document.documentElement.scrollTop,
+            scrollLeft: window.scrollX || document.documentElement.scrollLeft,
           })),
           distinctUntilChanged(
             (prev, curr) =>
               prev.scrollTop === curr.scrollTop &&
-              prev.scrollLeft === curr.scrollLeft
+              prev.scrollLeft === curr.scrollLeft,
           ),
-          shareReplay(1)
+          shareReplay(1),
         )
         .subscribe(() => {
           this.emitScrollEvent();
@@ -88,8 +85,8 @@ export class ScrollDetectorService {
 
       this.scrollTimer = setTimeout(() => {
         const newScrollPosition = {
-          scrollTop: window.pageYOffset || document.documentElement.scrollTop,
-          scrollLeft: window.pageXOffset || document.documentElement.scrollLeft,
+          scrollTop: window.scrollY || document.documentElement.scrollTop,
+          scrollLeft: window.scrollX || document.documentElement.scrollLeft,
         };
         this.scrollSubject.next(newScrollPosition);
         this.isScrollingSubject.next(false);
@@ -109,8 +106,8 @@ export class ScrollDetectorService {
 
       this.scrollTimer = setTimeout(() => {
         this.scrollSubject.next({
-          scrollTop: window.pageYOffset || document.documentElement.scrollTop,
-          scrollLeft: window.pageXOffset || document.documentElement.scrollLeft,
+          scrollTop: window.scrollY || document.documentElement.scrollTop,
+          scrollLeft: window.scrollX || document.documentElement.scrollLeft,
         });
         this.isScrollingSubject.next(false);
       }, 100);

@@ -1,11 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { MovieDetailsService } from '../../data-access/movie-details.service';
 import {
   CastCredit,
   Credit,
   Movie,
 } from '../../../../shared/interfaces/models/tmdb/Movies';
-import { Subscription } from 'rxjs';
+import { Subscription, takeUntil, tap } from 'rxjs';
 import {
   TextsSectionOptions,
   TextsSectionComponent,
@@ -21,6 +21,7 @@ import {
 } from '../../../../shared/components/cards-section/cards-section.component';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-more-details',
@@ -37,28 +38,26 @@ import { CommonModule } from '@angular/common';
 export class MovieMoreDetailsComponent {
   constructor(
     private movieDetailsService: MovieDetailsService,
-    private router: Router
+    private router: Router,
+    private destroyRef: DestroyRef,
   ) {
-    this.movieDataSubscription = this.movieDetailsService.movieData$.subscribe(
-      (movie) => {
-        if (movie) {
-          this.movieData = movie;
-        }
-      }
-    );
+    this.movieDetailsService.movieData$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((movie) => {
+          if (movie) {
+            this.movieData = movie;
+          }
+        }),
+      )
+      .subscribe();
   }
 
   movieData: Movie | undefined;
 
-  private movieDataSubscription!: Subscription;
-
-  ngOnDestroy() {
-    this.movieDataSubscription?.unsubscribe();
-  }
-
   isTextsSectionDoubleColumn(
     sectionA: TextsSectionOptions,
-    sectionB: TextsSectionOptions
+    sectionB: TextsSectionOptions,
   ): boolean {
     function itemsLessThanTen(): boolean {
       return sectionA.texts.length < 10 && sectionB.texts.length < 10

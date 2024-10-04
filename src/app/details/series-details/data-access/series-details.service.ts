@@ -20,7 +20,10 @@ import {
   providedIn: 'root',
 })
 export class SeriesDetailsService {
-  constructor(private router: Router, private tmdbService: TmdbService) {
+  constructor(
+    private router: Router,
+    private tmdbService: TmdbService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -46,7 +49,7 @@ export class SeriesDetailsService {
       tap((seasons) => {
         this.setSeason1OrSeasonAfterSpecials([...seasons]);
         this.seasonsSummary = seasons;
-      })
+      }),
     )
     .subscribe();
 
@@ -58,7 +61,7 @@ export class SeriesDetailsService {
         }
         this.selectedSeasonSummary = selectedSeasonSum;
         this.selectedSeason = selectedSeasonSum.name;
-      })
+      }),
     )
     .subscribe();
 
@@ -82,9 +85,9 @@ export class SeriesDetailsService {
 
         return this.tmdbService.series.getSeasonDetails(
           this.idFromRoute,
-          season.season_number
+          season.season_number,
         );
-      })
+      }),
     );
 
   viewSeriesDetails(id: number, title: string) {
@@ -105,10 +108,6 @@ export class SeriesDetailsService {
     const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
 
-    if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {
-      return;
-    }
-
     if (!isNaN(titleId) && this.isSeriesRoute) {
       this.fetchCurrentSeriesData();
     } else {
@@ -120,7 +119,7 @@ export class SeriesDetailsService {
     if (!this.idFromRoute) {
       console.log(
         'Error fetching series details:',
-        'no series id found on route'
+        'no series id found on route',
       );
       return;
     }
@@ -128,7 +127,7 @@ export class SeriesDetailsService {
     this.tmdbService.series.getSeriesDetails(this.idFromRoute).subscribe({
       next: (series) => {
         this.seasonsSummary$.next(
-          series.seasons.filter((season) => season.episode_count > 0)
+          series.seasons.filter((season) => season.episode_count > 0),
         );
         this._seriesData$.next(series);
         this.fetchedSeriesId = series.id;
@@ -143,7 +142,7 @@ export class SeriesDetailsService {
   setSeason1OrSeasonAfterSpecials(seasons: SeasonSummary[]) {
     const seasonOne = seasons.find((season) => season.name === 'Season 1');
     const seasonOtherThanSeason1OrSpecials = seasons.filter(
-      (season) => season.name !== 'Specials'
+      (season) => season.name !== 'Specials',
     )[0];
 
     if (seasonOne) {

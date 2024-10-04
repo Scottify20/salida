@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { MovieDetailsService } from '../data-access/movie-details.service';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
@@ -12,6 +12,8 @@ import {
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { Subscription, tap } from 'rxjs';
 import { NgScrollbarModule } from 'ngx-scrollbar';
+import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-details',
@@ -29,9 +31,12 @@ export class MovieDetailsComponent {
   constructor(
     private preferencesService: TemporaryUserPreferencesService,
     private movieDetailsService: MovieDetailsService,
+    private platformCheckService: PlatformCheckService,
+    private destroyRef: DestroyRef,
   ) {
     this.userPreferencesSubscriptions = this.preferencesService.preferences$
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap((preferences) => {
           if (!preferences) {
             return;
@@ -44,6 +49,13 @@ export class MovieDetailsComponent {
 
   private userPreferences!: UserPreferences;
   private userPreferencesSubscriptions: Subscription | null = null;
+
+  ngOnInit() {
+    if (this.platformCheckService.isBrowser()) {
+      window.scrollTo({ top: 0 });
+    }
+  }
+
   ngOnDestroy() {
     this.userPreferencesSubscriptions?.unsubscribe();
   }
@@ -69,9 +81,14 @@ export class MovieDetailsComponent {
           visibleOn: ['all'],
           visibleIf: () => {
             let hasReviews = false;
-            this.movieDetailsService.movieData$.subscribe((movie) => {
-              hasReviews = !!movie?.reviews.results.length;
-            });
+            this.movieDetailsService.movieData$
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((movie) => {
+                  hasReviews = !!movie?.reviews.results.length;
+                }),
+              )
+              .subscribe();
             return hasReviews;
           },
         },

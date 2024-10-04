@@ -3,12 +3,12 @@ import {
   SectionHeaderOptions,
   SectionHeaderTitleAndButtonComponent,
 } from '../section-header-title-and-button/section-header-title-and-button.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-texts-section',
   standalone: true,
-  imports: [SectionHeaderTitleAndButtonComponent, CommonModule],
+  imports: [SectionHeaderTitleAndButtonComponent],
   templateUrl: './texts-section.component.html',
   styleUrl: './texts-section.component.scss',
 })

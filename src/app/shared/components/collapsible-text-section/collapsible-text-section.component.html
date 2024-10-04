@@ -2,36 +2,38 @@
   <div class="section-header">
     <h4 class="section-header__title">{{ plotSectionOptions.sectionTitle }}</h4>
 
-    <ng-container *ngIf="plotSectionOptions.buttonProps as buttonProps">
-      <div
-        *ngIf="plotIsOverflowing(textElement, textContainer)"
-        [ngSwitch]="buttonProps.type"
-        class="section-header__button"
-        (click)="expanded = !expanded"
-        role="button"
-      >
-        <!-- if button is a text -->
-        <ng-container *ngSwitchCase="'text'">
-          <div
-            [textContent]="expanded ? 'Collapse' : 'Expand'"
-            class="section-header__button--text"
-          ></div>
-        </ng-container>
-        <ng-container *ngSwitchCase="'icon'">
-          <!-- if button is an icon -->
-          <div class="section-header__button--icon">
-            <img [src]="buttonProps.textOrIconPath" alt="" />
-          </div>
-        </ng-container>
-      </div>
-    </ng-container>
+    @if (plotSectionOptions.buttonProps; as buttonProps) {
+      @if (plotIsOverflowing(textElement, textContainer)) {
+        <div
+          class="section-header__button"
+          (click)="expanded = !expanded"
+          role="button"
+          >
+          @switch (buttonProps.type) {
+            <!-- if button is a text -->
+            @case ('text') {
+              <div
+                [textContent]="expanded ? 'Collapse' : 'Expand'"
+                class="section-header__button--text"
+              ></div>
+            }
+            @case ('icon') {
+              <!-- if button is an icon -->
+              <div class="section-header__button--icon">
+                <img [src]="buttonProps.textOrIconPath" alt="" />
+              </div>
+            }
+          }
+        </div>
+      }
+    }
   </div>
 
   <div
     #textContainer
     [ngClass]="!expanded ? 'plot-cutoff' : ''"
     class="texts-section__texts-container"
-  >
+    >
     <p #textElement class="texts-section__text">
       {{ plotSectionOptions.texts[0] }}
     </p>

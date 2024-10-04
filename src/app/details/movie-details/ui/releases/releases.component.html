@@ -1,6 +1,6 @@
 <!-- if the release dates are grouped by release type -->
 @if (releasesPreferences.groupBy == "release-type") {
-  <div [ngClass]="isLoading ? 'loading' : ''" class="releases release-type">
+  <div [class]="isLoading ? 'loading' : ''" class="releases release-type">
     @for (releaseType of releasesByType | keyvalue; track releaseType) {
       @if (releaseType.value[0]) {
         <div class="releases__type-container">
@@ -18,7 +18,7 @@
                 track release
               ) {
                 <div
-                  [ngClass]="
+                  [class]="
                     isFirstInReleaseDate(release, releaseType.value)
                       ? 'first-release-by-date'
                       : ''
@@ -74,7 +74,7 @@
 <!-- if the release dates are grouped by country -->
 
 @if (releasesPreferences.groupBy == "country") {
-  <div [ngClass]="isLoading ? 'loading' : ''" class="releases country">
+  <div [class]="isLoading ? 'loading' : ''" class="releases country">
     <div class="releases__type-container">
       <h4 class="release__type-name">COUNTRY</h4>
       <div class="releases__countries-container">

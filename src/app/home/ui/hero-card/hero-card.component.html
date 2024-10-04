@@ -5,23 +5,24 @@
   [id]="'hero-card--' + titleDetails.id"
   [attr.data-card-index]="cardIndex"
   (click)="runCallbackOnClick(titleDetails.callback)"
->
-  <img
-    *ngIf="getImageSrcBasedOnWidth()"
-    class="hero-card__poster"
-    [src]="getImageSrcBasedOnWidth()"
-    alt=""
-    [attr.data-card-index]="cardIndex"
-  />
+  >
+  @if (getImageSrcBasedOnWidth()) {
+    <img
+      class="hero-card__poster"
+      [src]="getImageSrcBasedOnWidth()"
+      alt=""
+      [attr.data-card-index]="cardIndex"
+      />
+  }
   <div
     class="hero-card__details"
     [id]="cardIndex === 0 ? 'hero-card__details--0' : ''"
     [style]="cardOpacity"
-  >
+    >
     <!-- <img
-      [src]="'https://image.tmdb.org/t/p/w500' + titleDetails"
-      alt=""
-      class="hero-card__logo"
+    [src]="'https://image.tmdb.org/t/p/w500' + titleDetails"
+    alt=""
+    class="hero-card__logo"
     /> -->
     <div class="hero-card__texts">
       <h4 class="hero-card__title">{{ titleDetails.title }}</h4>

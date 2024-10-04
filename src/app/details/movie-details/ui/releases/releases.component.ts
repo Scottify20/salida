@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
 import {
   Country,
@@ -15,12 +15,13 @@ import {
 } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import { MovieDetailsService } from '../../data-access/movie-details.service';
 import { ReleaseType } from '../../../../shared/interfaces/models/tmdb/Movies';
-import { CommonModule } from '@angular/common';
+import { DatePipe, KeyValuePipe, UpperCasePipe } from '@angular/common';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-releases',
   standalone: true,
-  imports: [CommonModule],
+  imports: [DatePipe, KeyValuePipe, UpperCasePipe],
   templateUrl: './releases.component.html',
   styleUrl: './releases.component.scss',
 })
@@ -28,22 +29,22 @@ export class ReleasesComponent {
   constructor(
     private movieDetailsService: MovieDetailsService,
     private tmdbConfigService: TmdbConfigService,
-    private userPreferencesService: TemporaryUserPreferencesService
+    private userPreferencesService: TemporaryUserPreferencesService,
+    private destroyRef: DestroyRef,
   ) {
-    this.releasesPreferencesSubscription =
-      this.userPreferencesService.preferences$
-        .pipe(
-          map((preferences) => {
-            if (!preferences) {
-              return;
-            }
-            this.releasesPreferences =
-              preferences.details.movieDetails.releases;
-          })
-        )
-        .subscribe();
+    this.userPreferencesService.preferences$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map((preferences) => {
+          if (!preferences) {
+            return;
+          }
+          this.releasesPreferences = preferences.details.movieDetails.releases;
+        }),
+      )
+      .subscribe();
 
-    this.movieDataSubscription = this.movieDetailsService.movieData$
+    this.movieDetailsService.movieData$
       .pipe(
         switchMap((movieDetails) => {
           if (movieDetails) {
@@ -51,13 +52,15 @@ export class ReleasesComponent {
               switchMap((countryCodes: Country[]) => {
                 this.countryCodes = countryCodes;
                 return of(movieDetails);
-              })
+              }),
+              takeUntilDestroyed(this.destroyRef),
             );
           } else {
             return of(null);
           }
         }),
-        filter((movieDetails): movieDetails is Movie => movieDetails !== null)
+        filter((movieDetails): movieDetails is Movie => movieDetails !== null),
+        takeUntilDestroyed(this.destroyRef),
       )
       .subscribe({
         next: (movieDetails: Movie) => {
@@ -73,17 +76,9 @@ export class ReleasesComponent {
   }
 
   releasesPreferences!: MovieReleasesPreferences;
-  releasesPreferencesSubscription: Subscription | null = null;
   countryCodes: Country[] = [];
 
   isLoading = true;
-
-  private movieDataSubscription!: Subscription;
-
-  ngOnDestroy() {
-    this.releasesPreferencesSubscription?.unsubscribe();
-    this.movieDataSubscription?.unsubscribe();
-  }
 
   releasesByCountry: ReleasesOfCountry[] = [];
   releasesByType: ReleasesByReleaseTypes = {
@@ -111,7 +106,7 @@ export class ReleasesComponent {
     releases.forEach((release) => {
       if (
         !firstReleasesPerDate.find(
-          (firstRelease) => firstRelease.release_date == release.release_date
+          (firstRelease) => firstRelease.release_date == release.release_date,
         )
       ) {
         firstReleasesPerDate.push(release);
@@ -126,7 +121,7 @@ export class ReleasesComponent {
   }
 
   toReleasesByReleaseTypes = (
-    results: ReleasesOfCountry[]
+    results: ReleasesOfCountry[],
   ): ReleasesByReleaseTypes => {
     const releases: ReleasesByReleaseTypes = {
       Premiere: [],
@@ -177,7 +172,7 @@ export class ReleasesComponent {
           releases[key].sort(
             (r1, r2) =>
               new Date(r2.release_date).getTime() -
-              new Date(r1.release_date).getTime()
+              new Date(r1.release_date).getTime(),
           );
         }
       }
@@ -195,10 +190,10 @@ export class ReleasesComponent {
         }
 
         const countryName1 = this.getCountryNameFromCode(
-          c1.iso_3166_1
+          c1.iso_3166_1,
         ) as string;
         const countryName2 = this.getCountryNameFromCode(
-          c2.iso_3166_1
+          c2.iso_3166_1,
         ) as string;
 
         return countryName1.localeCompare(countryName2);
@@ -212,10 +207,10 @@ export class ReleasesComponent {
         }
 
         const countryName1 = this.getCountryNameFromCode(
-          c1.iso_3166_1
+          c1.iso_3166_1,
         ) as string;
         const countryName2 = this.getCountryNameFromCode(
-          c2.iso_3166_1
+          c2.iso_3166_1,
         ) as string;
 
         return countryName2.localeCompare(countryName1);

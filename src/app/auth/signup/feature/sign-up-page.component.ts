@@ -34,6 +34,7 @@ import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
 import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
+import { PageTransitionService } from '../../../shared/services/navigation/page-transition.service';
 
 interface SignupErrorMessages {
   email: string | null;

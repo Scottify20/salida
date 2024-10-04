@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import {
   TextsSectionComponent,
   TextsSectionOptions,
@@ -12,7 +12,7 @@ import {
   SeriesCastCredit,
   SeriesCrewCredit,
 } from '../../../../shared/interfaces/models/tmdb/Series';
-import { Subscription } from 'rxjs';
+import { tap } from 'rxjs';
 import { SeriesDetailsService } from '../../data-access/series-details.service';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -20,6 +20,7 @@ import {
   CollapsibleTextSectionComponent,
   CollapsibleTextSectionOptions,
 } from '../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-series-more-details',
@@ -36,27 +37,26 @@ import {
 export class SeriesMoreDetailsComponent {
   constructor(
     private seriesDetailsService: SeriesDetailsService,
-    private router: Router
+    private router: Router,
+    private destroyRef: DestroyRef,
   ) {
-    this.seriesDataSubscription =
-      this.seriesDetailsService.seriesData$.subscribe((series) => {
-        if (series) {
-          this.seriesDetails = series;
-        }
-      });
+    this.seriesDetailsService.seriesData$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((series) => {
+          if (series) {
+            this.seriesData = series;
+          }
+        }),
+      )
+      .subscribe();
   }
 
-  seriesDetails: Series | undefined;
-
-  private seriesDataSubscription!: Subscription;
-
-  ngOnDestroy() {
-    this.seriesDataSubscription?.unsubscribe();
-  }
+  seriesData: Series | undefined;
 
   isTextsSectionDoubleColumn(
     sectionA: TextsSectionOptions,
-    sectionB: TextsSectionOptions
+    sectionB: TextsSectionOptions,
   ): boolean {
     function itemsLessThanTen(): boolean {
       return sectionA.texts.length < 10 && sectionB.texts.length < 10
@@ -69,8 +69,8 @@ export class SeriesMoreDetailsComponent {
 
   get plotSection(): CollapsibleTextSectionOptions {
     const plot =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails?.overview
-        ? this.seriesDetails.overview
+      this.seriesDetailsService.isSeriesRoute && this.seriesData?.overview
+        ? this.seriesData.overview
         : '';
 
     return {
@@ -86,7 +86,7 @@ export class SeriesMoreDetailsComponent {
 
   get creatorsSection(): TextsSectionOptions {
     const creators =
-      this.seriesDetails?.created_by?.map((creator) => creator.name) ?? [];
+      this.seriesData?.created_by?.map((creator) => creator.name) ?? [];
 
     return {
       sectionTitle: 'Creator',
@@ -97,8 +97,8 @@ export class SeriesMoreDetailsComponent {
 
   get writersSection(): TextsSectionOptions {
     const writers =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails
-        ? this.seriesDetails.aggregate_credits.crew
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.aggregate_credits.crew
             .filter((crew) => crew.department === 'Writing')
             .map((crew) => crew.name)
         : [];
@@ -112,8 +112,8 @@ export class SeriesMoreDetailsComponent {
 
   get countriesSection(): TextsSectionOptions {
     const countries =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails
-        ? this.seriesDetails.origin_country
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.origin_country
         : [];
 
     return {
@@ -125,9 +125,9 @@ export class SeriesMoreDetailsComponent {
 
   get languagesSection(): TextsSectionOptions {
     const languages =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails
-        ? this.seriesDetails.spoken_languages.map(
-            (language) => language.english_name
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.spoken_languages.map(
+            (language) => language.english_name,
           )
         : [];
 
@@ -182,8 +182,8 @@ export class SeriesMoreDetailsComponent {
     });
 
     const crew =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails
-        ? this.seriesDetails.aggregate_credits.crew.map(getCrewMemberEntity)
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.aggregate_credits.crew.map(getCrewMemberEntity)
         : [];
 
     return {
@@ -210,8 +210,8 @@ export class SeriesMoreDetailsComponent {
     });
 
     const cast =
-      this.seriesDetailsService.isSeriesRoute && this.seriesDetails
-        ? this.seriesDetails.aggregate_credits.cast.map(getCastMemberEntity)
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.aggregate_credits.cast.map(getCastMemberEntity)
         : [];
 
     return {

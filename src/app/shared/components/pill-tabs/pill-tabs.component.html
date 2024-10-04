@@ -1,97 +1,94 @@
-<ng-container *ngFor="let tabGroup of PillTabsConfig | keyvalue">
+@for (tabGroup of PillTabsConfig | keyvalue; track tabGroup) {
   <div
     [ngClass]="
       tabGroup.key == 'navTabs'
         ? 'nav'
         : tabGroup.key == 'leftTabs1'
-        ? 'left'
-        : tabGroup.key == 'leftTabs2'
-        ? 'left'
-        : tabGroup.key == 'rightTabs1'
-        ? 'right'
-        : 'right'
+          ? 'left'
+          : tabGroup.key == 'leftTabs2'
+            ? 'left'
+            : tabGroup.key == 'rightTabs1'
+              ? 'right'
+              : 'right'
     "
     class="tab-group"
   >
-    <ng-container *ngFor="let tabItem of tabGroup.value?.tabs; let i = index">
-      <div
-        [id]="tabItem.id ? tabItem.id : ''"
-        class="tab-container"
-        *ngIf="
-          isVisibleOnRoutes(tabItem.visibleOn) &&
-          (!tabItem.visibleIf || isVisibleIf(tabItem.visibleIf))
-        "
-        [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
-        [routerLink]="tabItem.routerLinkPath"
-        [routerLinkActive]="'active'"
-        (click)="
-          handleTabClick(tabItem.callback, i, tabGroup.key === 'navTabs')
-        "
-      >
+    @for (tabItem of tabGroup.value?.tabs; let i = $index; track tabItem) {
+      @if (
+        isVisibleOnRoutes(tabItem.visibleOn) &&
+        (!tabItem.visibleIf || isVisibleIf(tabItem.visibleIf))
+      ) {
         <div
-          *ngIf="
-            tabGroup.value &&
-            isInTabTypes(['icon'], tabGroup.value.buttonContent)
+          [id]="tabItem.id ? tabItem.id : ''"
+          class="tab-container"
+          [class]="tabItem.isSelected && tabItem.isSelected() ? 'selected' : ''"
+          [routerLink]="tabItem.routerLinkPath"
+          [routerLinkActive]="'active'"
+          (click)="
+            handleTabClick(tabItem.callback, i, tabGroup.key === 'navTabs')
           "
-          class="tab tab--icon"
         >
-          <img
-            [src]="
-              tabItem.isSelected && tabItem.isSelected()
-                ? tabItem.iconPathActive
-                : tabItem.iconPathDisabled
-            "
-            alt=""
-          />
-        </div>
-
-        <div
-          *ngIf="
+          @if (
             tabGroup.value &&
-            isInTabTypes(['text'], tabGroup.value.buttonContent)
-          "
-          class="tab tab--text"
-        >
-          {{ tabItem.text }}
-        </div>
+            isInTabTypes(["icon"], tabGroup.value.buttonContent)
+          ) {
+            <div class="tab tab--icon">
+              <img
+                [src]="
+                  tabItem.isSelected && tabItem.isSelected()
+                    ? tabItem.iconPathActive
+                    : tabItem.iconPathDisabled
+                "
+                alt=""
+              />
+            </div>
+          }
 
-        <div
-          *ngIf="
+          @if (
             tabGroup.value &&
-            isInTabTypes(['dynamic-text'], tabGroup.value.buttonContent) &&
+            isInTabTypes(["text"], tabGroup.value.buttonContent)
+          ) {
+            <div class="tab tab--text">
+              {{ tabItem.text }}
+            </div>
+          }
+
+          @if (
+            tabGroup.value &&
+            isInTabTypes(["dynamic-text"], tabGroup.value.buttonContent) &&
             tabItem.dynamicText
-          "
-          class="tab tab--text"
-        >
-          {{ getTruncatedText(tabItem.dynamicText()) }}
-        </div>
+          ) {
+            <div class="tab tab--text">
+              {{ getTruncatedText(tabItem.dynamicText()) }}
+            </div>
+          }
 
-        <div
-          class="tab--text-and-icon"
-          *ngIf="
+          @if (
             tabGroup.value &&
             isInTabTypes(
-              ['dynamic-text-then-icon', 'icon-then-dynamic-text'],
+              ["dynamic-text-then-icon", "icon-then-dynamic-text"],
               tabGroup.value.buttonContent
             ) &&
             tabItem.dynamicText
-          "
-        >
-          <div class="tab tab--text">
-            {{ getTruncatedText(tabItem.dynamicText()) }}
-          </div>
-          <div class="tab tab--icon">
-            <img
-              [src]="
-                tabItem.isSelected && tabItem.isSelected()
-                  ? tabItem.iconPathActive
-                  : tabItem.iconPathDisabled
-              "
-              alt=""
-            />
-          </div>
+          ) {
+            <div class="tab--text-and-icon">
+              <div class="tab tab--text">
+                {{ getTruncatedText(tabItem.dynamicText()) }}
+              </div>
+              <div class="tab tab--icon">
+                <img
+                  [src]="
+                    tabItem.isSelected && tabItem.isSelected()
+                      ? tabItem.iconPathActive
+                      : tabItem.iconPathDisabled
+                  "
+                  alt=""
+                />
+              </div>
+            </div>
+          }
         </div>
-      </div>
-    </ng-container>
+      }
+    }
   </div>
-</ng-container>
+}

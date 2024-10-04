@@ -35,13 +35,14 @@
           formControlName="email"
         />
         <div class="form__error-messages-container">
-          <p
-            [class]="isEmailPatternInvalid() ? '' : 'no-error'"
-            *ngFor="let error of emailErrorMessages()"
-            class="form__error-message"
-          >
-            {{ error }}
-          </p>
+          @for (error of emailErrorMessages(); track error) {
+            <p
+              [class]="isEmailPatternInvalid() ? '' : 'no-error'"
+              class="form__error-message"
+            >
+              {{ error }}
+            </p>
+          }
           <p class="form__error-message">
             {{ authErrorMessagesSig().email }}
           </p>
@@ -74,12 +75,16 @@
             "
           >
             <p>
-              <span
-                class="login__password-char"
-                *ngFor="let charCheck of passwordValidCharactersCheck()"
-                [ngClass]="charCheck.invalid ? 'invalid' : ''"
-                >{{ charCheck.char }}</span
-              >
+              @for (
+                charCheck of passwordValidCharactersCheck();
+                track charCheck
+              ) {
+                <span
+                  class="login__password-char"
+                  [ngClass]="charCheck.invalid ? 'invalid' : ''"
+                  >{{ charCheck.char }}</span
+                >
+              }
             </p>
             <p class="chars-right-padding"></p>
           </div>
@@ -104,13 +109,14 @@
           </div>
         </div>
         <div class="form__error-messages-container">
-          <p
-            [class]="isPasswordPatternInvalid() ? '' : 'no-error'"
-            *ngFor="let error of passwordErrorMessages()"
-            class="form__error-message"
-          >
-            {{ error }}
-          </p>
+          @for (error of passwordErrorMessages(); track error) {
+            <p
+              [class]="isPasswordPatternInvalid() ? '' : 'no-error'"
+              class="form__error-message"
+            >
+              {{ error }}
+            </p>
+          }
           <p class="form__error-message">
             {{ authErrorMessagesSig().password }}
           </p>

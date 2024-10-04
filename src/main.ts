@@ -12,13 +12,17 @@ import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { firebaseConfig } from './environments/environment';
 
+console.log(location.href);
+
 bootstrapApplication(AppComponent, {
   providers: [
     provideHttpClient(withFetch()),
     provideRouter(
       routes,
       withEnabledBlockingInitialNavigation(),
-      withInMemoryScrolling({ scrollPositionRestoration: 'disabled' }),
+      withInMemoryScrolling({
+        scrollPositionRestoration: 'disabled',
+      }),
     ),
     [provideFirebaseApp(() => initializeApp(firebaseConfig))],
     provideAuth(() => getAuth()),

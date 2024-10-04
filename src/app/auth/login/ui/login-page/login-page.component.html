@@ -32,12 +32,11 @@
           formControlName="emailOrUsername"
         />
         <div class="form__error-messages-container">
-          <p
-            *ngFor="let error of emailOrUsernameErrorMessages()"
-            class="form__error-message"
-          >
-            {{ error }}
-          </p>
+          @for (error of emailOrUsernameErrorMessages(); track error) {
+            <p class="form__error-message">
+              {{ error }}
+            </p>
+          }
           <p class="form__error-message">
             {{ authErrorMessagesSig().emailOrUsername }}
           </p>
@@ -74,22 +73,21 @@
           </div>
         </div>
         <div class="form__error-messages-container">
-          <p
-            *ngFor="let error of passwordErrorMessages()"
-            class="form__error-message"
-          >
-            {{ error }}
-          </p>
+          @for (error of passwordErrorMessages(); track error) {
+            <p class="form__error-message">
+              {{ error }}
+            </p>
+          }
           <p class="form__error-message">
             {{ authErrorMessagesSig().password }}
           </p>
         </div>
       </div>
-      <!-- 
-      <div class="form__input--keep-logged-in">
-        <input tabindex="1" type="checkbox" formControlName="keepLoggedIn" />
-        <label for="keep-logged-in">Keep me logged in</label>
-      </div> -->
+      <!--
+              <div class="form__input--keep-logged-in">
+                <input tabindex="1" type="checkbox" formControlName="keepLoggedIn" />
+                <label for="keep-logged-in">Keep me logged in</label>
+              </div> -->
 
       <div class="field">
         <button
@@ -99,8 +97,12 @@
           type="submit"
           class="login-button"
         >
-          <p *ngIf="!isLoginActioninProgress">Login</p>
-          <app-loading-dots *ngIf="isLoginActioninProgress"></app-loading-dots>
+          @if (!isLoginActioninProgress) {
+            <p>Login</p>
+          }
+          @if (isLoginActioninProgress) {
+            <app-loading-dots></app-loading-dots>
+          }
         </button>
       </div>
     </form>

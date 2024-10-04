@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { SeriesDetailsService } from '../data-access/series-details.service';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
 import {
@@ -11,8 +11,10 @@ import {
   ReviewsPreferences,
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
-import { Subscription, tap } from 'rxjs';
+import { tap } from 'rxjs';
 import { ElementPositionService } from '../../../shared/services/dom/element-position.service';
+import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-series-details',
@@ -26,10 +28,12 @@ export class SeriesDetailsComponent {
     private seriesDetailsService: SeriesDetailsService,
     private scrollDisablerService: ScrollDisablerService,
     private preferencesService: TemporaryUserPreferencesService,
-    private elementPositionService: ElementPositionService,
+    private platformCheckService: PlatformCheckService,
+    private destroyRef: DestroyRef,
   ) {
-    this.reviewsPreferencesSubscription = this.preferencesService.preferences$
+    this.preferencesService.preferences$
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap((preferences) => {
           this.reviewsPreferences =
             preferences.details.movieAndSeriesDetails.reviews;
@@ -39,9 +43,11 @@ export class SeriesDetailsComponent {
   }
 
   private reviewsPreferences: ReviewsPreferences = {};
-  private reviewsPreferencesSubscription: Subscription | null = null;
-  ngOnDestroy() {
-    this.reviewsPreferencesSubscription?.unsubscribe();
+
+  ngOnInit() {
+    if (this.platformCheckService.isBrowser()) {
+      window.scrollTo({ top: 0 });
+    }
   }
 
   TitleDetailsTabConfig: PillTabsConfig = {
@@ -55,7 +61,7 @@ export class SeriesDetailsComponent {
           visibleOn: ['all'],
         },
         {
-          text: 'Seasons',
+          text: 'Episodes',
           routerLinkPath: 'seasons',
           visibleOn: ['series'],
         },
@@ -65,9 +71,14 @@ export class SeriesDetailsComponent {
           visibleOn: ['all'],
           visibleIf: () => {
             let hasReviews = false;
-            this.seriesDetailsService.seriesData$.subscribe((series) => {
-              hasReviews = !!series?.reviews.results.length;
-            });
+            this.seriesDetailsService.seriesData$
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((series) => {
+                  hasReviews = !!series?.reviews.results.length;
+                }),
+              )
+              .subscribe();
             return hasReviews;
           },
         },
@@ -97,9 +108,14 @@ export class SeriesDetailsComponent {
           visibleOn: ['seasons'],
           visibleIf: () => {
             let hasMultipleSeasons = false;
-            this.seriesDetailsService.seriesData$.subscribe((series) => {
-              hasMultipleSeasons = !!series && series.number_of_seasons > 1;
-            });
+            this.seriesDetailsService.seriesData$
+              .pipe(
+                takeUntilDestroyed(this.destroyRef),
+                tap((series) => {
+                  hasMultipleSeasons = !!series && series.number_of_seasons > 1;
+                }),
+              )
+              .subscribe();
             return hasMultipleSeasons;
           },
         },

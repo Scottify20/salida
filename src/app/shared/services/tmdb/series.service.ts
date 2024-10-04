@@ -15,7 +15,7 @@ import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
 export class SeriesService {
   constructor(
     private http: HttpClient,
-    private tmdbConfig: TmdbConfigService
+    private tmdbConfig: TmdbConfigService,
   ) {}
   private cachedSeries: { [key: string]: Observable<Series> } = {};
   private cachedTrendingSeries!: Observable<TrendingSeries>;
@@ -34,7 +34,7 @@ export class SeriesService {
     if (!this.cachedSeriesSeasons[seriesIdString][seasonNumberString]) {
       this.cachedSeriesSeasons[seriesIdString][seasonNumberString] = this.http
         .get<Season>(
-          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}/season/${seasonNumberString}`
+          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}/season/${seasonNumberString}`,
         )
         .pipe(
           retry(2),
@@ -43,7 +43,7 @@ export class SeriesService {
             // Store the fetched season data in the cache.
             this.cachedSeriesSeasons[seriesIdString][seasonNumberString] =
               of(season);
-          })
+          }),
         );
     }
 
@@ -53,27 +53,29 @@ export class SeriesService {
   getSeriesDetails(seriesId: number): Observable<Series> {
     const seriesIdString = seriesId.toString();
     if (!this.cachedSeries[seriesIdString]) {
-      this.cachedSeries[seriesIdString] = this.http
+      return this.http
         .get<Series>(
-          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}?append_to_response=images,videos,aggregate_credits,external_ids,content_ratings,keywords,recommendations,watch/providers,reviews`
+          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}?append_to_response=images,videos,aggregate_credits,external_ids,content_ratings,keywords,recommendations,watch/providers,reviews`,
         )
         .pipe(
           retry(2),
           shareReplay(1),
           tap((series: Series) => {
-            // Store the fetched series data in the cache.
+            // Store the series data in the cache
             this.cachedSeries[seriesIdString] = of(series);
-          })
+          }),
         );
+    } else {
+      // Return the cached observable
+      return this.cachedSeries[seriesIdString];
     }
-    return this.cachedSeries[seriesIdString];
   }
 
   getTrendingSeries(timeWindow: TmdbTimeWindow): Observable<TrendingSeries> {
     if (!this.cachedTrendingSeries) {
       this.cachedTrendingSeries = this.http
         .get<TrendingSeries>(
-          `${this.tmdbConfig.baseUrl}/trending/tv/${timeWindow}`
+          `${this.tmdbConfig.baseUrl}/trending/tv/${timeWindow}`,
         )
         .pipe(
           retry(2),
@@ -81,7 +83,7 @@ export class SeriesService {
           tap((result: TrendingSeries) => {
             // Store the fetched trending series data in the cache.
             this.cachedTrendingSeries = of(result);
-          })
+          }),
         );
     }
     return this.cachedTrendingSeries;

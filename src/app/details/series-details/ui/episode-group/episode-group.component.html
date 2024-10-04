@@ -12,9 +12,10 @@
   </div>
 
   <div class="episode-group__episode-cards-container">
-    <app-episode-card
-      *ngFor="let episode of seasonData.episodes"
-      [episodeData]="episode"
-    ></app-episode-card>
+    @for (episode of seasonData.episodes; track episode) {
+      <app-episode-card
+        [episodeData]="episode"
+      ></app-episode-card>
+    }
   </div>
 </div>

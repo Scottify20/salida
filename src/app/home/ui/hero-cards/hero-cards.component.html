@@ -2,26 +2,27 @@
   <app-scroll-buttons
     [positionValues]="{ top: '40%', left: '1rem', right: '1rem' }"
   ></app-scroll-buttons>
-  <div class="hero__cards-container clickable-cards">
+  <div class="hero__cards-container clickable-cards" id="hero__cards-container">
     <div class="hero-card-filler"></div>
 
-    <ng-container *ngFor="let title of trendingTitles.results; let i = index">
+    @for (title of trendingTitles.results; track title; let i = $index) {
       <app-hero-card
         class="big-card"
         [cardIndex]="i"
         [titleDetails]="title"
       ></app-hero-card>
-    </ng-container>
+    }
 
     <div class="hero-card-filler"></div>
   </div>
 
   <div class="page-indicator-container">
-    <div
-      class="dot"
-      *ngFor="let title of trendingTitles.results; let i = index"
-      [id]="'hero-dot--' + i"
-      [ngClass]="indexOfFullyVisibleCard === i ? 'active' : ''"
-    ></div>
+    @for (title of trendingTitles.results; track title; let i = $index) {
+      <div
+        class="dot"
+        [id]="'hero-dot--' + i"
+        [ngClass]="indexOfFullyVisibleCard === i ? 'active' : ''"
+      ></div>
+    }
   </div>
 </div>

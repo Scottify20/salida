@@ -1,12 +1,12 @@
 import { Component, Input } from '@angular/core';
 import { Season } from '../../../../shared/interfaces/models/tmdb/Series';
 import { EpisodeCardComponent } from '../episode-card/episode-card.component';
-import { CommonModule } from '@angular/common';
+
 
 @Component({
   selector: 'app-episode-group',
   standalone: true,
-  imports: [EpisodeCardComponent, CommonModule],
+  imports: [EpisodeCardComponent],
   templateUrl: './episode-group.component.html',
   styleUrl: './episode-group.component.scss',
 })

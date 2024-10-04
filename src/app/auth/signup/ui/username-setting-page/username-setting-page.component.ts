@@ -1,28 +1,9 @@
-import {
-  Component,
-  DestroyRef,
-  ElementRef,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef, signal, WritableSignal } from '@angular/core';
 import { ProgressIndicatorProps } from '../../../shared/ui/progress-indicator/progress-indicator.model';
 import { ProgressIndicatorComponent } from '../../../shared/ui/progress-indicator/progress-indicator.component';
 import { DividerWithTitleComponent } from '../../../shared/ui/divider-with-title/divider-with-title.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import {
-  debounceTime,
-  fromEvent,
-  merge,
-  skip,
-  Subscription,
-  take,
-  tap,
-} from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { SalidaAuthError } from '../../../../shared/models/errors/SalidaAuthError';
-import { SalidaAuthErrorSource } from '../../../../shared/interfaces/types/api-response/SalidaErrors';
 import { SalidaAuthService } from '../../../../core/auth/salida-auth.service';
 import { DialogComponent } from '../../../../shared/components/dialog/dialog.component';
 import { DialogProps } from '../../../../shared/components/dialog/dialog.model';

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
 import { WindowResizeService } from '../../../shared/services/dom/window-resize.service';
 import { Subscription } from 'rxjs';
-import { NgIf, DOCUMENT } from '@angular/common';
+import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
 import {
   MediaSummary,
@@ -11,7 +11,7 @@ import {
 @Component({
   selector: 'app-hero-card',
   standalone: true,
-  imports: [NgIf],
+  imports: [],
   templateUrl: './hero-card.component.html',
   styleUrl: './hero-card.component.scss',
 })

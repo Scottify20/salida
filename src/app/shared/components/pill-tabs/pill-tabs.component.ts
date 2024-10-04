@@ -14,7 +14,7 @@ export class PillTabsComponent {
   constructor(
     private router: Router,
     public elementRef: ElementRef,
-    private platformCheck: PlatformCheckService
+    private platformCheck: PlatformCheckService,
   ) {}
 
   @Input() PillTabsConfig: PillTabsConfig = {
@@ -29,10 +29,10 @@ export class PillTabsComponent {
     return text && text.length < 12
       ? text
       : text
-      ? text.slice(0, 7).replace(/\s$/, '') +
-        '...' +
-        text.slice(-3).replace(/^\s/, '')
-      : null;
+        ? text.slice(0, 7).replace(/\s$/, '') +
+          '...' +
+          text.slice(-3).replace(/^\s/, '')
+        : null;
   }
 
   activeTabIndex = 0;
@@ -58,46 +58,42 @@ export class PillTabsComponent {
 
   isInTabTypes(
     tabTypes: TabButtonContent[],
-    tabType: TabButtonContent
+    tabType: TabButtonContent,
   ): boolean {
     return tabTypes.indexOf(tabType) != -1 ? true : false;
   }
 
   scrollToPillTab() {
-    setTimeout(() => {
-      const pillTabsElement = this.elementRef.nativeElement;
-      window.scrollTo({
-        top: pillTabsElement.offsetTop - 16,
-        left: 0,
-        behavior: 'smooth',
-      });
-    }, 0);
+    const pillTabsElement = this.elementRef.nativeElement;
+    window.scrollTo({
+      top: pillTabsElement.offsetTop - 16,
+      left: 0,
+      behavior: 'smooth',
+    });
   }
 
   scrollToTop() {
-    setTimeout(() => {
-      if (this.platformCheck.isBrowser()) {
-        window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
-      }
-    }, 0);
+    if (this.platformCheck.isBrowser()) {
+      window.scrollTo({ top: 0, left: 0, behavior: 'smooth' });
+    }
   }
 
   handleTabClick(
     callback: (() => void) | undefined,
     tabIndex: number,
-    isMainTab: boolean
+    isMainTab: boolean,
   ) {
     if (isMainTab) {
       const previousIndex = this.activeTabIndex;
 
       if (tabIndex == 0) {
         // scrolls to top if the tab clicked is the first tab
-        this.scrollToTop();
+        // this.scrollToTop();
       }
 
       if (tabIndex != 0) {
         // scrolls to top if the tab clicked is the second or subsequent tabs
-        this.scrollToPillTab();
+        // this.scrollToPillTab();
       }
 
       if (tabIndex == previousIndex) {
@@ -112,14 +108,14 @@ export class PillTabsComponent {
         direction === 'right' ? 'slide-in-from-right' : 'slide-in-from-left';
 
       const routerOutletContainer = this.elementRef.nativeElement
-        .closest('.title-details')
-        .querySelector('[title-pill-tab-transition]');
+        .closest('.pill-tab-parent')
+        .querySelector('[pill-tab-transition]');
       if (routerOutletContainer) {
         routerOutletContainer.classList.add(animationClass);
 
         setTimeout(() => {
           routerOutletContainer.classList.remove(animationClass);
-        }, 300);
+        }, 350);
 
         return;
       }

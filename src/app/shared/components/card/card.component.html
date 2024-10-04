@@ -3,7 +3,7 @@
   role="button"
   class="card"
   [class]="cardShape === 'circle' ? 'circle' : ''"
->
+  >
   <div class="card__image-container">
     <img
       [src]="
@@ -14,12 +14,14 @@
       alt=""
       class="card__image"
       [ngClass]="entity.image_path ? '' : 'no-image'"
-    />
+      />
+    </div>
+    <div class="card__texts">
+      <p class="card__title">{{ entity.name }}</p>
+      @if (entity.otherName) {
+        <p class="card__subtitle">
+          {{ entity.otherName }}
+        </p>
+      }
+    </div>
   </div>
-  <div class="card__texts">
-    <p class="card__title">{{ entity.name }}</p>
-    <p *ngIf="entity.otherName" class="card__subtitle">
-      {{ entity.otherName }}
-    </p>
-  </div>
-</div>

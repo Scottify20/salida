@@ -8,7 +8,10 @@ import { Movie } from '../../../shared/interfaces/models/tmdb/Movies';
   providedIn: 'root',
 })
 export class MovieDetailsService {
-  constructor(private router: Router, private tmdbService: TmdbService) {
+  constructor(
+    private router: Router,
+    private tmdbService: TmdbService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -43,10 +46,6 @@ export class MovieDetailsService {
     const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
 
-    if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {
-      return;
-    }
-
     if (!isNaN(titleId) && this.isMovieRoute) {
       this.fetchCurrentMovieData();
     } else {
@@ -58,7 +57,7 @@ export class MovieDetailsService {
     if (!this.idFromRoute) {
       console.log(
         'Error fetching movie details:',
-        'no movie id found on route'
+        'no movie id found on route',
       );
       return;
     }

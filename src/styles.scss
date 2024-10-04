@@ -35,11 +35,13 @@ body {
 
 app-root {
   display: block;
+  overflow: hidden;
 }
 
 main {
   max-width: var(--main-max-width);
   margin: 0 auto;
+  opacity: 100%;
 }
 
 @media (max-width: 376px) {
@@ -52,4 +54,48 @@ main {
   padding: 0 0.5em;
   font-size: 0.75em;
   color: var(--text-color-disabled);
+}
+
+.fade-in {
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.25s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0%;
+  }
+  to {
+    opacity: 100%;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-40px);
+    opacity: 0%;
+  }
+
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(40px);
+    opacity: 0%;
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
 }

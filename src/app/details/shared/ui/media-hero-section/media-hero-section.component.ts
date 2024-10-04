@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   ViewChild,
 } from '@angular/core';
@@ -8,13 +9,16 @@ import { Genre, Image } from '../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { WindowResizeService } from '../../../../shared/services/dom/window-resize.service';
 import { ButtonsHeaderComponent } from '../../../../shared/components/buttons-header/buttons-header.component';
 import { HeaderButton } from '../../../../shared/components/buttons-header/buttons-header.model';
 import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
 import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
+import { Router } from '@angular/router';
+import { RouteHistoryService } from '../../../../shared/services/navigation/route-history.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-media-hero-section',
@@ -29,10 +33,15 @@ export class MediaHeroSectionComponent {
     private moviesDetailsService: MovieDetailsService,
     private windowResizeService: WindowResizeService,
     private tmdbConfigService: TmdbConfigService,
+    private destroyRef: DestroyRef,
+    // private routeHistoryService: RouteHistoryService,
+    // private location: Location,
+    private router: Router,
   ) {
     if (this.moviesDetailsService.isMovieRoute) {
-      this.heroSectionDataSubscription = this.moviesDetailsService.movieData$
+      this.moviesDetailsService.movieData$
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           map((movie) => {
             if (movie == null) {
               return;
@@ -61,8 +70,9 @@ export class MediaHeroSectionComponent {
     }
 
     if (this.seriesDetailsService.isSeriesRoute) {
-      this.heroSectionDataSubscription = this.seriesDetailsService.seriesData$
+      this.seriesDetailsService.seriesData$
         .pipe(
+          takeUntilDestroyed(this.destroyRef),
           map((series) => {
             if (!series) {
               return;
@@ -105,7 +115,6 @@ export class MediaHeroSectionComponent {
   }
 
   isLoading = true;
-  heroSectionDataSubscription!: Subscription;
   heroSectionData$!: Observable<HeroSectionData | null>;
 
   heroSectionData: HeroSectionData = {
@@ -124,21 +133,14 @@ export class MediaHeroSectionComponent {
   // windows resize service properties
   isResizing = false;
   windowDimensions: { width: number; height: number } | undefined;
-  private resizeSubscription!: Subscription;
 
   ngOnInit(): void {
     this.windowDimensions = { width: 0, height: 0 };
 
-    this.resizeSubscription =
-      this.windowResizeService.windowResizeState$.subscribe((state) => {
-        this.isResizing = state.isResizing;
-        this.windowDimensions = state.dimensions;
-      });
-  }
-
-  ngOnDestroy() {
-    this.heroSectionDataSubscription?.unsubscribe();
-    this.resizeSubscription.unsubscribe();
+    this.windowResizeService.windowResizeState$.subscribe((state) => {
+      takeUntilDestroyed(this.destroyRef), (this.isResizing = state.isResizing);
+      this.windowDimensions = state.dimensions;
+    });
   }
 
   getBackropWidth(): string {
@@ -158,7 +160,7 @@ export class MediaHeroSectionComponent {
       type: 'iconWithBG',
       iconPath: 'assets/icons/header/Back.svg',
       actionCallback: () => {
-        // this.navigateToLastNonMoviesSeriesRoute();
+        this.router.navigateByUrl('/');
       },
     },
 

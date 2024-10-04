@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DialogService } from './dialog.service';
+import { RouteHistoryService } from './route-history.service';
 
-describe('DialogService', () => {
-  let service: DialogService;
+describe('RouteHistoryService', () => {
+  let service: RouteHistoryService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(DialogService);
+    service = TestBed.inject(RouteHistoryService);
   });
 
   it('should be created', () => {

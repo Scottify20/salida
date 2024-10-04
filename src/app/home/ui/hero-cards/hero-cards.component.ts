@@ -6,6 +6,7 @@ import { getGenreNames } from '../../../../assets/api-response/tmdb/Genres';
 import { ScrollButtonsComponent } from '../../../shared/components/scroll-buttons/scroll-buttons.component';
 import { TrendingTitles } from '../../../shared/interfaces/models/tmdb/All';
 import { HeroCardComponent } from '../hero-card/hero-card.component';
+import { HeroCardsService } from '../../data-access/hero-cards.service';
 
 @Component({
   selector: 'app-hero-cards',
@@ -15,6 +16,12 @@ import { HeroCardComponent } from '../hero-card/hero-card.component';
   styleUrl: './hero-cards.component.scss',
 })
 export class HeroCardsComponent {
+  constructor(
+    private intersectionObserverService: IntersectionObserverService,
+    private platformCheckService: PlatformCheckService,
+    private heroCardsService: HeroCardsService,
+  ) {}
+
   indexOfFullyVisibleCard: number = 0;
 
   @Input() trendingTitles: TrendingTitles = {
@@ -90,10 +97,9 @@ export class HeroCardsComponent {
     total_results: 0,
   };
 
-  constructor(
-    private intersectionObserverService: IntersectionObserverService,
-    private platformCheckService: PlatformCheckService
-  ) {}
+  ngAfterViewInit() {
+    this.heroCardsService.startScrollDetection();
+  }
 
   get cards(): NodeListOf<Element> | undefined {
     if (this.platformCheckService.isServer()) {
@@ -128,14 +134,14 @@ export class HeroCardsComponent {
     };
 
     const intersectionHandlerCallback = (
-      entries: IntersectionObserverEntry[]
+      entries: IntersectionObserverEntry[],
     ) => {
       const entry = entries[0];
       const intersectRatio = entry.intersectionRatio;
       const card = entry.target as HTMLElement;
       // const poster = entry.target.querySelector('.hero-card__poster') as HTMLElement;
       const indexOfCard = parseInt(
-        card.getAttribute('data-card-index') as string
+        card.getAttribute('data-card-index') as string,
       );
 
       if (intersectRatio >= 0.8) {
