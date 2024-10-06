@@ -12,6 +12,7 @@ import {
   map,
   shareReplay,
   startWith,
+  throttleTime,
 } from 'rxjs/operators';
 import { PlatformCheckService } from './platform-check.service';
 
@@ -57,7 +58,7 @@ export class ScrollDetectorService {
     if (this.platformCheck.isBrowser()) {
       const subscription = fromEvent(window, 'scroll')
         .pipe(
-          debounceTime(100),
+          throttleTime(15),
           map(() => ({
             scrollTop: window.scrollY || document.documentElement.scrollTop,
             scrollLeft: window.scrollX || document.documentElement.scrollLeft,
@@ -110,7 +111,7 @@ export class ScrollDetectorService {
           scrollLeft: window.scrollX || document.documentElement.scrollLeft,
         });
         this.isScrollingSubject.next(false);
-      }, 100);
+      }, 15);
     }
   }
 

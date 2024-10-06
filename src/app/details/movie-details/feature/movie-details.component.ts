@@ -11,19 +11,13 @@ import {
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { Subscription, tap } from 'rxjs';
-import { NgScrollbarModule } from 'ngx-scrollbar';
 import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [
-    RouterOutlet,
-    MediaHeroSectionComponent,
-    PillTabsComponent,
-    NgScrollbarModule,
-  ],
+  imports: [RouterOutlet, MediaHeroSectionComponent, PillTabsComponent],
   templateUrl: '../ui/movie-details/movie-details.component.html',
   styleUrl: '../ui/movie-details/movie-details.component.scss',
 })

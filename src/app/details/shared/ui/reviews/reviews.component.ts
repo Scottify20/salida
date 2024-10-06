@@ -24,7 +24,7 @@ export class ReviewsComponent {
   constructor(
     private seriesDetailsService: SeriesDetailsService,
     private moviesDetailsService: MovieDetailsService,
-    private preferencesService: TemporaryUserPreferencesService
+    private preferencesService: TemporaryUserPreferencesService,
   ) {
     if (this.moviesDetailsService.isMovieRoute) {
       this.mediaData$ = this.moviesDetailsService.movieData$;
@@ -40,7 +40,9 @@ export class ReviewsComponent {
           if (!data) {
             return null;
           }
-          return data.reviews;
+
+          const results = data.reviews.results.reverse();
+          return { ...data.reviews, results };
         }),
         tap((reviews) => {
           if (reviews) {
@@ -51,7 +53,7 @@ export class ReviewsComponent {
         catchError((err) => {
           console.log(err);
           return of(null);
-        })
+        }),
       )
       .subscribe();
 
@@ -60,7 +62,7 @@ export class ReviewsComponent {
         tap((preferences) => {
           this.reviewsConfig =
             preferences.details.movieAndSeriesDetails.reviews;
-        })
+        }),
       )
       .subscribe();
   }

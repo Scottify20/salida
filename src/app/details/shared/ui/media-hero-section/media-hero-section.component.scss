@@ -23,6 +23,54 @@
   //   background-color: white;
   // }
 }
+app-buttons-header {
+  z-index: 1003;
+  width: 100%;
+  position: fixed;
+}
+
+.buttons-header-bg-and-title {
+  position: fixed;
+  width: 100vw;
+  max-width: var(--main-max-width);
+
+  top: 0;
+  height: 4rem;
+  z-index: 1000;
+  background-color: var(--body-bg-color);
+
+  opacity: 0%;
+  transition: opacity ease-out 0.2s;
+  overflow: hidden;
+
+  &.visible {
+    opacity: 95%;
+  }
+
+  .title__hero--title-on-header {
+    z-index: 1001;
+    display: grid;
+    align-content: center;
+    text-align: left;
+    height: 2rem;
+    left: 4rem;
+    right: 4.5rem;
+    top: 1rem;
+    position: fixed;
+    font-size: 1.2rem;
+    font-weight: 500;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &.truncate {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
 
 .title__hero-backdrop {
   margin: -1rem;
@@ -157,7 +205,6 @@
 
 .title__play-button-parent-container {
   position: relative;
-  z-index: 1000;
   display: grid;
   height: 100%;
   width: 100%;

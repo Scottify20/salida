@@ -10,11 +10,11 @@
 }
 
 .picker-dialog.shown {
-  animation: Fadein ease-in-out 0.2s forwards;
+  animation: fadeIn ease-in-out 0.2s forwards;
 }
 
 .picker-dialog.hide:not(.shown) {
-  animation: Fadeout ease-in-out 0.2s forwards;
+  animation: fadeOut ease-in-out 0.2s forwards;
 }
 
 .picker-dialog:not(.shown) {
@@ -155,11 +155,11 @@ li.dialog__item {
 
 @media (max-width: 600px) {
   .picker-dialog.hide .dialog__arrow-and-items-container {
-    animation: BottomSheetHide cubic-bezier(0.72, 0.3, 0.84, 0) 0.2s forwards;
+    animation: slideDown cubic-bezier(1, 0.2, 0, 0.4) 0.2s forwards;
   }
 
   .picker-dialog.shown .dialog__arrow-and-items-container {
-    animation: BottomSheetShow cubic-bezier(0.16, 0.7, 0.28, 1) 0.4s forwards;
+    animation: slideUp cubic-bezier(0.4, 0, 0.2, 1) 0.3s forwards;
   }
 }
 
@@ -171,70 +171,4 @@ li.dialog__item {
   // .picker-dialog.shown .dialog__arrow-and-items-container {
   //   animation: PopIn ease-out 0.15s forwards;
   // }
-}
-
-@keyframes PopIn {
-  0% {
-    transform: scale(0);
-  }
-
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes PopOut {
-  0% {
-    transform: scale(1);
-  }
-
-  100% {
-    transform: scale(0);
-  }
-}
-
-@keyframes FadeIn {
-  0% {
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-  }
-
-  100% {
-    opacity: 100%;
-    pointer-events: all;
-    user-select: auto;
-  }
-}
-
-@keyframes Fadeout {
-  0% {
-    opacity: 100%;
-    pointer-events: all;
-    user-select: auto;
-  }
-
-  100% {
-    opacity: 0;
-    pointer-events: none;
-    user-select: none;
-  }
-}
-
-@keyframes BottomSheetHide {
-  0% {
-    bottom: 0;
-  }
-  100% {
-    bottom: -100%;
-  }
-}
-
-@keyframes BottomSheetShow {
-  0% {
-    bottom: -100%;
-  }
-  100% {
-    bottom: 0;
-  }
 }

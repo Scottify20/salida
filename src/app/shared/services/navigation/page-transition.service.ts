@@ -48,29 +48,50 @@ export class PageTransitionService {
   }
 
   setTransitionAnimation() {
+    // if the route is in the skip list for slide transition
     if (this.urlIsInSlideTransitionSkipList(this.router.url)) {
+      return;
+    }
+
+    // if the site is first viewed on the root route
+    if (this.previousRouteSig() === '/' && this.currentRouteSig() === '/') {
       return;
     }
 
     this.clearTransitionsAnimations();
 
-    const previousLength = this.previousRouteSig().split('/').length;
-    const currentLength = this.currentRouteSig().split('/').length;
+    const previousUrlSplitted = this.previousRouteSig().split('/');
+    const currentUrlSplitted = this.currentRouteSig().split('/');
 
+    const previousLength = previousUrlSplitted.length;
+    const currentLength = currentUrlSplitted.length;
+
+    // if the route length of previous is shorter than the current url (went to a deeper route)
     if (previousLength < currentLength) {
       this.triggerSlideFromRightTransition();
     }
 
+    // if the route length of previous is longer than the current url (go back to a shallower route)
     if (previousLength > currentLength) {
       this.triggerSlideFromLeftTransition();
     }
 
-    if (this.urlIsInFadeTransitionSkipList(this.router.url)) {
-      return;
+    if (
+      previousLength === currentLength &&
+      !this.urlIsInFadeTransitionSkipList(this.router.url)
+    ) {
+      console.log(previousUrlSplitted[2], currentUrlSplitted[2]);
+      if (
+        currentUrlSplitted[2] !== undefined &&
+        currentUrlSplitted[2].length >= 2
+        // && previousUrlSplitted[2] === currentUrlSplitted[2]
+      ) {
+        this.triggerSlideFromRightTransition();
+        return;
+      }
+
+      this.triggerFadeOutAndInTransititon();
     }
-    // if (previousLength === currentLength) {
-    this.triggerFadeOutAndInTransititon();
-    // }
   }
 
   urlIsInSlideTransitionSkipList(url: string) {

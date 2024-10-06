@@ -1,6 +1,4 @@
-import { Component, signal, WritableSignal } from '@angular/core';
-import { DialogProps } from '../../shared/components/dialog/dialog.model';
-import { DialogComponent } from '../../shared/components/dialog/dialog.component';
+import { Component } from '@angular/core';
 
 @Component({
   selector: 'app-lists-home',

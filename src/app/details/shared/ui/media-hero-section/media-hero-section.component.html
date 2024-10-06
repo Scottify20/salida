@@ -1,3 +1,17 @@
+<app-buttons-header
+  class="with-padding"
+  [headerButtons]="headerButtons"
+></app-buttons-header>
+
+<div
+  class="buttons-header-bg-and-title"
+  [class]="isHeaderBgAndTitleVisible ? 'visible' : ''"
+>
+  <h4 class="title__hero--title-on-header">
+    {{ heroSectionData.title }}
+  </h4>
+</div>
+
 <div class="title__hero" [ngClass]="isLoading ? 'loading' : ''">
   <img
     #backdrop
@@ -8,64 +22,56 @@
     "
     alt=""
     class="title__hero-backdrop"
-    />
+  />
 
-    <app-buttons-header
-      class="no-padding"
-      [headerButtons]="headerButtons"
-    ></app-buttons-header>
-
-    <div class="title__play-button-parent-container">
-      <div class="title__play-button-container">
-        <div class="title__play-button">
-          <img
-            src="assets/icons/header/title-details/Play.svg"
-            alt=""
-            class="title__play-icon"
-            />
+  <div class="title__play-button-parent-container">
+    <div class="title__play-button-container">
+      <div class="title__play-button">
+        <img
+          src="assets/icons/header/title-details/Play.svg"
+          alt=""
+          class="title__play-icon"
+        />
+      </div>
+      <p class="title__play-button__label">Watch Trailer</p>
+    </div>
+    <div class="title__logo-container">
+      <img
+        [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.logo_path"
+        alt=""
+        class="title__logo"
+      />
+    </div>
+  </div>
+  <div class="title__main-details-container">
+    <h4 class="title__title">{{ heroSectionData.title }}</h4>
+    <div class="title__metadataContainer">
+      <p class="title__metadata">
+        @if (heroSectionData.metadata.year) {
+          <span class="title__metadata--year metadata-text">{{
+            heroSectionData.metadata.year
+          }}</span>
+        }
+        @if (heroSectionData.metadata.rating) {
+          <span class="title__metadata--rating metadata-rating metadata-text">{{
+            heroSectionData.metadata.rating
+          }}</span>
+        }
+        @if (heroSectionData.metadata.runtimeOrSeasons) {
+          <span class="title__metadata--rating metadata-text">{{
+            heroSectionData.metadata.runtimeOrSeasons
+          }}</span>
+        }
+      </p>
+    </div>
+    @if (heroSectionData.genres[0]) {
+      <div class="title__genres-container">
+        @for (genre of heroSectionData.genres; track genre) {
+          <div class="title__genre">
+            {{ genre.name }}
           </div>
-          <p class="title__play-button__label">Watch Trailer</p>
-        </div>
-        <div class="title__logo-container">
-          <img
-            [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.logo_path"
-            alt=""
-            class="title__logo"
-            />
-          </div>
-        </div>
-        <div class="title__main-details-container">
-          <h4 class="title__title">{{ heroSectionData.title }}</h4>
-          <div class="title__metadataContainer">
-            <p class="title__metadata">
-              @if (heroSectionData.metadata.year) {
-                <span
-                  class="title__metadata--year metadata-text"
-                  >{{ heroSectionData.metadata.year }}</span
-                  >
-              }
-              @if (heroSectionData.metadata.rating) {
-                <span
-                  class="title__metadata--rating metadata-rating metadata-text"
-                  >{{ heroSectionData.metadata.rating }}</span
-                  >
-                }
-                @if (heroSectionData.metadata.runtimeOrSeasons) {
-                  <span
-                    class="title__metadata--rating metadata-text"
-                    >{{ heroSectionData.metadata.runtimeOrSeasons }}</span
-                    >
-                  }
-                </p>
-              </div>
-              @if (heroSectionData.genres[0]) {
-                <div class="title__genres-container">
-                  @for (genre of heroSectionData.genres; track genre) {
-                    <div class="title__genre">
-                      {{ genre.name }}
-                    </div>
-                  }
-                </div>
-              }
-            </div>
-          </div>
+        }
+      </div>
+    }
+  </div>
+</div>

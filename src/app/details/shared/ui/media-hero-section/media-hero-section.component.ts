@@ -1,15 +1,9 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  DestroyRef,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { Genre, Image } from '../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
-import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
-import { CommonModule, Location } from '@angular/common';
+import { catchError, map, Observable, of, tap } from 'rxjs';
+import { CommonModule } from '@angular/common';
 import { WindowResizeService } from '../../../../shared/services/dom/window-resize.service';
 import { ButtonsHeaderComponent } from '../../../../shared/components/buttons-header/buttons-header.component';
 import { HeaderButton } from '../../../../shared/components/buttons-header/buttons-header.model';
@@ -17,8 +11,9 @@ import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
 import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
 import { Router } from '@angular/router';
-import { RouteHistoryService } from '../../../../shared/services/navigation/route-history.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ScrollDetectorService } from '../../../../shared/services/dom/scroll-detector.service';
+import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 
 @Component({
   selector: 'app-media-hero-section',
@@ -34,9 +29,9 @@ export class MediaHeroSectionComponent {
     private windowResizeService: WindowResizeService,
     private tmdbConfigService: TmdbConfigService,
     private destroyRef: DestroyRef,
-    // private routeHistoryService: RouteHistoryService,
-    // private location: Location,
     private router: Router,
+    private scrollDetectorService: ScrollDetectorService,
+    private platformCheckSevice: PlatformCheckService,
   ) {
     if (this.moviesDetailsService.isMovieRoute) {
       this.moviesDetailsService.movieData$
@@ -132,7 +127,24 @@ export class MediaHeroSectionComponent {
 
   // windows resize service properties
   isResizing = false;
+  isHeaderBgAndTitleVisible = false;
+
   windowDimensions: { width: number; height: number } | undefined;
+
+  ngAfterViewInit() {
+    if (this.platformCheckSevice.isServer()) {
+      return;
+    }
+
+    this.scrollDetectorService.windowScrollState$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((scrollstate) => {
+          this.isHeaderBgAndTitleVisible = window.scrollY >= 280 ? true : false;
+        }),
+      )
+      .subscribe();
+  }
 
   ngOnInit(): void {
     this.windowDimensions = { width: 0, height: 0 };
@@ -163,7 +175,6 @@ export class MediaHeroSectionComponent {
         this.router.navigateByUrl('/');
       },
     },
-
     {
       type: 'iconWithBG',
       iconPath: 'assets/icons/header/title-details/AddToList.svg',

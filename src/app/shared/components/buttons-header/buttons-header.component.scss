@@ -1,6 +1,9 @@
 :host.with-padding .header {
   padding: 1rem;
 }
+:host.no-padding .header {
+  padding: 0;
+}
 
 .header {
   display: flex;

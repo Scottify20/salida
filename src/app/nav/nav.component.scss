@@ -14,9 +14,11 @@
 }
 
 .nav {
+  width: 100vw;
+  position: fixed;
   z-index: 1000000000;
   padding: 0 1rem;
-  margin-bottom: 0.5rem;
+  bottom: 0.5rem;
   height: var(--navbar-height);
 }
 

@@ -9,8 +9,8 @@ import { throttleTime } from 'rxjs';
 })
 export class RouteHistoryService {
   readonly urlRegexesToSkip: RegExp[] = [
-    /^\/series\/[\d-]+.+?\/(seasons|reviews)$/,
-    /^\/movie\/[\d-]+.+?\/(releases|reviews)$/,
+    /^\/series\/[\d-]+.+?\/(seasons|reviews|details)$/,
+    /^\/movie\/[\d-]+.+?\/(releases|reviews|details)$/,
   ];
   savedUrls: string[] = ['/'];
 
@@ -42,7 +42,7 @@ export class RouteHistoryService {
       this.isPopStateNavigation = true;
 
       // I added this to remove the flicker when navigating with back and forward buttons/gestures
-      this.navigateToLastSavedUrl();
+      // this.navigateToLastSavedUrl();
     });
 
     this.router.events.subscribe((event) => {
@@ -74,10 +74,7 @@ export class RouteHistoryService {
     // or is already the last entry in the savedUrls
     // and if the user navigated with backward and forward button/gesture
     // return if true and skip adding to savedUrls
-    if (
-      this.urlIsInTheSkipList(url) ||
-      url === this.savedUrls[this.savedUrls.length - 1]
-    ) {
+    if (this.urlIsInTheSkipList(url) || url === this.savedUrls[-1]) {
       return;
     }
 

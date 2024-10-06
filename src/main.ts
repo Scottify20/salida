@@ -10,7 +10,7 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
-import { firebaseConfig } from './environments/environment';
+import { environment } from './environments/environment';
 
 console.log(location.href);
 
@@ -24,7 +24,7 @@ bootstrapApplication(AppComponent, {
         scrollPositionRestoration: 'disabled',
       }),
     ),
-    [provideFirebaseApp(() => initializeApp(firebaseConfig))],
+    [provideFirebaseApp(() => initializeApp(environment.firebaseConfig))],
     provideAuth(() => getAuth()),
   ],
 }).catch((err) => console.error(err));
