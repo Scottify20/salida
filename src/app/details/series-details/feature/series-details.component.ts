@@ -1,35 +1,43 @@
 import { Component, DestroyRef } from '@angular/core';
-import { SeriesDetailsService } from '../data-access/series-details.service';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
-import {
-  PillTabsComponent,
-  PillTabsConfig,
-} from '../../../shared/components/pill-tabs/pill-tabs.component';
 import { RouterOutlet } from '@angular/router';
-import { ScrollDisablerService } from '../../../shared/services/dom/scroll-disabler.service';
 import {
   ReviewsPreferences,
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
 import { tap } from 'rxjs';
-import { ElementPositionService } from '../../../shared/services/dom/element-position.service';
-import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { DropdownPickerTabComponent } from '../../../shared/components/tabs/dropdown-picker-tab/dropdown-picker-tab.component';
+import { DropDownPickerTabProps } from '../../../shared/components/tabs/dropdown-picker-tab/dropdown-picker-tab.interface';
+import {
+  PillIndexedTabsComponent,
+  PillIndexedTabsProps,
+} from '../../../shared/components/tabs/pill-indexed-tabs/pill-indexed-tabs.component';
+import { ReviewsComponent } from '../../shared/ui/reviews/reviews.component';
+import { SeasonsComponent } from '../ui/series-details/seasons/seasons.component';
+import { SeriesMoreDetailsComponent } from '../ui/series-details/series-more-details/series-more-details.component';
+import { SeriesDetailsService } from '../data-access/series-details.service';
 
 @Component({
   selector: 'app-series-details',
   standalone: true,
-  imports: [MediaHeroSectionComponent, PillTabsComponent, RouterOutlet],
+  imports: [
+    MediaHeroSectionComponent,
+    RouterOutlet,
+    DropdownPickerTabComponent,
+    PillIndexedTabsComponent,
+    ReviewsComponent,
+    SeasonsComponent,
+    SeriesMoreDetailsComponent,
+  ],
   templateUrl: '../ui/series-details/series-details.component.html',
   styleUrl: '../ui/series-details/series-details.component.scss',
 })
 export class SeriesDetailsComponent {
   constructor(
-    private seriesDetailsService: SeriesDetailsService,
-    private scrollDisablerService: ScrollDisablerService,
     private preferencesService: TemporaryUserPreferencesService,
-    private platformCheckService: PlatformCheckService,
     private destroyRef: DestroyRef,
+    private seriesDetailsService: SeriesDetailsService,
   ) {
     this.preferencesService.preferences$
       .pipe(
@@ -44,123 +52,37 @@ export class SeriesDetailsComponent {
 
   private reviewsPreferences: ReviewsPreferences = {};
 
-  ngOnInit() {
-    if (this.platformCheckService.isBrowser()) {
-      window.scrollTo({ top: 0 });
-    }
+  previousTabIndex: number | null = null;
+  currentTabIndex: number = 0;
+
+  setTabIndex(index: number) {
+    this.previousTabIndex = Number(this.currentTabIndex);
+    this.currentTabIndex = index;
   }
 
-  TitleDetailsTabConfig: PillTabsConfig = {
-    navTabs: {
-      tabType: 'navigation',
-      buttonContent: 'text',
-      tabs: [
-        {
-          text: 'Details',
-          routerLinkPath: 'details',
-          visibleOn: ['all'],
-        },
-        {
-          text: 'Episodes',
-          routerLinkPath: 'seasons',
-          visibleOn: ['series'],
-        },
-        {
-          text: 'Reviews',
-          routerLinkPath: 'reviews',
-          visibleOn: ['all'],
-          visibleIf: () => {
-            let hasReviews = false;
-            this.seriesDetailsService.seriesData$
-              .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                tap((series) => {
-                  hasReviews = !!series?.reviews.results.length;
-                }),
-              )
-              .subscribe();
-            return hasReviews;
-          },
-        },
-      ],
+  dropDownPickerTabProps: DropDownPickerTabProps = {
+    id: 'season-picker-dropdown-tab',
+    text: this.seriesDetailsService.selectedSeasonNameSig(),
+    callback: () => {
+      this.seriesDetailsService.isSeriesPickerShownSig.set(true);
     },
+    visibleIf: () => {
+      return false;
+    },
+  };
 
-    rightTabs1: {
-      tabType: 'toggle-switch',
-      buttonContent: 'dynamic-text-then-icon',
-      tabs: [
-        {
-          id: 'season-picker-tab',
-          iconPathActive: 'assets/icons/pill-tabs/Arrow-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Arrow-grey.svg',
-          dynamicText: () => {
-            return this.seriesDetailsService.selectedSeason;
-          },
-          callback: () => {
-            this.scrollDisablerService.disableBodyScroll(
-              'season-picker-popup-or-bottom-sheet',
-            );
-            this.seriesDetailsService.isSeriesPickerShown$.next(true);
-          },
-          isSelected: () => {
-            return true;
-          },
-          visibleOn: ['seasons'],
-          visibleIf: () => {
-            let hasMultipleSeasons = false;
-            this.seriesDetailsService.seriesData$
-              .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                tap((series) => {
-                  hasMultipleSeasons = !!series && series.number_of_seasons > 1;
-                }),
-              )
-              .subscribe();
-            return hasMultipleSeasons;
-          },
-        },
-      ],
-    },
-
-    rightTabs2: {
-      tabType: 'toggle-switch',
-      buttonContent: 'icon',
-      tabs: [
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Salida-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Salida-grey.svg',
-          callback: () => {
-            this.preferencesService.updateMovieAndSeriesDetailsOverlapPreferences(
-              {
-                reviews: {
-                  reviewsSource: 'salida',
-                },
-              },
-            );
-          },
-          isSelected: () => {
-            return this.reviewsPreferences.reviewsSource == 'salida';
-          },
-          visibleOn: ['reviews'],
-        },
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Tmdb-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Tmdb-grey.svg',
-          callback: () => {
-            this.preferencesService.updateMovieAndSeriesDetailsOverlapPreferences(
-              {
-                reviews: {
-                  reviewsSource: 'tmdb',
-                },
-              },
-            );
-          },
-          isSelected: () => {
-            return this.reviewsPreferences.reviewsSource == 'tmdb';
-          },
-          visibleOn: ['reviews'],
-        },
-      ],
-    },
+  pillIndexedTabsProps: PillIndexedTabsProps = {
+    buttonContent: 'text',
+    tabs: [
+      {
+        text: 'Details',
+      },
+      {
+        text: 'Episodes',
+      },
+      {
+        text: 'Reviews',
+      },
+    ],
   };
 }

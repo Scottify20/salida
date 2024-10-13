@@ -3,9 +3,33 @@
   flex-flow: column nowrap;
   row-gap: 1rem;
   min-height: 200vh;
+  width: 100%;
 }
 
-router-outlet > * {
-  /* Target the direct child of router-outlet */
-  display: block; /* Ensure the content is displayed as a block element */
+.title-details__tabs {
+  padding: 0 0.5rem;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+
+  overflow: hidden;
+
+  display: grid;
+  grid-template-areas: "left-sec prim right-sec";
+  grid-template-columns: minmax(auto, 1fr) min-content 1fr;
+
+  .title-details__filler-tab {
+    grid-area: left-sec;
+    margin-left: 0.5rem;
+  }
+
+  .title-details__primary-tab {
+    grid-area: prim;
+    margin: 0 0.5rem;
+  }
+
+  .title-details__secondary-tab {
+    grid-area: right-sec;
+    margin-right: 0.5rem;
+  }
 }

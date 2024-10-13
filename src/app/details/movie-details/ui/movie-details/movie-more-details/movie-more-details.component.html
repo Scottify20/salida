@@ -1,0 +1,91 @@
+<div class="title__details">
+  @if (plotSection.texts[0]) {
+    <app-collapsible-text-section
+      class="title__section single"
+      [collapsibleTextSectionProps]="plotSection"
+    ></app-collapsible-text-section>
+  }
+
+  <!-- <app-ratings-section
+  class="title__section single"
+  [ratingsSectionOptions]="ratingsSection"
+></app-ratings-section> -->
+
+  @if (writersSection.texts[0] || directorsSection.texts[0]) {
+    <div
+      class="title__section-two-columns-container"
+      [ngClass]="
+        isTextsSectionDoubleColumn(writersSection, directorsSection)
+          ? 'double'
+          : ''
+      "
+    >
+      @if (directorsSection.texts[0]) {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="directorsSection"
+        ></app-texts-section>
+      }
+      @if (writersSection.texts[0]) {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="writersSection"
+        ></app-texts-section>
+      }
+    </div>
+  }
+
+  @if (castSection.entities[0]) {
+    <app-cards-section
+      class="title__section"
+      [cardsSectionOptions]="castSection"
+    ></app-cards-section>
+  }
+
+  @if (crewSection.entities[0]) {
+    <app-cards-section
+      class="title__section"
+      [cardsSectionOptions]="crewSection"
+    ></app-cards-section>
+  }
+
+  @if (languagesSection.texts[0] || countriesSection.texts[0]) {
+    <div
+      class="title__section-two-columns-container"
+      [ngClass]="
+        isTextsSectionDoubleColumn(languagesSection, countriesSection)
+          ? 'double'
+          : ''
+      "
+    >
+      @if (languagesSection.texts[0]) {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="languagesSection"
+        ></app-texts-section>
+      }
+      @if (countriesSection.texts[0]) {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="countriesSection"
+        ></app-texts-section>
+      }
+    </div>
+  }
+
+  @if (boxOfficeSection.texts[0]) {
+    <div class="title__section-two-columns-container">
+      <!-- <app-texts-section
+    *ngIf="awardsSection.texts[0]"
+    class="title__section"
+    [textsSectionOptions]="awardsSection"
+  ></app-texts-section> -->
+      @if (boxOfficeSection.texts[0] != "0") {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="boxOfficeSection"
+        ></app-texts-section>
+      }
+    </div>
+  }
+</div>

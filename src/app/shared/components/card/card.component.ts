@@ -16,6 +16,7 @@ export class CardComponent {
     name: '',
     image_path: '',
     otherName: '',
+    id: 0,
   };
 
   runCallbackOnClick(callback?: () => void) {
@@ -26,6 +27,7 @@ export class CardComponent {
 }
 
 export interface TmdbEntityForCard {
+  id: number | string;
   name: string;
   otherName?: string;
   image_path: string | null;

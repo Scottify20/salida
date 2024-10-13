@@ -3,7 +3,9 @@
 @media (hover: hover) {
   .clickable-cards {
     & > * {
-      transition: filter 0.3s ease-in-out, transform 0.2s ease-in-out;
+      transition:
+        filter 0.3s ease-in-out,
+        transform 0.2s ease-in-out;
     }
 
     & > *.big-card {
@@ -37,7 +39,9 @@
 @media (hover: none) {
   .clickable-cards {
     & > * {
-      transition: filter 0.3s ease-in-out, transform 0.2s ease-in-out;
+      transition:
+        filter 0.3s ease-in-out,
+        transform 0.2s ease-in-out;
     }
 
     & > *.big-card {
@@ -49,5 +53,95 @@
         transform: scale(0.75);
       }
     }
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+
+.slide-in-from-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.slide-in-from-right {
+  animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0%;
+  }
+  to {
+    opacity: 100%;
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    transform: translateX(-40px);
+    opacity: 0%;
+  }
+
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% {
+    transform: translateX(40px);
+    opacity: 0%;
+  }
+  100% {
+    opacity: 100%;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    bottom: 0;
+  }
+  100% {
+    bottom: -100%;
+  }
+}
+
+@keyframes slideUp {
+  0% {
+    bottom: -100%;
+  }
+  100% {
+    bottom: 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  100% {
+    opacity: 100%;
+    pointer-events: all;
+    user-select: auto;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 100%;
+    pointer-events: all;
+    user-select: auto;
+  }
+
+  100% {
+    opacity: 0;
+    pointer-events: none;
+    user-select: none;
   }
 }

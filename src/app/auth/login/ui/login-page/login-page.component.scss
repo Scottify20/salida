@@ -104,10 +104,12 @@ app-divider-with-title {
     font-weight: 600;
     border: 2px solid white;
     transform: scale(1);
+    display: grid;
+    place-content: center;
 
     & * {
       color: var(--text-color-inverted);
-      transform: translateY(-0.12em);
+      transform: translateY(15%);
     }
 
     &.disabled {

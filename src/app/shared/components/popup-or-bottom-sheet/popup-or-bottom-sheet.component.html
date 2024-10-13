@@ -1,8 +1,8 @@
 <div
   #dialog
   class="picker-dialog fullscreen-dialog"
-  [ngClass]="this.isPopUpShown ? 'shown' : ''"
-  >
+  [ngClass]="this.popUpOrBottomSheetConfig.isPopupShownSig() ? 'shown' : ''"
+>
   <div class="dialog__backrop" (click)="hideDialog()"></div>
 
   <div class="dialog__arrow-and-items-container">
@@ -10,25 +10,25 @@
       src="assets/icons/popups/Popup-tip.svg"
       alt=""
       class="dialog__popup-pointer"
-      />
-      <img
-        src="assets/icons/Arrow.svg"
-        alt=""
-        class="dialog__arrow-down-button"
-        (click)="hideDialog()"
-        />
-        <ul class="dialog__items-container">
-          @for (item of popUpOrBottomSheetConfig.items; track item) {
-            <li
-              (click)="item.callback(); hideDialog()"
-              class="dialog__item"
-              [ngClass]="item.isSelected() ? 'selected' : ''"
-              >
-              <p>
-                {{ item.textContent }}
-              </p>
-            </li>
-          }
-        </ul>
-      </div>
-    </div>
+    />
+    <img
+      src="assets/icons/Arrow.svg"
+      alt=""
+      class="dialog__arrow-down-button"
+      (click)="hideDialog()"
+    />
+    <ul class="dialog__items-container">
+      @for (item of popUpOrBottomSheetConfig.items; track item) {
+        <li
+          (click)="item.callback(); hideDialog()"
+          class="dialog__item"
+          [ngClass]="item.isSelected() ? 'selected' : ''"
+        >
+          <p>
+            {{ item.textContent }}
+          </p>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

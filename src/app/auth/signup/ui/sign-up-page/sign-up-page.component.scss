@@ -104,6 +104,10 @@ app-divider-with-title {
     border: 2px solid white;
     transform: scale(1);
 
+    & > * {
+      color: var(--text-color-inverted);
+    }
+
     &.disabled {
       pointer-events: none;
       opacity: 50%;
@@ -202,15 +206,13 @@ app-divider-with-title {
 
       p.chars-right-padding {
         width: 100%;
-        // border: 1px solid green;
         flex-grow: 1;
         flex-shrink: 1;
       }
 
       p {
-        // border: 1px solid red;
         display: flex;
-        justify-content: end;
+        justify-content: start;
         flex-flow: row nowrap;
         right: 20px;
         min-width: 100%;
@@ -224,7 +226,7 @@ app-divider-with-title {
         min-height: 1em;
         position: relative;
         color: var(--text-color-danger);
-        min-width: 0.55em;
+        min-width: var(--space-width);
 
         &::after {
           content: "";

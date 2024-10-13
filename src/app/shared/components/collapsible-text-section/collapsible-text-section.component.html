@@ -1,41 +1,46 @@
-<div class="texts-section">
+<div class="collapsible-texts-section">
   <div class="section-header">
-    <h4 class="section-header__title">{{ plotSectionOptions.sectionTitle }}</h4>
-
-    @if (plotSectionOptions.buttonProps; as buttonProps) {
-      @if (plotIsOverflowing(textElement, textContainer)) {
-        <div
-          class="section-header__button"
-          (click)="expanded = !expanded"
-          role="button"
-          >
-          @switch (buttonProps.type) {
-            <!-- if button is a text -->
-            @case ('text') {
-              <div
-                [textContent]="expanded ? 'Collapse' : 'Expand'"
-                class="section-header__button--text"
-              ></div>
-            }
-            @case ('icon') {
-              <!-- if button is an icon -->
-              <div class="section-header__button--icon">
-                <img [src]="buttonProps.textOrIconPath" alt="" />
-              </div>
-            }
-          }
-        </div>
-      }
-    }
+    <h4
+      class="section-header__title"
+      *ngIf="collapsibleTextSectionProps.sectionTitle as sectionTitle"
+    >
+      {{ sectionTitle }}
+    </h4>
   </div>
 
   <div
     #textContainer
-    [ngClass]="!expanded ? 'plot-cutoff' : ''"
-    class="texts-section__texts-container"
-    >
-    <p #textElement class="texts-section__text">
-      {{ plotSectionOptions.texts[0] }}
+    class="collapsible-texts-section__texts-container"
+    [style.max-height]="currentHeight()"
+    [ngClass]="{ 'apply-transition': applyTransition }"
+    (click)="toggleExpanded(); applyTransition = true"
+  >
+    <p #textElement class="collapsible-texts-section__text">
+      {{ collapsibleTextSectionProps.texts[0] }}
+    </p>
+  </div>
+
+  <!-- Invisible container to calculate the expanded height -->
+  <div #shadowTextContainer class="shadow__texts-container">
+    <p class="collapsible-texts-section__text">
+      {{ collapsibleTextSectionProps.texts[0] }}
     </p>
   </div>
 </div>
+
+<!-- Expand/Collapse button -->
+@if (isOverFlowing()) {
+  <div
+    role="button"
+    class="collapsible-texts-section__expand-button"
+    (click)="toggleExpanded(); applyTransition = true"
+  >
+    @if (isExpanded()) {
+      <p>-</p>
+    } @else {
+      <p>•</p>
+      <p>•</p>
+      <p>•</p>
+    }
+  </div>
+}

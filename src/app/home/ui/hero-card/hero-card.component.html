@@ -1,24 +1,23 @@
 <div
   class="hero-card"
   role="button"
-  [class]="windowDimensions.width > 480 ? 'landscape' : ''"
   [id]="'hero-card--' + titleDetails.id"
   [attr.data-card-index]="cardIndex"
   (click)="runCallbackOnClick(titleDetails.callback)"
-  >
+>
   @if (getImageSrcBasedOnWidth()) {
     <img
       class="hero-card__poster"
       [src]="getImageSrcBasedOnWidth()"
       alt=""
       [attr.data-card-index]="cardIndex"
-      />
+    />
   }
   <div
     class="hero-card__details"
     [id]="cardIndex === 0 ? 'hero-card__details--0' : ''"
     [style]="cardOpacity"
-    >
+  >
     <!-- <img
     [src]="'https://image.tmdb.org/t/p/w500' + titleDetails"
     alt=""

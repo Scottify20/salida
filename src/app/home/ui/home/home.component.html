@@ -1,8 +1,10 @@
-<app-buttons-header
+<app-header-buttons
   class="with-padding"
   [headerButtons]="headerButtons"
-></app-buttons-header>
-<app-popover [popoverConfig]="userActionsMenuPopoverConfig"></app-popover>
+></app-header-buttons>
+
+<app-user-actions-menu-popover></app-user-actions-menu-popover>
+
 <div class="home__main">
   <app-hero-cards [trendingTitles]="trendingTitles"></app-hero-cards>
   <app-cards-section

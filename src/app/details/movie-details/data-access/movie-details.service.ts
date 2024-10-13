@@ -34,7 +34,7 @@ export class MovieDetailsService {
       .replace(/-{2}/, '-')
       .toLowerCase();
     this._movieData$.next(null);
-    this.router.navigateByUrl(`/movie/${id}${titleSlugified}/details`);
+    this.router.navigateByUrl(`/movie/${id}${titleSlugified}`);
   }
 
   get isMovieRoute(): boolean {

@@ -1,11 +1,11 @@
-<app-buttons-header
+<app-header-buttons
   class="with-padding"
   [headerButtons]="headerButtons"
-></app-buttons-header>
+></app-header-buttons>
 
 <div
   class="buttons-header-bg-and-title"
-  [class]="isHeaderBgAndTitleVisible ? 'visible' : ''"
+  [class]="isHeaderBgAndTitleVisibleSig() ? 'visible' : ''"
 >
   <h4 class="title__hero--title-on-header">
     {{ heroSectionData.title }}
@@ -28,19 +28,12 @@
     <div class="title__play-button-container">
       <div class="title__play-button">
         <img
-          src="assets/icons/header/title-details/Play.svg"
+          src="assets/icons/header/Play.svg"
           alt=""
           class="title__play-icon"
         />
       </div>
       <p class="title__play-button__label">Watch Trailer</p>
-    </div>
-    <div class="title__logo-container">
-      <img
-        [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.logo_path"
-        alt=""
-        class="title__logo"
-      />
     </div>
   </div>
   <div class="title__main-details-container">
@@ -66,12 +59,17 @@
     </div>
     @if (heroSectionData.genres[0]) {
       <div class="title__genres-container">
-        @for (genre of heroSectionData.genres; track genre) {
+        @for (genre of heroSectionData.genres; track genre.id) {
           <div class="title__genre">
             {{ genre.name }}
           </div>
         }
       </div>
     }
+    <img
+      [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.poster_path"
+      alt=""
+      class="title__poster"
+    />
   </div>
 </div>

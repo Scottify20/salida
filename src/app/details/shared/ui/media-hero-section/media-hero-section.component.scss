@@ -5,43 +5,34 @@
   flex-flow: column nowrap;
   justify-content: space-between;
 
-  height: 120vw;
-  max-height: 450px;
+  height: 28rem;
 
   & *:not(.title__hero-backdrop) {
     z-index: 2;
   }
-
-  // &.loading::after {
-  //   z-index: 10000;
-  //   content: "loading";
-  //   font-size: 2rem;
-  //   color: red;
-  //   position: absolute;
-  //   width: 100%;
-  //   height: 100%;
-  //   background-color: white;
-  // }
 }
-app-buttons-header {
-  z-index: 1003;
+
+app-header-buttons {
+  top: 0;
   width: 100%;
+  max-width: var(--main-max-width);
+  z-index: 1003;
   position: fixed;
 }
 
 .buttons-header-bg-and-title {
   position: fixed;
-  width: 100vw;
-  max-width: var(--main-max-width);
-
   top: 0;
+  width: 100%;
+  max-width: var(--main-max-width);
   height: 4rem;
+  padding: 0 4rem;
   z-index: 1000;
-  background-color: var(--body-bg-color);
 
+  background-color: var(--body-bg-color);
   opacity: 0%;
-  transition: opacity ease-out 0.2s;
-  overflow: hidden;
+
+  transition: opacity ease-out 0.175s;
 
   &.visible {
     opacity: 95%;
@@ -49,26 +40,14 @@ app-buttons-header {
 
   .title__hero--title-on-header {
     z-index: 1001;
-    display: grid;
-    align-content: center;
+    line-height: 4rem;
     text-align: left;
-    height: 2rem;
-    left: 4rem;
-    right: 4.5rem;
-    top: 1rem;
-    position: fixed;
-    font-size: 1.2rem;
-    font-weight: 500;
+    font-size: 1.25rem;
+    font-weight: 600;
 
-    white-space: nowrap;
     overflow: hidden;
+    white-space: nowrap;
     text-overflow: ellipsis;
-
-    &.truncate {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
   }
 }
 
@@ -98,21 +77,22 @@ app-buttons-header {
 .title__main-details-container {
   display: flex;
   flex-flow: column nowrap;
+  position: relative;
+  padding-right: 8rem;
 }
 
-@media (min-width: 625px) {
-  .title__logo-container {
-    top: 0;
-    max-width: 100%;
-    height: 100%;
-    position: absolute;
-  }
-  .title__logo {
-  }
+.title__poster {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  max-width: 7rem;
+  border-radius: 1rem;
+  overflow: hidden;
 }
 
 .title__title {
-  line-height: 1.5;
+  // border: 1px solid red;
+  line-height: 1.4;
   font-size: 1.44rem;
   font-weight: 700;
   margin-bottom: calc(1rem - 0.44rem);
@@ -147,23 +127,6 @@ app-buttons-header {
       margin-left: 0;
     }
 
-    // .metadata-text:not(:first-of-type) {
-    //   &::before {
-    //     font-size: 0.8333rem;
-    //     position: absolute;
-    //     display: inline-block;
-    //     transform: scale(0.6);
-    //     content: "•";
-    //     padding: 0 0.25em;
-    //     color: var(--text-color-disabled);
-    //     top: 7.5%;
-    //   }
-
-    //   &::before {
-    //     left: -0.9rem;
-    //   }
-    // }
-
     .metadata-text:not(:last-of-type) {
       &::after {
         font-size: 0.8333rem;
@@ -191,7 +154,6 @@ app-buttons-header {
   overflow-x: auto;
 
   .title__genre {
-    text-wrap: nowrap;
     color: var(--text-color-slightly-transparent);
     cursor: pointer;
     background-color: var(--button-bg-subtle);
@@ -200,6 +162,8 @@ app-buttons-header {
     border-radius: 100px;
     padding: 0.35rem 0.7rem;
     font-size: 0.8rem;
+
+    white-space: nowrap;
   }
 }
 
@@ -211,23 +175,6 @@ app-buttons-header {
 
   &:hover .title__play-button-container {
     opacity: 100%;
-  }
-}
-
-.title__logo-container {
-  position: absolute;
-  left: 0;
-  pointer-events: none;
-  max-width: 180px;
-  height: 100%;
-  align-content: end;
-
-  // max-width: clamp(15vw, 35vw, 180px);
-
-  .title__logo {
-    max-width: inherit;
-
-    margin-bottom: 1.44rem;
   }
 }
 

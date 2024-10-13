@@ -13,7 +13,7 @@ export class NavComponent {
   constructor(
     private router: Router,
     private renderer: Renderer2,
-    @Inject(DOCUMENT) private document: Document
+    @Inject(DOCUMENT) private document: Document,
   ) {}
 
   routesWhereNavShows: string[] = ['/', '/lists', '/search', '/trending/**'];

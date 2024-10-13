@@ -1,0 +1,75 @@
+:host.with-padding .header {
+  padding: 1rem;
+}
+:host.no-padding .header {
+  padding: 0;
+}
+
+.header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header__button {
+  cursor: pointer;
+  width: 2.25rem;
+  aspect-ratio: 1/1;
+  font-size: 1.5rem;
+  display: grid;
+  place-content: center;
+  outline-offset: 1.5px;
+
+  border-radius: 500px;
+  overflow: hidden;
+
+  transition: all 0.2s ease-in-out;
+  transform: scale(1);
+
+  filter: drop-shadow(1px 1px 1px rgba(var(--bg-color), 0.4));
+
+  user-select: none;
+  * {
+    pointer-events: none;
+  }
+
+  &:hover {
+    filter: brightness(120%);
+  }
+
+  &:active {
+    filter: brightness(70%);
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px dotted var(--color-accent);
+    outline-offset: 1.5px;
+  }
+}
+
+.header__button--text {
+  text-decoration: none;
+  width: min-content;
+  aspect-ratio: unset;
+  height: 2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.header__button--icon-with-bg {
+  margin: 0.12rem;
+  background-color: var(--button-bg-color);
+  padding: 0.2em;
+  border-radius: 100px;
+  transform: scale(1.12);
+
+  * {
+    transform: scale(0.8);
+  }
+}
+
+img {
+  width: 100%;
+}

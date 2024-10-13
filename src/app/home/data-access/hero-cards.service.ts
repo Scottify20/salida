@@ -1,7 +1,5 @@
-import { DestroyRef, Inject, Injectable } from '@angular/core';
-import { ScrollDetectorService } from '../../shared/services/dom/scroll-detector.service';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { fromEvent, take, tap, throttleTime } from 'rxjs';
+import { Inject, Injectable } from '@angular/core';
+import { fromEvent, tap, throttleTime } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
 
 @Injectable({
@@ -25,7 +23,7 @@ export class HeroCardsService {
 
     fromEvent(cardsContainer, 'scroll')
       .pipe(
-        throttleTime(500),
+        throttleTime(100),
         tap((e) => {
           this.savedHeroCardsScrollX = cardsContainer.scrollLeft;
         }),

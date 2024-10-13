@@ -1,34 +1,38 @@
 import { Component, DestroyRef } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { MovieDetailsService } from '../data-access/movie-details.service';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
-import {
-  PillTabsComponent,
-  PillTabsConfig,
-} from '../../../shared/components/pill-tabs/pill-tabs.component';
 import {
   UserPreferences,
   TemporaryUserPreferencesService,
 } from '../../../shared/services/preferences/temporary-user-preferences-service';
-import { Subscription, tap } from 'rxjs';
-import { PlatformCheckService } from '../../../shared/services/dom/platform-check.service';
+import { tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  PillIndexedTabsComponent,
+  PillIndexedTabsProps,
+} from '../../../shared/components/tabs/pill-indexed-tabs/pill-indexed-tabs.component';
+import { MovieMoreDetailsComponent } from '../ui/movie-details/movie-more-details/movie-more-details.component';
+import { ReleasesComponent } from '../ui/movie-details/releases/releases.component';
+import { ReviewsComponent } from '../../shared/ui/reviews/reviews.component';
 
 @Component({
   selector: 'app-movie-details',
   standalone: true,
-  imports: [RouterOutlet, MediaHeroSectionComponent, PillTabsComponent],
+  imports: [
+    MediaHeroSectionComponent,
+    PillIndexedTabsComponent,
+    MovieMoreDetailsComponent,
+    ReleasesComponent,
+    ReviewsComponent,
+  ],
   templateUrl: '../ui/movie-details/movie-details.component.html',
   styleUrl: '../ui/movie-details/movie-details.component.scss',
 })
 export class MovieDetailsComponent {
   constructor(
     private preferencesService: TemporaryUserPreferencesService,
-    private movieDetailsService: MovieDetailsService,
-    private platformCheckService: PlatformCheckService,
     private destroyRef: DestroyRef,
   ) {
-    this.userPreferencesSubscriptions = this.preferencesService.preferences$
+    this.preferencesService.preferences$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((preferences) => {
@@ -42,135 +46,27 @@ export class MovieDetailsComponent {
   }
 
   private userPreferences!: UserPreferences;
-  private userPreferencesSubscriptions: Subscription | null = null;
 
-  ngOnInit() {
-    if (this.platformCheckService.isBrowser()) {
-      window.scrollTo({ top: 0 });
-    }
+  previousTabIndex: number | null = null;
+  currentTabIndex: number = 0;
+
+  setTabIndex(index: number) {
+    this.previousTabIndex = Number(this.currentTabIndex);
+    this.currentTabIndex = index;
   }
 
-  ngOnDestroy() {
-    this.userPreferencesSubscriptions?.unsubscribe();
-  }
-
-  TitleDetailsTabConfig: PillTabsConfig = {
-    navTabs: {
-      tabType: 'navigation',
-      buttonContent: 'text',
-      tabs: [
-        {
-          text: 'Details',
-          routerLinkPath: 'details',
-          visibleOn: ['all'],
-        },
-        {
-          text: 'Releases',
-          routerLinkPath: 'releases',
-          visibleOn: ['movie/\\d+.*/'],
-        },
-        {
-          text: 'Reviews',
-          routerLinkPath: 'reviews',
-          visibleOn: ['all'],
-          visibleIf: () => {
-            let hasReviews = false;
-            this.movieDetailsService.movieData$
-              .pipe(
-                takeUntilDestroyed(this.destroyRef),
-                tap((movie) => {
-                  hasReviews = !!movie?.reviews.results.length;
-                }),
-              )
-              .subscribe();
-            return hasReviews;
-          },
-        },
-      ],
-    },
-
-    rightTabs1: {
-      tabType: 'toggle-switch',
-      buttonContent: 'icon',
-      tabs: [
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Calendar-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Calender-grey.svg',
-          callback: () => {
-            this.userPreferences.details.movieDetails.releases.groupBy =
-              'release-type';
-          },
-          isSelected: () => {
-            return (
-              this.userPreferences.details.movieDetails.releases.groupBy ==
-              'release-type'
-            );
-          },
-          visibleOn: ['movie/\\d+.*/releases'],
-        },
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Globe-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Globe-grey.svg',
-          callback: () => {
-            this.userPreferences.details.movieDetails.releases.groupBy =
-              'country';
-          },
-          isSelected: () => {
-            return (
-              this.userPreferences.details.movieDetails.releases.groupBy ==
-              'country'
-            );
-          },
-          visibleOn: ['movie/\\d+.*/releases'],
-        },
-      ],
-    },
-
-    rightTabs2: {
-      tabType: 'toggle-switch',
-      buttonContent: 'icon',
-      tabs: [
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Salida-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Salida-grey.svg',
-          callback: () => {
-            this.preferencesService.updateMovieAndSeriesDetailsOverlapPreferences(
-              {
-                reviews: {
-                  reviewsSource: 'salida',
-                },
-              },
-            );
-          },
-          isSelected: () => {
-            return (
-              this.userPreferences.details.movieAndSeriesDetails.reviews
-                .reviewsSource == 'salida'
-            );
-          },
-          visibleOn: ['reviews'],
-        },
-        {
-          iconPathActive: 'assets/icons/pill-tabs/Tmdb-black.svg',
-          iconPathDisabled: 'assets/icons/pill-tabs/Tmdb-grey.svg',
-          callback: () => {
-            this.preferencesService.updateMovieAndSeriesDetailsOverlapPreferences(
-              {
-                reviews: {
-                  reviewsSource: 'tmdb',
-                },
-              },
-            );
-          },
-          isSelected: () => {
-            return (
-              this.userPreferences.details.movieAndSeriesDetails.reviews
-                .reviewsSource == 'tmdb'
-            );
-          },
-          visibleOn: ['reviews'],
-        },
-      ],
-    },
+  pillIndexedTabsProps: PillIndexedTabsProps = {
+    buttonContent: 'text',
+    tabs: [
+      {
+        text: 'Details',
+      },
+      {
+        text: 'Releases',
+      },
+      {
+        text: 'Reviews',
+      },
+    ],
   };
 }

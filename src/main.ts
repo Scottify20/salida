@@ -21,7 +21,7 @@ bootstrapApplication(AppComponent, {
       routes,
       withEnabledBlockingInitialNavigation(),
       withInMemoryScrolling({
-        scrollPositionRestoration: 'disabled',
+        scrollPositionRestoration: 'enabled',
       }),
     ),
     [provideFirebaseApp(() => initializeApp(environment.firebaseConfig))],

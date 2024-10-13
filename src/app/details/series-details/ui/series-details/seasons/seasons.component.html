@@ -1,0 +1,18 @@
+<!-- <div class="seasons-cotainer" *ngFor="let season of seasons">
+<app-episode-group
+  *ngIf="selectedSeason == season.name"
+  [seasonData]="season"
+></app-episode-group>
+</div> -->
+<app-popup-or-bottom-sheet
+  [popUpOrBottomSheetConfig]="seasonPickerConfig"
+></app-popup-or-bottom-sheet>
+
+<div class="seasons-cotainer">
+  @if (seriesDetailsService.selectedSeasonNameSig() === seasonData.name) {
+    <app-episode-group [seasonData]="seasonData"></app-episode-group>
+  }
+</div>
+<app-popup-or-bottom-sheet
+  [popUpOrBottomSheetConfig]="seasonPickerConfig"
+></app-popup-or-bottom-sheet>

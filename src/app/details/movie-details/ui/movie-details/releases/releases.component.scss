@@ -1,0 +1,212 @@
+.releases.release-type {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-flow: column nowrap;
+
+  .releases__type-container {
+    display: flex;
+    flex-flow: column nowrap;
+
+    // divider
+    &:not(:last-of-type)::after {
+      content: "";
+      display: block;
+      height: 1px;
+      width: 100%;
+      background-color: var(--divider-color);
+      margin-top: 1.5rem;
+      margin-bottom: 1rem;
+    }
+  }
+
+  .releases__releases-container {
+    display: flex;
+    flex-flow: column nowrap;
+    row-gap: 0.75rem;
+  }
+
+  .release.first-release-by-date:not(:first-of-type) {
+    margin-top: 1rem;
+  }
+
+  .release {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 100px 1fr;
+    column-gap: 2rem;
+
+    .release__date {
+      font-weight: 300;
+      color: var(--text-color-subtle);
+    }
+
+    .release__details-container {
+      display: flex;
+      flex-flow: row wrap;
+      column-gap: 0.5rem;
+      row-gap: 0.5rem;
+      align-items: center;
+
+      img.release__flag {
+        font-size: 1rem;
+        height: 0.9rem;
+        border-radius: 2px;
+      }
+      .release__country-name {
+        font-weight: 300;
+      }
+      .release__rating {
+        display: grid;
+        place-content: center;
+        text-wrap: nowrap;
+        font-size: 0.8333rem;
+
+        border: 1px solid var(--text-color-subtle);
+        color: var(--text-color-subtle);
+        width: min-content;
+        padding: 0.15em 0.25em;
+        border-radius: 0.25rem;
+      }
+      .release__note {
+        font-size: 0.8333rem;
+        color: var(--text-color-disabled);
+      }
+    }
+  }
+}
+
+.release__type-name {
+  position: sticky;
+  top: 3.98rem;
+  width: 100%;
+  background-color: var(--body-bg-color);
+  opacity: 98%;
+  padding-bottom: 1.25rem;
+
+  font-size: 1.25rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.releases.country {
+  padding: 0.75rem 1rem;
+  display: flex;
+  flex-flow: column nowrap;
+
+  .releases__type-container {
+    display: flex;
+    flex-flow: column nowrap;
+
+    .release__type-name {
+      padding-bottom: 1.25rem;
+    }
+  }
+
+  .releases__country-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 130px 1fr;
+    column-gap: 2rem;
+    row-gap: 0.5rem;
+    align-items: start;
+
+    .release__country-name-and-flag-container {
+      display: flex;
+      flex-flow: row nowrap;
+      column-gap: 0.5rem;
+      row-gap: 0.5rem;
+
+      img.release__flag {
+        font-size: 1rem;
+        height: 0.9rem;
+        border-radius: 2px;
+      }
+
+      .release__country-name {
+        margin-top: -0.3em;
+        line-height: 1.5;
+        font-weight: 300;
+        color: var(--text-color-subtle);
+      }
+    }
+    .releases__releases-container {
+      display: flex;
+      flex-flow: column wrap;
+      row-gap: 0.75rem;
+
+      .release {
+        display: flex;
+        flex-flow: row wrap;
+        column-gap: 0.5rem;
+        row-gap: 0.5rem;
+        align-items: center;
+
+        .release__date {
+          font-weight: 400;
+        }
+
+        .release__rating {
+          font-weight: 300;
+          display: grid;
+          place-content: center;
+          text-wrap: nowrap;
+          font-size: 0.8333rem;
+
+          border: 1px solid var(--text-color-subtle);
+          color: var(--text-color-subtle);
+          width: min-content;
+          padding: 0.15em 0.25em;
+          border-radius: 0.25rem;
+        }
+        .release__note {
+          word-break: break-all;
+          font-size: 0.8333rem;
+          color: var(--text-color-disabled);
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 0px) {
+  .releases.country {
+    .releases__countries-container {
+      row-gap: 0rem;
+    }
+
+    .releases__country-container {
+      // divider
+      &:not(:last-of-type)::after {
+        content: "";
+        display: block;
+        height: 1px;
+        width: 100%;
+        background-color: var(--divider-color);
+        margin-top: 0.3rem;
+        margin-bottom: 0.8rem;
+        grid-column: span 2;
+      }
+    }
+  }
+}
+
+// for displayin two columns of releases
+@media (min-width: 768px) {
+  .releases.country {
+    .releases__countries-container {
+      break-inside: avoid;
+      column-gap: 2.5rem;
+      columns: 2;
+
+      & > * {
+        break-inside: avoid;
+      }
+    }
+  }
+
+  .releases.release-type {
+    .releases__type-container {
+      // width: calc((100% - 2rem) / 2);
+    }
+  }
+}

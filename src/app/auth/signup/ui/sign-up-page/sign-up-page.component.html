@@ -1,6 +1,6 @@
 <div class="login">
   <div class="login__header">
-    <app-buttons-header [headerButtons]="headerButtons"></app-buttons-header>
+    <app-header-buttons [headerButtons]="headerButtons"></app-header-buttons>
     <app-progress-indicator
       [progressIndicatorProps]="progressIndicatorProps"
     ></app-progress-indicator>
@@ -35,7 +35,7 @@
           formControlName="email"
         />
         <div class="form__error-messages-container">
-          @for (error of emailErrorMessages(); track error) {
+          @for (error of emailErrorMessages(); let i = $index; track i) {
             <p
               [class]="isEmailPatternInvalid() ? '' : 'no-error'"
               class="form__error-message"
@@ -61,6 +61,7 @@
             [type]="passwordInputType"
             class="input password"
             formControlName="password"
+            maxlength="25"
             [style]="
               passwordInputType == 'text'
                 ? 'color: transparent; caret-color: white'
@@ -77,7 +78,8 @@
             <p>
               @for (
                 charCheck of passwordValidCharactersCheck();
-                track charCheck
+                let i = $index;
+                track i
               ) {
                 <span
                   class="login__password-char"
@@ -109,7 +111,7 @@
           </div>
         </div>
         <div class="form__error-messages-container">
-          @for (error of passwordErrorMessages(); track error) {
+          @for (error of passwordErrorMessages(); let i = $index; track i) {
             <p
               [class]="isPasswordPatternInvalid() ? '' : 'no-error'"
               class="form__error-message"
@@ -131,7 +133,12 @@
           type="submit"
           class="login-button"
         >
-          Create Account
+          @if (!isSubmitActioninProgress) {
+            <p>Create Account</p>
+          }
+          @if (isSubmitActioninProgress) {
+            <app-loading-dots></app-loading-dots>
+          }
         </button>
       </div>
     </form>

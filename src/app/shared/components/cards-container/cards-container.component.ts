@@ -5,7 +5,6 @@ import { TmdbEntityForCard } from '../card/card.component';
 import { CardsSectionOptions } from '../cards-section/cards-section.component';
 import { ScrollButtonsComponent } from '../scroll-buttons/scroll-buttons.component';
 
-
 @Component({
   selector: 'app-cards-container',
   standalone: true,
@@ -18,48 +17,7 @@ export class CardsContainerComponent {
     sectionTitle: 'SectionTitle',
     cardShape: 'rectangle',
     stacking: false,
-    entities: [
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-      {
-        name: '',
-        image_path: '',
-      },
-    ],
+    entities: [],
     maxNoOfCards: 100,
   };
 }

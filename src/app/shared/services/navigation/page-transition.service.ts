@@ -1,7 +1,7 @@
-import { Inject, Injectable, signal } from '@angular/core';
+import { ApplicationRef, Inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
-import { filter, tap, throttleTime } from 'rxjs';
+import { filter, tap } from 'rxjs';
 import { RouteHistoryService } from './route-history.service';
 
 @Injectable({
@@ -15,27 +15,20 @@ export class PageTransitionService {
   ) {}
 
   mainElement!: HTMLElement;
+  appElement!: HTMLElement;
   previousRouteSig = this.routeHistoryService.previousRouteSig;
-  currentRouteSig = this.routeHistoryService.currentRouteSig;
+  newRouteSig = this.routeHistoryService.newRouteSig;
 
-  readonly urlRegexesToSkipOnSlideTransition: RegExp[] = [
-    /^\/series\/[\d-]+.+?\/(seasons|reviews)$/,
-    /^\/movie\/[\d-]+.+?\/(releases|reviews)$/,
-  ];
-
-  readonly urlRegexesToSkipOnFadeTransition: RegExp[] = [
-    /^\/series\/[\d-]+.+?\/details$/,
-    /^\/movie\/[\d-]+.+?\/details$/,
-  ];
-
-  setMainElement() {
+  setElements() {
     this.mainElement = this.document.getElementById(
       'main-element',
     ) as HTMLElement;
+
+    this.appElement = this.document.querySelector('app-root') as HTMLElement;
   }
 
   startPageTransitions() {
-    this.setMainElement();
+    this.setElements();
 
     this.router.events
       .pipe(
@@ -48,20 +41,15 @@ export class PageTransitionService {
   }
 
   setTransitionAnimation() {
-    // if the route is in the skip list for slide transition
-    if (this.urlIsInSlideTransitionSkipList(this.router.url)) {
-      return;
-    }
-
-    // if the site is first viewed on the root route
-    if (this.previousRouteSig() === '/' && this.currentRouteSig() === '/') {
-      return;
-    }
-
     this.clearTransitionsAnimations();
 
-    const previousUrlSplitted = this.previousRouteSig().split('/');
-    const currentUrlSplitted = this.currentRouteSig().split('/');
+    const previousUrl = this.previousRouteSig();
+    if (!previousUrl) {
+      return;
+    }
+
+    const previousUrlSplitted = previousUrl.split('/');
+    const currentUrlSplitted = this.newRouteSig().split('/');
 
     const previousLength = previousUrlSplitted.length;
     const currentLength = currentUrlSplitted.length;
@@ -69,41 +57,24 @@ export class PageTransitionService {
     // if the route length of previous is shorter than the current url (went to a deeper route)
     if (previousLength < currentLength) {
       this.triggerSlideFromRightTransition();
+      return;
     }
 
     // if the route length of previous is longer than the current url (go back to a shallower route)
     if (previousLength > currentLength) {
       this.triggerSlideFromLeftTransition();
+      return;
     }
 
-    if (
-      previousLength === currentLength &&
-      !this.urlIsInFadeTransitionSkipList(this.router.url)
-    ) {
-      console.log(previousUrlSplitted[2], currentUrlSplitted[2]);
-      if (
-        currentUrlSplitted[2] !== undefined &&
-        currentUrlSplitted[2].length >= 2
-        // && previousUrlSplitted[2] === currentUrlSplitted[2]
-      ) {
+    if (previousLength === currentLength) {
+      if (previousUrlSplitted[-1] !== currentUrlSplitted[-1]) {
         this.triggerSlideFromRightTransition();
         return;
+      } else {
+        this.triggerFadeOutAndInTransititon();
+        return;
       }
-
-      this.triggerFadeOutAndInTransititon();
     }
-  }
-
-  urlIsInSlideTransitionSkipList(url: string) {
-    return this.urlRegexesToSkipOnSlideTransition.some((urlRegexToSkip) => {
-      return urlRegexToSkip.test(url);
-    });
-  }
-
-  urlIsInFadeTransitionSkipList(url: string) {
-    return this.urlRegexesToSkipOnFadeTransition.some((urlRegexToSkip) => {
-      return urlRegexToSkip.test(url);
-    });
   }
 
   clearTransitionsAnimations() {
@@ -114,7 +85,6 @@ export class PageTransitionService {
 
   triggerFadeOutAndInTransititon() {
     this.mainElement.classList.add('fade-in');
-
     // Remove class after animation ends
     this.mainElement.onanimationend = () => {
       this.mainElement.classList.remove('fade-in');
@@ -122,19 +92,26 @@ export class PageTransitionService {
   }
 
   triggerSlideFromLeftTransition() {
+    this.appElement.style.overflow = 'hidden';
+    this.appElement.style.display = 'block';
     this.mainElement.classList.add('slide-in-from-left');
-
+    // Remove class after animation ends
     this.mainElement.onanimationend = () => {
       this.mainElement.classList.remove('slide-in-from-left');
+      this.appElement.style.display = 'unset';
+      this.appElement.style.overflow = 'auto';
     };
   }
 
   triggerSlideFromRightTransition() {
+    this.appElement.style.overflow = 'hidden';
+    this.appElement.style.display = 'block';
     this.mainElement.classList.add('slide-in-from-right');
-
     // Remove class after animation ends
     this.mainElement.onanimationend = () => {
       this.mainElement.classList.remove('slide-in-from-right');
+      this.appElement.style.display = 'unset';
+      this.appElement.style.overflow = 'auto';
     };
   }
 }

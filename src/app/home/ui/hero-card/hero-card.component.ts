@@ -15,12 +15,7 @@ import {
   templateUrl: './hero-card.component.html',
   styleUrl: './hero-card.component.scss',
 })
-export class HeroCardComponent implements OnInit, OnDestroy {
-  isResizing: boolean = false;
-  windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
-
-  _resizeSubscription!: Subscription;
-
+export class HeroCardComponent {
   @Input() cardIndex = 0;
   @Input() titleDetails: MediaSummary = {
     media_type: 'movie',
@@ -36,22 +31,12 @@ export class HeroCardComponent implements OnInit, OnDestroy {
     vote_count: 0,
   };
 
-  constructor(
-    private windowResizeService: WindowResizeService,
-    private platformCheck: PlatformCheckService,
-    @Inject(DOCUMENT) private document: Document
-  ) {}
+  constructor(private platformCheck: PlatformCheckService) {}
 
   protected cardOpacity = 'opacity: 0%';
 
   ngOnInit() {
     this.setOpacityOfCardDetailsOnLoad();
-
-    this._resizeSubscription =
-      this.windowResizeService.windowResizeState$.subscribe((state) => {
-        this.isResizing = state.isResizing;
-        this.windowDimensions = state.dimensions;
-      });
   }
 
   setOpacityOfCardDetailsOnLoad() {
@@ -62,7 +47,7 @@ export class HeroCardComponent implements OnInit, OnDestroy {
     // Consider using CSS transitions or animations for a smoother fade-in effect
     setTimeout(() => {
       this.cardOpacity = 'opacity: 100%';
-    }, 1);
+    }, 0);
   }
 
   runCallbackOnClick(callback?: () => void) {
@@ -72,9 +57,13 @@ export class HeroCardComponent implements OnInit, OnDestroy {
   }
 
   getImageSrcBasedOnWidth(): string {
+    if (this.platformCheck.isServer()) {
+      return '';
+    }
+
     const baseLink = 'https://image.tmdb.org/t/p/'; // Use HTTPS
     const poster_path = this.titleDetails.poster_path || '';
-    const windowWidth = this.windowDimensions?.width || 0;
+    const windowWidth = window.innerWidth;
 
     if (windowWidth === 0) {
       return '';
@@ -90,9 +79,5 @@ export class HeroCardComponent implements OnInit, OnDestroy {
     } else {
       return baseLink + 'w1280' + this.titleDetails.backdrop_path;
     }
-  }
-
-  ngOnDestroy() {
-    this._resizeSubscription?.unsubscribe();
   }
 }

@@ -6,12 +6,14 @@ import {
   computed,
 } from '@angular/core';
 import { HeroCardsComponent } from '.././ui/hero-cards/hero-cards.component';
-import { ButtonsHeaderComponent } from '../../shared/components/buttons-header/buttons-header.component';
 import {
   CardsSectionComponent,
   CardsSectionOptions,
 } from '../../shared/components/cards-section/cards-section.component';
-import { HeaderButton } from '../../shared/components/buttons-header/buttons-header.model';
+import {
+  HeaderButtonsComponent,
+  HeaderButton,
+} from '../../shared/components/header-buttons/header-buttons.component';
 import { Router } from '@angular/router';
 import { TmdbService } from '../../shared/services/tmdb/tmdb.service';
 import {
@@ -30,13 +32,10 @@ import {
 import { Subscription } from 'rxjs';
 import { SeriesDetailsService } from '../../details/series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../details/movie-details/data-access/movie-details.service';
-import { PopoverConfig } from '../../shared/components/popover/popover.model';
 import { UserService } from '../../core/user/user.service';
 import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
-import { PopoverComponent } from '../../shared/components/popover/popover.component';
 import { JsonPipe } from '@angular/common';
-import { RouteScrollPositionService } from '../../shared/services/navigation/route-scroll-position.service';
-import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
+import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover/user-actions-menu-popover.component';
 
 @Component({
   selector: 'app-home',
@@ -44,11 +43,11 @@ import { PlatformCheckService } from '../../shared/services/dom/platform-check.s
   templateUrl: '../ui/home/home.component.html',
   styleUrls: ['../ui/home/home.component.scss'],
   imports: [
-    ButtonsHeaderComponent,
     HeroCardsComponent,
     CardsSectionComponent,
-    PopoverComponent,
     JsonPipe,
+    UserActionsMenuPopoverComponent,
+    HeaderButtonsComponent,
   ],
 })
 export class HomeComponent implements OnInit, OnDestroy {
@@ -86,19 +85,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     {
       type: 'icon',
       iconPath: '../../../../assets/icons/home-header/Github-solid.svg',
-      anchor: {
-        urlType: 'external',
-        path: 'https://github.com/Scottify20/salida',
-        target: '_blank',
+      onClickCallback: () => {
+        if (window) {
+          window.open('https://github.com/Scottify20/salida', 'blank');
+        }
       },
     },
     {
       type: 'text',
       text: 'Logo',
-      anchor: {
-        urlType: 'internal',
-        path: '/',
-        target: '_self',
+      onClickCallback: () => {
+        this.router.navigateByUrl('/');
       },
     },
     {
@@ -107,101 +104,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       iconPath: this.userService.userPhotoUrlSig,
     },
   ];
-
-  userActionsMenuPopoverConfig: PopoverConfig = {
-    popoverId: 'user-actions-menu-popover',
-    anchoringConfig: {
-      anchorElementId: 'user-button',
-      position: 'bottom-end',
-    },
-    layout: 'list',
-    itemSectionsConfig: [
-      {
-        contentType: 'icon-and-text',
-        sectionName: 'auth',
-        items: [
-          {
-            text: 'Create Account',
-            iconPath: 'assets/icons/popover/create_account.svg',
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? false : true;
-            }),
-            onClickCallback: () => {
-              this.router.navigateByUrl('/auth/signup');
-            },
-          },
-          {
-            text: 'Log in',
-            iconPath: 'assets/icons/popover/login.svg',
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? false : true;
-            }),
-            onClickCallback: () => {
-              this.router.navigateByUrl('/auth/login');
-            },
-          },
-        ],
-      },
-      {
-        contentType: 'icon-and-text',
-        sectionName: 'section1',
-        items: [
-          {
-            text: this.userService.userDisplayNameSig,
-            iconPath: 'assets/icons/popover/user.svg',
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? true : false;
-            }),
-            // need to change ---------------------------------------------
-            onClickCallback: () => {
-              this.router.navigateByUrl(
-                `/user/${this.userService.userDisplayNameSig()?.toLocaleLowerCase()}`,
-              );
-            },
-          },
-          {
-            text: 'Notifications',
-            iconPath: 'assets/icons/popover/notifications.svg',
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? true : false;
-            }),
-            // need to change -----------------------------------------------
-            onClickCallback: () => {
-              this.router.navigateByUrl(`/notifications`);
-            },
-          },
-        ],
-      },
-      {
-        contentType: 'icon-and-text',
-        sectionName: 'section2',
-        items: [
-          {
-            text: 'Settings',
-            iconPath: 'assets/icons/popover/settings.svg',
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? true : false;
-            }),
-            // need to change -----------------------------------------------
-            onClickCallback: () => {
-              this.router.navigateByUrl(`/settings`);
-            },
-          },
-          {
-            text: 'Logout',
-            iconPath: 'assets/icons/popover/logout.svg',
-            onClickCallback: () => {
-              this.firebaseAuthService.signOut();
-            },
-            isVisibleIf: computed(() => {
-              return this.userService.userSig() ? true : false;
-            }),
-          },
-        ],
-      },
-    ],
-    backdrop: 'mobile-only',
-  };
 
   trendingMovies: TrendingMovies = {
     page: 0,
@@ -272,6 +174,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.trendingMoviesOptions.entities = data.results
             .filter((movie, index) => [0, 1, 3].indexOf(index) == -1)
             .map((movie: MovieSummary) => ({
+              id: movie.id,
               name: movie.title,
               image_path: movie.poster_path || '',
               callback: () => {
@@ -301,6 +204,7 @@ export class HomeComponent implements OnInit, OnDestroy {
           this.trendingSeriesOptions.entities = data.results
             .filter((series, index) => [0, 1].indexOf(index) == -1)
             .map((series: SeriesSummary) => ({
+              id: series.id,
               name: series.name,
               image_path: series.poster_path || '',
               callback: () => {
@@ -324,6 +228,7 @@ export class HomeComponent implements OnInit, OnDestroy {
       .subscribe({
         next: (data: TrendingPeople) => {
           this.trendingPeopleOptions.entities = data.results.map((person) => ({
+            id: person.id,
             name: person.name,
             image_path: person.profile_path,
             callback: () => {

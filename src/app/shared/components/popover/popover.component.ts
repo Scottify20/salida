@@ -1,18 +1,24 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
 import {
+  ApplicationRef,
   Component,
+  DestroyRef,
   ElementRef,
-  inject,
+  Inject,
   Input,
-  Signal,
   signal,
+  Type,
   ViewChild,
+  ViewContainerRef,
+  ViewRef,
 } from '@angular/core';
-import { fromEvent, Subscription, tap } from 'rxjs';
+import { fromEvent, tap } from 'rxjs';
 
-import { PopoverConfig, PopoverItem } from './popover.model';
+import { PopoverProps } from './popover.interface';
 import { ElementPositionService } from '../../services/dom/element-position.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
+import { NavigationStart, Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-popover',
@@ -23,84 +29,114 @@ import { ScrollDisablerService } from '../../services/dom/scroll-disabler.servic
 })
 export class PopoverComponent {
   // Inject services
-  private elementPositionService = inject(ElementPositionService);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  private document = inject(DOCUMENT);
+  constructor(
+    private destroyRef: DestroyRef,
+    private router: Router,
+    private elementPositionService: ElementPositionService,
+    private scrollDisablerService: ScrollDisablerService,
+    @Inject(DOCUMENT) private document: Document,
+    private appRef: ApplicationRef,
+  ) {
+    this.router.events
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((event) => {
+          if (event instanceof NavigationStart) {
+            this.closePopover();
+          }
+        }),
+      )
+      .subscribe();
+  }
 
   // Input property for popover configuration
-  @Input() popoverConfig: PopoverConfig = {
+  @Input() popoverProps: PopoverProps = {
     popoverId: '',
-    anchoringConfig: {
-      anchorElementId: '',
-      position: 'bottom',
-    },
-    layout: 'list',
-    itemSectionsConfig: [],
+    anchorElementId: '',
+    position: 'bottom-end',
     backdrop: 'none',
+    childComponentsProps: {},
+    childComponentType: {},
   };
-
-  // View child references
-  @ViewChild('popoverSectionsContainer')
-  popoverSectionsContainer!: ElementRef;
-  @ViewChild('popoverArrow') popoverArrow!: ElementRef;
 
   // Signal to track popover open/close state
   isOpenSig = signal(false);
+  // offset style properties for the popover
+  topOffset = 0;
+  leftOffset = 0;
 
-  // Subscriptions are now initialized directly
-  private elementTrackingSubscription: Subscription | null = null;
-  private anchorElementClickSubscription: Subscription | null = null;
-  private clickedOutsidePopoverSubscription: Subscription | null = null;
+  // View child references
+  @ViewChild('popoverArrow') popoverArrow!: ElementRef;
+  @ViewChild('popover') popover!: ElementRef;
+  @ViewChild('dynamicComponentContainer', { read: ViewContainerRef })
+  dynamicComponentContainer!: ViewContainerRef;
 
   ngAfterViewInit() {
     this.setupEventListeners();
   }
 
   ngOnDestroy() {
-    this.cleanupSubscriptionsAndClosePopover();
+    this.stopTrackingAndClosePopover();
   }
 
   private closePopover() {
-    this.scrollDisablerService.enableBodyScroll(this.popoverConfig.popoverId);
+    this.scrollDisablerService.enableBodyScroll(this.popoverProps.popoverId);
     this.isOpenSig.set(false);
   }
 
   private openPopover() {
     this.trackAnchorElement();
-    this.scrollDisablerService.disableBodyScroll(this.popoverConfig.popoverId);
+
+    this.appendComponentToBody();
+
+    this.scrollDisablerService.disableBodyScroll(this.popoverProps.popoverId);
+  }
+
+  appendComponentToBody() {
+    const componentFactory = this.dynamicComponentContainer.createComponent(
+      this.popoverProps.childComponentType as Type<any>,
+    );
+
+    Object.assign(
+      componentFactory.instance,
+      this.popoverProps.childComponentsProps,
+    );
+
+    const componentRootElement = componentFactory.location
+      .nativeElement as HTMLElement;
+
+    // Check if the view is attached
+    if ((componentFactory.hostView as any)._viewContainerRef) {
+      this.appRef.detachView(componentFactory.hostView);
+    }
+
+    this.dynamicComponentContainer.clear(); // Still a good practice
+
+    this.appRef.attachView(componentFactory.hostView);
+    document.body.appendChild(componentRootElement);
   }
 
   // --- Helper Methods ---
-
   private setupEventListeners() {
-    const popoverElement = this.popoverSectionsContainer.nativeElement;
+    const popoverElement = this.popover.nativeElement;
     const anchorElement = this.getAnchorElement();
 
     if (!anchorElement) {
       return;
     }
 
-    this.anchorElementClickSubscription =
-      this.subscribeToAnchorClick(anchorElement);
-    this.clickedOutsidePopoverSubscription = this.subscribeToOutsideClick(
-      popoverElement,
-      anchorElement,
-    );
+    this.subscribeToAnchorClick(anchorElement);
+    this.subscribeToOutsideClick(popoverElement, anchorElement);
   }
 
-  private cleanupSubscriptionsAndClosePopover() {
+  private stopTrackingAndClosePopover() {
     this.closePopover();
     this.untrackAnchorElement();
-
-    this.anchorElementClickSubscription?.unsubscribe();
-    this.clickedOutsidePopoverSubscription?.unsubscribe();
-    this.elementTrackingSubscription?.unsubscribe();
   }
 
   // --- Element Tracking ---
-
   private trackAnchorElement() {
-    const anchorElementId = this.popoverConfig.anchoringConfig.anchorElementId;
+    const anchorElementId = this.popoverProps.anchorElementId;
     const anchorElementRef =
       this.elementPositionService.getElementRefById(anchorElementId);
 
@@ -108,24 +144,20 @@ export class PopoverComponent {
       return;
     }
 
-    this.elementTrackingSubscription = this.subscribeToAnchorPositionChanges(
-      anchorElementId,
-      anchorElementRef,
-    );
+    this.subscribeToAnchorPositionChanges(anchorElementId, anchorElementRef);
   }
 
   private untrackAnchorElement() {
-    this.elementTrackingSubscription?.unsubscribe();
     this.elementPositionService.untrackElementPosition(
-      this.popoverConfig.anchoringConfig.anchorElementId,
+      this.popoverProps.anchorElementId,
     );
   }
 
-  // --- Event Subscription Logic ---
-
-  private subscribeToAnchorClick(anchorElement: HTMLElement): Subscription {
-    return fromEvent(anchorElement, 'click')
+  // --- Event Subscriptions ---
+  private subscribeToAnchorClick(anchorElement: HTMLElement) {
+    fromEvent(anchorElement, 'click')
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap(() => {
           this.isOpenSig.set(!this.isOpenSig());
           this.isOpenSig() ? this.openPopover() : this.closePopover();
@@ -137,9 +169,10 @@ export class PopoverComponent {
   private subscribeToOutsideClick(
     popoverElement: HTMLElement,
     anchorElement: HTMLElement,
-  ): Subscription {
-    return fromEvent(this.document, 'click')
+  ) {
+    fromEvent(this.document, 'click')
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap((e) => {
           if (
             this.isOpenSig() &&
@@ -156,18 +189,17 @@ export class PopoverComponent {
   private subscribeToAnchorPositionChanges(
     anchorElementId: string,
     anchorElementRef: ElementRef,
-  ): Subscription {
-    const popover = this.popoverSectionsContainer
-      .nativeElement as HTMLDivElement;
+  ) {
+    const popover = this.popover.nativeElement as HTMLDivElement;
     const popoverWidth = popover.offsetWidth;
     const popoverHeight = popover.offsetHeight;
 
-    return this.elementPositionService
+    this.elementPositionService
       .trackElementPosition$(anchorElementId, anchorElementRef)
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap((domrect) => {
-          const popoverPositioning =
-            this.popoverConfig.anchoringConfig.position;
+          const popoverPositioning = this.popoverProps.position;
           this.updatePopoverPosition(
             popoverPositioning,
             domrect,
@@ -180,10 +212,9 @@ export class PopoverComponent {
   }
 
   // --- Utility Methods ---
-
   private getAnchorElement(): HTMLElement | undefined {
     return this.elementPositionService.getElementRefById(
-      this.popoverConfig.anchoringConfig.anchorElementId,
+      this.popoverProps.anchorElementId,
     )?.nativeElement as HTMLElement;
   }
 
@@ -200,29 +231,7 @@ export class PopoverComponent {
       return;
     }
 
-    const popover = this.popoverSectionsContainer
-      .nativeElement as HTMLDivElement;
-    popover.style.left = domrect.left - popoverWidth + domrect.width + 'px';
-    popover.style.top = domrect.top + domrect.height + 8 + 'px';
-  }
-
-  getItemText(
-    text:
-      | undefined
-      | string
-      | Signal<string | null | undefined>
-      | (() => string),
-  ): string | null | undefined {
-    return !text ? undefined : typeof text === 'string' ? text : text();
-  }
-
-  // Checks if a popover item should be visible based on its 'isVisibleIf' condition
-  itemIsVisible(item: PopoverItem): boolean {
-    return !item.isVisibleIf || item.isVisibleIf() ? true : false;
-  }
-
-  // Determines the active class for a popover item based on its 'isActive' condition
-  isActiveClass(isActiveCallback: (() => boolean) | undefined): string {
-    return !isActiveCallback || isActiveCallback() ? 'active' : '';
+    this.leftOffset = domrect.left - popoverWidth + domrect.width;
+    this.topOffset = domrect.top + domrect.height + 16;
   }
 }

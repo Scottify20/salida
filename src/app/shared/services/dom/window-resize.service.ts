@@ -1,11 +1,11 @@
 import { Injectable } from '@angular/core';
 import { fromEvent, Observable, BehaviorSubject, Subject } from 'rxjs';
 import {
-  debounceTime,
   distinctUntilChanged,
   map,
   shareReplay,
   startWith,
+  throttleTime,
 } from 'rxjs/operators';
 import { PlatformCheckService } from './platform-check.service';
 
@@ -17,7 +17,7 @@ export class WindowResizeService {
     if (this.platformCheck.isBrowser()) {
       fromEvent(window, 'resize')
         .pipe(
-          debounceTime(150),
+          throttleTime(15),
           map(() => ({ width: window.innerWidth, height: window.innerHeight })),
           distinctUntilChanged(
             (prev, curr) =>
@@ -90,7 +90,7 @@ export class WindowResizeService {
           height: window.innerHeight,
         });
         this.isResizingSubject.next(false);
-      }, 150);
+      }, 15);
     }
   }
 }

@@ -4,4 +4,12 @@
   --main-max-width: 900px;
 
   --toasts-padding-bottom: calc(var(--navbar-height) + 1rem);
+
+  --space-width: 0.55em;
+}
+
+@media (hover: none) {
+  :root {
+    --space-width: 0.6em;
+  }
 }

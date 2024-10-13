@@ -1,0 +1,23 @@
+<div class="header">
+  @for (button of headerButtons; track button; let buttonIndex = $index) {
+    <div
+      [id]="button.id"
+      tabindex="1"
+      role="button"
+      class="header__button"
+      [class]="
+        button.type === 'text' ? 'header__button--text' : 'header__button--icon'
+      "
+      (click)="button?.onClickCallback()"
+    >
+      @if (button.type === "icon") {
+        <img [src]="getTextOrIconPath(button.iconPath)" alt="" />
+      }
+      @if (button.type === "text") {
+        <p class="header__button-label-text">
+          {{ getTextOrIconPath(button.text) }}
+        </p>
+      }
+    </div>
+  }
+</div>

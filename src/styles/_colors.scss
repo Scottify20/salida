@@ -2,6 +2,7 @@
   // colors
   --body-bg-color: #101116;
   --body-bg-color-below: #000000;
+  --bg-color: #1a1b24;
 
   --text-color: white;
   --text-color-inverted: rgb(0, 0, 0);
@@ -12,10 +13,8 @@
   --text-color-success: #84db84;
   --text-color-warning: #efd583;
 
-  --icon-color-disabled: hsl(0, 0%, 50%);
-
-  --button-bg-color: #5e585a;
-  --button-bg-subtle: hsla(0, 0%, 100%, 0.05);
+  // --icon-color-disabled: hsl(0, 0%, 50%);
+  // --button-bg-color: #5e585a;
   --popup-window-bg-color: #28292d;
   --card-bg-color: rgba(255, 255, 255, 0.1);
   --card-bg-color-subtle: #1a1b24;
@@ -23,21 +22,19 @@
   --divider-color: rgba(255, 255, 255, 0.08);
 
   --toast-bg-color: #1e1f27;
+  --dialog-bg-color: #1e1f27;
 
   --accent-color: #b2bfff;
   --text-accent-color: #7c92ff;
   --text-hightlight-accent-color: rgba(152, 169, 255, 0.15);
-
-  --popover-bg-color: #28292d;
-  --popover-item-bg-color: rgba(255, 255, 255, 0.075);
-  --popover-item-bg-clicked: #212224;
-  --popover-item-bg-hovered: #494b50;
-
-  --dialog-bg-color: #1e1f27;
-
   --color-accent: #b2bfff;
   --color-neutral: white;
   --color-success: #84db84;
   --color-warning: #efd583;
   --color-danger: #f08686;
+
+  --popover-bg-color: #28292d;
+  --popover-item-bg-color: rgba(255, 255, 255, 0.075);
+  --popover-item-bg-clicked: #212224;
+  --popover-item-bg-hovered: #494b50;
 }

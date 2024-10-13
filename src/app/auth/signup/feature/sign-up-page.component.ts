@@ -1,7 +1,9 @@
 import { Component, ElementRef, signal, ViewChild } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
-import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
+import {
+  HeaderButtonsComponent,
+  HeaderButton,
+} from '../../../shared/components/header-buttons/header-buttons.component';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
@@ -35,6 +37,7 @@ import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/p
 import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 import { PageTransitionService } from '../../../shared/services/navigation/page-transition.service';
+import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -48,12 +51,13 @@ interface SignupErrorMessages {
   imports: [
     ReactiveFormsModule,
     CommonModule,
-    ButtonsHeaderComponent,
     CapsLockDetectorDirective,
     SocialsSignInComponent,
     RouterModule,
     ProgressIndicatorComponent,
     DividerWithTitleComponent,
+    LoadingDotsComponent,
+    HeaderButtonsComponent,
   ],
   templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
   styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
@@ -343,12 +347,10 @@ export class SignUpPageComponent {
 
   headerButtons: HeaderButton[] = [
     {
-      type: 'iconWithBG',
+      type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/',
-        target: '_self',
+      onClickCallback: () => {
+        this.router.navigateByUrl('/');
       },
     },
     // {

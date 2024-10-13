@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { movieDetailsRoutes } from './details/movie-details/feature/movie-details.routes';
-import { seriesDetailsRoutes } from './details/series-details/feature/series-details.routes';
 import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
 import { HomeComponent } from './home/feature/home.component';
 
@@ -31,18 +29,24 @@ export const routes: Routes = [
         path: 'set-username',
         loadComponent: () =>
           import(
-            './auth/signup/ui/username-setting-page/username-setting-page.component'
+            './auth/signup/ui/sign-up-page/username-setting-page/username-setting-page.component'
           ).then((m) => m.UsernameSettingPageComponent),
       },
     ],
   },
   {
     path: 'movie/:id',
-    children: movieDetailsRoutes,
+    loadComponent: () =>
+      import('./details/movie-details/feature/movie-details.component').then(
+        (m) => m.MovieDetailsComponent,
+      ),
   },
   {
     path: 'series/:id',
-    children: seriesDetailsRoutes,
+    loadComponent: () =>
+      import('./details/series-details/feature/series-details.component').then(
+        (m) => m.SeriesDetailsComponent,
+      ),
   },
   { path: 'people/:id', children: personDetailsRoutes },
   {
@@ -114,10 +118,10 @@ export const routes: Routes = [
 //               overview.component.ts
 //               overview.component.html
 //               overview.component.css
-//             cast/
-//               cast.component.ts
-//               cast.component.html
-//               cast.component.css
+//             releases/
+//               releases.component.ts
+//               releases.component.html
+//               releases.component.css
 //             reviews/
 //               reviews.component.ts
 //               reviews.component.html

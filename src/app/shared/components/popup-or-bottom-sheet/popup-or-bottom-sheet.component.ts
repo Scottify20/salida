@@ -1,11 +1,14 @@
 import {
   AfterViewInit,
   Component,
+  effect,
   ElementRef,
   Input,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { WindowResizeService } from '../../services/dom/window-resize.service';
@@ -35,18 +38,14 @@ export class PopupOrBottomSheetComponent
     anchorElementId: null,
     itemsType: 'texts',
     items: [],
-    isPopupShown$: of(false),
+    isPopupShownSig: signal(null),
   };
-
-  private isPopUpShownSubscription!: Subscription;
-  isPopUpShown: boolean = false;
 
   ngOnInit() {
     this.initializeResizeSubscriptions();
   }
 
   ngOnDestroy() {
-    this.isPopUpShownSubscription?.unsubscribe();
     this.untrackAndUnsubscribe();
   }
 
@@ -77,17 +76,6 @@ export class PopupOrBottomSheetComponent
       return;
     }
 
-    this.isPopUpShownSubscription = this.popUpOrBottomSheetConfig.isPopupShown$
-      .pipe(
-        tap((isPopupShown) => {
-          isPopupShown == null
-            ? ''
-            : isPopupShown
-              ? this.showDialog()
-              : this.hideDialog();
-        }),
-      )
-      .subscribe();
     this.startSeasonPickerDialogPositioner();
     this.trackAnchorElement();
   }
@@ -187,7 +175,7 @@ export interface PopupOrBottomSheetConfig {
   anchorElementId: string | null;
   itemsType: 'texts' | 'icon-grid';
   items: PopupItem[];
-  isPopupShown$: Observable<boolean | null>;
+  isPopupShownSig: WritableSignal<boolean | null>;
 }
 
 export interface PopupItem {

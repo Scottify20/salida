@@ -31,12 +31,6 @@
   }
 }
 
-// when a backdrop image is shown instead of poster
-.hero-card.landscape {
-  aspect-ratio: 16/9;
-  width: 75vw;
-}
-
 .hero-card__poster {
   opacity: 0%;
   animation: cardImageBlurBeforeLoaded 0.25s ease-in forwards;
@@ -48,37 +42,6 @@
   }
   100% {
     opacity: 100%;
-  }
-}
-
-.hero-card.landscape .hero-card__details {
-  opacity: 0%;
-  display: grid;
-  padding: 1rem;
-  max-width: 75%;
-  place-content: end start;
-  z-index: 2;
-  content: "";
-  width: 100%;
-  height: 100%;
-  inset: 0;
-  position: absolute;
-
-  // for the radial gradient background
-  &::after {
-    z-index: 0;
-    content: "";
-    width: 100%;
-    height: 100%;
-    bottom: 0;
-    left: 0;
-    position: absolute;
-    background-image: radial-gradient(
-      ellipse farthest-corner at bottom left,
-      rgba(0, 0, 0, 0.6) 40%,
-      transparent,
-      transparent
-    );
   }
 }
 
@@ -126,5 +89,44 @@
   }
   .hero-card__plot {
     display: none;
+  }
+}
+
+@media (min-width: 481px) {
+  .hero-card .hero-card__details {
+    opacity: 0%;
+    display: grid;
+    padding: 1rem;
+    max-width: 75%;
+    place-content: end start;
+    z-index: 2;
+    content: "";
+    width: 100%;
+    height: 100%;
+    inset: 0;
+    position: absolute;
+
+    // for the radial gradient background
+    &::after {
+      z-index: 0;
+      content: "";
+      width: 100%;
+      height: 100%;
+      bottom: 0;
+      left: 0;
+      position: absolute;
+      background-image: radial-gradient(
+        ellipse farthest-corner at bottom left,
+        rgba(0, 0, 0, 0.6) 40%,
+        transparent,
+        transparent
+      );
+    }
+  }
+
+  // when a backdrop image is shown instead of poster
+  .hero-card {
+    aspect-ratio: 16/9;
+    width: 75vw;
   }
 }

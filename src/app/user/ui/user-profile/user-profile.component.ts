@@ -1,36 +1,34 @@
 import { Component } from '@angular/core';
-import { ButtonsHeaderComponent } from '../../../shared/components/buttons-header/buttons-header.component';
-import { HeaderButton } from '../../../shared/components/buttons-header/buttons-header.model';
-import { Navigation } from '@angular/router';
 import { Location } from '@angular/common';
+import {
+  HeaderButton,
+  HeaderButtonsComponent,
+} from '../../../shared/components/header-buttons/header-buttons.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-profile',
   standalone: true,
-  imports: [ButtonsHeaderComponent],
+  imports: [HeaderButtonsComponent],
   templateUrl: './user-profile.component.html',
   styleUrl: './user-profile.component.scss',
 })
 export class UserProfileComponent {
-  constructor(private location: Location) {}
+  constructor(private router: Router) {}
 
   headerButtons: HeaderButton[] = [
     {
-      type: 'iconWithBG',
+      type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/',
-        target: '_self',
+      onClickCallback: () => {
+        history.back();
       },
     },
     {
-      type: 'iconWithBG',
+      type: 'icon',
       iconPath: 'assets/icons/header/Edit.svg',
-      anchor: {
-        urlType: 'internal',
-        path: '/edit',
-        target: '_self',
+      onClickCallback: () => {
+        this.router.navigateByUrl('/user/**/edit');
       },
     },
   ];

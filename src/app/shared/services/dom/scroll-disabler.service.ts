@@ -13,7 +13,7 @@ export class ScrollDisablerService {
     this.scrollLockingElementIDs.push(elementId);
 
     const body = this.document.body;
-    body.style.overflow = 'hidden';
+    body.classList.add('scroll-disabled');
   }
 
   enableBodyScroll(elementId: string) {
@@ -24,7 +24,7 @@ export class ScrollDisablerService {
 
     const body = this.document.body;
     if (!this.scrollLockingElementIDs[0]) {
-      body.style.overflow = 'auto';
+      body.classList.remove('scroll-disabled');
     }
   }
 

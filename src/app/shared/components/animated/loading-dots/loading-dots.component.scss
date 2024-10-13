@@ -1,12 +1,11 @@
 .dots-loading-animation {
+  font-size: 1.75rem;
   display: flex;
   flex-flow: row nowrap;
   justify-content: center;
   transform: translateY(-15%);
-  column-gap: 0px;
 
   & * {
-    // color: var(--accent-color);
     color: var(--text-color-inverted);
   }
 
@@ -25,15 +24,15 @@
   }
 
   25% {
-    transform: translateY(0.4em);
+    transform: translateY(0.3em);
   }
 
   50% {
-    transform: translateY(-0.4em);
+    transform: translateY(-0.3em);
   }
 
   75% {
-    transform: translateY(0.2em);
+    transform: translateY(0.15em);
   }
 
   100% {

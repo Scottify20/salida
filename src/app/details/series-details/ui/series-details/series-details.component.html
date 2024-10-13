@@ -1,10 +1,37 @@
-<div class="title-details pill-tab-parent">
+<div class="title-details" pill-tab-parent>
   <app-media-hero-section></app-media-hero-section>
-  <app-pill-tabs
-    id="title-details__pill-tabs"
-    [PillTabsConfig]="TitleDetailsTabConfig"
-  ></app-pill-tabs>
-  <div pill-tab-transition="router-outlet-transition">
-    <router-outlet></router-outlet>
+
+  <div class="title-details__tabs">
+    <!-- filler tab to key the main tab centered -->
+    <div class="title-details__filler-tab"></div>
+
+    <!-- primary tab for tab navigation -->
+    <app-pill-indexed-tabs
+      class="title-details__primary-tab"
+      (tabIndex)="setTabIndex($event)"
+      [pillIndexedTabsProps]="pillIndexedTabsProps"
+    ></app-pill-indexed-tabs>
+
+    <!-- secondary tabs for picker, toggle, etc -->
+    @if (currentTabIndex === 1) {
+      <app-dropdown-picker-tab
+        class="title-details__secondary-tab"
+        [dropDownPickerTabProps]="dropDownPickerTabProps"
+      ></app-dropdown-picker-tab>
+    }
+  </div>
+
+  <div class="tabbed-component-container" pill-tab-transition>
+    @if (currentTabIndex === 0) {
+      <app-series-more-details></app-series-more-details>
+    }
+
+    @if (currentTabIndex === 1) {
+      <app-seasons></app-seasons>
+    }
+
+    @if (currentTabIndex === 2) {
+      <app-reviews></app-reviews>
+    }
   </div>
 </div>

@@ -1,0 +1,15 @@
+@if (pillIndexedTabsProps; as pillNavProps) {
+  <div class="pill-indexed-tabs">
+    <div class="pill-indexed-tabs__tab-container">
+      @for (tab of pillNavProps.tabs; track tab; let i = $index) {
+        <div
+          (click)="handleTabClick(i)"
+          class="pill-indexed-tabs__tab"
+          [class]="currentTabIndex === i ? 'active' : ''"
+        >
+          {{ tab.text }}
+        </div>
+      }
+    </div>
+  </div>
+}

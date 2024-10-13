@@ -1,24 +1,41 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, Inject, signal } from '@angular/core';
 import { Genre, Image } from '../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, tap } from 'rxjs';
-import { CommonModule } from '@angular/common';
+import { CommonModule, DOCUMENT } from '@angular/common';
 import { WindowResizeService } from '../../../../shared/services/dom/window-resize.service';
-import { ButtonsHeaderComponent } from '../../../../shared/components/buttons-header/buttons-header.component';
-import { HeaderButton } from '../../../../shared/components/buttons-header/buttons-header.model';
+import {
+  HeaderButtonsComponent,
+  HeaderButton,
+} from '../../../../shared/components/header-buttons/header-buttons.component';
 import { Series } from '../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../shared/services/tmdb/tmdb-config.service';
 import { Movie } from '../../../../shared/interfaces/models/tmdb/Movies';
-import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ScrollDetectorService } from '../../../../shared/services/dom/scroll-detector.service';
 import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 
+interface TitleMetadata {
+  year: string | null;
+  rating: string | null;
+  runtimeOrSeasons: string | null;
+}
+
+export interface HeroSectionData {
+  mediaType: 'movie' | 'series';
+  title: string;
+  metadata: TitleMetadata;
+  backdrop_path: string | null;
+  logo_path: string | null;
+  poster_path: string | null;
+  genres: Genre[];
+}
+
 @Component({
   selector: 'app-media-hero-section',
   standalone: true,
-  imports: [CommonModule, ButtonsHeaderComponent],
+  imports: [CommonModule, HeaderButtonsComponent],
   templateUrl: './media-hero-section.component.html',
   styleUrl: './media-hero-section.component.scss',
 })
@@ -29,88 +46,24 @@ export class MediaHeroSectionComponent {
     private windowResizeService: WindowResizeService,
     private tmdbConfigService: TmdbConfigService,
     private destroyRef: DestroyRef,
-    private router: Router,
     private scrollDetectorService: ScrollDetectorService,
-    private platformCheckSevice: PlatformCheckService,
+    protected platformCheckSevice: PlatformCheckService,
+    @Inject(DOCUMENT) private document: Document,
   ) {
     if (this.moviesDetailsService.isMovieRoute) {
-      this.moviesDetailsService.movieData$
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          map((movie) => {
-            if (movie == null) {
-              return;
-            }
-
-            const heroSectionData: HeroSectionData = {
-              mediaType: 'movie',
-              title: movie.title,
-              metadata: {
-                year: this.getMovieYear(movie.release_date),
-                rating: this.getLocalReleaseOrFallbackRating(movie, 'movie'),
-                runtimeOrSeasons: this.getMovieRuntime(movie.runtime),
-              },
-              backdrop_path: movie.backdrop_path,
-              logo_path: this.getFirstEnglishLogoPath(movie.images.logos),
-              genres: movie.genres,
-            };
-
-            return heroSectionData;
-          }),
-          tap((heroSectionData) => {
-            heroSectionData ? (this.heroSectionData = heroSectionData) : '';
-          }),
-        )
-        .subscribe();
+      this.setMovieData();
     }
-
     if (this.seriesDetailsService.isSeriesRoute) {
-      this.seriesDetailsService.seriesData$
-        .pipe(
-          takeUntilDestroyed(this.destroyRef),
-          map((series) => {
-            if (!series) {
-              return;
-            }
-
-            const heroSectionData: HeroSectionData = {
-              mediaType: 'series',
-              title: series.name,
-              metadata: {
-                year: this.getSeriesYearOrYearRange(
-                  series.first_air_date,
-                  series.status,
-                  series.last_air_date,
-                ),
-                rating: this.getLocalReleaseOrFallbackRating(series, 'tv'),
-                runtimeOrSeasons: this.getSeasonsText(series.number_of_seasons),
-              },
-              backdrop_path: series.backdrop_path,
-              logo_path: this.getFirstEnglishLogoPath(series.images.logos),
-              genres: series.genres,
-            };
-            return heroSectionData;
-          }),
-
-          tap((data) => {
-            if (!data) {
-              return;
-            }
-            this.heroSectionData = data;
-            this.isLoading = false;
-          }),
-
-          catchError((err) => {
-            console.log('failed to fetch series hero section data', err);
-            return of(null);
-          }),
-        )
-        .subscribe();
+      this.setSeriesData();
     }
   }
 
   isLoading = true;
   heroSectionData$!: Observable<HeroSectionData | null>;
+  // windows resize service properties
+  isResizing = false;
+  windowDimensions: { width: number; height: number } | undefined;
+  isHeaderBgAndTitleVisibleSig = signal(false);
 
   heroSectionData: HeroSectionData = {
     mediaType: 'movie',
@@ -123,15 +76,90 @@ export class MediaHeroSectionComponent {
     backdrop_path: null,
     logo_path: null,
     genres: [],
+    poster_path: null,
   };
 
-  // windows resize service properties
-  isResizing = false;
-  isHeaderBgAndTitleVisible = false;
+  setMovieData() {
+    this.moviesDetailsService.movieData$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map((movie) => {
+          if (!movie) {
+            return;
+          }
 
-  windowDimensions: { width: number; height: number } | undefined;
+          const heroSectionData: HeroSectionData = {
+            mediaType: 'movie',
+            title: movie.title,
+            metadata: {
+              year: this.getMovieYear(movie.release_date),
+              rating: this.getLocalReleaseOrFallbackRating(movie, 'movie'),
+              runtimeOrSeasons: this.transformToFormattedDuration(
+                movie.runtime || 0,
+                'minutes',
+              ),
+            },
+            backdrop_path: movie.backdrop_path,
+            logo_path: this.getFirstEnglishLogoPath(movie.images.logos),
+            genres: movie.genres,
+            poster_path: movie.poster_path,
+          };
 
-  ngAfterViewInit() {
+          return heroSectionData;
+        }),
+        tap((heroSectionData) => {
+          heroSectionData ? (this.heroSectionData = heroSectionData) : '';
+        }),
+      )
+      .subscribe();
+  }
+
+  setSeriesData() {
+    this.seriesDetailsService.seriesData$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        map((series) => {
+          if (!series) {
+            return;
+          }
+
+          const heroSectionData: HeroSectionData = {
+            mediaType: 'series',
+            title: series.name,
+            metadata: {
+              year: this.getSeriesYearOrYearRange(
+                series.first_air_date,
+                series.status,
+                series.last_air_date,
+              ),
+              rating: this.getLocalReleaseOrFallbackRating(series, 'tv'),
+              runtimeOrSeasons: this.getSeasonsText(series.number_of_seasons),
+            },
+            backdrop_path: series.backdrop_path,
+            logo_path: this.getFirstEnglishLogoPath(series.images.logos),
+            genres: series.genres,
+            poster_path: series.poster_path,
+          };
+          return heroSectionData;
+        }),
+
+        tap((data) => {
+          if (!data) {
+            return;
+          }
+          this.heroSectionData = data;
+          this.isLoading = false;
+        }),
+
+        catchError((err) => {
+          console.log('failed to fetch series hero section data', err);
+          return of(null);
+        }),
+      )
+      .subscribe();
+  }
+
+  startSettingHeaderBgAndTitleVisibility() {
     if (this.platformCheckSevice.isServer()) {
       return;
     }
@@ -140,10 +168,23 @@ export class MediaHeroSectionComponent {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((scrollstate) => {
-          this.isHeaderBgAndTitleVisible = window.scrollY >= 280 ? true : false;
+          const remInPixels = parseFloat(
+            window.getComputedStyle(document.body).fontSize,
+          );
+
+          this.isHeaderBgAndTitleVisibleSig.set(
+            (remInPixels === 16 && window.scrollY >= 280) ||
+              (remInPixels === 14 && window.scrollY >= 250)
+              ? true
+              : false,
+          );
         }),
       )
-      .subscribe();
+      .subscribe((scrollState) => {});
+  }
+
+  ngAfterViewInit() {
+    this.startSettingHeaderBgAndTitleVisibility();
   }
 
   ngOnInit(): void {
@@ -169,16 +210,16 @@ export class MediaHeroSectionComponent {
 
   headerButtons: HeaderButton[] = [
     {
-      type: 'iconWithBG',
+      type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      actionCallback: () => {
-        this.router.navigateByUrl('/');
+      onClickCallback: () => {
+        history.back();
       },
     },
     {
-      type: 'iconWithBG',
-      iconPath: 'assets/icons/header/title-details/AddToList.svg',
-      actionCallback: () => {},
+      type: 'icon',
+      iconPath: 'assets/icons/header/AddToList.svg',
+      onClickCallback: () => {},
     },
   ];
 
@@ -307,16 +348,17 @@ export class MediaHeroSectionComponent {
 
     return !firstAirYear && !lastAirYear()
       ? ''
-      : hasEndedOrCancelled() && lastAirYear
-        ? `${firstAirYear} - ${lastAirYear()}`
-        : !lastAirYear()
-          ? firstAirYear
-          : '';
+      : firstAirYear === lastAirYear()
+        ? firstAirYear
+        : hasEndedOrCancelled() && lastAirYear
+          ? `${firstAirYear} - ${lastAirYear()}`
+          : !lastAirYear()
+            ? firstAirYear
+            : '';
   }
 
   private getMovieYear(release_date: string) {
     const airYear = `${String(release_date).replace(/-\d{2}-\d{2}$/, '')}`;
-
     return release_date ? airYear : null;
   }
 
@@ -331,26 +373,46 @@ export class MediaHeroSectionComponent {
     return runtimeString;
   }
 
+  private transformToFormattedDuration(
+    value: number,
+    inputUnit: 'seconds' | 'minutes' | 'hours' | 'weeks' = 'seconds',
+  ) {
+    let seconds: number;
+    switch (inputUnit) {
+      case 'seconds':
+        seconds = value;
+        break;
+      case 'minutes':
+        seconds = value * 60;
+        break;
+      case 'hours':
+        seconds = value * 3600;
+        break;
+      case 'weeks':
+        seconds = value * 604800; // 60 seconds * 60 minutes * 24 hours * 7 days
+        break;
+      default:
+        seconds = value;
+    }
+
+    const weeks = Math.floor(seconds / 604800);
+    const days = Math.floor((seconds % 604800) / 86400);
+    const hours = Math.floor((seconds % 86400) / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+
+    const weeksString = weeks > 0 ? `${weeks}w ` : '';
+    const daysString = days > 0 ? `${days}d ` : '';
+    const hoursString = hours > 0 ? `${hours}h ` : '';
+    const minutesString = minutes > 0 ? `${minutes}m` : '';
+
+    return weeksString + daysString + hoursString + minutesString;
+  }
+
   private getSeasonsText(no_of_seasons: number): string {
     return no_of_seasons > 1
       ? `${no_of_seasons} Seasons`
       : no_of_seasons == 1
-        ? `${no_of_seasons} Seasons`
+        ? `${no_of_seasons} Season`
         : '';
   }
-}
-
-interface TitleMetadata {
-  year: string | null;
-  rating: string | null;
-  runtimeOrSeasons: string | null;
-}
-
-export interface HeroSectionData {
-  mediaType: 'movie' | 'series';
-  title: string;
-  metadata: TitleMetadata;
-  backdrop_path: string | null;
-  logo_path: string | null;
-  genres: Genre[];
 }

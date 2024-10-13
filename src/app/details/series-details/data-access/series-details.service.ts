@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../shared/services/tmdb/tmdb.service';
 import {
@@ -41,14 +41,19 @@ export class SeriesDetailsService {
     this.seasonsSummarySubscription?.unsubscribe();
   }
 
-  isSeriesPickerShown$ = new BehaviorSubject<boolean | null>(null);
+  isSeriesPickerShownSig: WritableSignal<boolean | null> = signal(null);
   selectedSeasonSummary$ = new BehaviorSubject<SeasonSummary | null>(null);
   seasonsSummary$ = new BehaviorSubject<SeasonSummary[]>([]);
+
+  selectedSeasonNameSig = signal('');
+  seasonsSummarySig: WritableSignal<SeasonSummary[]> = signal([]);
+  selectedSeasonSummary: SeasonSummary | null = null;
+
   private seasonsSummarySubscription: Subscription = this.seasonsSummary$
     .pipe(
       tap((seasons) => {
         this.setSeason1OrSeasonAfterSpecials([...seasons]);
-        this.seasonsSummary = seasons;
+        this.seasonsSummarySig.set(seasons);
       }),
     )
     .subscribe();
@@ -60,14 +65,10 @@ export class SeriesDetailsService {
           return;
         }
         this.selectedSeasonSummary = selectedSeasonSum;
-        this.selectedSeason = selectedSeasonSum.name;
+        this.selectedSeasonNameSig.set(selectedSeasonSum.name);
       }),
     )
     .subscribe();
-
-  selectedSeason: string | null = null;
-  seasonsSummary: SeasonSummary[] = [];
-  selectedSeasonSummary: SeasonSummary | null = null;
 
   private _seriesData$ = new BehaviorSubject<Series | null>(null);
   seriesData$: Observable<Series | null> = this._seriesData$.asObservable();
@@ -96,7 +97,7 @@ export class SeriesDetailsService {
       .replace(/-{2}/, '-')
       .toLowerCase();
     this._seriesData$.next(null);
-    this.router.navigateByUrl(`/series/${id}${titleSlugified}/details`);
+    this.router.navigateByUrl(`/series/${id}${titleSlugified}`);
   }
 
   get isSeriesRoute(): boolean {
