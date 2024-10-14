@@ -61,11 +61,11 @@
 }
 
 .slide-in-from-left {
-  animation: slideInFromLeft 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: slideInFromLeft 0.3s var(--material-easing) forwards;
 }
 
 .slide-in-from-right {
-  animation: slideInFromRight 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: slideInFromRight 0.3s var(--material-easing) forwards;
 }
 
 @keyframes fadeIn {
@@ -83,8 +83,11 @@
     opacity: 0%;
   }
 
-  100% {
+  75% {
     opacity: 100%;
+  }
+
+  100% {
     transform: translateX(0);
   }
 }
@@ -94,8 +97,12 @@
     transform: translateX(40px);
     opacity: 0%;
   }
-  100% {
+
+  75% {
     opacity: 100%;
+  }
+
+  100% {
     transform: translateX(0);
   }
 }

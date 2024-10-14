@@ -13,7 +13,9 @@
     ></app-pill-indexed-tabs>
 
     <!-- secondary tabs for picker, toggle, etc -->
-    @if (currentTabIndex === 1) {
+    @if (
+      currentTabIndex === 1 && seriesDetailsService.seasonsSummary.length > 1
+    ) {
       <app-dropdown-picker-tab
         class="title-details__secondary-tab"
         [dropDownPickerTabProps]="dropDownPickerTabProps"

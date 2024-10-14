@@ -6,6 +6,8 @@
   --toasts-padding-bottom: calc(var(--navbar-height) + 1rem);
 
   --space-width: 0.55em;
+
+  --material-easing: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (hover: none) {

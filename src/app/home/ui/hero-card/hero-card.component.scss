@@ -31,19 +31,19 @@
   }
 }
 
-.hero-card__poster {
-  opacity: 0%;
-  animation: cardImageBlurBeforeLoaded 0.25s ease-in forwards;
-}
+// .hero-card__poster {
+//   opacity: 0%;
+//   animation: cardImageBlurBeforeLoaded 0.5s ease-in forwards;
+// }
 
-@keyframes cardImageBlurBeforeLoaded {
-  0% {
-    opacity: 0%;
-  }
-  100% {
-    opacity: 100%;
-  }
-}
+// @keyframes cardImageBlurBeforeLoaded {
+//   0% {
+//     opacity: 0%;
+//   }
+//   100% {
+//     opacity: 100%;
+//   }
+// }
 
 .hero-card__details {
   transition: opacity 0.25s ease-in-out;
