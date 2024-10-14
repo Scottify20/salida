@@ -1,4 +1,4 @@
-import { Injectable, signal, WritableSignal } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../shared/services/tmdb/tmdb.service';
 import {
@@ -41,19 +41,14 @@ export class SeriesDetailsService {
     this.seasonsSummarySubscription?.unsubscribe();
   }
 
-  isSeriesPickerShownSig: WritableSignal<boolean | null> = signal(null);
+  isSeriesPickerShown$ = new BehaviorSubject<boolean | null>(null);
   selectedSeasonSummary$ = new BehaviorSubject<SeasonSummary | null>(null);
   seasonsSummary$ = new BehaviorSubject<SeasonSummary[]>([]);
-
-  selectedSeasonNameSig = signal('');
-  seasonsSummarySig: WritableSignal<SeasonSummary[]> = signal([]);
-  selectedSeasonSummary: SeasonSummary | null = null;
-
   private seasonsSummarySubscription: Subscription = this.seasonsSummary$
     .pipe(
       tap((seasons) => {
         this.setSeason1OrSeasonAfterSpecials([...seasons]);
-        this.seasonsSummarySig.set(seasons);
+        this.seasonsSummary = seasons;
       }),
     )
     .subscribe();
@@ -65,10 +60,14 @@ export class SeriesDetailsService {
           return;
         }
         this.selectedSeasonSummary = selectedSeasonSum;
-        this.selectedSeasonNameSig.set(selectedSeasonSum.name);
+        this.selectedSeason = selectedSeasonSum.name;
       }),
     )
     .subscribe();
+
+  selectedSeason: string | null = null;
+  seasonsSummary: SeasonSummary[] = [];
+  selectedSeasonSummary: SeasonSummary | null = null;
 
   private _seriesData$ = new BehaviorSubject<Series | null>(null);
   seriesData$: Observable<Series | null> = this._seriesData$.asObservable();
@@ -108,6 +107,10 @@ export class SeriesDetailsService {
     const urlSegments = this.router.url.split('/');
     const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
+
+    if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {
+      return;
+    }
 
     if (!isNaN(titleId) && this.isSeriesRoute) {
       this.fetchCurrentSeriesData();

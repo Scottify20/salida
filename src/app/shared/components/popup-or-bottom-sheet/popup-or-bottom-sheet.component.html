@@ -1,7 +1,7 @@
 <div
   #dialog
   class="picker-dialog fullscreen-dialog"
-  [ngClass]="this.popUpOrBottomSheetConfig.isPopupShownSig() ? 'shown' : ''"
+  [ngClass]="this.isPopUpShown ? 'shown' : ''"
 >
   <div class="dialog__backrop" (click)="hideDialog()"></div>
 
@@ -18,17 +18,16 @@
       (click)="hideDialog()"
     />
     <ul class="dialog__items-container">
-      @for (item of popUpOrBottomSheetConfig.items; track item) {
-        <li
-          (click)="item.callback(); hideDialog()"
-          class="dialog__item"
-          [ngClass]="item.isSelected() ? 'selected' : ''"
-        >
-          <p>
-            {{ item.textContent }}
-          </p>
-        </li>
-      }
+      <li
+        (click)="item.callback(); hideDialog()"
+        *ngFor="let item of popUpOrBottomSheetConfig.items"
+        class="dialog__item"
+        [ngClass]="item.isSelected() ? 'selected' : ''"
+      >
+        <p>
+          {{ item.textContent }}
+        </p>
+      </li>
     </ul>
   </div>
 </div>

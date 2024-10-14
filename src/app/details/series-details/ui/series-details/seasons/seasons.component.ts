@@ -1,64 +1,68 @@
-import { Component, DestroyRef, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { Season } from '../../../../../shared/interfaces/models/tmdb/Series';
 
 import { catchError, map, of, Subscription, switchMap, tap } from 'rxjs';
 import { SeriesDetailsService } from '../../../data-access/series-details.service';
 import { EpisodeGroupComponent } from '../episode-group/episode-group.component';
-
+import { CommonModule } from '@angular/common';
 import {
   PopupItem,
   PopupOrBottomSheetComponent,
   PopupOrBottomSheetConfig,
 } from '../../../../../shared/components/popup-or-bottom-sheet/popup-or-bottom-sheet.component';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   standalone: true,
-  imports: [EpisodeGroupComponent, PopupOrBottomSheetComponent],
+  imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
   selector: 'app-seasons',
   templateUrl: './seasons.component.html',
   styleUrls: ['./seasons.component.scss'],
 })
 export class SeasonsComponent {
-  constructor(
-    protected seriesDetailsService: SeriesDetailsService,
-    private destroyRef: DestroyRef,
-  ) {
-    this.seriesDetailsService.seasonsSummary$
+  constructor(private seriesDetailsService: SeriesDetailsService) {
+    this.seasonSummariesForPickerSubscription =
+      this.seriesDetailsService.seasonsSummary$
+        .pipe(
+          map((seasons) => {
+            if (!seasons[0]) {
+              return;
+            }
+
+            this.seasonPickerConfig.items = [...seasons].map((season) => {
+              const seasonName = String(season.name);
+
+              const popUpItemConfig: PopupItem = {
+                textContent: seasonName,
+                callback: () => {
+                  this.seriesDetailsService.selectedSeasonSummary$.next({
+                    ...season,
+                  });
+                },
+                isSelected: () => {
+                  return this.selectedSeason == seasonName;
+                },
+              };
+
+              return popUpItemConfig;
+            });
+          }),
+        )
+        .subscribe();
+
+    this.selectedSeasonSubscription =
+      this.seriesDetailsService.selectedSeasonSummary$
+        .pipe(
+          tap((seasonSummary) => {
+            if (!seasonSummary) {
+              return;
+            }
+            this.selectedSeason = seasonSummary.name;
+          }),
+        )
+        .subscribe();
+
+    this.seasonDataSubscription = this.seriesDetailsService.selectedSeasonData$
       .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map((seasons) => {
-          if (!seasons[0]) {
-            return;
-          }
-
-          this.seasonPickerConfig.items = [...seasons].map((season) => {
-            const seasonName = String(season.name);
-
-            const popUpItemConfig: PopupItem = {
-              textContent: seasonName,
-              callback: () => {
-                this.seriesDetailsService.selectedSeasonSummary$.next({
-                  ...season,
-                });
-              },
-              isSelected: () => {
-                return (
-                  this.seriesDetailsService.selectedSeasonNameSig() ===
-                  seasonName
-                );
-              },
-            };
-
-            return popUpItemConfig;
-          });
-        }),
-      )
-      .subscribe();
-
-    this.seriesDetailsService.selectedSeasonData$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
         tap((seasonData) => {
           if (!seasonData) {
             return;
@@ -78,9 +82,10 @@ export class SeasonsComponent {
     anchorElementId: 'season-picker-tab',
     itemsType: 'texts',
     items: [],
-    isPopupShownSig: this.seriesDetailsService.isSeriesPickerShownSig,
+    isPopupShown$: this.seriesDetailsService.isSeriesPickerShown$,
   };
 
+  seasonDataSubscription: Subscription | null = null;
   seasonData: Season = {
     _id: '',
     air_date: '',
@@ -101,10 +106,17 @@ export class SeasonsComponent {
     },
   };
 
+  seasonSummariesForPickerSubscription: Subscription | null = null;
+  selectedSeasonSubscription: Subscription | null = null;
+  selectedSeason: string | null = null;
+
   isLoading = false;
   isFetchingFailed = false;
 
   ngOnDestroy() {
-    this.seriesDetailsService.isSeriesPickerShownSig.set(null);
+    this.seasonSummariesForPickerSubscription?.unsubscribe();
+    this.seriesDetailsService.isSeriesPickerShown$.next(null);
+    this.selectedSeasonSubscription?.unsubscribe();
+    this.seasonDataSubscription?.unsubscribe();
   }
 }
