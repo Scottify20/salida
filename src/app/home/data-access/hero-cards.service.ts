@@ -23,7 +23,7 @@ export class HeroCardsService {
 
     fromEvent(cardsContainer, 'scroll')
       .pipe(
-        throttleTime(100),
+        throttleTime(200),
         tap((e) => {
           this.savedHeroCardsScrollX = cardsContainer.scrollLeft;
         }),

@@ -1,20 +1,15 @@
-import { Injectable } from '@angular/core';
+import { DestroyRef, Injectable, signal, WritableSignal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../shared/services/tmdb/tmdb.service';
-import {
-  BehaviorSubject,
-  filter,
-  Observable,
-  of,
-  Subscription,
-  switchMap,
-  tap,
-} from 'rxjs';
+import { BehaviorSubject, filter, Observable, of, switchMap, tap } from 'rxjs';
 import {
   Season,
   SeasonSummary,
   Series,
 } from '../../../shared/interfaces/models/tmdb/Series';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export type IdFromRoute = null | number;
 
 @Injectable({
   providedIn: 'root',
@@ -23,7 +18,27 @@ export class SeriesDetailsService {
   constructor(
     private router: Router,
     private tmdbService: TmdbService,
+    private destroyRef: DestroyRef,
   ) {
+    this.listenForSeriesRouteVisit();
+    this.listenForAllSeasonsSummary();
+    this.listenForSelectedSeasonsSummary();
+  }
+
+  private fetchedSeriesId: number | null = null;
+  private _seriesData$ = new BehaviorSubject<Series | null>(null);
+
+  idFromRoute: IdFromRoute = null;
+  isSeriesPickerShown$ = new BehaviorSubject<boolean | null>(null);
+  selectedSeasonSummary$ = new BehaviorSubject<SeasonSummary | null>(null);
+  seasonsSummary$ = new BehaviorSubject<SeasonSummary[]>([]);
+  seriesData$: Observable<Series | null> = this._seriesData$.asObservable();
+
+  selectedSeason: WritableSignal<string> = signal('');
+  seasonsSummary: SeasonSummary[] = [];
+  selectedSeasonSummary: SeasonSummary | null = null;
+
+  listenForSeriesRouteVisit() {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {
@@ -33,44 +48,32 @@ export class SeriesDetailsService {
       });
   }
 
-  idFromRoute: IdFromRoute = null;
-  private fetchedSeriesId: number | null = null;
-
-  ngOnDestroy() {
-    this.selectedSeasonSummarySubscription?.unsubscribe();
-    this.seasonsSummarySubscription?.unsubscribe();
+  listenForAllSeasonsSummary() {
+    this.seasonsSummary$
+      .pipe(
+        tap((seasons) => {
+          takeUntilDestroyed(this.destroyRef),
+            this.setSeason1OrSeasonAfterSpecials([...seasons]);
+          this.seasonsSummary = seasons;
+        }),
+      )
+      .subscribe();
   }
 
-  isSeriesPickerShown$ = new BehaviorSubject<boolean | null>(null);
-  selectedSeasonSummary$ = new BehaviorSubject<SeasonSummary | null>(null);
-  seasonsSummary$ = new BehaviorSubject<SeasonSummary[]>([]);
-  private seasonsSummarySubscription: Subscription = this.seasonsSummary$
-    .pipe(
-      tap((seasons) => {
-        this.setSeason1OrSeasonAfterSpecials([...seasons]);
-        this.seasonsSummary = seasons;
-      }),
-    )
-    .subscribe();
-
-  selectedSeasonSummarySubscription: Subscription = this.selectedSeasonSummary$
-    .pipe(
-      tap((selectedSeasonSum) => {
-        if (!selectedSeasonSum) {
-          return;
-        }
-        this.selectedSeasonSummary = selectedSeasonSum;
-        this.selectedSeason = selectedSeasonSum.name;
-      }),
-    )
-    .subscribe();
-
-  selectedSeason: string | null = null;
-  seasonsSummary: SeasonSummary[] = [];
-  selectedSeasonSummary: SeasonSummary | null = null;
-
-  private _seriesData$ = new BehaviorSubject<Series | null>(null);
-  seriesData$: Observable<Series | null> = this._seriesData$.asObservable();
+  listenForSelectedSeasonsSummary() {
+    this.selectedSeasonSummary$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((selectedSeasonSum) => {
+          if (!selectedSeasonSum) {
+            return;
+          }
+          this.selectedSeasonSummary = selectedSeasonSum;
+          this.selectedSeason.set(selectedSeasonSum.name);
+        }),
+      )
+      .subscribe();
+  }
 
   selectedSeasonData$: Observable<Season | null> =
     this.selectedSeasonSummary$.pipe(
@@ -160,5 +163,3 @@ export class SeriesDetailsService {
     }
   }
 }
-
-export type IdFromRoute = null | number;

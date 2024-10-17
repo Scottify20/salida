@@ -8,7 +8,7 @@ export class SalidaAuthError extends SalidaError {
   constructor(
     public override message: string,
     public override code: SalidaAuthErrorCode,
-    public source: SalidaAuthErrorSource
+    public source: SalidaAuthErrorSource,
   ) {
     super(message, code);
     this.name = 'SalidaAuthError';

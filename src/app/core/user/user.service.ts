@@ -1,18 +1,35 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, map, Observable, take, tap } from 'rxjs';
+import { Observable, of, take, tap } from 'rxjs';
 import { UserInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-
-import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
-import { SalidaResponse } from '../../shared/interfaces/types/api-response/SalidaResponse';
 import { environment } from '../../../environments/environment';
+import { SalidaResponse } from '../../shared/interfaces/types/api-response/SalidaResponse';
+import { FirebaseAuthService } from '../auth/firebase-auth.service';
+import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
+import { authState } from '@angular/fire/auth';
+import { ToastsService } from '../../toasts-container/data-access/toasts.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class UserService {
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private firebaseAuthService: FirebaseAuthService,
+    private platformCheckService: PlatformCheckService,
+    private toastService: ToastsService,
+  ) {
+    if (this.platformCheckService.isBrowser()) {
+      authState(this.firebaseAuthService.auth)
+        .pipe(
+          tap((user) => {
+            this.userSig.set(user);
+          }),
+        )
+        .subscribe();
+    }
+  }
   userSig: WritableSignal<User | null | undefined> = signal(null); // the auth state of the user
 
   userDisplayNameSig = computed(() => this.userSig()?.displayName);
@@ -22,21 +39,42 @@ export class UserService {
       ? this.userSig()?.photoURL
       : '../../../../assets/icons/home-header/User-solid.svg',
   );
+  userPlainStringIdentifierSig = computed(
+    () =>
+      this.userEmailSig()?.split('@')[0] ||
+      this.userDisplayNameSig() ||
+      'My Profile',
+  );
 
   private baseUrlProtected = `${environment.SALIDA_API_BASE_URL}/api/v1/protected/users`;
-  private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
+  // private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
 
-  saveUserInfoResponse: SalidaResponse | undefined = undefined;
-
-  async registerUserInfoToFirestore(
+  registerUserInfoToFirestore(
     user: User | null | undefined,
-    idToken: string | undefined,
-  ) {
+  ): Observable<SalidaResponse | null> {
+    // get the JWT token of the user's UID
+    let idToken: string | undefined;
+    this.firebaseAuthService
+      .getToken()
+      .pipe(take(1))
+      .subscribe((token) => (idToken = token));
+
     if (!user || !idToken) {
-      return;
+      this.toastService.addToast({
+        text: 'An error has occured while saving your data.',
+        scope: 'route',
+        iconPath: 'assets/icons/toast/error.svg',
+      });
+      console.log(
+        'Failed to save user to firestore, cannot read user or userToken',
+      );
+      return of(null);
     }
+
+    // copies the user object from firebase auth
     const userCopy: { [key: string]: any } = { ...user };
 
+    // the user object that will uploaded to firestore db
     const userToFirestore: UserInFireStore = {
       isAnonymous: false,
       uid: '',
@@ -54,12 +92,14 @@ export class UserService {
       updatedAt: undefined,
     };
 
+    // copies all the non null/undefined valuse to userToFirestore object
     Object.keys(userToFirestore).forEach((key) => {
       if (userCopy[key]) {
         userToFirestore[key] = userCopy[key];
       }
     });
 
+    // gets the creation time and last sign in time of the user's account and also assigns it to userToFirestore object
     const { creationTime, lastSignInTime } = user.metadata;
 
     if (creationTime) {
@@ -69,38 +109,20 @@ export class UserService {
       userToFirestore.lastLoginAt = Date.parse(lastSignInTime).toString();
     }
 
+    // sets the request headers's Authorization with the JWT token of the userId
     const headers = new HttpHeaders({ Authorization: `Bearer ${idToken}` });
 
-    this.http
+    return this.http
       .post<SalidaResponse>(
         `${this.baseUrlProtected}/make-permanent`,
         userToFirestore,
         { headers },
       )
-      .pipe(
-        tap((response) => {
-          this.saveUserInfoResponse = response;
-        }),
-        take(1),
-      )
-      .subscribe();
+      .pipe(take(1));
   }
 
-  saveUserPreferencesToFireStore() {}
+  setUsernameForUser(idToken: string | undefined, username: string) {}
 
-  getUserEmailsByUsername$(username: string): Observable<SalidaEmailsResponse> {
-    return this.http
-      .get<SalidaEmailsResponse>(`${this.baseUrlPublic}/${username}/emails`)
-      .pipe(
-        map((response) => {
-          return response;
-        }),
-        catchError((error) => {
-          // console.log(error);
-          throw error;
-        }),
-      );
-  }
-
-  // getUserDataFromFireStoreWith
+  // saveUserPreferencesToFireStore() {}
+  getUserDataFromFireStore(idToken: string | undefined) {}
 }

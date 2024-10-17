@@ -2,11 +2,16 @@ import { Injectable } from '@angular/core';
 import { SalidaAuthErrorSource } from '../../shared/interfaces/types/api-response/SalidaErrors';
 import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
 
+import { environment } from '../../../environments/environment';
+import { catchError, map, Observable } from 'rxjs';
+import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
+import { HttpClient } from '@angular/common/http';
+
 @Injectable({
   providedIn: 'root',
 })
 export class SalidaAuthService {
-  constructor() {}
+  constructor(private http: HttpClient) {}
 
   getSalidAuthErrorMessage(error: SalidaAuthError): {
     errorSource: SalidaAuthErrorSource;
@@ -32,5 +37,21 @@ export class SalidaAuthService {
         break;
     }
     return { errorSource, message };
+  }
+
+  getUserEmailsByUsername$(username: string): Observable<SalidaEmailsResponse> {
+    const baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
+
+    return this.http
+      .get<SalidaEmailsResponse>(`${baseUrlPublic}/${username}/emails`)
+      .pipe(
+        map((response) => {
+          return response;
+        }),
+        catchError((error) => {
+          // console.log(error);
+          throw error;
+        }),
+      );
   }
 }

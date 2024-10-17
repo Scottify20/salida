@@ -139,7 +139,7 @@ export class HeroCardsComponent {
       const entry = entries[0];
       const intersectRatio = entry.intersectionRatio;
       const card = entry.target as HTMLElement;
-      // const poster = entry.target.querySelector('.hero-card__poster') as HTMLElement;
+
       const indexOfCard = parseInt(
         card.getAttribute('data-card-index') as string,
       );
