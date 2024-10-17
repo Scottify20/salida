@@ -1,6 +1,7 @@
 import {
   AfterViewInit,
   Component,
+  DestroyRef,
   ElementRef,
   Input,
   OnDestroy,
@@ -13,6 +14,25 @@ import { Observable, of, Subscription, tap } from 'rxjs';
 import { ElementPositionService } from '../../services/dom/element-position.service';
 import { CommonModule } from '@angular/common';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export interface PopupOrBottomSheetConfig {
+  anchorElementId: string | null;
+  itemsType: 'texts' | 'icon-grid';
+  items: PopupItem[];
+  isPopupShown$: Observable<boolean | null>;
+}
+
+export interface PopupItem {
+  textContent: string;
+  callback: () => void;
+  isSelected: () => boolean;
+}
+
+export interface AnchoringInfo {
+  dialogElementRef: ElementRef | null;
+  anchorElementId: string;
+}
 
 @Component({
   selector: 'app-popup-or-bottom-sheet',
@@ -29,6 +49,7 @@ export class PopupOrBottomSheetComponent
     private windowResizeService: WindowResizeService,
     private scrollDisabler: ScrollDisablerService,
     private platformCheckService: PlatformCheckService,
+    private destroyRef: DestroyRef,
   ) {}
 
   @Input() popUpOrBottomSheetConfig: PopupOrBottomSheetConfig = {
@@ -38,7 +59,6 @@ export class PopupOrBottomSheetComponent
     isPopupShown$: of(false),
   };
 
-  private isPopUpShownSubscription!: Subscription;
   isPopUpShown: boolean = false;
 
   ngOnInit() {
@@ -46,7 +66,6 @@ export class PopupOrBottomSheetComponent
   }
 
   ngOnDestroy() {
-    this.isPopUpShownSubscription?.unsubscribe();
     this.untrackAndUnsubscribe();
   }
 
@@ -77,8 +96,9 @@ export class PopupOrBottomSheetComponent
       return;
     }
 
-    this.isPopUpShownSubscription = this.popUpOrBottomSheetConfig.isPopupShown$
+    this.popUpOrBottomSheetConfig.isPopupShown$
       .pipe(
+        takeUntilDestroyed(this.destroyRef),
         tap((isPopupShown) => {
           isPopupShown == null
             ? ''
@@ -105,9 +125,7 @@ export class PopupOrBottomSheetComponent
 
   trackAnchorElement() {
     // Unsubscribe from the previous subscription if it exists
-    if (this.anchorElementPositionSubscription) {
-      this.anchorElementPositionSubscription.unsubscribe();
-    }
+    this.anchorElementPositionSubscription?.unsubscribe();
 
     // Use PlatformCheckService to determine the scheduling function
     const scheduleFn = this.platformCheckService.isBrowser()
@@ -155,8 +173,9 @@ export class PopupOrBottomSheetComponent
 
   initializeResizeSubscriptions() {
     // Subscribe to the combined windowResizeState$ observable
-    this._resizeSubscription =
-      this.windowResizeService.windowResizeState$.subscribe((state) => {
+    this.windowResizeService.windowResizeState$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((state) => {
         this.isResizing = state.isResizing;
         this.windowDimensions = state.dimensions;
       });
@@ -171,7 +190,6 @@ export class PopupOrBottomSheetComponent
     this.elemPositionService.untrackElementPosition(
       this.popUpOrBottomSheetConfig.anchorElementId,
     );
-    this._resizeSubscription?.unsubscribe();
     this.anchorElementPositionSubscription?.unsubscribe();
   }
 
@@ -180,23 +198,4 @@ export class PopupOrBottomSheetComponent
     width: 0,
     height: 0,
   };
-  _resizeSubscription!: Subscription;
-}
-
-export interface PopupOrBottomSheetConfig {
-  anchorElementId: string | null;
-  itemsType: 'texts' | 'icon-grid';
-  items: PopupItem[];
-  isPopupShown$: Observable<boolean | null>;
-}
-
-export interface PopupItem {
-  textContent: string;
-  callback: () => void;
-  isSelected: () => boolean;
-}
-
-export interface AnchoringInfo {
-  dialogElementRef: ElementRef | null;
-  anchorElementId: string;
 }

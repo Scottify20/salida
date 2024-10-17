@@ -1,7 +1,6 @@
 import { inject, Injectable } from '@angular/core';
 import {
   Auth,
-  authState,
   GoogleAuthProvider,
   FacebookAuthProvider,
   signInWithPopup,
@@ -11,18 +10,28 @@ import {
   AuthErrorCodes,
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { UserService } from '../user/user.service';
 import {
   catchError,
   from,
   map,
   Observable,
+  of,
   Subscription,
   switchMap,
-  tap,
 } from 'rxjs';
 import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
 import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
+import { SalidaAuthService } from './salida-auth.service';
+
+export type FirebaseAuthErrorSource =
+  | 'general'
+  | 'password'
+  | 'email'
+  | 'emailAndPassword';
+
+export type FirebaseAuthErrors = {
+  [key in FirebaseAuthErrorSource]?: string | null;
+};
 
 @Injectable({
   providedIn: 'root',
@@ -30,34 +39,20 @@ import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response
 export class FirebaseAuthService {
   constructor(
     private platformCheckService: PlatformCheckService,
-    private userService: UserService,
+    private salidaAuthService: SalidaAuthService,
   ) {
-    this.setUserAuthStateToUserSignal();
-  }
-
-  auth!: Auth;
-  userAuthStateSubscription: Subscription | null = null;
-
-  setUserAuthStateToUserSignal() {
     if (this.platformCheckService.isBrowser()) {
       this.auth = inject(Auth);
-
-      this.userAuthStateSubscription = authState(this.auth)
-        .pipe(
-          tap((user) => {
-            this.userService.userSig.set(user);
-          }),
-        )
-        .subscribe();
     }
   }
+  auth!: Auth;
 
-  ngOnDestroy() {
-    this.userAuthStateSubscription?.unsubscribe();
-  }
-
-  private async getToken(): Promise<string | undefined> {
-    return await this.auth.currentUser?.getIdToken(true);
+  // gets the the JWT token for the user's UID
+  getToken(): Observable<string | undefined> {
+    if (!this.auth.currentUser) {
+      return of(undefined);
+    }
+    return from(this.auth.currentUser.getIdToken(true));
   }
 
   loginWithGoogle$(): Observable<User> {
@@ -91,7 +86,6 @@ export class FirebaseAuthService {
     return from(signInWithEmailAndPassword(this.auth, email, password)).pipe(
       map((userCredential) => userCredential.user),
       catchError((error) => {
-        // console.log(error.name, error.code, 'firebase auth service');
         throw error;
       }),
     );
@@ -101,7 +95,7 @@ export class FirebaseAuthService {
     username: string,
     password: string,
   ): Observable<User> {
-    return this.userService.getUserEmailsByUsername$(username).pipe(
+    return this.salidaAuthService.getUserEmailsByUsername$(username).pipe(
       switchMap((response) => {
         const emails = (response as SalidaEmailsResponse).data
           ?.emails[0] as string;
@@ -200,13 +194,3 @@ export class FirebaseAuthService {
     return { errorSource, message };
   }
 }
-
-export type FirebaseAuthErrorSource =
-  | 'general'
-  | 'password'
-  | 'email'
-  | 'emailAndPassword';
-
-export type FirebaseAuthErrors = {
-  [key in FirebaseAuthErrorSource]?: string | null;
-};

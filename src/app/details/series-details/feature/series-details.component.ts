@@ -17,7 +17,6 @@ import { ReviewsComponent } from '../../shared/ui/reviews/reviews.component';
 import { SeasonsComponent } from '../ui/series-details/seasons/seasons.component';
 import { SeriesMoreDetailsComponent } from '../ui/series-details/series-more-details/series-more-details.component';
 import { SeriesDetailsService } from '../data-access/series-details.service';
-import { ScrollDisablerService } from '../../../shared/services/dom/scroll-disabler.service';
 
 @Component({
   selector: 'app-series-details',
@@ -39,7 +38,6 @@ export class SeriesDetailsComponent {
     private preferencesService: TemporaryUserPreferencesService,
     private destroyRef: DestroyRef,
     protected seriesDetailsService: SeriesDetailsService,
-    private scrollDisablerService: ScrollDisablerService,
   ) {
     this.preferencesService.preferences$
       .pipe(
@@ -66,9 +64,6 @@ export class SeriesDetailsComponent {
     id: 'season-picker-dropdown-tab',
     text: this.seriesDetailsService.selectedSeason || '',
     callback: () => {
-      this.scrollDisablerService.disableBodyScroll(
-        'season-picker-popup-or-bottom-sheet',
-      );
       this.seriesDetailsService.isSeriesPickerShown$.next(true);
     },
     visibleIf: () => {

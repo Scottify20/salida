@@ -23,12 +23,13 @@ import {
   fromEvent,
   merge,
   of,
+  retry,
   skip,
   Subscription,
   take,
   tap,
 } from 'rxjs';
-import { AuthError } from 'firebase/auth';
+import { AuthError, User } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
@@ -36,8 +37,9 @@ import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
 import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
-import { PageTransitionService } from '../../../shared/services/navigation/page-transition.service';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
+import { UserService } from '../../../core/user/user.service';
+import { SalidaResponse } from '../../../shared/interfaces/types/api-response/SalidaResponse';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -69,12 +71,13 @@ export class SignUpPageComponent {
     private toastsService: ToastsService,
     private salidaAuthService: SalidaAuthService,
     private router: Router,
+    private userService: UserService,
   ) {}
   @ViewChild('signupButton') signupButton!: ElementRef;
 
   passwordInputType: 'text' | 'password' = 'password';
   isSubmittedAtleastOnce = false;
-  isSubmitActioninProgress = false;
+  isSignupActionInProgress = signal<boolean>(false);
 
   authErrorMessagesSig = signal<SignupErrorMessages>({
     email: null,
@@ -140,43 +143,42 @@ export class SignUpPageComponent {
     if (this.signupForm.valid) {
       const email = this.signupForm.get('email')?.getRawValue();
       const password = this.signupForm.get('password')?.getRawValue();
-      // try to register user to auth
+
+      // Set signup in progress
+      this.isSignupActionInProgress.set(true);
+
       this.registrationSubscription = this.firebaseAuthService
         .registerWithEmailAndPasswordToAuth$(email, password)
         .pipe(
           tap((user) => {
-            this.handleSignupSuccess(user?.email);
+            this.handleSignupSuccess(user);
           }),
           catchError((error) => {
-            // if errors occured error message will be shown on the component
             this.setAuthErrorMessages(error);
             return of(null);
+          }),
+          tap(() => {
+            // Signup request finished, set in progress to false
+            this.isSignupActionInProgress.set(false);
           }),
         )
         .subscribe();
     }
   }
 
-  private handleSignupSuccess(accountIdentifier: string | null) {
-    let successMessage = `Successfully created account.`;
+  private handleSignupSuccess(user: User) {
+    let response: null | SalidaResponse = null;
 
-    if (accountIdentifier) {
-      successMessage = `Successfully created account with ${accountIdentifier}.`;
-    }
+    this.userService
+      .registerUserInfoToFirestore(user)
+      .pipe(
+        retry(3),
+        take(1),
+        tap((res) => (response = res)),
+      )
+      .subscribe();
 
-    this.toastsService.addToast({
-      text: successMessage,
-      scope: 'route',
-      duration: 8000,
-      iconPath: 'assets/icons/toast/success.svg',
-      actionButton: {
-        type: 'success',
-        callback: () => {
-          this.router.navigateByUrl('/');
-        },
-        label: 'Proceed',
-      },
-    });
+    this.router.navigateByUrl('/set-username');
   }
 
   private setAuthErrorMessages(
@@ -250,7 +252,7 @@ export class SignUpPageComponent {
       this.isPasswordPatternInvalid() ||
       !!firebaseEmailError ||
       !!firebasePasswordError ||
-      this.isSubmitActioninProgress
+      this.isSignupActionInProgress() // Access signal value here
     );
   }
 

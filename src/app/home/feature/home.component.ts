@@ -4,6 +4,7 @@ import {
   OnInit,
   OnDestroy,
   computed,
+  DestroyRef,
 } from '@angular/core';
 import { HeroCardsComponent } from '.././ui/hero-cards/hero-cards.component';
 import {
@@ -36,6 +37,7 @@ import { UserService } from '../../core/user/user.service';
 import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
 import { JsonPipe } from '@angular/common';
 import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover/user-actions-menu-popover.component';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-home',
@@ -50,35 +52,22 @@ import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover
     HeaderButtonsComponent,
   ],
 })
-export class HomeComponent implements OnInit, OnDestroy {
+export class HomeComponent {
   constructor(
     private router: Router,
     private tmdbService: TmdbService,
     private seriesDetailService: SeriesDetailsService,
     private movieDetailsService: MovieDetailsService,
     private userService: UserService,
-    private firebaseAuthService: FirebaseAuthService,
+    private destroyRef: DestroyRef,
   ) {}
 
   @ViewChild(HeroCardsComponent) heroCards!: HeroCardsComponent;
 
-  private trendingTitlesSubscription!: Subscription;
-  private trendingMoviesSubscription!: Subscription;
-  private trendingSeriesSubscription!: Subscription;
-  private trendingPeopleSubscription!: Subscription;
-
   ngOnInit(): void {
-    // this.fetchTrendingTitles();
     this.fetchTrendingMovies();
     this.fetchTrendingSeries();
     this.fetchTrendingPeople();
-  }
-
-  ngOnDestroy() {
-    this.trendingTitlesSubscription?.unsubscribe();
-    this.trendingMoviesSubscription?.unsubscribe();
-    this.trendingSeriesSubscription?.unsubscribe();
-    this.trendingPeopleSubscription?.unsubscribe();
   }
 
   headerButtons: HeaderButton[] = [
@@ -163,8 +152,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
 
   fetchTrendingMovies = () => {
-    this.trendingMoviesSubscription = this.tmdbService.movies
+    this.tmdbService.movies
       .getTrendingMovies('day')
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: TrendingMovies) => {
           // push the first 3 movies to the trending titles
@@ -193,8 +183,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
 
   fetchTrendingSeries = () => {
-    this.trendingSeriesSubscription = this.tmdbService.series
+    this.tmdbService.series
       .getTrendingSeries('day')
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: TrendingSeries) => {
           // push the first 2 series to the trending titles
@@ -223,8 +214,9 @@ export class HomeComponent implements OnInit, OnDestroy {
   };
 
   fetchTrendingPeople = () => {
-    this.trendingPeopleSubscription = this.tmdbService.people
+    this.tmdbService.people
       .getTrendingPeople('day')
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (data: TrendingPeople) => {
           this.trendingPeopleOptions.entities = data.results.map((person) => ({
@@ -247,7 +239,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // push the mapped first 3 movies to the trending titles
     // this adds a callback function to each movie that views the movie's details when the hero card of the movie is clicked
     if (mediaType == 'movie') {
-      const mappedMovies = results.map((movie) => ({
+      let mappedMovies = results.map((movie) => ({
         ...movie,
         callback: () => {
           this.movieDetailsService.viewMovieDetails(
@@ -256,6 +248,11 @@ export class HomeComponent implements OnInit, OnDestroy {
           );
         },
       }));
+
+      // remove series that has no poster_path or a backdrop_bath // both paths must be included
+      mappedMovies = mappedMovies.filter(
+        (movie) => movie.poster_path && movie.backdrop_path,
+      );
 
       this.trendingTitles.results = [
         ...this.trendingTitles.results,
@@ -266,7 +263,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     // push the mapped first 2 series to the trending titles
     // this adds a callback function to each series that views the series's details when the hero card of the series is clicked
     if (mediaType === 'series') {
-      const mappedSeries = results.map((series) => ({
+      let mappedSeries = results.map((series) => ({
         ...series,
         title: series.name,
         callback: () => {
@@ -277,21 +274,20 @@ export class HomeComponent implements OnInit, OnDestroy {
         },
       }));
 
+      // remove series that has no poster_path or a backdrop_bath // both paths must be included
+      mappedSeries = mappedSeries.filter(
+        (series) => series.poster_path && series.backdrop_path,
+      );
+
       this.trendingTitles.results = [
         ...this.trendingTitles.results,
         ...mappedSeries,
       ];
     }
 
-    // check if the pushed movies and series are already at least 5 and that their properties have values
-    if (
-      this.trendingTitles.results.length >= 5 &&
-      this.trendingTitles.results.every((title) => title.backdrop_path)
-    ) {
-      // starts the scroll-based animation on the cards of the hero section
-      setTimeout(() => {
-        this.heroCards?.startCardsScrollBasedAnimation();
-      }, 0);
-    }
+    // starts the scroll-based animation on the cards of the hero section
+    setTimeout(() => {
+      this.heroCards?.startCardsScrollBasedAnimation();
+    }, 0);
   }
 }

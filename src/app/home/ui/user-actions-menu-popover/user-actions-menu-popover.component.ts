@@ -8,7 +8,7 @@ import {
   signal,
   ViewChild,
 } from '@angular/core';
-import { MenuItem, PopoverProps } from './user-actions-menu-popover.interface';
+
 import { DOCUMENT } from '@angular/common';
 import { ElementPositionService } from '../../../shared/services/dom/element-position.service';
 import { ScrollDisablerService } from '../../../shared/services/dom/scroll-disabler.service';
@@ -17,6 +17,42 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../../core/user/user.service';
 import { FirebaseAuthService } from '../../../core/auth/firebase-auth.service';
 import { Router } from '@angular/router';
+
+export interface PopoverProps {
+  popoverId: string;
+  anchoringConfig: {
+    anchorElementId: string;
+    position:
+      | 'bottom'
+      | 'top'
+      | 'left'
+      | 'right'
+      | 'bottom-start'
+      | 'bottom-end'
+      | 'top-start'
+      | 'top-end'
+      | 'right-start'
+      | 'right-end'
+      | 'left-start'
+      | 'left-end';
+  };
+  backdrop: 'mobile-only' | 'always' | 'none';
+  itemSectionsConfig: ItemsConfigSection[];
+}
+
+interface ItemsConfigSection {
+  contentType: 'icon' | 'icon-and-text' | 'text';
+  sectionName: string;
+  items: MenuItem[];
+}
+
+export interface MenuItem {
+  iconPath?: string;
+  text?: string | Signal<string | null | undefined> | (() => string);
+  isActive?: () => boolean; // refer to the isActiveClass() method on the end of this component's class
+  isVisibleIf?: () => boolean | Signal<boolean | null | undefined>; // shows the item if true, hide otherwise // always show if this fn is not defined
+  onClickCallback?: () => void;
+}
 
 @Component({
   selector: 'app-user-actions-menu-popover',
@@ -76,7 +112,16 @@ export class UserActionsMenuPopoverComponent {
         sectionName: 'section1',
         items: [
           {
-            text: this.userService.userDisplayNameSig,
+            text: () => {
+              const identifier =
+                this.userService.userPlainStringIdentifierSig();
+              const charLimit = 15;
+              const trail = '...';
+
+              return identifier.length + trail.length <= charLimit
+                ? identifier
+                : `${identifier.substring(0, charLimit - trail.length) + trail}`;
+            },
             iconPath: 'assets/icons/popover/user.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? true : false;

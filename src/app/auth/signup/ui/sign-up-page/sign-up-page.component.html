@@ -133,10 +133,10 @@
           type="submit"
           class="login-button"
         >
-          @if (!isSubmitActioninProgress) {
+          @if (!isSignupActionInProgress()) {
             <p>Create Account</p>
           }
-          @if (isSubmitActioninProgress) {
+          @if (isSignupActionInProgress()) {
             <app-loading-dots></app-loading-dots>
           }
         </button>
