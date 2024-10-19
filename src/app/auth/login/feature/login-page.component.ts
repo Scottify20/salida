@@ -25,8 +25,8 @@ import {
   FirebaseAuthService,
 } from '../../../core/auth/firebase-auth.service';
 import { AuthError } from 'firebase/auth';
-import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
-import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
+import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaError';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
@@ -327,7 +327,7 @@ export class LoginPageComponent {
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         this.router.navigateByUrl('/');
       },
     },

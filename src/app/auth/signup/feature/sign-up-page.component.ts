@@ -19,19 +19,19 @@ import {
 import {
   catchError,
   debounceTime,
+  delay,
   distinctUntilChanged,
   fromEvent,
   merge,
   of,
-  retry,
   skip,
   Subscription,
   take,
   tap,
 } from 'rxjs';
 import { AuthError, User } from 'firebase/auth';
-import { SalidaAuthError } from '../../../shared/models/errors/SalidaAuthError';
-import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaErrors';
+import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaError';
 import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
@@ -39,7 +39,6 @@ import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progr
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 import { UserService } from '../../../core/user/user.service';
-import { SalidaResponse } from '../../../shared/interfaces/types/api-response/SalidaResponse';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -68,10 +67,10 @@ export class SignUpPageComponent {
   constructor(
     private fb: FormBuilder,
     private firebaseAuthService: FirebaseAuthService,
-    private toastsService: ToastsService,
     private salidaAuthService: SalidaAuthService,
     private router: Router,
     private userService: UserService,
+    private toastsService: ToastsService,
   ) {}
   @ViewChild('signupButton') signupButton!: ElementRef;
 
@@ -151,15 +150,14 @@ export class SignUpPageComponent {
         .registerWithEmailAndPasswordToAuth$(email, password)
         .pipe(
           tap((user) => {
+            console.log(user, user);
             this.handleSignupSuccess(user);
           }),
           catchError((error) => {
             this.setAuthErrorMessages(error);
-            return of(null);
-          }),
-          tap(() => {
             // Signup request finished, set in progress to false
             this.isSignupActionInProgress.set(false);
+            return of(null);
           }),
         )
         .subscribe();
@@ -167,18 +165,28 @@ export class SignUpPageComponent {
   }
 
   private handleSignupSuccess(user: User) {
-    let response: null | SalidaResponse = null;
+    this.registerUserToFirestore(user);
+  }
 
+  private registerUserToFirestore(user: User) {
     this.userService
-      .registerUserInfoToFirestore(user)
-      .pipe(
-        retry(3),
-        take(1),
-        tap((res) => (response = res)),
-      )
-      .subscribe();
+      .registerUserDataToFirestore(user)
+      .pipe(take(1), delay(500))
+      .subscribe((response) => {
+        if (!response) {
+          this.toastsService.addToast({
+            text: 'There was an error registering your data.',
+            scope: 'route',
+            iconPath: 'assets/icons/toast/error.svg',
+          });
+          return;
+        }
 
-    this.router.navigateByUrl('/set-username');
+        // Signup and register request finished, set in progress to false
+        this.isSignupActionInProgress.set(false);
+
+        this.router.navigateByUrl('/auth/set-username');
+      });
   }
 
   private setAuthErrorMessages(
@@ -351,7 +359,7 @@ export class SignUpPageComponent {
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         this.router.navigateByUrl('/');
       },
     },

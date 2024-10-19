@@ -110,35 +110,22 @@
     }
 
     &:active {
-      transform: scale(0.98);
-    }
-
-    &:focus,
-    &:hover {
-      border: 2px solid black;
-      outline: 2px solid var(--accent-color);
+      transform: scale(0.95);
+      opacity: 50%;
     }
   }
 
   .skip-username-setting-button {
     opacity: 85%;
-
-    &:active {
-      background-color: transparent;
-    }
   }
 
-  button[type="submit"] {
+  button[type="submit"].username-setting-button {
     display: grid;
     place-content: center;
     cursor: pointer;
     color: var(--text-color-inverted);
     background-color: white;
     font-weight: 600;
-
-    &:active {
-      background-color: var(--accent-color);
-    }
   }
 }
 

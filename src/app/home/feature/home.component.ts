@@ -6,7 +6,7 @@ import {
   computed,
   DestroyRef,
 } from '@angular/core';
-import { HeroCardsComponent } from '.././ui/hero-cards/hero-cards.component';
+import { HeroCardsComponent } from '../ui/home/hero-cards/hero-cards.component';
 import {
   CardsSectionComponent,
   CardsSectionOptions,
@@ -36,7 +36,7 @@ import { MovieDetailsService } from '../../details/movie-details/data-access/mov
 import { UserService } from '../../core/user/user.service';
 import { FirebaseAuthService } from '../../core/auth/firebase-auth.service';
 import { JsonPipe } from '@angular/common';
-import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover/user-actions-menu-popover.component';
+import { UserActionsMenuPopoverComponent } from '../ui/home/user-actions-menu-popover/user-actions-menu-popover.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
@@ -74,7 +74,7 @@ export class HomeComponent {
     {
       type: 'icon',
       iconPath: '../../../../assets/icons/home-header/Github-solid.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         if (window) {
           window.open('https://github.com/Scottify20/salida', 'blank');
         }
@@ -83,7 +83,7 @@ export class HomeComponent {
     {
       type: 'text',
       text: 'Logo',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         this.router.navigateByUrl('/');
       },
     },

@@ -19,8 +19,8 @@ import {
   Subscription,
   switchMap,
 } from 'rxjs';
-import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
-import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
+import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
+import { SalidaEmailResponse } from '../../shared/interfaces/types/api-response/SalidaEmailResponse';
 import { SalidaAuthService } from './salida-auth.service';
 
 export type FirebaseAuthErrorSource =
@@ -95,12 +95,12 @@ export class FirebaseAuthService {
     username: string,
     password: string,
   ): Observable<User> {
-    return this.salidaAuthService.getUserEmailsByUsername$(username).pipe(
+    return this.salidaAuthService.getUserEmailByUsername$(username).pipe(
       switchMap((response) => {
-        const emails = (response as SalidaEmailsResponse).data
-          ?.emails[0] as string;
+        const email = (response as SalidaEmailResponse).data?.email as string;
 
-        return this.loginWithEmailAndPassword$(emails, password);
+        console.log(email, 'email');
+        return this.loginWithEmailAndPassword$(email, password);
       }),
       catchError((err) => {
         if (err.name === 'FirebaseError') {

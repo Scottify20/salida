@@ -10,12 +10,12 @@ import {
 } from '@angular/core';
 
 import { DOCUMENT } from '@angular/common';
-import { ElementPositionService } from '../../../shared/services/dom/element-position.service';
-import { ScrollDisablerService } from '../../../shared/services/dom/scroll-disabler.service';
+import { ElementPositionService } from '../../../../shared/services/dom/element-position.service';
+import { ScrollDisablerService } from '../../../../shared/services/dom/scroll-disabler.service';
 import { fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { UserService } from '../../../core/user/user.service';
-import { FirebaseAuthService } from '../../../core/auth/firebase-auth.service';
+import { UserService } from '../../../../core/user/user.service';
+import { FirebaseAuthService } from '../../../../core/auth/firebase-auth.service';
 import { Router } from '@angular/router';
 
 export interface PopoverProps {

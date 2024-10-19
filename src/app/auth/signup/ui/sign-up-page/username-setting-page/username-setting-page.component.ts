@@ -1,12 +1,13 @@
-import { Component, DestroyRef, signal, WritableSignal } from '@angular/core';
+import { Component, computed, signal } from '@angular/core';
 import { ProgressIndicatorProps } from '../../../../shared/ui/progress-indicator/progress-indicator.model';
 import { ProgressIndicatorComponent } from '../../../../shared/ui/progress-indicator/progress-indicator.component';
 import { DividerWithTitleComponent } from '../../../../shared/ui/divider-with-title/divider-with-title.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
-import { SalidaAuthService } from '../../../../../core/auth/salida-auth.service';
-import { DialogComponent } from '../../../../../shared/components/dialog/dialog.component';
-import { DialogProps } from '../../../../../shared/components/dialog/dialog.model';
+import {
+  DialogComponent,
+  DialogProps,
+} from '../../../../../shared/components/dialog/dialog.component';
+import { usernameValidator } from '../../../../validators/username-validator';
 
 @Component({
   selector: 'app-username-setting-page',
@@ -21,19 +22,12 @@ import { DialogProps } from '../../../../../shared/components/dialog/dialog.mode
   styleUrl: './username-setting-page.component.scss',
 })
 export class UsernameSettingPageComponent {
-  constructor(
-    private fb: FormBuilder,
-    private router: Router,
-    private destroyRef: DestroyRef,
-    private salidaAuthService: SalidaAuthService,
-  ) {}
+  constructor(private fb: FormBuilder) {}
 
   progressIndicatorProps: ProgressIndicatorProps = {
     visitedSteps: 2,
     steps: 2,
   };
-
-  // @ViewChild('setUsernameButton') setUsernameButton!: ElementRef;
 
   passwordInputType: 'text' | 'password' = 'password';
   isSubmittedAtleastOnce = false;
@@ -42,26 +36,67 @@ export class UsernameSettingPageComponent {
   usernameErrorMessageSig = signal<string>('');
 
   isSubmitted = false;
-
-  // ngAfterViewInit() {
-
-  //   // listening
-  //     fromEvent(
-  //       this.setUsernameButton.nativeElement,
-  //       'click',
-  //     ).pipe(
-  //       takeUntilDestroyed(this.destroyRef),
-  //       tap(() => {
-  //         this.onSetUsername();
-  //       }),
-  //     ).subscribe()
-  // }
+  isUsernameAvailable = signal(false);
+  isUsernameSetOrIsSkipped = signal(false);
+  isUsernameValid = computed(
+    () =>
+      this.setUsernameForm.get('username')?.valid && this.isUsernameAvailable(),
+  );
 
   setUsernameForm = this.fb.group({
-    username: ['', [Validators.required]],
+    username: ['', [Validators.required, usernameValidator()]],
   });
 
-  onSetUsername() {
+  setUsername() {
+    throw new Error('Method not implemented.');
+  }
+
+  usernameErrorMessages(): string[] {
+    const errorMessages: string[] = [];
+
+    // if (
+    //   !this.setUsernameForm.get('password')?.dirty &&
+    //   !this.setUsernameForm.get('password')?.touched &&
+    //   !this.isSubmitted
+    // ) {
+    //   return [];
+    // }
+
+    const usernameErrors =
+      this.setUsernameForm.controls.username.errors?.['invalidUsername'];
+
+    if (this.setUsernameForm.get('username')?.hasError('required')) {
+      errorMessages.push('Username is required.');
+      return errorMessages;
+    }
+
+    if (usernameErrors.minLength || usernameErrors.maxLength) {
+      errorMessages.push('Password must be 8 to 16 characters long.');
+      return errorMessages;
+    }
+
+    if (usernameErrors.hasNonLetterAsFirstCharacter) {
+      errorMessages.push('Username must start with a letter.');
+      return errorMessages;
+    }
+
+    if (usernameErrors.containsWhitespace) {
+      errorMessages.push('Spaces not allowed.');
+      return errorMessages;
+    }
+
+    if (
+      this.setUsernameForm.get('username')?.invalid ||
+      usernameErrors.invalidCharacter
+    ) {
+      errorMessages.push('Invalid username.');
+      return errorMessages;
+    }
+
+    return errorMessages;
+  }
+
+  onSetUsernameButtonClicked() {
     this.isSubmitted = true;
 
     if (
@@ -69,15 +104,13 @@ export class UsernameSettingPageComponent {
       this.confirmSetUsernameDialogProps.mainContent.textItems
     ) {
       const username = this.setUsernameForm.get('username')?.getRawValue();
-
       this.confirmSetUsernameDialogProps.mainContent.textItems[0] = `Are you sure you want to set “${username}” as your username? This cannot be changed later.`;
+      this.confirmSetUsernameDialogProps.config.isOpenSig.set(true);
     }
-
-    this.isConfirmSetUsernameDialogOpenSig.set(true);
   }
 
   onSkip() {
-    this.isSkipUsernameDialogOpenSig.set(true);
+    this.skipUsernameDialogProps.config.isOpenSig.set(true);
   }
 
   // private handleUsernameSetSuccess(accountIdentifier: string | null) {}
@@ -102,17 +135,15 @@ export class UsernameSettingPageComponent {
     return this.setUsernameForm.get('username')?.invalid ? true : false;
   }
 
-  isConfirmSetUsernameDialogOpenSig: WritableSignal<null | boolean> =
-    signal(null); // should be null by default to prevent initial open or closed animation
   confirmSetUsernameDialogProps: DialogProps = {
     config: {
       id: 'confirm-set-username-dialog',
       isBackdropEnabled: true,
-      isOpenSig: this.isConfirmSetUsernameDialogOpenSig,
+      isOpenSig: signal(null),
       triggerElementIds: ['username-setting-button'],
     },
     mainContent: {
-      iconPath: 'assets/icons/dialog/warning.svg',
+      iconPath: 'assets/icons/dialog/profile.svg',
       title: 'Set Username?',
       textItems: [],
     },
@@ -121,26 +152,23 @@ export class UsernameSettingPageComponent {
         type: 'success',
         label: 'Set',
         onClickCallback: () => {
-          console.log('clicked primary');
-
-          this.isCreateAccountSuccessDialogOpenSig.set(true);
+          this.setUsername();
         },
       },
       secondary: {
         label: 'Cancel',
         onClickCallback: () => {
-          console.log('clicked secondary');
+          // console.log('clicked secondary');
         },
       },
     },
   };
 
-  isSkipUsernameDialogOpenSig: WritableSignal<null | boolean> = signal(null); // should be null by default to prevent initial open or closed animation
   skipUsernameDialogProps: DialogProps = {
     config: {
       id: 'skip-username-dialog',
       isBackdropEnabled: false,
-      isOpenSig: this.isSkipUsernameDialogOpenSig,
+      isOpenSig: signal(null),
       triggerElementIds: ['skip-username-setting-button'],
     },
     mainContent: {
@@ -153,25 +181,23 @@ export class UsernameSettingPageComponent {
         type: 'warning',
         label: 'Skip',
         onClickCallback: () => {
-          console.log('clicked primary');
+          this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
         },
       },
       secondary: {
         label: 'Cancel',
         onClickCallback: () => {
-          console.log('clicked secondary');
+          // proceeded to setting username
         },
       },
     },
   };
 
-  isCreateAccountSuccessDialogOpenSig: WritableSignal<null | boolean> =
-    signal(null); // should be null by default to prevent initial open or closed animation
   createAccountSuccessDialogProps: DialogProps = {
     config: {
       id: 'account-creation-success-dialog',
       isBackdropEnabled: true,
-      isOpenSig: this.isCreateAccountSuccessDialogOpenSig,
+      isOpenSig: signal(null),
       triggerElementIds: [],
     },
     mainContent: {

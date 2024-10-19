@@ -212,14 +212,14 @@ export class MediaHeroSectionComponent {
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         history.back();
       },
     },
     {
       type: 'icon',
       iconPath: 'assets/icons/header/AddToList.svg',
-      onClickCallback: () => {},
+      onClickCallbackFn: () => {},
     },
   ];
 

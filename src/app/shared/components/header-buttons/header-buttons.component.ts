@@ -7,13 +7,13 @@ export type HeaderButton =
       type: 'text';
       text: string | Signal<string | null | undefined> | (() => string);
       id?: string;
-      onClickCallback?: () => void;
+      onClickCallbackFn?: () => void;
     }
   | {
       type: 'icon';
       iconPath: string | Signal<string | null | undefined> | (() => string);
       id?: string;
-      onClickCallback?: () => void;
+      onClickCallbackFn?: () => void;
     };
 
 @Component({
@@ -34,5 +34,11 @@ export class HeaderButtonsComponent {
       | (() => string),
   ): string | null | undefined {
     return !text ? undefined : typeof text === 'string' ? text : text();
+  }
+
+  callOnClickCallbackFn(callback: undefined | (() => void)) {
+    if (callback) {
+      callback();
+    }
   }
 }

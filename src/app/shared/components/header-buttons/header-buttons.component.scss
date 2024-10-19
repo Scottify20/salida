@@ -14,12 +14,10 @@
 
 .header__button {
   cursor: pointer;
-  width: 2.25rem;
-  aspect-ratio: 1/1;
   font-size: 1.5rem;
   display: grid;
   place-content: center;
-  outline-offset: 1.5px;
+  outline-offset: 2px;
 
   border-radius: 500px;
   overflow: hidden;
@@ -45,29 +43,23 @@
 
   &:focus {
     outline: 2px dotted var(--color-accent);
-    outline-offset: 1.5px;
+    outline-offset: 2px;
   }
+}
+
+.header__button--icon {
+  padding: 0;
+  width: 2.125rem;
+  aspect-ratio: 1/1;
 }
 
 .header__button--text {
   text-decoration: none;
   width: min-content;
   aspect-ratio: unset;
-  height: 2rem;
+  height: 2.125rem;
   font-size: 1.5rem;
   font-weight: 600;
-}
-
-.header__button--icon-with-bg {
-  margin: 0.12rem;
-  background-color: var(--button-bg-color);
-  padding: 0.2em;
-  border-radius: 100px;
-  transform: scale(1.12);
-
-  * {
-    transform: scale(0.8);
-  }
 }
 
 img {

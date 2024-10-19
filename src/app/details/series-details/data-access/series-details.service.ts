@@ -111,10 +111,6 @@ export class SeriesDetailsService {
     const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
     this.idFromRoute = titleId;
 
-    if (!isNaN(titleId) && titleId == this.fetchedSeriesId) {
-      return;
-    }
-
     if (!isNaN(titleId) && this.isSeriesRoute) {
       this.fetchCurrentSeriesData();
     } else {
