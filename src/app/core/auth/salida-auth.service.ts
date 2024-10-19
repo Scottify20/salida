@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
-import { SalidaAuthErrorSource } from '../../shared/interfaces/types/api-response/SalidaErrors';
-import { SalidaAuthError } from '../../shared/models/errors/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../shared/interfaces/types/api-response/SalidaError';
+import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 
 import { environment } from '../../../environments/environment';
 import { catchError, map, Observable } from 'rxjs';
-import { SalidaEmailsResponse } from '../../shared/interfaces/types/api-response/SalidaEmailsResponse';
+import { SalidaEmailResponse } from '../../shared/interfaces/types/api-response/SalidaEmailResponse';
 import { HttpClient } from '@angular/common/http';
 
 @Injectable({
@@ -35,15 +35,26 @@ export class SalidaAuthService {
         message =
           'Failed to connect to the server. Check your internet connection or contact the developer';
         break;
+
+      case 'auth/invalid-token':
+        message = 'Your credentials are invalid.';
+        break;
+
+      case 'auth/username-already-in-use':
+        message = 'That username is already in use.';
+        break;
+
+      case 'auth/internal-error':
+        break;
     }
     return { errorSource, message };
   }
 
-  getUserEmailsByUsername$(username: string): Observable<SalidaEmailsResponse> {
+  getUserEmailByUsername$(username: string): Observable<SalidaEmailResponse> {
     const baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
 
     return this.http
-      .get<SalidaEmailsResponse>(`${baseUrlPublic}/${username}/emails`)
+      .get<SalidaEmailResponse>(`${baseUrlPublic}/${username}/email`)
       .pipe(
         map((response) => {
           return response;

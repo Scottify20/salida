@@ -8,13 +8,43 @@ import {
   Signal,
   signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
-import { DialogProps } from './dialog.model';
 import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 import { fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+
+export interface DialogProps {
+  config: {
+    id: string;
+    isBackdropEnabled?: boolean;
+    isOpenSig: WritableSignal<boolean | null>; // should be null by default to prevent initial open or closed animation
+    triggerElementIds: string[];
+  };
+  mainContent: {
+    iconPath?: string;
+    title: string | Signal<string | null | undefined> | (() => string);
+    textItems?:
+      | string[]
+      | Signal<string | null | undefined>[]
+      | (() => string)[];
+  };
+  buttons: {
+    primary: PrimaryButton;
+    secondary?: DialogButton;
+  };
+}
+
+interface PrimaryButton extends DialogButton {
+  type: 'default' | 'info' | 'success' | 'danger' | 'warning';
+}
+
+interface DialogButton {
+  label: string | Signal<string | null | undefined> | (() => string);
+  onClickCallback: () => void;
+}
 
 @Component({
   selector: 'app-dialog',

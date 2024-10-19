@@ -20,14 +20,14 @@ export class UserProfileComponent {
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         history.back();
       },
     },
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Edit.svg',
-      onClickCallback: () => {
+      onClickCallbackFn: () => {
         this.router.navigateByUrl('/user/**/edit');
       },
     },

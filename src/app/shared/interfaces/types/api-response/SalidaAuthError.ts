@@ -1,7 +1,4 @@
-import {
-  SalidaAuthErrorCode,
-  SalidaAuthErrorSource,
-} from '../../interfaces/types/api-response/SalidaErrors';
+import { SalidaAuthErrorCode, SalidaAuthErrorSource } from './SalidaError';
 import { SalidaError } from './SalidaError';
 
 export class SalidaAuthError extends SalidaError {

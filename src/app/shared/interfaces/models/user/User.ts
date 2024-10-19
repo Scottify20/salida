@@ -1,6 +1,28 @@
 import { UserPreferences } from '../../../services/preferences/temporary-user-preferences-service';
 
-export type UserInFireStore = {
+// export class SalidaUser implements UserDataInFireStore {
+//   constructor(userData: UserDataInFireStore) {
+//     Object.assign(this, userData);
+//   }
+//   [key: string]: any;
+
+//   providerData = [];
+//   role: Role = 'user';
+//   uid = '';
+// }
+
+// export class SalidaAdmin implements UserDataInFireStore {
+//   constructor(userData: UserDataInFireStore) {
+//     Object.assign(this, userData);
+//   }
+//   [key: string]: any;
+
+//   providerData = [];
+//   role: Role = 'admin';
+//   uid = '';
+// }
+
+export type UserDataInFireStore = {
   [key: string]: any;
 } & {
   uid: string;

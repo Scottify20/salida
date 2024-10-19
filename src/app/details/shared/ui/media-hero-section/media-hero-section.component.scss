@@ -78,7 +78,9 @@ app-header-buttons {
   display: flex;
   flex-flow: column nowrap;
   position: relative;
+  justify-content: flex-end;
   padding-right: 8rem;
+  height: 100%;
 }
 
 .title__poster {
@@ -167,44 +169,44 @@ app-header-buttons {
   }
 }
 
-.title__play-button-parent-container {
-  position: relative;
-  display: grid;
-  height: 100%;
-  width: 100%;
+// .title__play-button-parent-container {
+//   position: relative;
+//   display: grid;
+//   height: 100%;
+//   width: 100%;
 
-  &:hover .title__play-button-container {
-    opacity: 100%;
-  }
-}
+//   &:hover .title__play-button-container {
+//     opacity: 100%;
+//   }
+// }
 
-.title__play-button-container {
-  transition: all ease-in-out 0.15s;
-  opacity: 0;
-  place-self: center;
-  cursor: pointer;
-  pointer-events: all;
-  display: flex;
-  flex-flow: column nowrap;
-  row-gap: 0.5em;
-  align-items: center;
+// .title__play-button-container {
+//   transition: all ease-in-out 0.15s;
+//   opacity: 0;
+//   place-self: center;
+//   cursor: pointer;
+//   pointer-events: all;
+//   display: flex;
+//   flex-flow: column nowrap;
+//   row-gap: 0.5em;
+//   align-items: center;
 
-  .title__play-button {
-    display: grid;
-    place-content: center;
-    width: 2.625rem;
-    aspect-ratio: 1/1;
-    background-color: rgba(255, 255, 255, 0.9);
-    border-radius: 4rem;
+//   .title__play-button {
+//     display: grid;
+//     place-content: center;
+//     width: 2.625rem;
+//     aspect-ratio: 1/1;
+//     background-color: rgba(255, 255, 255, 0.9);
+//     border-radius: 4rem;
 
-    .title__play-icon {
-      text-align: center;
-    }
-  }
-  .title__play-button__label {
-    font-size: 0.8333rem;
-  }
-}
+//     .title__play-icon {
+//       text-align: center;
+//     }
+//   }
+//   .title__play-button__label {
+//     font-size: 0.8333rem;
+//   }
+// }
 
 @media (hover: none) {
   .title__genres-container {

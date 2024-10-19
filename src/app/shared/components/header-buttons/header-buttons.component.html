@@ -8,7 +8,7 @@
       [class]="
         button.type === 'text' ? 'header__button--text' : 'header__button--icon'
       "
-      (click)="button?.onClickCallback()"
+      (click)="callOnClickCallbackFn(button.onClickCallbackFn)"
     >
       @if (button.type === "icon") {
         <img [src]="getTextOrIconPath(button.iconPath)" alt="" />

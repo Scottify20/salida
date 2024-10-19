@@ -35,14 +35,14 @@
           formControlName="username"
         />
         <div class="form__error-messages-container">
-          <!-- @for(error of emailErrorMessages() ; track error){
+          @for (error of usernameErrorMessages(); let i = $index; track i) {
             <p
               [class]="isUsernamePatternInvalid() ? '' : 'no-error'"
               class="form__error-message"
             >
               {{ error }}
             </p>
-          } -->
+          }
           <p class="form__error-message">
             <!-- {{ ErrorMessagesSig().username }} -->
           </p>
@@ -59,7 +59,7 @@
           Skip
         </button>
         <button
-          (click)="onSetUsername()"
+          (click)="onSetUsernameButtonClicked()"
           id="username-setting-button"
           [class]="isSetUsernameButtonDisabled() ? 'disabled' : ''"
           tabindex="1"

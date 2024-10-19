@@ -1,4 +1,4 @@
-import { SalidaErrorCodes, SalidaErrorSource } from './SalidaErrors';
+import { SalidaErrorCodes, SalidaErrorSource } from './SalidaError';
 
 export interface SalidaResponse {
   stack?: string;

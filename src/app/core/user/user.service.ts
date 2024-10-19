@@ -1,13 +1,13 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { Observable, of, take, tap } from 'rxjs';
-import { UserInFireStore } from '../../shared/interfaces/models/user/User';
+import { delay, map, Observable, of, retry, switchMap, take, tap } from 'rxjs';
+import { UserDataInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { SalidaResponse } from '../../shared/interfaces/types/api-response/SalidaResponse';
 import { FirebaseAuthService } from '../auth/firebase-auth.service';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { authState } from '@angular/fire/auth';
+import { authState, user } from '@angular/fire/auth';
 import { ToastsService } from '../../toasts-container/data-access/toasts.service';
 
 @Injectable({
@@ -30,15 +30,22 @@ export class UserService {
         .subscribe();
     }
   }
+
+  private baseUrlProtected = `${environment.SALIDA_API_BASE_URL}/api/v1/protected/users`;
+  // private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
+
   userSig: WritableSignal<User | null | undefined> = signal(null); // the auth state of the user
 
   userDisplayNameSig = computed(() => this.userSig()?.displayName);
+
   userEmailSig = computed(() => this.userSig()?.email);
+
   userPhotoUrlSig = computed(() =>
     this.userSig()?.photoURL
       ? this.userSig()?.photoURL
       : '../../../../assets/icons/home-header/User-solid.svg',
   );
+
   userPlainStringIdentifierSig = computed(
     () =>
       this.userEmailSig()?.split('@')[0] ||
@@ -46,28 +53,17 @@ export class UserService {
       'My Profile',
   );
 
-  private baseUrlProtected = `${environment.SALIDA_API_BASE_URL}/api/v1/protected/users`;
-  // private baseUrlPublic = `${environment.SALIDA_API_BASE_URL}/api/v1/public/users`;
-
-  registerUserInfoToFirestore(
+  registerUserDataToFirestore(
     user: User | null | undefined,
   ): Observable<SalidaResponse | null> {
-    // get the JWT token of the user's UID
-    let idToken: string | undefined;
-    this.firebaseAuthService
-      .getToken()
-      .pipe(take(1))
-      .subscribe((token) => (idToken = token));
-
-    if (!user || !idToken) {
+    // checks if the user Object is not null or undefined
+    if (!user) {
       this.toastService.addToast({
         text: 'An error has occured while saving your data.',
         scope: 'route',
         iconPath: 'assets/icons/toast/error.svg',
       });
-      console.log(
-        'Failed to save user to firestore, cannot read user or userToken',
-      );
+      console.log('Failed to save user to firestore, cannot read user.');
       return of(null);
     }
 
@@ -75,7 +71,7 @@ export class UserService {
     const userCopy: { [key: string]: any } = { ...user };
 
     // the user object that will uploaded to firestore db
-    const userToFirestore: UserInFireStore = {
+    const userToFirestore: UserDataInFireStore = {
       isAnonymous: false,
       uid: '',
       password: undefined,
@@ -92,16 +88,15 @@ export class UserService {
       updatedAt: undefined,
     };
 
-    // copies all the non null/undefined valuse to userToFirestore object
-    Object.keys(userToFirestore).forEach((key) => {
-      if (userCopy[key]) {
+    // copies all the non null/undefined valuse to userToFirestoreTemplate object
+    Object.keys(userCopy).forEach((key) => {
+      if (userCopy[key] !== undefined && userToFirestore.hasOwnProperty(key)) {
         userToFirestore[key] = userCopy[key];
       }
     });
 
-    // gets the creation time and last sign in time of the user's account and also assigns it to userToFirestore object
+    // gets the creation time and last sign in time of the user's account and also assigns it to userToFirestoreTemplate object
     const { creationTime, lastSignInTime } = user.metadata;
-
     if (creationTime) {
       userToFirestore.createdAt = Date.parse(creationTime).toString();
     }
@@ -109,19 +104,70 @@ export class UserService {
       userToFirestore.lastLoginAt = Date.parse(lastSignInTime).toString();
     }
 
-    // sets the request headers's Authorization with the JWT token of the userId
-    const headers = new HttpHeaders({ Authorization: `Bearer ${idToken}` });
+    return this.getAuthorizationHeadersWithUserToken().pipe(
+      retry(3),
+      take(1),
+      switchMap((headers) => {
+        if (!headers) {
+          // Handle the missing token by showing a toast message
+          this.toastService.addToast({
+            text: 'Authorization failed. Cannot save user data.',
+            scope: 'route',
+            iconPath: 'assets/icons/toast/error.svg',
+          });
+          return of(null); // Return a null observable instead of making a request
+        }
 
-    return this.http
-      .post<SalidaResponse>(
-        `${this.baseUrlProtected}/make-permanent`,
-        userToFirestore,
-        { headers },
-      )
-      .pipe(take(1));
+        return this.http
+          .post<SalidaResponse>(this.baseUrlProtected, userToFirestore, {
+            headers,
+          })
+          .pipe(take(1));
+      }),
+    );
   }
 
-  setUsernameForUser(idToken: string | undefined, username: string) {}
+  // creates a observable of the HttpHeader with the token of the user or null
+  getAuthorizationHeadersWithUserToken(): Observable<HttpHeaders | null> {
+    return this.firebaseAuthService.getToken().pipe(
+      take(1),
+      switchMap((idToken) => {
+        if (!idToken) {
+          return of(null);
+        }
+        const headers = new HttpHeaders({ Authorization: `Bearer ${idToken}` });
+        return of(headers);
+      }),
+    );
+  }
+
+  setUsernameForUser(username: string) {
+    return this.getAuthorizationHeadersWithUserToken().pipe(
+      retry(3),
+      take(1),
+      switchMap((headers) => {
+        if (!headers) {
+          // Handle the missing token by showing a toast message
+          this.toastService.addToast({
+            text: 'Cannot set username. Authorization failed.',
+            scope: 'route',
+            iconPath: 'assets/icons/toast/error.svg',
+          });
+          return of(null); // Return a null observable instead of making a request
+        }
+
+        return this.http
+          .patch<SalidaResponse>(
+            `${this.baseUrlProtected}/set-username`,
+            { username: username },
+            {
+              headers,
+            },
+          )
+          .pipe(take(1));
+      }),
+    );
+  }
 
   // saveUserPreferencesToFireStore() {}
   getUserDataFromFireStore(idToken: string | undefined) {}

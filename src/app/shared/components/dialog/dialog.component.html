@@ -33,7 +33,7 @@
 
     @if (dialogProps.mainContent.textItems; as textItems) {
       <ul class="dialog__text-items-container">
-        @for (textItem of textItems; track textItem) {
+        @for (textItem of textItems; track textItem.toString()) {
           <li class="dialog__text-item">
             @if (textItems.length > 1) {
               <div class="dialog__text-item-bullet">•</div>
