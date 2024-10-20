@@ -35,13 +35,12 @@ export class SalidaAuthService {
         message =
           'Failed to connect to the server. Check your internet connection or contact the developer';
         break;
-
       case 'auth/invalid-token':
         message = 'Your credentials are invalid.';
         break;
 
       case 'auth/username-already-in-use':
-        message = 'That username is already in use.';
+        message = 'That username is already taken.';
         break;
 
       case 'auth/internal-error':

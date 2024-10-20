@@ -1,12 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-loading-dots',
   standalone: true,
   imports: [],
   templateUrl: './loading-dots.component.html',
-  styleUrl: './loading-dots.component.scss'
+  styleUrl: './loading-dots.component.scss',
 })
 export class LoadingDotsComponent {
+  @Input() dotsCount: 1 | 2 | 3 | 4 | 5 = 5;
 
+  get dotsCountArray() {
+    return Array.from({ length: this.dotsCount }, (_, index) => index + 1);
+  }
 }

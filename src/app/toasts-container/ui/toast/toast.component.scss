@@ -1,12 +1,9 @@
 .toast {
   position: absolute;
   inset: 0;
-
-  pointer-events: all;
   display: flex;
   flex-flow: row nowrap;
   align-items: center;
-  margin: 0 auto;
   height: fit-content;
   width: fit-content;
 
@@ -14,10 +11,10 @@
   border-radius: 1rem;
   color: var(--text-color-slightly-transparent);
 
-  padding: 0.5rem;
-  margin: 0 0.5rem;
+  margin: 0 auto;
   font-size: 0.8333rem;
   column-gap: 0.5rem;
+  padding: 0.5rem;
 
   stroke: 1px solid rgb(154, 154, 154);
 
@@ -26,7 +23,8 @@
   animation: SlideInFromBottom 0.75s cubic-bezier(0.4, 0, 0.2, 1) forwards;
 
   &.closed {
-    animation: FadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+    animation:
+      FadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
       ScaleOut 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
   }
 }

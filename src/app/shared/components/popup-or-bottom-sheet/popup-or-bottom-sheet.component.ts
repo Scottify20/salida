@@ -78,6 +78,9 @@ export class PopupOrBottomSheetComponent
 
   showDialog() {
     setTimeout(() => {
+      this.scrollDisabler.disableBodyScroll(
+        'season-picker-popup-or-bottom-sheet',
+      );
       this.dialogElement.classList.remove('hide');
       this.dialogElement.classList.add('shown');
     }, 0);

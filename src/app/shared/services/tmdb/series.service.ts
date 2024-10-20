@@ -74,9 +74,7 @@ export class SeriesService {
   getTrendingSeries(timeWindow: TmdbTimeWindow): Observable<TrendingSeries> {
     if (!this.cachedTrendingSeries) {
       this.cachedTrendingSeries = this.http
-        .get<TrendingSeries>(
-          `${this.tmdbConfig.baseUrl}/trending/tv/${timeWindow}`,
-        )
+        .get<TrendingSeries>(`${this.tmdbConfig.baseUrl}/tv/popular`)
         .pipe(
           retry(2),
           shareReplay(1),

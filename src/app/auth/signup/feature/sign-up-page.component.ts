@@ -1,4 +1,10 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   HeaderButtonsComponent,
@@ -18,16 +24,13 @@ import {
 } from '../../../core/auth/firebase-auth.service';
 import {
   catchError,
-  debounceTime,
   delay,
   distinctUntilChanged,
   fromEvent,
-  merge,
   of,
-  skip,
-  Subscription,
   take,
   tap,
+  throttleTime,
 } from 'rxjs';
 import { AuthError, User } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
@@ -39,6 +42,7 @@ import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progr
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 import { UserService } from '../../../core/user/user.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -71,7 +75,13 @@ export class SignUpPageComponent {
     private router: Router,
     private userService: UserService,
     private toastsService: ToastsService,
+    private destoryRef: DestroyRef,
   ) {}
+  signupForm = this.fb.group({
+    email: ['', [Validators.required, Validators.email]],
+    password: ['', [Validators.required, passwordValidator()]],
+  });
+
   @ViewChild('signupButton') signupButton!: ElementRef;
 
   passwordInputType: 'text' | 'password' = 'password';
@@ -83,15 +93,32 @@ export class SignUpPageComponent {
     password: null,
   });
 
-  private signupFormValuesSubscription: Subscription | null = null;
-  private signupButtonClickSubscription: Subscription | null = null;
-
-  registrationSubscription: Subscription | null = null;
   isSubmitted = false;
 
   ngOnInit() {
-    this.signupFormValuesSubscription = this.signupForm.valueChanges
+    this.startAuthErrorMessageRefresher();
+  }
+
+  ngAfterViewInit() {
+    this.startSignupButtonListener();
+  }
+
+  startSignupButtonListener() {
+    fromEvent(this.signupButton.nativeElement, 'click')
       .pipe(
+        takeUntilDestroyed(this.destoryRef),
+        throttleTime(1000),
+        tap(() => {
+          this.onSubmit();
+        }),
+      )
+      .subscribe();
+  }
+
+  startAuthErrorMessageRefresher() {
+    this.signupForm.valueChanges
+      .pipe(
+        takeUntilDestroyed(this.destoryRef),
         distinctUntilChanged(
           (prev, curr) => JSON.stringify(prev) === JSON.stringify(curr),
         ),
@@ -106,36 +133,6 @@ export class SignUpPageComponent {
       .subscribe();
   }
 
-  ngAfterViewInit() {
-    const firstClick$ = fromEvent(
-      this.signupButton.nativeElement,
-      'click',
-    ).pipe(take(1));
-    const subsequentClicks$ = fromEvent(
-      this.signupButton.nativeElement,
-      'click',
-    ).pipe(skip(1), debounceTime(1000));
-
-    this.signupButtonClickSubscription = merge(firstClick$, subsequentClicks$)
-      .pipe(
-        tap(() => {
-          this.onSubmit();
-        }),
-      )
-      .subscribe();
-  }
-
-  ngOnDestroy() {
-    this.registrationSubscription?.unsubscribe();
-    this.signupFormValuesSubscription?.unsubscribe();
-    this.signupButtonClickSubscription?.unsubscribe();
-  }
-
-  signupForm = this.fb.group({
-    email: ['', [Validators.required, Validators.email]],
-    password: ['', [Validators.required, passwordValidator()]],
-  });
-
   onSubmit() {
     this.isSubmitted = true;
 
@@ -146,12 +143,13 @@ export class SignUpPageComponent {
       // Set signup in progress
       this.isSignupActionInProgress.set(true);
 
-      this.registrationSubscription = this.firebaseAuthService
+      this.firebaseAuthService
         .registerWithEmailAndPasswordToAuth$(email, password)
         .pipe(
+          takeUntilDestroyed(this.destoryRef),
           tap((user) => {
-            console.log(user, user);
-            this.handleSignupSuccess(user);
+            // console.log(user, user);
+            this.registerUserToFirestore(user);
           }),
           catchError((error) => {
             this.setAuthErrorMessages(error);
@@ -162,10 +160,6 @@ export class SignUpPageComponent {
         )
         .subscribe();
     }
-  }
-
-  private handleSignupSuccess(user: User) {
-    this.registerUserToFirestore(user);
   }
 
   private registerUserToFirestore(user: User) {

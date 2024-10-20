@@ -1,7 +1,5 @@
 <div class="dots-loading-animation">
-  <span class="dot-1">•</span>
-  <span class="dot-2">•</span>
-  <span class="dot-3">•</span>
-  <span class="dot-4">•</span>
-  <span class="dot-5">•</span>
+  @for (dotNumber of dotsCountArray; let i = $index; track dotNumber) {
+    <span [class]="'dot-' + dotNumber">•</span>
+  }
 </div>
