@@ -8,6 +8,18 @@ import {
   DialogProps,
 } from '../../../../../shared/components/dialog/dialog.component';
 import { usernameValidator } from '../../../../validators/username-validator';
+import { Router } from '@angular/router';
+import { UserService } from '../../../../../core/user/user.service';
+import { AuthError } from '@angular/fire/auth';
+import { catchError, of, take, tap } from 'rxjs';
+import { SalidaAuthError } from '../../../../../shared/interfaces/types/api-response/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../../../shared/interfaces/types/api-response/SalidaError';
+import {
+  FirebaseAuthErrorSource,
+  FirebaseAuthService,
+} from '../../../../../core/auth/firebase-auth.service';
+import { SalidaAuthService } from '../../../../../core/auth/salida-auth.service';
+import { ToastsService } from '../../../../../toasts-container/data-access/toasts.service';
 
 @Component({
   selector: 'app-username-setting-page',
@@ -22,78 +34,98 @@ import { usernameValidator } from '../../../../validators/username-validator';
   styleUrl: './username-setting-page.component.scss',
 })
 export class UsernameSettingPageComponent {
-  constructor(private fb: FormBuilder) {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private userService: UserService,
+    private salidaAuthService: SalidaAuthService,
+    private firebaseAuthService: FirebaseAuthService,
+    private toastsService: ToastsService,
+  ) {}
 
   progressIndicatorProps: ProgressIndicatorProps = {
     visitedSteps: 2,
     steps: 2,
   };
 
-  passwordInputType: 'text' | 'password' = 'password';
-  isSubmittedAtleastOnce = false;
-  isSubmitActioninProgress = false;
-
+  authErrorMessageSig = signal<{ username: string | null }>({
+    username: null,
+  });
   usernameErrorMessageSig = signal<string>('');
+
+  passwordInputType: 'text' | 'password' = 'password';
+  // isSubmittedAtleastOnce = false;
+  isSubmitActioninProgress = false;
+  isAccountCreationSuccessful = signal(false);
 
   isSubmitted = false;
   isUsernameAvailable = signal(false);
-  isUsernameSetOrIsSkipped = signal(false);
-  isUsernameValid = computed(
-    () =>
-      this.setUsernameForm.get('username')?.valid && this.isUsernameAvailable(),
-  );
+  // isUsernameSetOrIsSkipped = signal(false);
+  // isUsernameValid = computed(
+  //   () =>
+  //     this.setUsernameForm.get('username')?.valid && this.isUsernameAvailable(),
+  // );
 
   setUsernameForm = this.fb.group({
     username: ['', [Validators.required, usernameValidator()]],
   });
 
-  setUsername() {
-    throw new Error('Method not implemented.');
-  }
-
   usernameErrorMessages(): string[] {
     const errorMessages: string[] = [];
+    const usernameControl = this.setUsernameForm.get('username');
 
-    // if (
-    //   !this.setUsernameForm.get('password')?.dirty &&
-    //   !this.setUsernameForm.get('password')?.touched &&
-    //   !this.isSubmitted
-    // ) {
-    //   return [];
-    // }
-
-    const usernameErrors =
-      this.setUsernameForm.controls.username.errors?.['invalidUsername'];
-
-    if (this.setUsernameForm.get('username')?.hasError('required')) {
+    if (
+      usernameControl?.hasError('required') &&
+      (usernameControl.dirty || usernameControl?.touched)
+    ) {
       errorMessages.push('Username is required.');
       return errorMessages;
     }
 
-    if (usernameErrors.minLength || usernameErrors.maxLength) {
-      errorMessages.push('Password must be 8 to 16 characters long.');
-      return errorMessages;
+    const usernameErrors = usernameControl?.errors?.['invalidUsername'];
+
+    if (usernameErrors?.invalidCharacter) {
+      errorMessages.push('Username contains invalid characters.');
+      // return errorMessages;
     }
 
-    if (usernameErrors.hasNonLetterAsFirstCharacter) {
+    if (usernameErrors?.hasNonLetterAsFirstCharacter) {
       errorMessages.push('Username must start with a letter.');
       return errorMessages;
     }
 
-    if (usernameErrors.containsWhitespace) {
-      errorMessages.push('Spaces not allowed.');
-      return errorMessages;
+    if (usernameErrors?.minLength || usernameErrors?.maxLength) {
+      errorMessages.push('Username must be 8 to 20 characters long.');
+      // return errorMessages;
     }
 
-    if (
-      this.setUsernameForm.get('username')?.invalid ||
-      usernameErrors.invalidCharacter
-    ) {
-      errorMessages.push('Invalid username.');
-      return errorMessages;
+    if (usernameErrors?.containsWhitespace) {
+      errorMessages.push('Username cannot contain spaces.');
+      // return errorMessages;
     }
+
+    // Add more specific error messages as needed based on your validator
 
     return errorMessages;
+  }
+
+  // usernameInvalidCharactersChecker(): { char: string; invalid: boolean }[] {
+  //   const rawPassword = this.signupForm.get('password')?.getRawValue() || '';
+  //   const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+  //   const segments = segmenter.segment(rawPassword);
+  //   const characters = Array.from(segments).map((segment) => segment.segment);
+
+  //   return characters.map((char) => {
+  //     return this.passwordInputType === 'password'
+  //       ? { char: '•', invalid: false }
+  //       : validPasswordCharRegex.test(char)
+  //         ? { char: char, invalid: false }
+  //         : { char: char, invalid: true };
+  //   });
+  // }
+
+  onSkip() {
+    this.skipUsernameDialogProps.config.isOpenSig.set(true);
   }
 
   onSetUsernameButtonClicked() {
@@ -109,23 +141,84 @@ export class UsernameSettingPageComponent {
     }
   }
 
-  onSkip() {
-    this.skipUsernameDialogProps.config.isOpenSig.set(true);
+  setUsername() {
+    const username = this.setUsernameForm.get('username')?.getRawValue();
+    this.userService
+      .setUsernameForUser(username)
+      .pipe(
+        take(1),
+        tap((response) => {
+          console.log(response);
+          this.confirmSetUsernameDialogProps.config.isOpenSig.set(false);
+          this.isAccountCreationSuccessful.set(true);
+          this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
+        }),
+        catchError((error) => {
+          this.setAuthErrorMessages(error);
+          this.confirmSetUsernameDialogProps.config.isOpenSig.set(false);
+          this.confirmSetUsernameDialogProps.buttons.primary.isBusySig?.set(
+            false,
+          );
+
+          this.confirmSetUsernameDialogProps.buttons.secondary?.isHiddenSig?.set(
+            false,
+          );
+          // this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
+          return of(null);
+        }),
+      )
+      .subscribe();
+    // throw new Error('Method not implemented.');
   }
 
-  // private handleUsernameSetSuccess(accountIdentifier: string | null) {}
+  private setAuthErrorMessages(
+    error: Error | AuthError | SalidaAuthError | any,
+  ) {
+    let errorSource:
+      | SalidaAuthErrorSource
+      | FirebaseAuthErrorSource
+      | undefined = undefined;
+    let errorMessage: string | undefined = undefined;
 
-  // private setAuthErrorMessages(error: Error | SalidaAuthError | any) {
-  //   let errorSource: SalidaAuthErrorSource | undefined = undefined;
-  //   let errorMessage: string | undefined = undefined;
+    if (error instanceof SalidaAuthError) {
+      const salidaAuthError =
+        this.salidaAuthService.getSalidAuthErrorMessage(error);
+      errorSource = salidaAuthError.errorSource;
+      errorMessage = salidaAuthError.message;
+    } else if (
+      error.name === 'FirebaseError' &&
+      error.hasOwnProperty('code') &&
+      /auth/.test(error.code)
+    ) {
+      const firebaseAuthError =
+        this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
+      errorSource = firebaseAuthError.errorSource;
+      errorMessage = firebaseAuthError.message;
+    }
 
-  //   if (error instanceof SalidaAuthError) {
-  //     const salidaAuthError =
-  //       this.salidaAuthService.getSalidAuthErrorMessage(error);
-  //     errorSource = salidaAuthError.errorSource;
-  //     errorMessage = salidaAuthError.message;
-  //   }
-  // }
+    if (!errorSource || !errorMessage) {
+      this.toastsService.addToast({
+        iconPath: '/assets/icons/toast/error.svg',
+        text: 'An unexpected error has occurred.',
+        scope: 'route',
+        duration: 0,
+      });
+      return;
+    }
+
+    if (errorSource == 'general') {
+      this.toastsService.addToast({
+        iconPath: '/assets/icons/toast/error.svg',
+        text: errorMessage,
+        scope: 'route',
+        duration: 0,
+      });
+    }
+
+    this.authErrorMessageSig.set({
+      username: errorSource === 'username' ? errorMessage : null,
+    });
+  }
 
   isSetUsernameButtonDisabled(): boolean {
     return this.isUsernamePatternInvalid() || this.isSubmitActioninProgress;
@@ -153,12 +246,24 @@ export class UsernameSettingPageComponent {
         label: 'Set',
         onClickCallback: () => {
           this.setUsername();
+          this.confirmSetUsernameDialogProps.buttons.primary.isBusySig?.set(
+            true,
+          );
+
+          this.confirmSetUsernameDialogProps.buttons.secondary?.isHiddenSig?.set(
+            true,
+          );
         },
+        isBusySig: signal(false),
       },
       secondary: {
         label: 'Cancel',
         onClickCallback: () => {
-          // console.log('clicked secondary');
+          this.confirmSetUsernameDialogProps.config.isOpenSig.set(false);
+
+          this.confirmSetUsernameDialogProps.buttons.primary.isBusySig?.set(
+            false,
+          );
         },
       },
     },
@@ -167,7 +272,7 @@ export class UsernameSettingPageComponent {
   skipUsernameDialogProps: DialogProps = {
     config: {
       id: 'skip-username-dialog',
-      isBackdropEnabled: false,
+      isBackdropEnabled: true,
       isOpenSig: signal(null),
       triggerElementIds: ['skip-username-setting-button'],
     },
@@ -181,7 +286,10 @@ export class UsernameSettingPageComponent {
         type: 'warning',
         label: 'Skip',
         onClickCallback: () => {
-          this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
+          setTimeout(() => {
+            this.isAccountCreationSuccessful.set(true);
+            this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
+          }, 200);
         },
       },
       secondary: {
@@ -201,7 +309,7 @@ export class UsernameSettingPageComponent {
       triggerElementIds: [],
     },
     mainContent: {
-      iconPath: 'assets/icons/dialog/warning.svg',
+      iconPath: 'assets/icons/dialog/success.svg',
       title: 'Account successfully created.',
       textItems: ['You can now access all of Salida’s features.'],
     },
@@ -210,7 +318,7 @@ export class UsernameSettingPageComponent {
         type: 'success',
         label: 'Proceed',
         onClickCallback: () => {
-          console.log('clicked primary');
+          this.router.navigateByUrl('/');
         },
       },
     },

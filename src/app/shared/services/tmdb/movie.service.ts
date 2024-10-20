@@ -11,7 +11,7 @@ import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
 export class MovieService {
   constructor(
     private http: HttpClient,
-    private tmdbConfig: TmdbConfigService
+    private tmdbConfig: TmdbConfigService,
   ) {}
 
   private cachedMovies: { [key: string]: Observable<Movie> } = {};
@@ -22,7 +22,7 @@ export class MovieService {
     if (!this.cachedMovies[movieIdString]) {
       this.cachedMovies[movieIdString] = this.http
         .get<Movie>(
-          `${this.tmdbConfig.baseUrl}/movie/${movieIdString}?append_to_response=images,videos,credits,external_ids,release_dates,keywords,recommendations,watch/providers,reviews`
+          `${this.tmdbConfig.baseUrl}/movie/${movieIdString}?append_to_response=images,videos,credits,external_ids,release_dates,keywords,recommendations,watch/providers,reviews`,
         )
         .pipe(
           retry(2),
@@ -30,7 +30,7 @@ export class MovieService {
           tap((movie: Movie) => {
             // Store the fetched movie data in the cache.
             this.cachedMovies[movieIdString] = of(movie); // Wrap in of()
-          })
+          }),
         );
     }
     return this.cachedMovies[movieIdString];
@@ -39,16 +39,14 @@ export class MovieService {
   getTrendingMovies(timeWindow: TmdbTimeWindow): Observable<TrendingMovies> {
     if (!this.cachedTrendingMovies) {
       this.cachedTrendingMovies = this.http
-        .get<TrendingMovies>(
-          `${this.tmdbConfig.baseUrl}/trending/movie/${timeWindow}`
-        )
+        .get<TrendingMovies>(`${this.tmdbConfig.baseUrl}/movie/popular`)
         .pipe(
           retry(2),
           shareReplay(1),
           tap((result: TrendingMovies) => {
             // Store the fetched trending movies in the cache.
             this.cachedTrendingMovies = of(result); // Wrap in of()
-          })
+          }),
         );
     }
     return this.cachedTrendingMovies;

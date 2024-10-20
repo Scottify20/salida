@@ -22,12 +22,14 @@
   background-color: white;
 
   .dropdown-tab__text {
+    pointer-events: none;
     border-radius: 100px;
     color: var(--text-color-inverted);
     font-weight: 600;
   }
 
   .dropdown-tab__icon {
+    pointer-events: none;
     height: 0.9rem;
     aspect-ratio: 1;
   }

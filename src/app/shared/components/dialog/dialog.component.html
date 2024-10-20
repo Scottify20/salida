@@ -52,9 +52,20 @@
         #secondaryButton
         tabindex="1"
         class="dialog__button secondary"
-        (click)="closeDialog(); secondaryButton.onClickCallback()"
+        [class]="
+          secondaryButton.isBusySig && secondaryButton.isBusySig()
+            ? 'disabled'
+            : secondaryButton.isHiddenSig && secondaryButton.isHiddenSig()
+              ? 'hidden'
+              : ''
+        "
+        (click)="onSecondaryButtonClicked()"
       >
-        {{ getTextFromTextItem(secondaryButton.label) }}
+        @if (secondaryButton.isBusySig && secondaryButton.isBusySig()) {
+          <app-loading-dots [dotsCount]="3"></app-loading-dots>
+        } @else {
+          {{ getTextFromTextItem(secondaryButton.label) }}
+        }
       </div>
     }
 
@@ -63,10 +74,20 @@
         #primaryButton
         tabindex="1"
         class="dialog__button primary"
-        [class]="primaryButton.type"
-        (click)="closeDialog(); primaryButton.onClickCallback()"
+        (click)="onPrimaryButtonClicked()"
+        [class]="
+          primaryButton.isBusySig && primaryButton.isBusySig()
+            ? 'disabled ' + primaryButton.type
+            : primaryButton.isHiddenSig && primaryButton.isHiddenSig()
+              ? 'hidden ' + primaryButton.type
+              : primaryButton.type
+        "
       >
-        {{ getTextFromTextItem(primaryButton.label) }}
+        @if (primaryButton.isBusySig && primaryButton.isBusySig()) {
+          <app-loading-dots [dotsCount]="3"></app-loading-dots>
+        } @else {
+          {{ getTextFromTextItem(primaryButton.label) }}
+        }
       </div>
     }
   </div>

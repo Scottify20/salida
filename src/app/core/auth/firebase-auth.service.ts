@@ -10,18 +10,11 @@ import {
   AuthErrorCodes,
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import {
-  catchError,
-  from,
-  map,
-  Observable,
-  of,
-  Subscription,
-  switchMap,
-} from 'rxjs';
+import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaEmailResponse } from '../../shared/interfaces/types/api-response/SalidaEmailResponse';
 import { SalidaAuthService } from './salida-auth.service';
+import { HttpHeaders } from '@angular/common/http';
 
 export type FirebaseAuthErrorSource =
   | 'general'
@@ -99,7 +92,7 @@ export class FirebaseAuthService {
       switchMap((response) => {
         const email = (response as SalidaEmailResponse).data?.email as string;
 
-        console.log(email, 'email');
+        // console.log(email, 'email');
         return this.loginWithEmailAndPassword$(email, password);
       }),
       catchError((err) => {
@@ -139,6 +132,20 @@ export class FirebaseAuthService {
     );
   }
 
+  // creates a observable of the HttpHeader with the token of the user or null
+  getAuthorizationHeadersWithUserToken(): Observable<HttpHeaders | null> {
+    return this.getToken().pipe(
+      take(1),
+      switchMap((idToken) => {
+        if (!idToken) {
+          return of(null);
+        }
+        const headers = new HttpHeaders({ Authorization: `Bearer ${idToken}` });
+        return of(headers);
+      }),
+    );
+  }
+
   signOut(): void {
     if (this.auth) {
       this.auth.signOut();
@@ -158,7 +165,7 @@ export class FirebaseAuthService {
         message = 'Check your internet connection and try again.';
         break;
       case AuthErrorCodes.EMAIL_EXISTS:
-        message = 'Email is already in use. Please use a different email';
+        message = 'Email is already in use. Please use a different email.';
         errorSource = 'email';
         break;
       case AuthErrorCodes.WEAK_PASSWORD:
@@ -181,7 +188,7 @@ export class FirebaseAuthService {
         break;
       case AuthErrorCodes.TOO_MANY_ATTEMPTS_TRY_LATER:
         errorSource = 'email';
-        message = 'Too many failed attempts. Please try again later';
+        message = 'Too many failed attempts. Please try again later.';
         break;
       case AuthErrorCodes.USER_DELETED:
         message = "Couldn't find your account.";

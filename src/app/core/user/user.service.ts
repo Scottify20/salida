@@ -1,14 +1,15 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { delay, map, Observable, of, retry, switchMap, take, tap } from 'rxjs';
+import { catchError, Observable, of, retry, switchMap, take, tap } from 'rxjs';
 import { UserDataInFireStore } from '../../shared/interfaces/models/user/User';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { SalidaResponse } from '../../shared/interfaces/types/api-response/SalidaResponse';
 import { FirebaseAuthService } from '../auth/firebase-auth.service';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { authState, user } from '@angular/fire/auth';
+import { authState } from '@angular/fire/auth';
 import { ToastsService } from '../../toasts-container/data-access/toasts.service';
+import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 
 @Injectable({
   providedIn: 'root',
@@ -48,8 +49,8 @@ export class UserService {
 
   userPlainStringIdentifierSig = computed(
     () =>
-      this.userEmailSig()?.split('@')[0] ||
       this.userDisplayNameSig() ||
+      this.userEmailSig()?.split('@')[0] ||
       'My Profile',
   );
 
@@ -104,7 +105,7 @@ export class UserService {
       userToFirestore.lastLoginAt = Date.parse(lastSignInTime).toString();
     }
 
-    return this.getAuthorizationHeadersWithUserToken().pipe(
+    return this.firebaseAuthService.getAuthorizationHeadersWithUserToken().pipe(
       retry(3),
       take(1),
       switchMap((headers) => {
@@ -127,22 +128,8 @@ export class UserService {
     );
   }
 
-  // creates a observable of the HttpHeader with the token of the user or null
-  getAuthorizationHeadersWithUserToken(): Observable<HttpHeaders | null> {
-    return this.firebaseAuthService.getToken().pipe(
-      take(1),
-      switchMap((idToken) => {
-        if (!idToken) {
-          return of(null);
-        }
-        const headers = new HttpHeaders({ Authorization: `Bearer ${idToken}` });
-        return of(headers);
-      }),
-    );
-  }
-
   setUsernameForUser(username: string) {
-    return this.getAuthorizationHeadersWithUserToken().pipe(
+    return this.firebaseAuthService.getAuthorizationHeadersWithUserToken().pipe(
       retry(3),
       take(1),
       switchMap((headers) => {
@@ -164,7 +151,26 @@ export class UserService {
               headers,
             },
           )
-          .pipe(take(1));
+          .pipe(
+            take(1),
+            catchError((err) => {
+              // if error comes from not being able to connect to server
+              if (err.status == 0) {
+                throw new SalidaAuthError(
+                  "Can't connect to server.",
+                  'auth/cannot-connect-to-server',
+                  'general',
+                );
+              }
+
+              // if error comes from setting username
+              throw new SalidaAuthError(
+                err.error.message,
+                err.error.code,
+                err.error.source,
+              );
+            }),
+          );
       }),
     );
   }

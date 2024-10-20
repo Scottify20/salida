@@ -11,7 +11,7 @@ import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
 export class PeopleService {
   constructor(
     private tmdbConfig: TmdbConfigService,
-    private http: HttpClient
+    private http: HttpClient,
   ) {}
   private cachedPerson: { [key: string]: Observable<Person> } = {};
   private cachedTrendingPeople!: Observable<TrendingPeople>;
@@ -22,7 +22,7 @@ export class PeopleService {
     if (!this.cachedPerson[personIdString]) {
       this.http
         .get<Person>(
-          `${this.tmdbConfig.baseUrl}/person/${personIdString}?append_to_response=external_ids,images,latest,movie_credits,tv_credits`
+          `${this.tmdbConfig.baseUrl}/person/${personIdString}?append_to_response=external_ids,images,latest,movie_credits,tv_credits`,
         )
         .pipe(
           retry(2),
@@ -30,7 +30,7 @@ export class PeopleService {
           tap((person: Person) => {
             // Store the fetched person data in the cache.
             this.cachedPerson[personIdString] = of(person);
-          })
+          }),
         );
     }
 
@@ -40,16 +40,14 @@ export class PeopleService {
   getTrendingPeople(timeWindow: TmdbTimeWindow): Observable<TrendingPeople> {
     if (!this.cachedTrendingPeople) {
       this.cachedTrendingPeople = this.http
-        .get<TrendingPeople>(
-          `${this.tmdbConfig.baseUrl}/trending/person/${timeWindow}`
-        )
+        .get<TrendingPeople>(`${this.tmdbConfig.baseUrl}/person/popular`)
         .pipe(
           retry(2),
           shareReplay(1),
           tap((result: TrendingPeople) => {
             // Store the fetched trending series data in the cache.
             this.cachedTrendingPeople = of(result);
-          })
+          }),
         );
     }
     return this.cachedTrendingPeople;

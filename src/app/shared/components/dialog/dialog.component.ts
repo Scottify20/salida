@@ -15,6 +15,7 @@ import { PlatformCheckService } from '../../services/dom/platform-check.service'
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 import { fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { LoadingDotsComponent } from '../animated/loading-dots/loading-dots.component';
 
 export interface DialogProps {
   config: {
@@ -44,12 +45,14 @@ interface PrimaryButton extends DialogButton {
 interface DialogButton {
   label: string | Signal<string | null | undefined> | (() => string);
   onClickCallback: () => void;
+  isBusySig?: WritableSignal<boolean>;
+  isHiddenSig?: WritableSignal<boolean>;
 }
 
 @Component({
   selector: 'app-dialog',
   standalone: true,
-  imports: [],
+  imports: [LoadingDotsComponent],
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',
 })
@@ -75,16 +78,6 @@ export class DialogComponent {
 
   @ViewChild('dialog') dialogRef!: ElementRef;
   @ViewChild('backdrop') backdropRef!: ElementRef | undefined;
-
-  ngOnInit() {
-    if (this.platformCheckService.isServer()) {
-      return;
-    }
-
-    this.document.body.appendChild(this.elementRef.nativeElement);
-    this.startOutsideClicksListener();
-  }
-
   @Input({ required: true }) dialogProps: DialogProps = {
     config: {
       id: '',
@@ -105,6 +98,20 @@ export class DialogComponent {
       },
     },
   };
+
+  isPrimaryButtonBusy =
+    this.dialogProps.buttons.primary.isBusySig || signal(false);
+  isSecondaryButtonBusy =
+    this.dialogProps.buttons.secondary?.isBusySig || signal(false);
+
+  ngOnInit() {
+    if (this.platformCheckService.isServer()) {
+      return;
+    }
+
+    this.document.body.appendChild(this.elementRef.nativeElement);
+    this.startOutsideClicksListener();
+  }
 
   // checks if the user clicks outside the dialog or outside the elemnents with ids listed on the props
   // then closes the dialog
@@ -129,7 +136,7 @@ export class DialogComponent {
             this.dialogProps.config.isOpenSig()
           ) {
             this.dialogProps.config.isOpenSig.set(false);
-          } else {
+            this.resetBusyAndDisabledStates();
           }
         }),
       )
@@ -140,6 +147,15 @@ export class DialogComponent {
     this.dialogProps.config.isOpenSig.set(false);
   }
 
+  resetBusyAndDisabledStates() {
+    const primaryButton = this.dialogProps.buttons.primary;
+    const secondaryButton = this.dialogProps.buttons.secondary;
+    primaryButton.isBusySig?.set(false);
+    primaryButton.isHiddenSig?.set(false);
+    secondaryButton?.isBusySig?.set(false);
+    secondaryButton?.isHiddenSig?.set(false);
+  }
+
   getTextFromTextItem(
     text:
       | undefined
@@ -148,6 +164,24 @@ export class DialogComponent {
       | (() => string),
   ): string | null | undefined {
     return !text ? undefined : typeof text === 'string' ? text : text();
+  }
+
+  onPrimaryButtonClicked() {
+    const primaryButton = this.dialogProps.buttons.primary;
+    primaryButton.onClickCallback();
+
+    if (!primaryButton.isBusySig) {
+      this.closeDialog();
+    }
+  }
+
+  onSecondaryButtonClicked() {
+    const secondaryButton = this.dialogProps.buttons.secondary;
+    secondaryButton?.onClickCallback();
+
+    if (!secondaryButton?.isBusySig) {
+      this.closeDialog();
+    }
   }
 
   ngOnDestroy() {

@@ -1,74 +1,79 @@
+<app-dialog [dialogProps]="createAccountSuccessDialogProps"></app-dialog>
 <app-dialog [dialogProps]="confirmSetUsernameDialogProps"></app-dialog>
 <app-dialog [dialogProps]="skipUsernameDialogProps"></app-dialog>
-<app-dialog [dialogProps]="createAccountSuccessDialogProps"></app-dialog>
 
-<div class="username-setting">
-  <div class="username-setting__header">
-    <app-progress-indicator
-      [progressIndicatorProps]="progressIndicatorProps"
-    ></app-progress-indicator>
-  </div>
-
-  <div class="username-setting__main">
-    <div class="username-setting__header-container">
-      <h1 class="username-setting__title">Set your username</h1>
-      <img
-        src="assets/icons/login/illustration-temp.svg"
-        alt=""
-        width="130px"
-        height="130px"
-        class="username-setting__avatar"
-      />
+@if (!isAccountCreationSuccessful()) {
+  <div class="username-setting">
+    <div class="username-setting__header">
+      <app-progress-indicator
+        [progressIndicatorProps]="progressIndicatorProps"
+      ></app-progress-indicator>
     </div>
 
-    <form
-      class="username-setting__section username-setting__form-container"
-      [formGroup]="setUsernameForm"
-    >
-      <div class="field">
-        <label for="username" class="label">USERNAME</label>
-        <input
-          tabindex="1"
-          placeholder="Enter a unique username"
-          type="text"
-          class="input"
-          formControlName="username"
+    <div class="username-setting__main">
+      <div class="username-setting__header-container">
+        <h1 class="username-setting__title">Set your username</h1>
+        <img
+          src="assets/icons/login/illustration-temp.svg"
+          alt=""
+          width="130px"
+          height="130px"
+          class="username-setting__avatar"
         />
-        <div class="form__error-messages-container">
-          @for (error of usernameErrorMessages(); let i = $index; track i) {
-            <p
-              [class]="isUsernamePatternInvalid() ? '' : 'no-error'"
-              class="form__error-message"
-            >
-              {{ error }}
-            </p>
-          }
-          <p class="form__error-message">
-            <!-- {{ ErrorMessagesSig().username }} -->
-          </p>
-        </div>
       </div>
 
-      <div class="field buttons">
-        <button
-          (click)="onSkip()"
-          id="skip-username-setting-button"
-          tabindex="1"
-          class="skip-username-setting-button"
-        >
-          Skip
-        </button>
-        <button
-          (click)="onSetUsernameButtonClicked()"
-          id="username-setting-button"
-          [class]="isSetUsernameButtonDisabled() ? 'disabled' : ''"
-          tabindex="1"
-          type="submit"
-          class="username-setting-button"
-        >
-          Set username
-        </button>
-      </div>
-    </form>
+      <form
+        class="username-setting__section username-setting__form-container"
+        [formGroup]="setUsernameForm"
+      >
+        <div class="field">
+          <label for="username" class="label">USERNAME</label>
+          <input
+            tabindex="1"
+            placeholder="Enter a unique username"
+            type="text"
+            class="input"
+            formControlName="username"
+          />
+          <div class="form__error-messages-container">
+            @for (error of usernameErrorMessages(); let i = $index; track i) {
+              <p
+                [class]="isUsernamePatternInvalid() ? '' : 'no-error'"
+                class="form__error-message"
+              >
+                {{ error }}
+              </p>
+              <p class="form__error-message">
+                {{ authErrorMessageSig().username }}
+              </p>
+            }
+            <p class="form__error-message">
+              <!-- {{ ErrorMessagesSig().username }} -->
+            </p>
+          </div>
+        </div>
+
+        <div class="field buttons">
+          <button
+            (click)="onSkip()"
+            id="skip-username-setting-button"
+            tabindex="1"
+            class="skip-username-setting-button"
+          >
+            Skip
+          </button>
+          <button
+            (click)="onSetUsernameButtonClicked()"
+            id="username-setting-button"
+            [class]="isSetUsernameButtonDisabled() ? 'disabled' : ''"
+            tabindex="1"
+            type="submit"
+            class="username-setting-button"
+          >
+            Set username
+          </button>
+        </div>
+      </form>
+    </div>
   </div>
-</div>
+}
