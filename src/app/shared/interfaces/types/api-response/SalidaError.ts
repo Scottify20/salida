@@ -19,7 +19,8 @@ export type SalidaAuthErrorCode =
   | 'auth/username-already-in-use'
   | 'auth/internal-error'
   | 'auth/cannot-connect-to-server'
-  | 'auth/invalid-credentials';
+  | 'auth/invalid-credentials'
+  | 'auth/username-already-set';
 
 export type SalidaAuthErrorSource =
   | 'password'

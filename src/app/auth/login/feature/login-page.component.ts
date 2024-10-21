@@ -283,8 +283,14 @@ export class LoginPageComponent {
     ) {
       const firebaseAuthError =
         this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-      errorSource = firebaseAuthError.errorSource;
-      errorMessage = firebaseAuthError.message;
+      errorSource = firebaseAuthError?.errorSource;
+      errorMessage = firebaseAuthError?.message;
+
+      // if the getFirebaseAuthErrorMessage function returns null, return and do not show any error message
+      // the function returns null when the message isnt supposed to be seen by the user.
+      if (!errorSource || !errorMessage) {
+        return;
+      }
     }
 
     if (!errorSource || !errorMessage) {

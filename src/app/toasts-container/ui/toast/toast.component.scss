@@ -47,6 +47,7 @@
 }
 
 .toast__action-button {
+  pointer-events: all;
   border-radius: 1000px;
   transform: scale(1);
   cursor: pointer;

@@ -1,4 +1,4 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, computed, DestroyRef, signal } from '@angular/core';
 import { ProgressIndicatorProps } from '../../../../shared/ui/progress-indicator/progress-indicator.model';
 import { ProgressIndicatorComponent } from '../../../../shared/ui/progress-indicator/progress-indicator.component';
 import { DividerWithTitleComponent } from '../../../../shared/ui/divider-with-title/divider-with-title.component';
@@ -7,11 +7,14 @@ import {
   DialogComponent,
   DialogProps,
 } from '../../../../../shared/components/dialog/dialog.component';
-import { usernameValidator } from '../../../../validators/username-validator';
+import {
+  usernameValidator,
+  validUsernameCharRegex,
+} from '../../../../validators/username-validator';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../../core/user/user.service';
 import { AuthError } from '@angular/fire/auth';
-import { catchError, of, take, tap } from 'rxjs';
+import { catchError, delay, fromEvent, map, of, take, tap } from 'rxjs';
 import { SalidaAuthError } from '../../../../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../../../shared/interfaces/types/api-response/SalidaError';
 import {
@@ -20,6 +23,8 @@ import {
 } from '../../../../../core/auth/firebase-auth.service';
 import { SalidaAuthService } from '../../../../../core/auth/salida-auth.service';
 import { ToastsService } from '../../../../../toasts-container/data-access/toasts.service';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
 
 @Component({
   selector: 'app-username-setting-page',
@@ -41,34 +46,66 @@ export class UsernameSettingPageComponent {
     private salidaAuthService: SalidaAuthService,
     private firebaseAuthService: FirebaseAuthService,
     private toastsService: ToastsService,
+    private destroyRef: DestroyRef,
+    private platformCheckService: PlatformCheckService,
   ) {}
-
-  progressIndicatorProps: ProgressIndicatorProps = {
-    visitedSteps: 2,
-    steps: 2,
-  };
 
   authErrorMessageSig = signal<{ username: string | null }>({
     username: null,
   });
   usernameErrorMessageSig = signal<string>('');
 
-  passwordInputType: 'text' | 'password' = 'password';
-  // isSubmittedAtleastOnce = false;
   isSubmitActioninProgress = false;
   isAccountCreationSuccessful = signal(false);
 
   isSubmitted = false;
-  isUsernameAvailable = signal(false);
+  // isUsernameAvailable = signal(false);
   // isUsernameSetOrIsSkipped = signal(false);
   // isUsernameValid = computed(
   //   () =>
   //     this.setUsernameForm.get('username')?.valid && this.isUsernameAvailable(),
   // );
 
+  userDisplayPhotoURLSig = this.userService.userPhotoUrlSig || signal(null);
+
+  ngOnInit() {
+    this.startListeningForEnterKey();
+  }
+
+  startListeningForEnterKey() {
+    if (this.platformCheckService.isServer()) {
+      return;
+    }
+
+    fromEvent(document, 'keydown')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event: any) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+        }
+
+        if (
+          event.key === 'Enter' &&
+          !this.confirmSetUsernameDialogProps.config.isOpenSig()
+        ) {
+          setTimeout(() => {
+            this.onSetUsernameButtonClicked();
+          }, 100);
+        }
+      });
+  }
+
   setUsernameForm = this.fb.group({
     username: ['', [Validators.required, usernameValidator()]],
   });
+
+  isSetUsernameButtonDisabled(): boolean {
+    return this.isUsernamePatternInvalid() || this.isSubmitActioninProgress;
+  }
+
+  isUsernamePatternInvalid(): boolean {
+    return this.setUsernameForm.get('username')?.invalid ? true : false;
+  }
 
   usernameErrorMessages(): string[] {
     const errorMessages: string[] = [];
@@ -76,7 +113,7 @@ export class UsernameSettingPageComponent {
 
     if (
       usernameControl?.hasError('required') &&
-      (usernameControl.dirty || usernameControl?.touched)
+      (usernameControl.dirty || usernameControl.touched)
     ) {
       errorMessages.push('Username is required.');
       return errorMessages;
@@ -109,20 +146,19 @@ export class UsernameSettingPageComponent {
     return errorMessages;
   }
 
-  // usernameInvalidCharactersChecker(): { char: string; invalid: boolean }[] {
-  //   const rawPassword = this.signupForm.get('password')?.getRawValue() || '';
-  //   const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
-  //   const segments = segmenter.segment(rawPassword);
-  //   const characters = Array.from(segments).map((segment) => segment.segment);
+  usernameInvalidCharactersChecker(): { char: string; invalid: boolean }[] {
+    const rawUsername =
+      this.setUsernameForm.get('username')?.getRawValue() || '';
+    const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
+    const segments = segmenter.segment(rawUsername);
+    const characters = Array.from(segments).map((segment) => segment.segment);
 
-  //   return characters.map((char) => {
-  //     return this.passwordInputType === 'password'
-  //       ? { char: '•', invalid: false }
-  //       : validPasswordCharRegex.test(char)
-  //         ? { char: char, invalid: false }
-  //         : { char: char, invalid: true };
-  //   });
-  // }
+    return characters.map((char) => {
+      return validUsernameCharRegex.test(char)
+        ? { char: char, invalid: false }
+        : { char: char, invalid: true };
+    });
+  }
 
   onSkip() {
     this.skipUsernameDialogProps.config.isOpenSig.set(true);
@@ -192,8 +228,14 @@ export class UsernameSettingPageComponent {
     ) {
       const firebaseAuthError =
         this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-      errorSource = firebaseAuthError.errorSource;
-      errorMessage = firebaseAuthError.message;
+      errorSource = firebaseAuthError?.errorSource;
+      errorMessage = firebaseAuthError?.message;
+
+      // if the getFirebaseAuthErrorMessage function returns null, return and do not show any error message
+      // the function returns null when the message isnt supposed to be seen by the user.
+      if (!errorSource || !errorMessage) {
+        return;
+      }
     }
 
     if (!errorSource || !errorMessage) {
@@ -201,7 +243,6 @@ export class UsernameSettingPageComponent {
         iconPath: '/assets/icons/toast/error.svg',
         text: 'An unexpected error has occurred.',
         scope: 'route',
-        duration: 0,
       });
       return;
     }
@@ -211,21 +252,12 @@ export class UsernameSettingPageComponent {
         iconPath: '/assets/icons/toast/error.svg',
         text: errorMessage,
         scope: 'route',
-        duration: 0,
       });
     }
 
     this.authErrorMessageSig.set({
       username: errorSource === 'username' ? errorMessage : null,
     });
-  }
-
-  isSetUsernameButtonDisabled(): boolean {
-    return this.isUsernamePatternInvalid() || this.isSubmitActioninProgress;
-  }
-
-  isUsernamePatternInvalid(): boolean {
-    return this.setUsernameForm.get('username')?.invalid ? true : false;
   }
 
   confirmSetUsernameDialogProps: DialogProps = {
@@ -279,7 +311,7 @@ export class UsernameSettingPageComponent {
     mainContent: {
       iconPath: 'assets/icons/dialog/warning.svg',
       title: 'Skip setting username?',
-      textItems: ['You can set your username later in your user profile page.'],
+      textItems: ['You can set your username later in your user profile.'],
     },
     buttons: {
       primary: {
@@ -295,7 +327,7 @@ export class UsernameSettingPageComponent {
       secondary: {
         label: 'Cancel',
         onClickCallback: () => {
-          // proceeded to setting username
+          // dialog automatically closed // proceed to setting username
         },
       },
     },
@@ -318,9 +350,19 @@ export class UsernameSettingPageComponent {
         type: 'success',
         label: 'Proceed',
         onClickCallback: () => {
-          this.router.navigateByUrl('/');
+          try {
+            this.router.navigateByUrl('/');
+            setTimeout(() => {
+              window.location.reload();
+            }, 0);
+          } catch {}
         },
       },
     },
+  };
+
+  progressIndicatorProps: ProgressIndicatorProps = {
+    visitedSteps: 2,
+    steps: 2,
   };
 }

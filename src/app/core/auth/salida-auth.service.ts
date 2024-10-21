@@ -42,7 +42,9 @@ export class SalidaAuthService {
       case 'auth/username-already-in-use':
         message = 'That username is already taken.';
         break;
-
+      case 'auth/username-already-set':
+        message = 'Your username was already set and cannot be changed.';
+        break;
       case 'auth/internal-error':
         break;
     }

@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
 import { HomeComponent } from './home/feature/home.component';
+import { loginAndSignupGuard } from './shared/guards/login-and-signup.guard';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,7 @@ export const routes: Routes = [
           import('./auth/login/feature/login-page.component').then(
             (m) => m.LoginPageComponent,
           ),
+        canActivate: [loginAndSignupGuard],
       },
       {
         path: 'signup',
@@ -24,6 +26,7 @@ export const routes: Routes = [
           import('./auth/signup/feature/sign-up-page.component').then(
             (m) => m.SignUpPageComponent,
           ),
+        canActivate: [loginAndSignupGuard],
       },
       {
         path: 'set-username',

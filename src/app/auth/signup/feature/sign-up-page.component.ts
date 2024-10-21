@@ -165,7 +165,7 @@ export class SignUpPageComponent {
   private registerUserToFirestore(user: User) {
     this.userService
       .registerUserDataToFirestore(user)
-      .pipe(take(1), delay(500))
+      .pipe(take(1))
       .subscribe((response) => {
         if (!response) {
           this.toastsService.addToast({
@@ -204,8 +204,14 @@ export class SignUpPageComponent {
     ) {
       const firebaseAuthError =
         this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-      errorSource = firebaseAuthError.errorSource;
-      errorMessage = firebaseAuthError.message;
+      errorSource = firebaseAuthError?.errorSource;
+      errorMessage = firebaseAuthError?.message;
+
+      // if the getFirebaseAuthErrorMessage function returns null,  return and do not show any error message
+      // the function returns null when the message isnt supposed to be seen by the user.
+      if (!errorSource || !errorMessage) {
+        return;
+      }
     }
 
     if (!errorSource || !errorMessage) {

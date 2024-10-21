@@ -11,7 +11,7 @@ export function usernameValidator(): ValidatorFn {
           maxLength: control.value.length > 20,
           hasNonLetterAsFirstCharacter: !/^[a-zA-Z]/.test(control.value),
           containsWhitespace: /\s/.test(control.value),
-          invalidCharacter: !/^[a-zA-Z0-9\s]+$/.test(control.value),
+          invalidCharacter: !/^[a-zA-Z0-9\._-\s]+$/.test(control.value),
         },
       };
     }
@@ -19,4 +19,4 @@ export function usernameValidator(): ValidatorFn {
   };
 }
 
-const validUsernameRegex = /^[a-zA-Z][a-zA-Z0-9\._-]{7,15}$/;
+export const validUsernameCharRegex = /^[a-zA-Z0-9\._-]$/;
