@@ -1,13 +1,13 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
-import { ToastsContainerComponent } from './toasts-container/feature/toasts-container.component';
+import { ToastsContainerComponent } from './shared/components/toasts/feature/toasts-container.component';
 import { PlatformCheckService } from './shared/services/dom/platform-check.service';
 
 import { FirebaseAuthService } from './core/auth/firebase-auth.service';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
-import { PageTransitionService } from './shared/services/navigation/page-transition.service';
-import { RouteHistoryService } from './shared/services/navigation/route-history.service';
+import { PageTransitionService } from './core/routing/page-transition.service';
+import { RouteHistoryService } from './core/routing/route-history.service';
 
 @Component({
   selector: 'app-root',

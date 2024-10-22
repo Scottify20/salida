@@ -1,12 +1,12 @@
 import { Component, DestroyRef } from '@angular/core';
 import { FirebaseAuthService } from '../../../../core/auth/firebase-auth.service';
 import { AsyncPipe } from '@angular/common';
-import { catchError, delay, of, Subscription, take, tap } from 'rxjs';
-import { ToastsService } from '../../../../toasts-container/data-access/toasts.service';
+import { catchError, of, take, tap } from 'rxjs';
+import { ToastsService } from '../../../../shared/components/toasts/data-access/toasts.service';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { UserService } from '../../../../core/user/user.service';
-import { AuthError, User, UserMetadata } from 'firebase/auth';
+import { User } from 'firebase/auth';
 
 @Component({
   selector: 'app-socials-sign-in',
@@ -46,9 +46,19 @@ export class SocialsSignInComponent {
             iconPath: 'assets/icons/toast/success.svg',
           });
 
+          // if the account is newly created, the createdAt and lastLoginAt will have roughly the same value which will then trigger the registration of the user to firestore
           const metadata = user.metadata as any;
-          // if the account is newly created, the createdAt and lastLoginAt will be the same which will then trigger the registration of the user to firestore
-          if (metadata.createdAt === metadata.lastLoginAt) {
+          // the threshold is in milliseconds if the difference between lastLoginAt and createdAt is less than or equal than the threshold, its considered as newly created
+          const threshold = 10 * 1000;
+
+          console.log(
+            metadata.createdAt,
+            metadata.lastLoginAt,
+            metadata.lastLoginAt - metadata.createdAt,
+          );
+
+          if (metadata.lastLoginAt - metadata.createdAt <= threshold) {
+            console.log('registering');
             this.registerUserToFirestore(user);
           } else {
             this.router.navigateByUrl('/');
@@ -101,7 +111,7 @@ export class SocialsSignInComponent {
           return;
         }
         // Signup and register request finished, set in progress to false
-        this.router.navigateByUrl('/auth/set-username');
+        this.router.navigateByUrl('/auth/user/set-username');
       });
   }
 }

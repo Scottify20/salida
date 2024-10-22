@@ -8,7 +8,7 @@ import { SalidaResponse } from '../../shared/interfaces/types/api-response/Salid
 import { FirebaseAuthService } from '../auth/firebase-auth.service';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 import { authState } from '@angular/fire/auth';
-import { ToastsService } from '../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../shared/components/toasts/data-access/toasts.service';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 
 @Injectable({

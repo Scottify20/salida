@@ -10,7 +10,7 @@ import {
 import {
   usernameValidator,
   validUsernameCharRegex,
-} from '../../../../validators/username-validator';
+} from '../../../../shared/validators/username-validator';
 import { Router } from '@angular/router';
 import { UserService } from '../../../../../core/user/user.service';
 import { AuthError } from '@angular/fire/auth';
@@ -22,7 +22,7 @@ import {
   FirebaseAuthService,
 } from '../../../../../core/auth/firebase-auth.service';
 import { SalidaAuthService } from '../../../../../core/auth/salida-auth.service';
-import { ToastsService } from '../../../../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../../../../shared/components/toasts/data-access/toasts.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
 

@@ -28,7 +28,7 @@ import { AuthError } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaError';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
-import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../../shared/components/toasts/data-access/toasts.service';
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/divider-with-title.component';
 

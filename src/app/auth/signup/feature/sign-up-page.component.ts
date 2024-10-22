@@ -16,7 +16,7 @@ import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-
 import {
   passwordValidator,
   validPasswordCharRegex,
-} from '../../validators/password-validator';
+} from '../../shared/validators/password-validator';
 import { Router, RouterModule } from '@angular/router';
 import {
   FirebaseAuthErrorSource,
@@ -35,7 +35,7 @@ import {
 import { AuthError, User } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaError';
-import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../../shared/components/toasts/data-access/toasts.service';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
 import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
@@ -179,7 +179,7 @@ export class SignUpPageComponent {
         // Signup and register request finished, set in progress to false
         this.isSignupActionInProgress.set(false);
 
-        this.router.navigateByUrl('/auth/set-username');
+        this.router.navigateByUrl('/auth/user/set-username');
       });
   }
 
