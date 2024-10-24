@@ -6,17 +6,15 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  HeaderButtonsComponent,
-  HeaderButton,
-} from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButton } from '../../../shared/components/header-button/header-button.component';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
 import {
   passwordValidator,
   validPasswordCharRegex,
-} from '../../validators/password-validator';
+} from '../../shared/validators/password-validator';
 import { Router, RouterModule } from '@angular/router';
 import {
   FirebaseAuthErrorSource,
@@ -35,7 +33,7 @@ import {
 import { AuthError, User } from 'firebase/auth';
 import { SalidaAuthError } from '../../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaAuthErrorSource } from '../../../shared/interfaces/types/api-response/SalidaError';
-import { ToastsService } from '../../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../../shared/components/toasts/data-access/toasts.service';
 import { SalidaAuthService } from '../../../core/auth/salida-auth.service';
 import { ProgressIndicatorComponent } from '../../shared/ui/progress-indicator/progress-indicator.component';
 import { ProgressIndicatorProps } from '../../shared/ui/progress-indicator/progress-indicator.model';
@@ -165,7 +163,7 @@ export class SignUpPageComponent {
   private registerUserToFirestore(user: User) {
     this.userService
       .registerUserDataToFirestore(user)
-      .pipe(take(1), delay(500))
+      .pipe(take(1))
       .subscribe((response) => {
         if (!response) {
           this.toastsService.addToast({
@@ -204,8 +202,14 @@ export class SignUpPageComponent {
     ) {
       const firebaseAuthError =
         this.firebaseAuthService.getFirebaseAuthErrorMessage(error.code);
-      errorSource = firebaseAuthError.errorSource;
-      errorMessage = firebaseAuthError.message;
+      errorSource = firebaseAuthError?.errorSource;
+      errorMessage = firebaseAuthError?.message;
+
+      // if the getFirebaseAuthErrorMessage function returns null,  return and do not show any error message
+      // the function returns null when the message isnt supposed to be seen by the user.
+      if (!errorSource || !errorMessage) {
+        return;
+      }
     }
 
     if (!errorSource || !errorMessage) {

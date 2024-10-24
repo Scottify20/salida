@@ -5,8 +5,6 @@ import {
   Input,
   signal,
   ViewChild,
-  AfterViewInit,
-  OnDestroy,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
@@ -18,14 +16,18 @@ import { PlatformCheckService } from '../../services/dom/platform-check.service'
   templateUrl: './collapsible-text-section.component.html',
   styleUrl: './collapsible-text-section.component.scss',
 })
-export class CollapsibleTextSectionComponent
-  implements AfterViewInit, OnDestroy
-{
+export class CollapsibleTextSectionComponent {
   constructor(private platformCheckService: PlatformCheckService) {}
+
+  @Input({ required: true })
+  collapsibleTextSectionProps: CollapsibleTextSectionOptions = {
+    text: '',
+    maxLines: 3,
+  };
 
   // Computed signal: True if the text content overflows its collapsed height.
   isOverFlowing = computed(
-    () => this.textElementHeight() - this.collapsedHeight() > 0,
+    () => this.textElementHeight() - this.collapsedHeight(),
   );
 
   isExpanded = signal(false);
@@ -39,14 +41,27 @@ export class CollapsibleTextSectionComponent
   collapsedHeight = signal(0);
   textElementHeight = signal(0);
 
+  animateLengthClass = computed(() => {
+    const lineHeightDiff =
+      this.expandedHeight() / 1.5 / this.getRem() -
+      this.collapsibleTextSectionProps.maxLines;
+
+    return lineHeightDiff > 20
+      ? 'very-very-very-long'
+      : lineHeightDiff > 20
+        ? 'very-very-long'
+        : lineHeightDiff > 15
+          ? 'very-long'
+          : lineHeightDiff > 10
+            ? 'long'
+            : lineHeightDiff > 4
+              ? 'medium'
+              : 'short';
+  });
+
   // Signal: Dynamically sets the 'max-height' style of the text container.
   currentHeight = signal('0px');
   applyTransition = false;
-
-  @Input({ required: true })
-  collapsibleTextSectionProps: CollapsibleTextSectionOptions = {
-    texts: [],
-  };
 
   private resizeObserver: ResizeObserver | null = null;
 
@@ -75,7 +90,9 @@ export class CollapsibleTextSectionComponent
 
   // Updates the calculated heights of the text container and its shadow element.
   private updateHeights() {
-    this.collapsedHeight.set(this.getRem() * 3 * 1.5);
+    this.collapsedHeight.set(
+      this.getRem() * this.collapsibleTextSectionProps.maxLines * 1.5,
+    );
     this.expandedHeight.set(
       this.shadowTextContainer.nativeElement.offsetHeight,
     );
@@ -111,5 +128,6 @@ export class CollapsibleTextSectionComponent
 
 export interface CollapsibleTextSectionOptions {
   sectionTitle?: string; // Optional title for the section.
-  texts: string[]; // Array of text strings to display.
+  text: string; // Array of text strings to display.
+  maxLines: number;
 }

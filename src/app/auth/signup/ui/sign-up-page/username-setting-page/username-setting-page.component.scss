@@ -42,6 +42,7 @@
     text-align: center;
   }
   .username-setting__avatar {
+    border-radius: 10000px;
   }
 }
 
@@ -113,13 +114,18 @@
       transform: scale(0.95);
       opacity: 50%;
     }
+
+    &:focus {
+      outline: 2px solid var(--color-accent);
+      outline-offset: 2px;
+    }
   }
 
   .skip-username-setting-button {
     opacity: 85%;
   }
 
-  button[type="submit"].username-setting-button {
+  button.username-setting-button {
     display: grid;
     place-content: center;
     cursor: pointer;
@@ -161,5 +167,72 @@
   }
   .username-setting__main {
     min-width: unset;
+  }
+}
+
+.username-input-and-checker-container {
+  position: relative;
+  // border: 1px solid red;
+
+  .username-input {
+    caret-color: white;
+    color: transparent !important;
+    font-family: monospace, sans-serif;
+
+    &::placeholder {
+      font-family: Inter, sans-serif;
+    }
+  }
+
+  .username-setting__username-character-checker {
+    z-index: 10000;
+    // border: 1px solid green;
+    pointer-events: none;
+    position: absolute;
+    inset: 0;
+    align-items: start;
+    padding: calc((2.625rem - 1rem) / 2);
+    height: 100%;
+    width: 100%;
+
+    display: grid;
+    align-content: center;
+
+    grid-template-columns: auto 1fr;
+
+    p > .login__password-char {
+      font-family: monospace, sans-serif;
+    }
+
+    p.chars-right-padding {
+      width: 100%;
+      flex-grow: 1;
+      flex-shrink: 1;
+    }
+
+    p {
+      display: flex;
+      justify-content: start;
+      flex-flow: row nowrap;
+      right: 20px;
+      min-width: 100%;
+    }
+
+    p > .login__password-char.invalid {
+      min-height: 1em;
+      position: relative;
+      color: var(--text-color-danger);
+      min-width: 0.55rem;
+
+      &::after {
+        content: "";
+        inset: 0;
+        position: absolute;
+        min-width: 75%;
+        height: 100%;
+        margin: 0 auto;
+        border-bottom: 1.75px solid var(--text-color-danger);
+      }
+    }
   }
 }

@@ -1,7 +1,8 @@
 import { Routes } from '@angular/router';
 import { NotFoundComponent } from './not-found/not-found.component';
-import { personDetailsRoutes } from './details/person-details/feature/person-details.routes';
-import { HomeComponent } from './home/feature/home.component';
+import { personDetailsRoutes } from './features/details/person-details/feature/person-details.routes';
+import { HomeComponent } from './features/home/feature/home.component';
+import { loginAndSignupGuard } from './auth/shared/guards/login-and-signup.guard';
 
 export const routes: Routes = [
   {
@@ -17,6 +18,7 @@ export const routes: Routes = [
           import('./auth/login/feature/login-page.component').then(
             (m) => m.LoginPageComponent,
           ),
+        canActivate: [loginAndSignupGuard],
       },
       {
         path: 'signup',
@@ -24,6 +26,7 @@ export const routes: Routes = [
           import('./auth/signup/feature/sign-up-page.component').then(
             (m) => m.SignUpPageComponent,
           ),
+        canActivate: [loginAndSignupGuard],
       },
       {
         path: 'set-username',
@@ -37,16 +40,16 @@ export const routes: Routes = [
   {
     path: 'movie/:id',
     loadComponent: () =>
-      import('./details/movie-details/feature/movie-details.component').then(
-        (m) => m.MovieDetailsComponent,
-      ),
+      import(
+        './features/details/movie-details/feature/movie-details.component'
+      ).then((m) => m.MovieDetailsComponent),
   },
   {
     path: 'series/:id',
     loadComponent: () =>
-      import('./details/series-details/feature/series-details.component').then(
-        (m) => m.SeriesDetailsComponent,
-      ),
+      import(
+        './features/details/series-details/feature/series-details.component'
+      ).then((m) => m.SeriesDetailsComponent),
   },
   { path: 'people/:id', children: personDetailsRoutes },
   {
@@ -55,7 +58,7 @@ export const routes: Routes = [
       {
         path: ':username',
         loadComponent: () =>
-          import('./user/ui/user-profile/user-profile.component').then(
+          import('./features/user/ui/user-profile/user-profile.component').then(
             (m) => m.UserProfileComponent,
           ),
       },
@@ -65,21 +68,16 @@ export const routes: Routes = [
   {
     path: 'lists',
     loadComponent: () =>
-      import('./lists/feature/lists-home.component').then(
+      import('./features/lists/feature/lists-home.component').then(
         (m) => m.ListsHomeComponent,
       ),
   },
   {
     path: 'search',
     loadComponent: () =>
-      import('./search/feature/search-home.component').then(
+      import('./features/search/feature/search-home.component').then(
         (m) => m.SearchHomeComponent,
       ),
-  },
-  {
-    path: 'trending',
-    loadChildren: () =>
-      import('./trending/trending.module').then((m) => m.TrendingModule),
   },
   { path: '**', component: NotFoundComponent },
 ];

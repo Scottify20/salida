@@ -14,7 +14,10 @@
       <div class="username-setting__header-container">
         <h1 class="username-setting__title">Set your username</h1>
         <img
-          src="assets/icons/login/illustration-temp.svg"
+          [src]="
+            userDisplayPhotoURLSig() ||
+            'assets/icons/login/illustration-temp.svg'
+          "
           alt=""
           width="130px"
           height="130px"
@@ -28,13 +31,35 @@
       >
         <div class="field">
           <label for="username" class="label">USERNAME</label>
-          <input
-            tabindex="1"
-            placeholder="Enter a unique username"
-            type="text"
-            class="input"
-            formControlName="username"
-          />
+
+          <div class="username-input-and-checker-container">
+            <input
+              tabindex="1"
+              placeholder="Enter a unique username"
+              type="text"
+              class="username-input"
+              formControlName="username"
+              maxlength="25"
+            />
+
+            <div class="username-setting__username-character-checker">
+              <p>
+                @for (
+                  charCheck of usernameInvalidCharactersChecker();
+                  let i = $index;
+                  track i
+                ) {
+                  <span
+                    class="login__password-char"
+                    [class]="charCheck.invalid ? 'invalid' : ''"
+                    >{{ charCheck.char }}</span
+                  >
+                }
+              </p>
+              <p class="chars-right-padding"></p>
+            </div>
+          </div>
+
           <div class="form__error-messages-container">
             @for (error of usernameErrorMessages(); let i = $index; track i) {
               <p
@@ -67,7 +92,6 @@
             id="username-setting-button"
             [class]="isSetUsernameButtonDisabled() ? 'disabled' : ''"
             tabindex="1"
-            type="submit"
             class="username-setting-button"
           >
             Set username

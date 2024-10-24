@@ -13,7 +13,7 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
-import { fromEvent, tap } from 'rxjs';
+import { delay, fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadingDotsComponent } from '../animated/loading-dots/loading-dots.component';
 
@@ -111,6 +111,32 @@ export class DialogComponent {
 
     this.document.body.appendChild(this.elementRef.nativeElement);
     this.startOutsideClicksListener();
+    this.startListeningForEnterKey();
+  }
+
+  // this listen for the enter key while its open
+  startListeningForEnterKey() {
+    if (this.platformCheckService.isServer()) {
+      return;
+    }
+
+    fromEvent(document, 'keydown')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((event: any) => {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+        }
+
+        if (event.key === 'Enter' && this.dialogProps.config.isOpenSig()) {
+          // event.preventDefault();
+          const primaryButton = this.dialogProps.buttons.primary;
+          primaryButton.onClickCallback();
+
+          if (!primaryButton.isBusySig) {
+            this.closeDialog();
+          }
+        }
+      });
   }
 
   // checks if the user clicks outside the dialog or outside the elemnents with ids listed on the props

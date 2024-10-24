@@ -1,0 +1,21 @@
+<div
+  [id]="headerButtonProps.id"
+  tabindex="1"
+  role="headerButtonProps"
+  class="header__button"
+  [class]="
+    headerButtonProps.type === 'text'
+      ? 'header__button--text'
+      : 'header__button--icon'
+  "
+  (click)="callOnClickCallbackFn(headerButtonProps.onClickCallbackFn)"
+>
+  @if (headerButtonProps.type === "icon") {
+    <img [src]="getTextOrIconPath(headerButtonProps.iconPath)" alt="" />
+  }
+  @if (headerButtonProps.type === "text") {
+    <p class="header__button-label-text">
+      {{ getTextOrIconPath(headerButtonProps.text) }}
+    </p>
+  }
+</div>

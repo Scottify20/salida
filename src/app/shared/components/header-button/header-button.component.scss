@@ -1,0 +1,53 @@
+.header__button {
+  cursor: pointer;
+  font-size: 1.5rem;
+  display: grid;
+  place-content: center;
+  outline-offset: 2px;
+
+  border-radius: 500px;
+  overflow: hidden;
+
+  transition: all 0.2s ease-in-out;
+  transform: scale(1);
+
+  filter: drop-shadow(1px 1px 1px rgba(var(--bg-color), 0.4));
+
+  user-select: none;
+  * {
+    pointer-events: none;
+  }
+
+  &:hover {
+    filter: brightness(120%);
+  }
+
+  &:active {
+    filter: brightness(70%);
+    transform: scale(0.95);
+  }
+
+  &:focus {
+    outline: 2px dotted var(--color-accent);
+    outline-offset: 2px;
+  }
+}
+
+.header__button--icon {
+  padding: 0;
+  width: 2.125rem;
+  aspect-ratio: 1/1;
+}
+
+.header__button--text {
+  text-decoration: none;
+  width: min-content;
+  aspect-ratio: unset;
+  height: 2.125rem;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+img {
+  width: 100%;
+}

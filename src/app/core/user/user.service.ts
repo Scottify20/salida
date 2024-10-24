@@ -8,7 +8,7 @@ import { SalidaResponse } from '../../shared/interfaces/types/api-response/Salid
 import { FirebaseAuthService } from '../auth/firebase-auth.service';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
 import { authState } from '@angular/fire/auth';
-import { ToastsService } from '../../toasts-container/data-access/toasts.service';
+import { ToastsService } from '../../shared/components/toasts/data-access/toasts.service';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 
 @Injectable({
@@ -64,7 +64,7 @@ export class UserService {
         scope: 'route',
         iconPath: 'assets/icons/toast/error.svg',
       });
-      console.log('Failed to save user to firestore, cannot read user.');
+      // console.log('Failed to save user to firestore, cannot read user.');
       return of(null);
     }
 

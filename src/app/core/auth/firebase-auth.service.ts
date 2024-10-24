@@ -153,10 +153,12 @@ export class FirebaseAuthService {
     }
   }
 
+  // the function returns the message that will be shown to the user when a firebase auth error has occured
+  // it returns null when the message isn't supposed to be seen by the user.
   getFirebaseAuthErrorMessage(errorCode: string): {
     errorSource: FirebaseAuthErrorSource;
     message: string;
-  } {
+  } | null {
     let errorSource: FirebaseAuthErrorSource = 'general';
     let message = 'Unexpected error. Try again or contact the developer.';
 
@@ -177,8 +179,9 @@ export class FirebaseAuthService {
         errorSource = 'email';
         break;
       case AuthErrorCodes.POPUP_CLOSED_BY_USER:
-        message = 'Please allow popups.';
-        break;
+        return null;
+      case AuthErrorCodes.EXPIRED_POPUP_REQUEST:
+        return null;
       case AuthErrorCodes.INVALID_LOGIN_CREDENTIALS:
         message = 'The email or password you entered in incorrect.';
         errorSource = 'emailAndPassword';
