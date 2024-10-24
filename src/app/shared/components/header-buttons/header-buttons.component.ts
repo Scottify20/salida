@@ -1,20 +1,7 @@
 import { Component, Input, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-
-export type HeaderButton =
-  | {
-      type: 'text';
-      text: string | Signal<string | null | undefined> | (() => string);
-      id?: string;
-      onClickCallbackFn?: () => void;
-    }
-  | {
-      type: 'icon';
-      iconPath: string | Signal<string | null | undefined> | (() => string);
-      id?: string;
-      onClickCallbackFn?: () => void;
-    };
+import { HeaderButton } from '../header-button/header-button.component';
 
 @Component({
   selector: 'app-header-buttons',

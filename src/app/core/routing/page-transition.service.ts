@@ -67,7 +67,7 @@ export class PageTransitionService {
     }
 
     if (previousLength === currentLength) {
-      if (previousUrlSplitted[-1] !== currentUrlSplitted[-1]) {
+      if (currentUrlSplitted.length >= 3) {
         this.triggerSlideFromRightTransition();
         return;
       } else {

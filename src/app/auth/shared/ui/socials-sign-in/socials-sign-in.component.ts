@@ -51,14 +51,7 @@ export class SocialsSignInComponent {
           // the threshold is in milliseconds if the difference between lastLoginAt and createdAt is less than or equal than the threshold, its considered as newly created
           const threshold = 10 * 1000;
 
-          console.log(
-            metadata.createdAt,
-            metadata.lastLoginAt,
-            metadata.lastLoginAt - metadata.createdAt,
-          );
-
           if (metadata.lastLoginAt - metadata.createdAt <= threshold) {
-            console.log('registering');
             this.registerUserToFirestore(user);
           } else {
             this.router.navigateByUrl('/');
@@ -111,7 +104,7 @@ export class SocialsSignInComponent {
           return;
         }
         // Signup and register request finished, set in progress to false
-        this.router.navigateByUrl('/auth/user/set-username');
+        this.router.navigateByUrl('/auth/set-username');
       });
   }
 }

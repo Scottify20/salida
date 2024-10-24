@@ -13,17 +13,22 @@
     class="collapsible-texts-section__texts-container"
     [style.max-height]="currentHeight()"
     [ngClass]="{ 'apply-transition': applyTransition }"
+    [class]="animateLengthClass()"
     (click)="toggleExpanded(); applyTransition = true"
   >
-    <p #textElement class="collapsible-texts-section__text">
-      {{ collapsibleTextSectionProps.texts[0] }}
+    <p
+      #textElement
+      class="collapsible-texts-section__text"
+      [class]="isOverFlowing() ? 'overflowing' : ''"
+    >
+      {{ collapsibleTextSectionProps.text }}
     </p>
   </div>
 
   <!-- Invisible container to calculate the expanded height -->
   <div #shadowTextContainer class="shadow__texts-container">
     <p class="collapsible-texts-section__text">
-      {{ collapsibleTextSectionProps.texts[0] }}
+      {{ collapsibleTextSectionProps.text }}
     </p>
   </div>
 </div>
@@ -53,6 +58,7 @@
           stroke-linejoin="round"
         />
       </svg>
+      <!-- arrow up svg icon -->
     } @else {
       <p>•</p>
       <p>•</p>

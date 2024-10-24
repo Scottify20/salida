@@ -30,8 +30,11 @@
 }
 
 .review__profile-photo {
-  // position: sticky;
-  // top: 0;
+  position: sticky;
+  top: 4rem;
+  background-color: var(--body-bg-color);
+  z-index: 996;
+
   width: 55px;
   aspect-ratio: 1/1;
   object-fit: cover;
@@ -40,12 +43,25 @@
 }
 
 .review__header-texts {
-  // position: sticky;
-  // top: 0;
+  position: sticky;
+  top: 4.23rem;
+  background-color: var(--body-bg-color);
+  z-index: 996;
+
   grid-area: hd;
   display: grid;
   align-items: center;
-  // row-gap: 0.1rem;
+
+  box-shadow: 0 0.25rem 6px 0px var(--body-bg-color);
+
+  &::before {
+    position: absolute;
+    content: "";
+    top: -0.25rem; // Adjusted bottom to prevent overlap
+    height: 0.25rem; // Increased height for better visibility
+    width: 100%;
+    background: var(--body-bg-color);
+  }
 
   .review__username {
     font-size: 1.2rem;

@@ -72,7 +72,8 @@ export class MovieMoreDetailsComponent {
     const plot = this.movieData?.overview ? this.movieData.overview : '';
 
     return {
-      texts: [plot],
+      text: plot,
+      maxLines: 3,
     };
   }
 

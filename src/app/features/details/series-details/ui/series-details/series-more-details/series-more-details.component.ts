@@ -74,7 +74,8 @@ export class SeriesMoreDetailsComponent {
         : '';
 
     return {
-      texts: [plot],
+      text: plot,
+      maxLines: 3,
     };
   }
 

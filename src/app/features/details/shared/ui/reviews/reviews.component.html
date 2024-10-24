@@ -40,7 +40,13 @@
             </p>
           </div>
         </div>
-        <p [data]="review.content" markdown class="review__body"></p>
+        <app-collapsible-text-section
+          class="review__body"
+          [collapsibleTextSectionProps]="{
+            text: review.content,
+            maxLines: 5,
+          }"
+        ></app-collapsible-text-section>
       </div>
     }
   </div>
@@ -89,7 +95,13 @@
             </p>
           </div>
         </div>
-        <p [data]="review.content" markdown class="review__body"></p>
+        <app-collapsible-text-section
+          class="review__body"
+          [collapsibleTextSectionProps]="{
+            text: review.content,
+            maxLines: 6,
+          }"
+        ></app-collapsible-text-section>
       </div>
     }
   </div>

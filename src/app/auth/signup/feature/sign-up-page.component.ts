@@ -6,10 +6,8 @@ import {
   ViewChild,
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import {
-  HeaderButtonsComponent,
-  HeaderButton,
-} from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButton } from '../../../shared/components/header-button/header-button.component';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
@@ -179,7 +177,7 @@ export class SignUpPageComponent {
         // Signup and register request finished, set in progress to false
         this.isSignupActionInProgress.set(false);
 
-        this.router.navigateByUrl('/auth/user/set-username');
+        this.router.navigateByUrl('/auth/set-username');
       });
   }
 

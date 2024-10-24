@@ -64,7 +64,7 @@ export class UserService {
         scope: 'route',
         iconPath: 'assets/icons/toast/error.svg',
       });
-      console.log('Failed to save user to firestore, cannot read user.');
+      // console.log('Failed to save user to firestore, cannot read user.');
       return of(null);
     }
 

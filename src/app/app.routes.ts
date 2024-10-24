@@ -29,7 +29,7 @@ export const routes: Routes = [
         canActivate: [loginAndSignupGuard],
       },
       {
-        path: 'user/set-username',
+        path: 'set-username',
         loadComponent: () =>
           import(
             './auth/signup/ui/sign-up-page/username-setting-page/username-setting-page.component'

@@ -1,9 +1,7 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
-import {
-  HeaderButton,
-  HeaderButtonsComponent,
-} from '../../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButtonsComponent } from '../../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButton } from '../../../../shared/components/header-button/header-button.component';
 import { Router } from '@angular/router';
 
 @Component({

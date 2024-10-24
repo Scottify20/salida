@@ -3,10 +3,8 @@ import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
-import {
-  HeaderButtonsComponent,
-  HeaderButton,
-} from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButton } from '../../../shared/components/header-button/header-button.component';
 import { Router, RouterModule } from '@angular/router';
 import {
   catchError,

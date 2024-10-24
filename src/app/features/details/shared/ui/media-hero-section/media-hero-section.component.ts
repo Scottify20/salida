@@ -5,10 +5,8 @@ import { MovieDetailsService } from '../../../movie-details/data-access/movie-de
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { CommonModule, DOCUMENT } from '@angular/common';
 import { WindowResizeService } from '../../../../../shared/services/dom/window-resize.service';
-import {
-  HeaderButtonsComponent,
-  HeaderButton,
-} from '../../../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButtonsComponent } from '../../../../../shared/components/header-buttons/header-buttons.component';
+import { HeaderButton } from '../../../../../shared/components/header-button/header-button.component';
 import { Series } from '../../../../../shared/interfaces/models/tmdb/Series';
 import { TmdbConfigService } from '../../../../../shared/services/tmdb/tmdb-config.service';
 import { Movie } from '../../../../../shared/interfaces/models/tmdb/Movies';

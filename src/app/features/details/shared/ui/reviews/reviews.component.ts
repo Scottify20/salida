@@ -2,23 +2,27 @@ import { Component } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
-import { Reviews } from '../../../../../shared/interfaces/models/tmdb/All';
+import {
+  Review,
+  Reviews,
+} from '../../../../../shared/interfaces/models/tmdb/All';
 import { CommonModule } from '@angular/common';
 import {
   ReviewsPreferences,
   TemporaryUserPreferencesService,
 } from '../../../../../shared/services/preferences/temporary-user-preferences-service';
-import { MarkdownModule, provideMarkdown } from 'ngx-markdown';
 import { Movie } from '../../../../../shared/interfaces/models/tmdb/Movies';
 import { Series } from '../../../../../shared/interfaces/models/tmdb/Series';
+import { CollapsibleTextSectionComponent } from '../../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
+
+import removeMd from 'remove-markdown';
 
 @Component({
   selector: 'app-reviews',
   standalone: true,
-  imports: [CommonModule, MarkdownModule],
+  imports: [CommonModule, CollapsibleTextSectionComponent],
   templateUrl: './reviews.component.html',
   styleUrl: './reviews.component.scss',
-  providers: [provideMarkdown()],
 })
 export class ReviewsComponent {
   constructor(
@@ -41,8 +45,14 @@ export class ReviewsComponent {
             return null;
           }
 
-          const results = data.reviews.results.reverse();
-          return { ...data.reviews, results };
+          const resultsRemovedMarkdown = data.reviews.results.map(
+            (review: Review) => ({
+              ...review,
+              content: removeMd(review.content),
+            }),
+          );
+
+          return { ...data.reviews, results: resultsRemovedMarkdown.reverse() };
         }),
         tap((reviews) => {
           if (reviews) {
