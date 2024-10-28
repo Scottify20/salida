@@ -34,21 +34,21 @@
   }
 
   &.apply-transition.medium {
-    transition: max-height var(--material-easing) 0.5s;
+    transition: max-height var(--material-easing) 0.4s;
   }
 
   &.apply-transition.long {
-    transition: max-height var(--material-easing) 0.75s;
+    transition: max-height var(--material-easing) 0.55s;
   }
 
   &.apply-transition.very-long {
-    transition: max-height var(--material-easing) 1s;
+    transition: max-height var(--material-easing) 0.7s;
   }
   &.apply-transition.very-very-long {
-    transition: max-height var(--material-easing) 1.25s;
+    transition: max-height var(--material-easing) 0.85s;
   }
   &.apply-transition.very-very-very-long {
-    transition: max-height var(--material-easing) 1.5s;
+    transition: max-height var(--material-easing) 1s;
   }
 }
 
@@ -60,7 +60,7 @@
   line-height: 1.5rem;
 
   &:active.overflowing {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 }
 

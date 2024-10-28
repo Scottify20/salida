@@ -8,6 +8,14 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
+import { fromEvent, take, tap } from 'rxjs';
+
+export interface CollapsibleTextSectionOptions {
+  sectionTitle?: string; // Optional title for the section.
+  text: string; // Array of text strings to display.
+  maxLines: number;
+  restoreScrollPosition?: boolean;
+}
 
 @Component({
   selector: 'app-collapsible-text-section',
@@ -22,12 +30,12 @@ export class CollapsibleTextSectionComponent {
   @Input({ required: true })
   collapsibleTextSectionProps: CollapsibleTextSectionOptions = {
     text: '',
-    maxLines: 3,
+    maxLines: 0,
   };
 
   // Computed signal: True if the text content overflows its collapsed height.
   isOverFlowing = computed(
-    () => this.textElementHeight() - this.collapsedHeight(),
+    () => this.textElementHeight() - this.collapsedHeight() > 0,
   );
 
   isExpanded = signal(false);
@@ -40,6 +48,9 @@ export class CollapsibleTextSectionComponent {
   expandedHeight = signal(0);
   collapsedHeight = signal(0);
   textElementHeight = signal(0);
+
+  // signal to store the window top position right before the text is expanded
+  windowTopPositionBeforeExpand = signal(0);
 
   animateLengthClass = computed(() => {
     const lineHeightDiff =
@@ -122,12 +133,40 @@ export class CollapsibleTextSectionComponent {
   // Toggles the 'isExpanded' state and updates the container height.
   toggleExpanded() {
     this.isExpanded.set(!this.isExpanded());
+
+    if (
+      this.isExpanded() &&
+      this.collapsibleTextSectionProps.restoreScrollPosition
+    ) {
+      //if isExpanded is set to true //save the window top position before the height of the text is updated
+      this.windowTopPositionBeforeExpand.set(window.scrollY);
+    } else if (this.collapsibleTextSectionProps.restoreScrollPosition) {
+      // if the text is collapsed
+      this.scrollToTopOfText();
+    }
+
     this.updateCurrentHeight();
   }
-}
 
-export interface CollapsibleTextSectionOptions {
-  sectionTitle?: string; // Optional title for the section.
-  text: string; // Array of text strings to display.
-  maxLines: number;
+  // scrolls to the top of the text content
+  scrollToTopOfText() {
+    const textContainer = this.textContainer.nativeElement as HTMLElement;
+
+    window.scrollTo({
+      behavior: 'smooth',
+      top: this.windowTopPositionBeforeExpand(),
+    });
+
+    // fromEvent(textContainer, 'transitionend')
+    //   .pipe(
+    //     take(1),
+    //     tap((event) => {
+    //       window.scrollTo({
+    //         behavior: 'smooth',
+    //         top: this.windowTopPositionBeforeExpand(),
+    //       });
+    //     }),
+    //   )
+    //   .subscribe();
+  }
 }

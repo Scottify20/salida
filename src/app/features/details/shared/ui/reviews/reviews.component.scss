@@ -13,8 +13,6 @@
     "dv dv";
 
   grid-template-columns: auto 1fr;
-
-  row-gap: 1rem;
   column-gap: 0.75rem;
 
   &:not(:last-child)::after {
@@ -30,8 +28,8 @@
 }
 
 .review__profile-photo {
-  position: sticky;
-  top: 4rem;
+  // position: sticky;
+  // top: 4rem;
   background-color: var(--body-bg-color);
   z-index: 996;
 
@@ -40,13 +38,15 @@
   object-fit: cover;
   grid-area: pp;
   border-radius: 50%;
+  margin-bottom: 1rem;
 }
 
 .review__header-texts {
-  position: sticky;
-  top: 4.23rem;
+  // position: sticky;
+  // top: 4.23rem;
   background-color: var(--body-bg-color);
   z-index: 996;
+  margin-bottom: 1rem;
 
   grid-area: hd;
   display: grid;
@@ -107,9 +107,9 @@
   line-height: 1.5;
   color: var(--text-color-subtle);
   grid-area: bd;
-  // max-height: calc(1rem * 1.5 * 5);
   font-weight: 300;
   overflow: hidden;
+  padding-bottom: 1rem;
 }
 
 @media (min-width: 900px) {
@@ -121,12 +121,3 @@
     font-size: 1rem;
   }
 }
-
-// @media (max-width: 425px) {
-//   .review {
-//     grid-template-areas:
-//       "pp hd"
-//       "bd bd"
-//       "dv dv";
-//   }
-// }
