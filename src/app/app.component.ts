@@ -8,6 +8,7 @@ import { FirebaseAuthService } from './core/auth/firebase-auth.service';
 import { DialogComponent } from './shared/components/dialog/dialog.component';
 import { PageTransitionService } from './core/routing/page-transition.service';
 import { RouteHistoryService } from './core/routing/route-history.service';
+import { UserService } from './core/user/user.service';
 
 @Component({
   selector: 'app-root',
@@ -27,6 +28,7 @@ export class AppComponent {
     private firebaseAuthService: FirebaseAuthService,
     private routeHistoryService: RouteHistoryService,
     private pageTransitionService: PageTransitionService,
+    private userService: UserService,
   ) {}
 
   ngAfterViewInit() {

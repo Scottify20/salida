@@ -8,9 +8,21 @@ import {
   signInWithEmailAndPassword,
   User,
   AuthErrorCodes,
+  IdTokenResult,
+  ParsedToken,
 } from '@angular/fire/auth';
 import { PlatformCheckService } from '../../shared/services/dom/platform-check.service';
-import { catchError, from, map, Observable, of, switchMap, take } from 'rxjs';
+import {
+  BehaviorSubject,
+  catchError,
+  delay,
+  from,
+  map,
+  Observable,
+  of,
+  switchMap,
+  take,
+} from 'rxjs';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 import { SalidaEmailResponse } from '../../shared/interfaces/types/api-response/SalidaEmailResponse';
 import { SalidaAuthService } from './salida-auth.service';
@@ -39,6 +51,7 @@ export class FirebaseAuthService {
     }
   }
   auth!: Auth;
+  userClaimsState$ = new BehaviorSubject<ParsedToken | undefined>(undefined);
 
   // gets the the JWT token for the user's UID
   getToken(): Observable<string | undefined> {
@@ -54,9 +67,6 @@ export class FirebaseAuthService {
 
     return from(signInWithPopup(this.auth, provider)).pipe(
       map((userCredential) => userCredential.user),
-      catchError((error) => {
-        throw error;
-      }),
     );
   }
 
@@ -144,6 +154,16 @@ export class FirebaseAuthService {
         return of(headers);
       }),
     );
+  }
+
+  // Forces a refresh of the token of the user
+  async refreshUserTokenAndClaims() {
+    const user = this.auth.currentUser;
+    if (user) {
+      await user.getIdToken(true);
+      const idTokenResult = await user.getIdTokenResult();
+      this.userClaimsState$.next(idTokenResult.claims);
+    }
   }
 
   signOut(): void {

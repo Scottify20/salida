@@ -1,6 +1,16 @@
 import { computed, Injectable, signal, WritableSignal } from '@angular/core';
 import { User } from 'firebase/auth';
-import { catchError, Observable, of, retry, switchMap, take, tap } from 'rxjs';
+import {
+  catchError,
+  defer,
+  map,
+  Observable,
+  of,
+  retry,
+  switchMap,
+  take,
+  tap,
+} from 'rxjs';
 import { UserDataInFireStore } from '../../shared/interfaces/models/user/User';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
@@ -10,6 +20,7 @@ import { PlatformCheckService } from '../../shared/services/dom/platform-check.s
 import { authState } from '@angular/fire/auth';
 import { ToastsService } from '../../shared/components/toasts/data-access/toasts.service';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
+import { toSignal } from '@angular/core/rxjs-interop';
 
 @Injectable({
   providedIn: 'root',
@@ -26,6 +37,7 @@ export class UserService {
         .pipe(
           tap((user) => {
             this.userSig.set(user);
+            this.firebaseAuthService.refreshUserTokenAndClaims();
           }),
         )
         .subscribe();
@@ -39,8 +51,18 @@ export class UserService {
 
   userDisplayNameSig = computed(() => this.userSig()?.displayName);
 
-  userEmailSig = computed(() => this.userSig()?.email);
+  userUsernameSig = toSignal(
+    this.firebaseAuthService.userClaimsState$.pipe(
+      map((claims) => {
+        return claims && claims.hasOwnProperty('username')
+          ? (claims['username'] as string)
+          : undefined;
+      }),
+      tap((claims) => {}),
+    ),
+  );
 
+  userEmailSig = computed(() => this.userSig()?.email);
   userPhotoUrlSig = computed(() =>
     this.userSig()?.photoURL
       ? this.userSig()?.photoURL
@@ -48,10 +70,7 @@ export class UserService {
   );
 
   userPlainStringIdentifierSig = computed(
-    () =>
-      this.userDisplayNameSig() ||
-      this.userEmailSig()?.split('@')[0] ||
-      'My Profile',
+    () => this.userUsernameSig() || 'My Profile',
   );
 
   registerUserDataToFirestore(
@@ -64,7 +83,7 @@ export class UserService {
         scope: 'route',
         iconPath: 'assets/icons/toast/error.svg',
       });
-      // console.log('Failed to save user to firestore, cannot read user.');
+
       return of(null);
     }
 
@@ -123,7 +142,26 @@ export class UserService {
           .post<SalidaResponse>(this.baseUrlProtected, userToFirestore, {
             headers,
           })
-          .pipe(take(1));
+          .pipe(
+            take(1),
+            catchError((err) => {
+              // if error comes from not being able to connect to server
+              if (err.status == 0) {
+                throw new SalidaAuthError(
+                  "Can't connect to server.",
+                  'auth/cannot-connect-to-server',
+                  'general',
+                );
+              }
+
+              // if error comes from registration to firestore
+              throw new SalidaAuthError(
+                err.error.message,
+                err.error.code,
+                err.error.source,
+              );
+            }),
+          );
       }),
     );
   }
@@ -153,6 +191,9 @@ export class UserService {
           )
           .pipe(
             take(1),
+            tap(() => {
+              this.firebaseAuthService.refreshUserTokenAndClaims();
+            }),
             catchError((err) => {
               // if error comes from not being able to connect to server
               if (err.status == 0) {

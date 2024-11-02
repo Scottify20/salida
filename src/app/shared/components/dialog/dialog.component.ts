@@ -33,20 +33,20 @@ export interface DialogProps {
       | (() => string)[];
   };
   buttons: {
-    primary: PrimaryButton;
+    primary: PrimaryDialogButton;
     secondary?: DialogButton;
   };
 }
 
-interface PrimaryButton extends DialogButton {
+interface PrimaryDialogButton extends DialogButton {
   type: 'default' | 'info' | 'success' | 'danger' | 'warning';
 }
 
 interface DialogButton {
   label: string | Signal<string | null | undefined> | (() => string);
   onClickCallback: () => void;
-  isBusySig?: WritableSignal<boolean>;
-  isHiddenSig?: WritableSignal<boolean>;
+  isBusySig: WritableSignal<boolean>;
+  isHiddenSig: WritableSignal<boolean>;
 }
 
 @Component({
@@ -94,7 +94,9 @@ export class DialogComponent {
       primary: {
         type: 'default',
         label: '',
+        isBusySig: signal(false),
         onClickCallback: () => {},
+        isHiddenSig: signal(false),
       },
     },
   };

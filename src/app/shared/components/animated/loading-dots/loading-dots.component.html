@@ -1,5 +1,5 @@
 <div class="dots-loading-animation">
   @for (dotNumber of dotsCountArray; let i = $index; track dotNumber) {
-    <span [class]="'dot-' + dotNumber">•</span>
+    <span [class]="'dot-' + dotNumber" [style]="'color:' + dotsColor">•</span>
   }
 </div>

@@ -41,6 +41,10 @@ import { DividerWithTitleComponent } from '../../shared/ui/divider-with-title/di
 import { LoadingDotsComponent } from '../../../shared/components/animated/loading-dots/loading-dots.component';
 import { UserService } from '../../../core/user/user.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  LoadingModalComponent,
+  LoadingModalProps,
+} from '../../../shared/components/loading-modal/loading-modal.component';
 
 interface SignupErrorMessages {
   email: string | null;
@@ -61,6 +65,7 @@ interface SignupErrorMessages {
     DividerWithTitleComponent,
     LoadingDotsComponent,
     HeaderButtonsComponent,
+    LoadingModalComponent,
   ],
   templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
   styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
@@ -146,14 +151,7 @@ export class SignUpPageComponent {
         .pipe(
           takeUntilDestroyed(this.destoryRef),
           tap((user) => {
-            // console.log(user, user);
             this.registerUserToFirestore(user);
-          }),
-          catchError((error) => {
-            this.setAuthErrorMessages(error);
-            // Signup request finished, set in progress to false
-            this.isSignupActionInProgress.set(false);
-            return of(null);
           }),
         )
         .subscribe();
@@ -161,11 +159,24 @@ export class SignUpPageComponent {
   }
 
   private registerUserToFirestore(user: User) {
+    this.registrationLoadingModalProps.config.isOpenSig.set(true);
+
     this.userService
       .registerUserDataToFirestore(user)
-      .pipe(take(1))
+      .pipe(
+        take(1),
+        catchError((error) => {
+          this.setAuthErrorMessages(error);
+          // Signup request finished, set in progress to false
+          this.isSignupActionInProgress.set(false);
+          this.registrationLoadingModalProps.config.isOpenSig.set(false);
+          return of(null);
+        }),
+      )
       .subscribe((response) => {
         if (!response) {
+          this.registrationLoadingModalProps.config.isOpenSig.set(false);
+
           this.toastsService.addToast({
             text: 'There was an error registering your data.',
             scope: 'route',
@@ -175,6 +186,7 @@ export class SignUpPageComponent {
         }
 
         // Signup and register request finished, set in progress to false
+        this.registrationLoadingModalProps.config.isOpenSig.set(false);
         this.isSignupActionInProgress.set(false);
 
         this.router.navigateByUrl('/auth/set-username');
@@ -361,14 +373,15 @@ export class SignUpPageComponent {
         this.router.navigateByUrl('/');
       },
     },
-    // {
-    //   type: 'iconWithBG',
-    //   iconPath: 'assets/icons/header/Question.svg',
-    //   anchor: {
-    //     urlType: 'internal',
-    //     path: '/auth/login',
-    //     target: '_self',
-    //   },
-    // },
   ];
+
+  registrationLoadingModalProps: LoadingModalProps = {
+    config: {
+      id: 'registration-with-email-and-password-loading-modal',
+      isOpenSig: signal(false),
+    },
+    content: {
+      title: 'Registering your account.',
+    },
+  };
 }

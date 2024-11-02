@@ -1,3 +1,4 @@
+import { User } from 'firebase/auth';
 import { UserPreferences } from '../../../services/preferences/temporary-user-preferences-service';
 
 // export class SalidaUser implements UserDataInFireStore {

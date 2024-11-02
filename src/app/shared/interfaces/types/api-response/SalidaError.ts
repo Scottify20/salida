@@ -20,7 +20,8 @@ export type SalidaAuthErrorCode =
   | 'auth/internal-error'
   | 'auth/cannot-connect-to-server'
   | 'auth/invalid-credentials'
-  | 'auth/username-already-set';
+  | 'auth/username-already-set'
+  | 'auth/user-already-registered';
 
 export type SalidaAuthErrorSource =
   | 'password'

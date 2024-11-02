@@ -244,20 +244,15 @@ export class LoginPageComponent {
   }
 
   private handleLoginSuccess(accountIdentifier: string) {
-    const successMessage = `Successfully logged in with ${accountIdentifier}.`;
+    const successMessage = `Successfully logged in with \n ${accountIdentifier}.`;
     this.toastsService.addToast({
       text: successMessage,
       scope: 'route',
       duration: 8000,
       iconPath: 'assets/icons/toast/success.svg',
-      actionButton: {
-        type: 'success',
-        callback: () => {
-          this.router.navigateByUrl('/');
-        },
-        label: 'Proceed',
-      },
     });
+
+    this.router.navigateByUrl('/');
   }
 
   private setAuthErrorMessages(
