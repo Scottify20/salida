@@ -1,0 +1,47 @@
+<div
+  class="loading-modal__backdrop"
+  [class]="
+    loadingModalProps.config.isOpenSig() == null
+      ? ''
+      : loadingModalProps.config.isOpenSig()
+        ? 'open'
+        : 'closed'
+  "
+></div>
+
+<div
+  class="loading-modal"
+  [class]="
+    loadingModalProps.config.isOpenSig() == null
+      ? ''
+      : loadingModalProps.config.isOpenSig()
+        ? 'open'
+        : 'closed'
+  "
+>
+  <div class="loading-modal__main-content-container">
+    <app-loading-dots
+      [dotsCount]="4"
+      [dotsColor]="'var(--color-accent)'"
+    ></app-loading-dots>
+
+    <h4 class="loading-modal__title">
+      {{ getTextFromTextItem(loadingModalProps.content.title) }}
+    </h4>
+
+    @if (loadingModalProps.content.textItems; as textItems) {
+      <ul class="loading-modal__text-items-container">
+        @for (textItem of textItems; track textItem.toString()) {
+          <li class="loading-modal__text-item">
+            @if (textItems.length > 1) {
+              <div class="loading-modal__text-item-bullet">•</div>
+            }
+            <p class="loading-modal__text-item-text">
+              {{ getTextFromTextItem(textItem) }}
+            </p>
+          </li>
+        }
+      </ul>
+    }
+  </div>
+</div>

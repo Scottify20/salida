@@ -1,30 +1,30 @@
-import { Component, computed, DestroyRef, signal } from '@angular/core';
-import { ProgressIndicatorProps } from '../../../../shared/ui/progress-indicator/progress-indicator.model';
-import { ProgressIndicatorComponent } from '../../../../shared/ui/progress-indicator/progress-indicator.component';
-import { DividerWithTitleComponent } from '../../../../shared/ui/divider-with-title/divider-with-title.component';
+import { Component, DestroyRef, signal } from '@angular/core';
+import { ProgressIndicatorProps } from '../progress-indicator/progress-indicator.model';
+import { ProgressIndicatorComponent } from '../progress-indicator/progress-indicator.component';
+import { DividerWithTitleComponent } from '../divider-with-title/divider-with-title.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   DialogComponent,
   DialogProps,
-} from '../../../../../shared/components/dialog/dialog.component';
+} from '../../../../shared/components/dialog/dialog.component';
 import {
   usernameValidator,
   validUsernameCharRegex,
-} from '../../../../shared/validators/username-validator';
+} from '../../validators/username-validator';
 import { Router } from '@angular/router';
-import { UserService } from '../../../../../core/user/user.service';
+import { UserService } from '../../../../core/user/user.service';
 import { AuthError } from '@angular/fire/auth';
 import { catchError, delay, fromEvent, map, of, take, tap } from 'rxjs';
-import { SalidaAuthError } from '../../../../../shared/interfaces/types/api-response/SalidaAuthError';
-import { SalidaAuthErrorSource } from '../../../../../shared/interfaces/types/api-response/SalidaError';
+import { SalidaAuthError } from '../../../../shared/interfaces/types/api-response/SalidaAuthError';
+import { SalidaAuthErrorSource } from '../../../../shared/interfaces/types/api-response/SalidaError';
 import {
   FirebaseAuthErrorSource,
   FirebaseAuthService,
-} from '../../../../../core/auth/firebase-auth.service';
-import { SalidaAuthService } from '../../../../../core/auth/salida-auth.service';
-import { ToastsService } from '../../../../../shared/components/toasts/data-access/toasts.service';
+} from '../../../../core/auth/firebase-auth.service';
+import { SalidaAuthService } from '../../../../core/auth/salida-auth.service';
+import { ToastsService } from '../../../../shared/components/toasts/data-access/toasts.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
+import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 
 @Component({
   selector: 'app-username-setting-page',
@@ -59,12 +59,6 @@ export class UsernameSettingPageComponent {
   isAccountCreationSuccessful = signal(false);
 
   isSubmitted = false;
-  // isUsernameAvailable = signal(false);
-  // isUsernameSetOrIsSkipped = signal(false);
-  // isUsernameValid = computed(
-  //   () =>
-  //     this.setUsernameForm.get('username')?.valid && this.isUsernameAvailable(),
-  // );
 
   userDisplayPhotoURLSig = this.userService.userPhotoUrlSig || signal(null);
 
@@ -172,7 +166,10 @@ export class UsernameSettingPageComponent {
       this.confirmSetUsernameDialogProps.mainContent.textItems
     ) {
       const username = this.setUsernameForm.get('username')?.getRawValue();
-      this.confirmSetUsernameDialogProps.mainContent.textItems[0] = `Are you sure you want to set “${username}” as your username? This cannot be changed later.`;
+      this.confirmSetUsernameDialogProps.mainContent.textItems = [
+        `Are you sure you want to set “${username}” as your username?`,
+        'This cannot be changed later.',
+      ];
       this.confirmSetUsernameDialogProps.config.isOpenSig.set(true);
     }
   }
@@ -184,7 +181,6 @@ export class UsernameSettingPageComponent {
       .pipe(
         take(1),
         tap((response) => {
-          console.log(response);
           this.confirmSetUsernameDialogProps.config.isOpenSig.set(false);
           this.isAccountCreationSuccessful.set(true);
           this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
@@ -204,7 +200,6 @@ export class UsernameSettingPageComponent {
         }),
       )
       .subscribe();
-    // throw new Error('Method not implemented.');
   }
 
   private setAuthErrorMessages(
@@ -287,9 +282,12 @@ export class UsernameSettingPageComponent {
           );
         },
         isBusySig: signal(false),
+        isHiddenSig: signal(false),
       },
       secondary: {
         label: 'Cancel',
+        isHiddenSig: signal(false),
+        isBusySig: signal(false),
         onClickCallback: () => {
           this.confirmSetUsernameDialogProps.config.isOpenSig.set(false);
 
@@ -323,12 +321,16 @@ export class UsernameSettingPageComponent {
             this.createAccountSuccessDialogProps.config.isOpenSig.set(true);
           }, 200);
         },
+        isBusySig: signal(false),
+        isHiddenSig: signal(false),
       },
       secondary: {
         label: 'Cancel',
         onClickCallback: () => {
           // dialog automatically closed // proceed to setting username
         },
+        isBusySig: signal(false),
+        isHiddenSig: signal(false),
       },
     },
   };
@@ -352,11 +354,10 @@ export class UsernameSettingPageComponent {
         onClickCallback: () => {
           try {
             this.router.navigateByUrl('/');
-            setTimeout(() => {
-              window.location.reload();
-            }, 0);
           } catch {}
         },
+        isBusySig: signal(false),
+        isHiddenSig: signal(false),
       },
     },
   };

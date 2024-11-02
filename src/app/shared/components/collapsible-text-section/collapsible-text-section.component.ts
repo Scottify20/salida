@@ -8,7 +8,6 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
-import { fromEvent, take, tap } from 'rxjs';
 
 export interface CollapsibleTextSectionOptions {
   sectionTitle?: string; // Optional title for the section.
@@ -105,7 +104,8 @@ export class CollapsibleTextSectionComponent {
       this.getRem() * this.collapsibleTextSectionProps.maxLines * 1.5,
     );
     this.expandedHeight.set(
-      this.shadowTextContainer.nativeElement.offsetHeight,
+      this.shadowTextContainer.nativeElement.offsetHeight +
+        this.getRem() * 1.5 * 2,
     );
     this.textElementHeight.set(this.textElement.nativeElement.clientHeight);
 

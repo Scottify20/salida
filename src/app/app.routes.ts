@@ -3,6 +3,7 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { personDetailsRoutes } from './features/details/person-details/feature/person-details.routes';
 import { HomeComponent } from './features/home/feature/home.component';
 import { loginAndSignupGuard } from './auth/shared/guards/login-and-signup.guard';
+import { setUsernameGuard } from './auth/shared/guards/set-username.guard';
 
 export const routes: Routes = [
   {
@@ -32,8 +33,9 @@ export const routes: Routes = [
         path: 'set-username',
         loadComponent: () =>
           import(
-            './auth/signup/ui/sign-up-page/username-setting-page/username-setting-page.component'
+            './auth/shared/ui/username-setting-page/username-setting-page.component'
           ).then((m) => m.UsernameSettingPageComponent),
+        // canActivate: [setUsernameGuard],
       },
     ],
   },

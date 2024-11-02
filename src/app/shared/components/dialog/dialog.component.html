@@ -53,15 +53,15 @@
         tabindex="1"
         class="dialog__button secondary"
         [class]="
-          secondaryButton.isBusySig && secondaryButton.isBusySig()
+          secondaryButton.isBusySig()
             ? 'disabled'
-            : secondaryButton.isHiddenSig && secondaryButton.isHiddenSig()
+            : secondaryButton.isHiddenSig()
               ? 'hidden'
               : ''
         "
         (click)="onSecondaryButtonClicked()"
       >
-        @if (secondaryButton.isBusySig && secondaryButton.isBusySig()) {
+        @if (secondaryButton.isBusySig()) {
           <app-loading-dots [dotsCount]="3"></app-loading-dots>
         } @else {
           {{ getTextFromTextItem(secondaryButton.label) }}
@@ -76,14 +76,14 @@
         class="dialog__button primary"
         (click)="onPrimaryButtonClicked()"
         [class]="
-          primaryButton.isBusySig && primaryButton.isBusySig()
-            ? 'disabled ' + primaryButton.type
-            : primaryButton.isHiddenSig && primaryButton.isHiddenSig()
-              ? 'hidden ' + primaryButton.type
+          primaryButton.isBusySig()
+            ? 'disabled' + primaryButton.type
+            : primaryButton.isHiddenSig()
+              ? 'hidden' + primaryButton.type
               : primaryButton.type
         "
       >
-        @if (primaryButton.isBusySig && primaryButton.isBusySig()) {
+        @if (primaryButton.isBusySig()) {
           <app-loading-dots [dotsCount]="3"></app-loading-dots>
         } @else {
           {{ getTextFromTextItem(primaryButton.label) }}
