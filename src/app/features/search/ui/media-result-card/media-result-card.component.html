@@ -1,0 +1,38 @@
+<article class="card" (click)="props.onClick()">
+  <img
+    [src]="'https://image.tmdb.org/t/p/w185/' + props.posterURL"
+    [alt]="props.title + ' poster'"
+    loading="lazy"
+    class="card-poster"
+  />
+  <div class="card-content">
+    <div class="card-header">
+      <div class="card-titles">
+        <p class="card-titles-wrapper">
+          <span class="card-title">{{ props.title }}</span>
+          <span class="card-original-title">{{ props.original_title }}</span>
+        </p>
+        <div class="card-meta">
+          @for (data of props.metadata; let i = $index; track data) {
+            <span class="meta-info">{{ data }}</span>
+            @if (
+              i !== props.metadata.length - 1 &&
+              props.metadata.length > 1 &&
+              props.metadata[i + 1]
+            ) {
+              <span class="meta-divider">•</span>
+            }
+          }
+        </div>
+      </div>
+      <div class="genre-list" role="list">
+        @for (genre of props.genres; track genre) {
+          <span class="genre-tag" role="listitem" tabindex="0">
+            {{ genre }}
+          </span>
+        }
+      </div>
+    </div>
+    <p class="card-plot">{{ props.overview }}</p>
+  </div>
+</article>
