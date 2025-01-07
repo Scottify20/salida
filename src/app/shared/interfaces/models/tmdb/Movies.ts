@@ -32,8 +32,8 @@ export interface Movie extends Media {
   production_companies: ProductionCompany[];
   production_countries: ProductionCountry[];
   credits: {
-    cast: CastCredit[];
-    crew: Credit[];
+    cast: MovieCastCredit[];
+    crew: MovieCredit[];
   };
   external_ids: MovieExternalIds;
   release_dates: {
@@ -51,7 +51,7 @@ export interface Movie extends Media {
   };
 }
 
-export interface TrendingMovies {
+export interface MovieSummaryResults {
   page: number;
   results: MovieSummary[];
   total_pages: number;
@@ -59,13 +59,14 @@ export interface TrendingMovies {
 }
 
 export interface MovieSummary extends MediaSummary {
+  media_type?: 'movie'; // not present in some responses
   original_title: string;
   title: string;
   release_date: string;
   video: boolean;
 }
 
-export interface CastCredit {
+export interface MovieCastCredit {
   adult: boolean;
   gender: number | null; // Gender might be unknown
   id: number;
@@ -102,7 +103,7 @@ interface MovieExternalIds {
   twitter_id: string | null;
 }
 
-export interface Credit {
+export interface MovieCredit {
   adult: boolean;
   credit_id: string;
   department: string;
@@ -114,4 +115,12 @@ export interface Credit {
   original_name: string;
   popularity: number;
   profile_path: string | null;
+}
+
+export interface MoviesInThearesOrUpcoming {
+  dates: { maximum: string; minimum: string };
+  page: number;
+  results: MovieSummary[];
+  total_pages: number;
+  total_results: number;
 }

@@ -1,70 +1,74 @@
 <!-- if the release dates are grouped by release type -->
-@if (releasesPreferences.groupBy == "release-type") {
+@if (releasesPreferences.groupBy() == "release-type") {
   <div [class]="isLoading ? 'loading' : ''" class="releases release-type">
-    @for (releaseType of releasesByType | keyvalue; track releaseType) {
-      @if (releaseType.value[0]) {
+    @for (releaseType of orderedReleaseTypes; track releaseType) {
+      @if (releasesByType[releaseType][0]) {
         <div class="releases__type-container">
           <h4 class="release__type-name">
-            {{ releaseType.key }}
+            {{ releaseType }}
           </h4>
-          @if (
-            releasesPreferences.dateOrder === "newest-first" ||
-            releasesPreferences.dateOrder === "oldest-first"
-          ) {
-            <div class="releases__releases-container">
-              @for (
-                release of releaseType.value;
-                let i = $index;
-                track release
-              ) {
-                <div
-                  [class]="
-                    isFirstInReleaseDate(release, releaseType.value)
-                      ? 'first-release-by-date'
-                      : ''
-                  "
-                  class="release"
-                >
-                  @if (!isFirstInReleaseDate(release, releaseType.value)) {
-                    <p class="release__date-empty-placeholder"></p>
-                  }
+          <!-- Display releases grouped by release type -->
+          <div class="releases__releases-container">
+            @for (
+              release of releasesByType[releaseType];
+              let i = $index;
+              track release
+            ) {
+              <div
+                [class]="
+                  isFirstReleaseInDate(release, releasesByType[releaseType])
+                    ? 'first-release-by-date'
+                    : ''
+                "
+                class="release"
+              >
+                @if (
+                  !isFirstReleaseInDate(release, releasesByType[releaseType])
+                ) {
+                  <p class="release__date-empty-placeholder"></p>
+                }
 
-                  @if (isFirstInReleaseDate(release, releaseType.value)) {
-                    <p class="release__date">
-                      {{ release.release_date | date: "dd MMM yyyy" }}
+                @if (
+                  isFirstReleaseInDate(release, releasesByType[releaseType])
+                ) {
+                  <p class="release__date">
+                    {{ release.release_date | date: "dd MMM yyyy" }}
+                  </p>
+                }
+
+                <div class="release__details-container">
+                  <img
+                    [src]="
+                      'https://purecatamphetamine.github.io/country-flag-icons/3x2/' +
+                      release.iso_639_1 +
+                      '.svg'
+                    "
+                    alt=""
+                    class="release__flag"
+                  />
+                  @if (release.iso_639_1) {
+                    <p class="release__country-name">
+                      {{
+                        this.tmdbConfigService.getCountryNameFromCode(
+                          release.iso_639_1
+                        )
+                      }}
                     </p>
                   }
 
-                  <div class="release__details-container">
-                    <img
-                      [src]="
-                        'https://purecatamphetamine.github.io/country-flag-icons/3x2/' +
-                        release.iso_639_1 +
-                        '.svg'
-                      "
-                      alt=""
-                      class="release__flag"
-                    />
-                    @if (release.iso_639_1) {
-                      <p class="release__country-name">
-                        {{ getCountryNameFromCode(release.iso_639_1) }}
-                      </p>
-                    }
+                  @if (release.certification) {
+                    <p class="release__rating">
+                      {{ release.certification }}
+                    </p>
+                  }
 
-                    @if (release.certification) {
-                      <p class="release__rating">
-                        {{ release.certification }}
-                      </p>
-                    }
-
-                    @if (release.note) {
-                      <p class="release__note">{{ release.note }}</p>
-                    }
-                  </div>
+                  @if (release.note) {
+                    <p class="release__note">{{ release.note }}</p>
+                  }
                 </div>
-              }
-            </div>
-          }
+              </div>
+            }
+          </div>
         </div>
       }
     }
@@ -73,7 +77,7 @@
 
 <!-- if the release dates are grouped by country -->
 
-@if (releasesPreferences.groupBy == "country") {
+@if (releasesPreferences.groupBy() == "country") {
   <div [class]="isLoading ? 'loading' : ''" class="releases country">
     <div class="releases__type-container">
       <h4 class="release__type-name">Country</h4>
@@ -91,7 +95,9 @@
                 class="release__flag"
               />
               <p class="release__country-name">
-                {{ getCountryNameFromCode(country.iso_3166_1) }}
+                {{
+                  tmdbConfigService.getCountryNameFromCode(country.iso_3166_1)
+                }}
               </p>
             </div>
 

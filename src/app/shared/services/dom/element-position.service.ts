@@ -56,10 +56,11 @@ export class ElementPositionService {
       const element = document.getElementById(id);
 
       if (!element) {
-        console.log('Element not found, check if the id is correct.');
+        console.log(
+          `Element with id: ${id}  not found, check if the id is correct.`,
+        );
         return null;
       }
-
       return new ElementRef(element);
     }
     return null;

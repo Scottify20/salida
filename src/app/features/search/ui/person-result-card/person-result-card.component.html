@@ -1,0 +1,56 @@
+<article class="card" (click)="props.onClick()">
+  <img
+    [src]="'https://image.tmdb.org/t/p/w185/' + props.profilePhotoURL"
+    [alt]="'A photo of ' + props.name"
+    loading="lazy"
+    class="card-poster"
+  />
+  <div class="card-content">
+    <div class="card-header">
+      <div class="card-titles">
+        <p class="card-titles-wrapper">
+          <span class="card-title">{{ props.name }}</span>
+          <span class="card-original-title">{{ props.originalName }}</span>
+        </p>
+        <div class="card-meta">
+          @if (props.role) {
+            <span class="meta-info">{{ props.role }}</span>
+          }
+        </div>
+      </div>
+      <div class="card-media-container large">
+        @for (media of props.knownForMedia; let i = $index; track media) {
+          <!-- for larger screens -->
+          <div class="card-media" (click)="media.onClick()">
+            <img
+              [src]="'https://image.tmdb.org/t/p/w185/' + media.backdropURL"
+              alt=""
+              class="card-media-backdrop"
+            />
+            <p class="card-media-title">{{ media.title }}</p>
+          </div>
+        }
+      </div>
+
+      <p class="card-media-container small">
+        @for (media of props.knownForMedia; let i = $index; track media) {
+          <!-- for smaller screens -->
+
+          <span
+            (click)="onMediaTitleClick($event, media.onClick)"
+            class="card-media-title"
+            >{{ media.title }}</span
+          >
+
+          @if (
+            i !== props.knownForMedia.length - 1 &&
+            props.knownForMedia.length > 1 &&
+            props.knownForMedia[i + 1]
+          ) {
+            <span class="title-divider">•</span>
+          }
+        }
+      </p>
+    </div>
+  </div>
+</article>

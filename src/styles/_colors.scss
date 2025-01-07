@@ -1,8 +1,8 @@
 :root {
   // colors
-  --body-bg-color: #101116;
-  --body-bg-color-below: #000000;
-  --bg-color: #1a1b24;
+  --body-bg-color: rgb(16, 17, 22);
+  --body-bg-color-below: rgb(0, 0, 0);
+  --bg-color: rgb(26, 27, 36);
 
   --text-color: white;
   --text-color-inverted: rgb(0, 0, 0);
@@ -15,6 +15,8 @@
 
   // --icon-color-disabled: hsl(0, 0%, 50%);
   // --button-bg-color: #5e585a;
+  // --button-bg-subtle: #0000002f;
+
   --popup-window-bg-color: #28292d;
   --card-bg-color: rgba(255, 255, 255, 0.1);
   --card-bg-color-subtle: #1a1b24;

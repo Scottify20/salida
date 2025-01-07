@@ -11,11 +11,14 @@
       (click)="callOnClickCallbackFn(button.onClickCallbackFn)"
     >
       @if (button.type === "icon") {
-        <img [src]="getTextOrIconPath(button.iconPath)" alt="" />
+        <img
+          [src]="this.extractStringService.extract(button.iconPath)"
+          alt=""
+        />
       }
       @if (button.type === "text") {
         <p class="header__button-label-text">
-          {{ getTextOrIconPath(button.text) }}
+          {{ this.extractStringService.extract(button.text) }}
         </p>
       }
     </div>

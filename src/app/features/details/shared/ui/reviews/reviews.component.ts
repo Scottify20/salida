@@ -9,6 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import {
   ReviewsPreferences,
+  ReviewsSource,
   TemporaryUserPreferencesService,
 } from '../../../../../shared/services/preferences/temporary-user-preferences-service';
 import { Movie } from '../../../../../shared/interfaces/models/tmdb/Movies';
@@ -30,6 +31,16 @@ export class ReviewsComponent {
     private moviesDetailsService: MovieDetailsService,
     private preferencesService: TemporaryUserPreferencesService,
   ) {
+    this.initializeReviewsFetching();
+  }
+
+  reviewsSource: ReviewsSource =
+    this.preferencesService.preferences.details.movieAndSeriesDetails.reviews
+      .reviewsSource;
+  mediaData$: Observable<Movie | Series | null> = of(null);
+  isLoading = true;
+
+  initializeReviewsFetching() {
     if (this.moviesDetailsService.isMovieRoute) {
       this.mediaData$ = this.moviesDetailsService.movieData$;
     }
@@ -66,20 +77,7 @@ export class ReviewsComponent {
         }),
       )
       .subscribe();
-
-    this.reviewsConfigSubscription = this.preferencesService.preferences$
-      .pipe(
-        tap((preferences) => {
-          this.reviewsConfig =
-            preferences.details.movieAndSeriesDetails.reviews;
-        }),
-      )
-      .subscribe();
   }
-
-  mediaData$: Observable<Movie | Series | null> = of(null);
-
-  isLoading = true;
 
   private tmdbReviewsDataSubscription!: Subscription;
   tmdbReviewsData: Reviews = {
@@ -87,14 +85,6 @@ export class ReviewsComponent {
     results: [],
     total_pages: 0,
     total_results: 0,
-  };
-
-  private reviewsConfigSubscription!: Subscription;
-  reviewsConfig: ReviewsPreferences = {
-    reviewsSource: 'tmdb',
-    dateOrder: 'newest-first',
-    ratingOrder: 'highest-first',
-    orderBy: 'date',
   };
 
   salidaReviews: Reviews = {

@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, effect } from '@angular/core';
 import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 import {
   Country,
@@ -15,56 +15,70 @@ import {
 } from '../../../../../../shared/services/preferences/temporary-user-preferences-service';
 import { MovieDetailsService } from '../../../data-access/movie-details.service';
 import { ReleaseType } from '../../../../../../shared/interfaces/models/tmdb/Movies';
-import {
-  CommonModule,
-  DatePipe,
-  KeyValuePipe,
-  UpperCasePipe,
-} from '@angular/common';
+import { CommonModule, DatePipe } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ScrollingModule } from '@angular/cdk/scrolling';
 import { PlatformCheckService } from '../../../../../../shared/services/dom/platform-check.service';
 
+interface ReleasesByReleaseTypes {
+  Premiere: ReleaseDate[];
+  'Theatrical (limited)': ReleaseDate[];
+  Theatrical: ReleaseDate[];
+  Digital: ReleaseDate[];
+  Physical: ReleaseDate[];
+  TV: ReleaseDate[];
+  [key: string]: ReleaseDate[];
+}
+
+const RELEASE_TYPES = [
+  'Premiere',
+  'Theatrical (limited)',
+  'Theatrical',
+  'Digital',
+  'Physical',
+  'TV',
+];
+
 @Component({
   selector: 'app-releases',
   standalone: true,
-  imports: [
-    DatePipe,
-    KeyValuePipe,
-    UpperCasePipe,
-    ScrollingModule,
-    CommonModule,
-  ],
+  imports: [DatePipe, ScrollingModule, CommonModule],
   templateUrl: './releases.component.html',
   styleUrl: './releases.component.scss',
 })
 export class ReleasesComponent {
-  constructor(
-    private movieDetailsService: MovieDetailsService,
-    private tmdbConfigService: TmdbConfigService,
-    private userPreferencesService: TemporaryUserPreferencesService,
-    private destroyRef: DestroyRef,
-    protected platformCheckService: PlatformCheckService,
-  ) {
-    this.getUserPreferences();
-    this.getMovieData();
-  }
-
-  releasesPreferences!: MovieReleasesPreferences;
   countryCodes: Country[] = [];
   isLoading = true;
 
   releasesByCountry: ReleasesOfCountry[] = [];
-  releasesByType: ReleasesByReleaseTypes = {
-    Premiere: [],
-    'Theatrical (limited)': [],
-    Theatrical: [],
-    Digital: [],
-    Physical: [],
-    TV: [],
-  };
+  releasesByType: ReleasesByReleaseTypes = RELEASE_TYPES.reduce((acc, type) => {
+    acc[type] = [];
+    return acc;
+  }, {} as ReleasesByReleaseTypes);
 
-  getMovieData() {
+  orderedReleaseTypes = RELEASE_TYPES;
+
+  constructor(
+    private movieDetailsService: MovieDetailsService,
+    protected tmdbConfigService: TmdbConfigService,
+    private userPreferencesService: TemporaryUserPreferencesService,
+    private destroyRef: DestroyRef,
+    protected platformCheckService: PlatformCheckService,
+  ) {
+    effect(() =>
+      this.releasesPreferences.groupBy() === 'release-type'
+        ? this.loadMovieData()
+        : this.loadMovieData(),
+    );
+  }
+
+  releasesPreferences: MovieReleasesPreferences =
+    this.userPreferencesService.preferences.details.movieDetails.releases;
+  localCountryCode =
+    this.userPreferencesService.preferences.user.localCountryCode;
+
+  // Load movie data and process release dates
+  private loadMovieData() {
     this.movieDetailsService.movieData$
       .pipe(
         switchMap((movieDetails) => {
@@ -86,8 +100,12 @@ export class ReleasesComponent {
       .subscribe({
         next: (movieDetails: Movie) => {
           const results = movieDetails.release_dates.results;
-          this.releasesByType = this.toReleasesByReleaseTypes(results);
-          this.releasesByCountry = this.toReleasesByCountryName(results);
+          if (this.releasesPreferences.groupBy() === 'release-type') {
+            this.releasesByType = this.groupReleasesByType(results);
+          } else if (this.releasesPreferences.groupBy() === 'country') {
+            this.releasesByCountry = this.groupReleasesByCountry(results);
+          }
+
           this.isLoading = false;
         },
         error: (err) => {
@@ -96,32 +114,12 @@ export class ReleasesComponent {
       });
   }
 
-  getUserPreferences() {
-    this.userPreferencesService.preferences$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        map((preferences) => {
-          if (!preferences) {
-            return;
-          }
-          this.releasesPreferences = preferences.details.movieDetails.releases;
-        }),
-      )
-      .subscribe();
-  }
-
-  getCountryNameFromCode(code: string) {
-    return this.countryCodes.find((country) => country.iso_3166_1 === code)
-      ?.native_name;
-  }
-
-  isFirstInReleaseDate(release: ReleaseDate, releases: ReleaseDate[]): boolean {
-    // if the release inside the release is 1 then it's release_date is unique
+  // Check if the release is the first release on the given date
+  isFirstReleaseInDate(release: ReleaseDate, releases: ReleaseDate[]): boolean {
     if (releases.length <= 1) {
       return true;
     }
 
-    // this are the releases that are the first based on its release_date
     const firstReleasesPerDate: ReleaseDate[] = [];
     releases.forEach((release) => {
       if (
@@ -133,16 +131,65 @@ export class ReleasesComponent {
       }
     });
 
-    // check if the release is in the firstReleasesPerDate
-    if (firstReleasesPerDate.indexOf(release) > -1) {
-      return true;
-    }
-    return false;
+    return firstReleasesPerDate.indexOf(release) > -1;
   }
 
-  toReleasesByReleaseTypes = (
+  // Prioritize local country release dates
+  private prioritizeLocalCountryReleaseDates(
+    items: ReleaseDate[],
+    localCountryCode: string,
+  ): ReleaseDate[] {
+    return items.sort((a, b) => {
+      if (a.iso_639_1 === localCountryCode) return -1;
+      if (b.iso_639_1 === localCountryCode) return 1;
+      return 0;
+    });
+  }
+
+  // Prioritize local country releases of country
+  private prioritizeLocalCountryReleasesOfCountry(
+    items: ReleasesOfCountry[],
+    localCountryCode: string,
+  ): ReleasesOfCountry[] {
+    return items.sort((a, b) => {
+      if (a.iso_3166_1 === localCountryCode) return -1;
+      if (b.iso_3166_1 === localCountryCode) return 1;
+      return 0;
+    });
+  }
+
+  // Sort release dates by preference (latest-first or earliest-first)
+  private sortReleaseDatesByPreference(
+    releases: ReleaseDate[],
+    dateOrder: 'latest-first' | 'earliest-first',
+  ): ReleaseDate[] {
+    return releases.sort((r1, r2) => {
+      const date1 = new Date(r1.release_date).getTime();
+      const date2 = new Date(r2.release_date).getTime();
+      return dateOrder === 'latest-first' ? date2 - date1 : date1 - date2;
+    });
+  }
+
+  // Sort release dates by country order (a-z or z-a)
+  private sortReleaseDatesByCountryOrder(
+    releases: ReleaseDate[],
+    countryOrder: 'a-z' | 'z-a',
+  ): ReleaseDate[] {
+    return releases.sort((a, b) => {
+      const countryNameA =
+        this.tmdbConfigService.getCountryNameFromCode(a.iso_639_1) || '';
+      const countryNameB =
+        this.tmdbConfigService.getCountryNameFromCode(b.iso_639_1) || '';
+      return countryOrder === 'a-z'
+        ? countryNameA.localeCompare(countryNameB)
+        : countryNameB.localeCompare(countryNameA);
+    });
+  }
+
+  // Group releases by type and sort them based on preferences
+  private groupReleasesByType(
     results: ReleasesOfCountry[],
-  ): ReleasesByReleaseTypes => {
+  ): ReleasesByReleaseTypes {
     const releases: ReleasesByReleaseTypes = {
       Premiere: [],
       'Theatrical (limited)': [],
@@ -163,88 +210,100 @@ export class ReleasesComponent {
           case ReleaseType.Premiere:
             releases.Premiere.push(releaseCopy);
             break;
-
           case ReleaseType['Theatrical (limited)']:
             releases['Theatrical (limited)'].push(releaseCopy);
             break;
-
           case ReleaseType.Theatrical:
             releases.Theatrical.push(releaseCopy);
             break;
-
           case ReleaseType.Digital:
             releases.Digital.push(releaseCopy);
             break;
-
           case ReleaseType.Physical:
             releases.Physical.push(releaseCopy);
             break;
-
           case ReleaseType.TV:
             releases.TV.push(releaseCopy);
             break;
         }
       });
+    });
 
-      if (this.releasesPreferences.dateOrder === 'newest-first') {
-        for (const key in releases) {
-          // sort releases to newest first
-          releases[key].sort(
-            (r1, r2) =>
-              new Date(r2.release_date).getTime() -
-              new Date(r1.release_date).getTime(),
+    const sortedReleases: ReleasesByReleaseTypes = { ...releases };
+
+    RELEASE_TYPES.forEach((type) => {
+      sortedReleases[type] = this.sortReleaseDatesByPreference(
+        sortedReleases[type],
+        this.releasesPreferences.dateOrder(),
+      );
+
+      const groupedByDate: { [key: string]: ReleaseDate[] } = {};
+      sortedReleases[type].forEach((release) => {
+        const date = release.release_date;
+        if (!groupedByDate[date]) {
+          groupedByDate[date] = [];
+        }
+        groupedByDate[date].push(release);
+      });
+
+      sortedReleases[type] = [];
+      Object.keys(groupedByDate).forEach((date) => {
+        let releasesOnDate = groupedByDate[date];
+        releasesOnDate = this.sortReleaseDatesByCountryOrder(
+          releasesOnDate,
+          this.releasesPreferences.countryOrder(),
+        );
+        if (this.releasesPreferences.showLocalCountryFirst()) {
+          releasesOnDate = this.prioritizeLocalCountryReleaseDates(
+            releasesOnDate,
+            this.localCountryCode() || this.tmdbConfigService.localCountryCode,
           );
         }
-      }
+        sortedReleases[type] = sortedReleases[type].concat(releasesOnDate);
+      });
     });
-    return releases;
-  };
 
-  toReleasesByCountryName(releases: ReleasesOfCountry[]): ReleasesOfCountry[] {
-    if (this.releasesPreferences.countryOrder === 'a-z') {
-      return releases.sort((c1, c2) => {
-        if (c1.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
-          return -1; // Move local country to the top
-        } else if (c2.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
-          return 1; // Move other countries down
-        }
-
-        const countryName1 = this.getCountryNameFromCode(
-          c1.iso_3166_1,
-        ) as string;
-        const countryName2 = this.getCountryNameFromCode(
-          c2.iso_3166_1,
-        ) as string;
-
-        return countryName1.localeCompare(countryName2);
-      });
-    } else {
-      return releases.sort((c1, c2) => {
-        if (c1.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
-          return -1; // Move local country to the top
-        } else if (c2.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
-          return 1; // Move other countries down
-        }
-
-        const countryName1 = this.getCountryNameFromCode(
-          c1.iso_3166_1,
-        ) as string;
-        const countryName2 = this.getCountryNameFromCode(
-          c2.iso_3166_1,
-        ) as string;
-
-        return countryName2.localeCompare(countryName1);
-      });
-    }
+    // console.log('Grouped Releases by Type:', sortedReleases);
+    return sortedReleases;
   }
-}
 
-interface ReleasesByReleaseTypes {
-  Premiere: ReleaseDate[];
-  'Theatrical (limited)': ReleaseDate[];
-  Theatrical: ReleaseDate[];
-  Digital: ReleaseDate[];
-  Physical: ReleaseDate[];
-  TV: ReleaseDate[];
-  [key: string]: ReleaseDate[];
+  // Group releases by country and sort them based on preferences
+  private groupReleasesByCountry(
+    releases: ReleasesOfCountry[],
+  ): ReleasesOfCountry[] {
+    const sortByCountryName = (
+      c1: ReleasesOfCountry,
+      c2: ReleasesOfCountry,
+    ) => {
+      const countryName1 = this.tmdbConfigService.getCountryNameFromCode(
+        c1.iso_3166_1,
+      ) as string;
+      const countryName2 = this.tmdbConfigService.getCountryNameFromCode(
+        c2.iso_3166_1,
+      ) as string;
+      return countryName1.localeCompare(countryName2);
+    };
+
+    const sortedReleases = releases.sort((c1, c2) => {
+      if (c1.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
+        return -1;
+      } else if (c2.iso_3166_1 === this.tmdbConfigService.localCountryCode) {
+        return 1;
+      }
+
+      return this.releasesPreferences.countryOrder() === 'a-z'
+        ? sortByCountryName(c1, c2)
+        : sortByCountryName(c2, c1);
+    });
+
+    const prioritizedReleases = this.releasesPreferences.showLocalCountryFirst()
+      ? this.prioritizeLocalCountryReleasesOfCountry(
+          sortedReleases,
+          this.localCountryCode() || this.tmdbConfigService.localCountryCode,
+        )
+      : sortedReleases;
+
+    // console.log('Grouped Releases by Country:', prioritizedReleases);
+    return prioritizedReleases;
+  }
 }

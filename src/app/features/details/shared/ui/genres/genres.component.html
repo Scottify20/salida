@@ -1,0 +1,9 @@
+@if (props.length) {
+  <div class="title__genres-container">
+    @for (genre of props; track genre.id) {
+      <div class="title__genre">
+        {{ genre.name }}
+      </div>
+    }
+  </div>
+}

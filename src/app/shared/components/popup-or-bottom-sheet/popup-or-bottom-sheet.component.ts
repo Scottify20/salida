@@ -52,7 +52,7 @@ export class PopupOrBottomSheetComponent
     private destroyRef: DestroyRef,
   ) {}
 
-  @Input() popUpOrBottomSheetConfig: PopupOrBottomSheetConfig = {
+  @Input() props: PopupOrBottomSheetConfig = {
     anchorElementId: null,
     itemsType: 'texts',
     items: [],
@@ -99,7 +99,7 @@ export class PopupOrBottomSheetComponent
       return;
     }
 
-    this.popUpOrBottomSheetConfig.isPopupShown$
+    this.props.isPopupShown$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap((isPopupShown) => {
@@ -136,18 +136,18 @@ export class PopupOrBottomSheetComponent
       : setTimeout;
 
     scheduleFn(() => {
-      if (!this.popUpOrBottomSheetConfig.anchorElementId) {
+      if (!this.props.anchorElementId) {
         console.log('anchor element id not set');
         return;
       }
       const anchorElementRef = this.elemPositionService.getElementRefById(
-        this.popUpOrBottomSheetConfig.anchorElementId,
+        this.props.anchorElementId,
       );
 
       if (anchorElementRef) {
         this.anchorElementPosition$ =
           this.elemPositionService.trackElementPosition$(
-            this.popUpOrBottomSheetConfig.anchorElementId,
+            this.props.anchorElementId,
             anchorElementRef,
           );
 
@@ -185,14 +185,12 @@ export class PopupOrBottomSheetComponent
   }
 
   untrackAndUnsubscribe() {
-    if (!this.popUpOrBottomSheetConfig.anchorElementId) {
+    if (!this.props.anchorElementId) {
       console.log('anchor element id not set');
       return;
     }
 
-    this.elemPositionService.untrackElementPosition(
-      this.popUpOrBottomSheetConfig.anchorElementId,
-    );
+    this.elemPositionService.untrackElementPosition(this.props.anchorElementId);
     this.anchorElementPositionSubscription?.unsubscribe();
   }
 

@@ -1,3 +1,63 @@
-p {
-  height: 500vh;
+:host {
+  width: 100%;
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
+.search__header {
+  position: relative;
+  gap: 1rem;
+  display: flex;
+  flex-flow: row nowrap;
+  align-items: center;
+
+  border-bottom: 1px solid var(--divider-color);
+  padding: 1rem;
+}
+
+.search__main {
+  padding: 1rem;
+  padding-bottom: 0;
+  margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
+
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1rem;
+}
+
+.tabs-container {
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+
+  overflow: hidden;
+
+  display: grid;
+  grid-template-areas: "left-sec prim right-sec";
+  grid-template-columns: minmax(auto, 1fr) auto 1fr;
+
+  .filler-tab {
+    grid-area: left-sec;
+    margin-right: 0.45rem;
+  }
+
+  app-pill-indexed-tabs.main-tabs {
+    overflow-x: auto;
+    border-radius: 1000px;
+
+    scrollbar-width: thin;
+    grid-area: prim;
+  }
+
+  .secondary-tabs {
+    grid-area: right-sec;
+    margin-left: 0.5rem;
+  }
+}
+
+.search__results {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1rem;
 }

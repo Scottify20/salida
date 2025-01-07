@@ -1,11 +1,7 @@
 import { Component, DestroyRef } from '@angular/core';
 import { MovieDetailsService } from '../../../data-access/movie-details.service';
-import {
-  CastCredit,
-  Credit,
-  Movie,
-} from '../../../../../../shared/interfaces/models/tmdb/Movies';
-import { Subscription, takeUntil, tap } from 'rxjs';
+import { Movie } from '../../../../../../shared/interfaces/models/tmdb/Movies';
+import { tap } from 'rxjs';
 import {
   TextsSectionOptions,
   TextsSectionComponent,
@@ -14,14 +10,9 @@ import {
   CollapsibleTextSectionOptions,
   CollapsibleTextSectionComponent,
 } from '../../../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
-import { SeriesCrewCredit } from '../../../../../../shared/interfaces/models/tmdb/Series';
-import {
-  CardsSectionOptions,
-  CardsSectionComponent,
-} from '../../../../../../shared/components/cards-section/cards-section.component';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 
 @Component({
   selector: 'app-movie-more-details',
@@ -29,7 +20,6 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   imports: [
     CollapsibleTextSectionComponent,
     TextsSectionComponent,
-    CardsSectionComponent,
     CommonModule,
   ],
   templateUrl: './movie-more-details.component.html',
@@ -38,8 +28,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class MovieMoreDetailsComponent {
   constructor(
     private movieDetailsService: MovieDetailsService,
-    private router: Router,
     private destroyRef: DestroyRef,
+    private tmdbConfigService: TmdbConfigService,
   ) {
     this.movieDetailsService.movieData$
       .pipe(
@@ -47,6 +37,7 @@ export class MovieMoreDetailsComponent {
         tap((movie) => {
           if (movie) {
             this.movieData = movie;
+            this.updateCountryNames();
           }
         }),
       )
@@ -54,6 +45,18 @@ export class MovieMoreDetailsComponent {
   }
 
   movieData: Movie | undefined;
+  countries: string[] = [];
+
+  updateCountryNames() {
+    if (this.movieData) {
+      const countryCodes = this.movieData.origin_country;
+      this.tmdbConfigService.getCountryCodes().subscribe(() => {
+        this.countries = countryCodes
+          .map((code) => this.tmdbConfigService.getCountryNameFromCode(code))
+          .filter((name): name is string => name !== undefined);
+      });
+    }
+  }
 
   isTextsSectionDoubleColumn(
     sectionA: TextsSectionOptions,
@@ -92,12 +95,10 @@ export class MovieMoreDetailsComponent {
   }
 
   get countriesSection(): TextsSectionOptions {
-    const countries = this.movieData ? this.movieData.origin_country : [];
-
     return {
       sectionTitle: 'Country of Origin',
       sectionTitlePlural: 'Countries of Origin',
-      texts: countries,
+      texts: this.countries,
     };
   }
 
@@ -154,62 +155,6 @@ export class MovieMoreDetailsComponent {
       sectionTitle: 'Director',
       sectionTitlePlural: 'Directors',
       texts: directors,
-    };
-  }
-
-  get crewSection(): CardsSectionOptions {
-    const getCrewMemberEntity = (crewMember: Credit) => ({
-      id: crewMember.id + crewMember.job,
-      name: crewMember.name,
-      image_path: crewMember.profile_path ?? null,
-      otherName: crewMember.job,
-      callback: () => {
-        this.router.navigate(['/people/', crewMember.id, 'details']);
-      },
-    });
-
-    const crew = this.movieData
-      ? this.movieData.credits.crew.map(getCrewMemberEntity)
-      : [];
-
-    return {
-      sectionTitle: 'Crew',
-      cardShape: 'circle',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: () => {},
-      },
-      maxNoOfCards: 10,
-      entities: crew,
-    };
-  }
-
-  get castSection(): CardsSectionOptions {
-    const getCastMemberEntity = (castMember: CastCredit) => ({
-      id: castMember.id + castMember.character,
-      name: castMember.name,
-      image_path: castMember.profile_path ?? null,
-      otherName: castMember.character ?? '',
-      callback: () => {
-        this.router.navigate(['/people/', castMember.id, 'details']);
-      },
-    });
-
-    const cast = this.movieData
-      ? this.movieData.credits.cast.map(getCastMemberEntity)
-      : [];
-
-    return {
-      sectionTitle: 'Cast',
-      cardShape: 'circle',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: () => {},
-      },
-      maxNoOfCards: 10,
-      entities: cast,
     };
   }
 

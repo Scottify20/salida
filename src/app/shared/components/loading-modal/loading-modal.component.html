@@ -26,7 +26,7 @@
     ></app-loading-dots>
 
     <h4 class="loading-modal__title">
-      {{ getTextFromTextItem(loadingModalProps.content.title) }}
+      {{ this.extractStringService.extract(loadingModalProps.content.title) }}
     </h4>
 
     @if (loadingModalProps.content.textItems; as textItems) {
@@ -37,7 +37,7 @@
               <div class="loading-modal__text-item-bullet">•</div>
             }
             <p class="loading-modal__text-item-text">
-              {{ getTextFromTextItem(textItem) }}
+              {{ this.extractStringService.extract(textItem) }}
             </p>
           </li>
         }

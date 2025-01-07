@@ -1,5 +1,4 @@
-import { MovieSummary, ReleaseType } from './Movies';
-import { SeriesSummary } from './Series';
+import { ReleaseType } from './Movies';
 
 export type MediaType = 'movie' | 'tv';
 
@@ -14,17 +13,9 @@ type VideoType =
   | 'Opening Credits'
   | 'Blooper Reel';
 
-export interface TrendingTitles {
-  page: number;
-  results: MediaSummary[];
-  total_pages: number;
-  total_results: number;
-}
-
-export interface MediaSummary {
-  media_type: MediaType;
-  backdrop_path: string | null;
+export interface BaseMedia {
   id: number;
+  backdrop_path: string | null;
   overview: string;
   poster_path: string | null;
   adult: boolean;
@@ -33,7 +24,11 @@ export interface MediaSummary {
   popularity: number;
   vote_average: number;
   vote_count: number;
-  // Specific to Movies or Series
+  [key: string]: any;
+}
+
+export interface MediaSummary extends BaseMedia {
+  media_type?: MediaType; // not present in some responses
   original_title?: string; // For Movies
   title?: string; // For movies
   release_date?: string; // For movies
@@ -42,27 +37,43 @@ export interface MediaSummary {
   name?: string; // For series
   original_name?: string; // For series
   origin_country?: string[]; // For series
-  callback?: () => void; // to be used for homescreen hero section cards
-  [key: string]: any;
 }
 
-export interface Media {
+export interface PersonSummary {
   id: number;
-  adult: boolean;
-  backdrop_path: string | null;
-  genre_ids: number[];
-  original_language: string;
-  original_title: string;
-  overview: string | null;
+  name: string;
   popularity: number;
-  poster_path: string | null;
+  profile_path: string | null;
+  known_for: MediaSummary[];
+  known_for_department: string | null;
+}
 
-  vote_average: number;
-  vote_count: number;
+export interface MediaAndPersonSummary extends BaseMedia {
+  media_type?: MediaType;
+  name: string;
+  original_name?: string;
+  origin_country?: string[];
+  profile_path: string | null;
+  known_for: MediaSummary[];
+  original_title?: string;
+  title?: string;
+  release_date?: string;
+  video?: boolean;
+}
+
+export interface MultiSearchSummaryResults {
+  page: number;
+  results: MediaAndPersonSummary[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface Media extends BaseMedia {
+  original_title: string;
   videos: { results: Video[] };
   recommendations: {
     page: number;
-    results: MediaSummary[]; // Use MediaSummary for both movies and series recommendations
+    results: MediaSummary[];
     total_pages: number;
     total_results: number;
   };
@@ -175,4 +186,16 @@ export interface Country {
   iso_3166_1: string;
   english_name: string;
   native_name: string;
+}
+
+export interface WatchProviders {
+  results: WatchProvider[];
+}
+
+export interface WatchProvider {
+  display_priorities: { [key: string]: number };
+  display_priority: number;
+  logo_path: string;
+  provider_name: string;
+  provider_id: number;
 }

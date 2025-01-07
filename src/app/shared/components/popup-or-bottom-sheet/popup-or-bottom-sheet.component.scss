@@ -65,7 +65,7 @@
 
 ul.dialog__items-container {
   overflow-y: auto;
-  max-height: 50vh;
+  max-height: 35vh;
   width: 100%;
   display: flex;
   flex-flow: column nowrap;
@@ -92,7 +92,7 @@ li.dialog__item {
 
   &:hover p {
     background-color: var(--card-bg-color);
-    color: var(--text-color-subtle);
+    color: var(--text-color);
   }
 
   &.selected p {

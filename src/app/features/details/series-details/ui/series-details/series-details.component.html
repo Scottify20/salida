@@ -2,37 +2,56 @@
   <app-media-hero-section></app-media-hero-section>
 
   <div class="title-details__tabs">
-    <!-- filler tab to key the main tab centered -->
+    <!-- filler tab to keep the main tab centered -->
     <div class="title-details__filler-tab"></div>
 
     <!-- primary tab for tab navigation -->
     <app-pill-indexed-tabs
       class="title-details__primary-tab"
       (tabIndex)="setTabIndex($event)"
-      [pillIndexedTabsProps]="pillIndexedTabsProps"
+      [props]="pillIndexedTabsProps"
     ></app-pill-indexed-tabs>
 
     <!-- secondary tabs for picker, toggle, etc -->
     @if (
-      currentTabIndex === 1 && seriesDetailsService.seasonsSummary.length > 1
+      currentTabIndex === 2 && seriesDetailsService.seasonsSummary.length > 1
     ) {
-      <app-dropdown-picker-tab
-        class="title-details__secondary-tab"
-        [dropDownPickerTabProps]="dropDownPickerTabProps"
-      ></app-dropdown-picker-tab>
+      <app-dropdown-picker
+        class="title-details__secondary-tabs"
+        [props]="dropDownPickerTabProps"
+      ></app-dropdown-picker>
     }
+
+    <div class="title-details__secondary-tabs">
+      <!-- 1 is the index of Cast & Crew tab pill indexed tab props -->
+      @if (currentTabIndex === 1) {
+        <app-toggle-switch [props]="castOrCrewSwitchProps"></app-toggle-switch>
+      }
+
+      <!-- 3 is the index of reviews tab pill indexed tab props -->
+      @if (currentTabIndex === 3) {
+        <app-toggle-switch
+          [props]="reviewsSourceSwitchProps"
+        ></app-toggle-switch>
+      }
+    </div>
   </div>
 
-  <div class="tabbed-component-container" pill-tab-transition>
+  <div class="tabbed-component-container" pill-tab-component-transition>
     @if (currentTabIndex === 0) {
       <app-series-more-details></app-series-more-details>
     }
 
     @if (currentTabIndex === 1) {
-      <app-seasons></app-seasons>
+      <app-cast-and-crew></app-cast-and-crew>
     }
 
     @if (currentTabIndex === 2) {
+      <app-seasons
+        [dropdownPickerArrowDirection]="dropDownPickerTabProps.arrowDirection"
+      ></app-seasons>
+    }
+    @if (currentTabIndex === 3) {
       <app-reviews></app-reviews>
     }
   </div>

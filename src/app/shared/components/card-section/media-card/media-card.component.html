@@ -1,0 +1,17 @@
+<div (click)="props.onClick()" role="button" class="card">
+  <div class="card__image-container">
+    <img
+      [src]="
+        props.poster_path
+          ? 'https://image.tmdb.org/t/p/w154' + props.poster_path
+          : 'assets/icons/placeholders/Profile.svg'
+      "
+      alt=""
+      class="card__image"
+      [class]="props.poster_path ? '' : 'no-image'"
+    />
+  </div>
+  <div class="card__texts">
+    <p class="card__title">{{ props.name || props.title }}</p>
+  </div>
+</div>

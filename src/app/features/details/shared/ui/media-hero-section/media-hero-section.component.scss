@@ -18,6 +18,7 @@ app-header-buttons {
   max-width: var(--main-max-width);
   z-index: 1003;
   position: fixed;
+  filter: drop-shadow(0 0 3px rgb(0, 0, 0, 0.3));
 }
 
 .buttons-header-bg-and-title {
@@ -79,138 +80,35 @@ app-header-buttons {
   flex-flow: column nowrap;
   position: relative;
   justify-content: flex-end;
-  padding-right: 8rem;
+  // padding-right: 8rem;
   height: 100%;
 }
 
 .title__poster {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  max-width: 7rem;
+  max-width: 6.25rem;
   border-radius: 1rem;
   overflow: hidden;
+  margin-bottom: 0.7rem;
+  filter: drop-shadow(0 0 0.5rem rgb(0, 0, 0, 0.5));
 }
 
 .title__title {
-  // border: 1px solid red;
   line-height: 1.4;
   font-size: 1.44rem;
   font-weight: 700;
   margin-bottom: calc(1rem - 0.44rem);
+  word-wrap: break-word;
 }
 
-.title__metadataContainer {
-  position: relative;
-  margin-bottom: 0.75rem;
-  opacity: 90%;
-  display: flex;
-  flex-flow: row nowrap;
-  font-size: 1rem;
-  align-items: center;
-
-  .title__metadata {
-    .metadata-text {
-      color: var(--text-color-subtle);
-      position: relative;
-    }
-
-    .metadata-text.metadata-rating {
-      height: 1rem;
-      font-size: 0.7rem;
-      border: 1px solid var(--text-color-subtle);
-      width: min-content;
-      margin: 0 1.25em;
-      padding: 0.15em 0.5em;
-      border-radius: 0.25rem;
-    }
-
-    .metadata-text:first-of-type {
-      margin-left: 0;
-    }
-
-    .metadata-text:not(:last-of-type) {
-      &::after {
-        font-size: 0.8333rem;
-        position: absolute;
-        display: inline-block;
-        transform: scale(0.6);
-        content: "•";
-        padding: 0 0.25em;
-        color: var(--text-color-disabled);
-        top: 7.5%;
-      }
-
-      &::after {
-        right: -0.9rem;
-      }
-    }
+@media (min-width: 600px) {
+  .title__title {
+    margin-right: 9rem;
   }
-}
 
-.title__genres-container {
-  margin-top: 0.15rem;
-  display: flex;
-  flex-flow: row nowrap;
-  column-gap: 0.5rem;
-  overflow-x: auto;
-
-  .title__genre {
-    color: var(--text-color-slightly-transparent);
-    cursor: pointer;
-    background-color: var(--button-bg-subtle);
-    border: 1px solid var(--divider-color);
-    font-weight: 300;
-    border-radius: 100px;
-    padding: 0.35rem 0.7rem;
-    font-size: 0.8rem;
-
-    white-space: nowrap;
-  }
-}
-
-// .title__play-button-parent-container {
-//   position: relative;
-//   display: grid;
-//   height: 100%;
-//   width: 100%;
-
-//   &:hover .title__play-button-container {
-//     opacity: 100%;
-//   }
-// }
-
-// .title__play-button-container {
-//   transition: all ease-in-out 0.15s;
-//   opacity: 0;
-//   place-self: center;
-//   cursor: pointer;
-//   pointer-events: all;
-//   display: flex;
-//   flex-flow: column nowrap;
-//   row-gap: 0.5em;
-//   align-items: center;
-
-//   .title__play-button {
-//     display: grid;
-//     place-content: center;
-//     width: 2.625rem;
-//     aspect-ratio: 1/1;
-//     background-color: rgba(255, 255, 255, 0.9);
-//     border-radius: 4rem;
-
-//     .title__play-icon {
-//       text-align: center;
-//     }
-//   }
-//   .title__play-button__label {
-//     font-size: 0.8333rem;
-//   }
-// }
-
-@media (hover: none) {
-  .title__genres-container {
-    overflow-x: auto;
-    scrollbar-width: none;
+  .title__poster {
+    max-width: 8rem;
+    position: absolute;
+    align-self: flex-end;
+    margin-bottom: 0;
   }
 }

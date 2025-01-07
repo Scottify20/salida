@@ -1,6 +1,6 @@
 .episode-card {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: calc(var(--episode-thumbnail-height) * 16 / 11) 1fr;
   grid-template-areas: "thumb texts";
   grid-template-rows: var(--episode-thumbnail-height);
 
@@ -98,7 +98,7 @@
   overflow: hidden;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 600px) {
   :host {
     --episode-thumbnail-height: 85px;
   }
@@ -152,44 +152,3 @@
     display: none;
   }
 }
-
-// .episode-card.no-plot {
-//   --episode-thumbnail-height: 85px;
-//   .episode__poster-and-mini-number-container {
-//     .episode__mini-number {
-//       display: grid;
-//     }
-//   }
-
-//   .episode-card__header {
-//     column-gap: 0;
-
-//     .episode__number {
-//       display: none;
-//     }
-
-//     .title-runtime-and-date-container {
-//       row-gap: 0.5rem;
-
-//       .episode__title {
-//         font-size: 1.125rem;
-//         font-weight: 600;
-//         line-height: 1.2;
-//         max-height: calc(1.125rem * 1.2 * 2);
-//       }
-
-//       .episode__date-and-runtime {
-//         font-size: 0.9rem;
-
-//         span {
-//           color: var(--text-color-subtle);
-//           font-weight: 300;
-//         }
-//       }
-//     }
-//   }
-
-//   .episode__plot {
-//     display: none;
-//   }
-// }

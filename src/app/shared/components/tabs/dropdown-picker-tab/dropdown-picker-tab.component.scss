@@ -1,10 +1,11 @@
 :host {
-  height: 100%;
   user-select: none;
   width: min-content;
   border-radius: 100px;
   padding: 0.375rem 0.5rem;
   background-color: var(--card-bg-color);
+  cursor: pointer;
+  height: min-content;
 }
 
 .dropdown-tab {
@@ -17,9 +18,11 @@
 
   font-size: 0.9rem;
   width: max-content;
-  height: 100%;
   border-radius: 100px;
   background-color: white;
+
+  transition: all 0.2s ease-in-out;
+  transform: scale(1);
 
   .dropdown-tab__text {
     pointer-events: none;
@@ -32,5 +35,21 @@
     pointer-events: none;
     height: 0.9rem;
     aspect-ratio: 1;
+
+    transition: all 0.25s ease-in-out;
+    transform: rotate(0deg);
+
+    &.up {
+      transform: rotate(180deg) translateY(5%);
+    }
+  }
+
+  &:active {
+    opacity: 20%;
+    transform: scale(0.95);
+  }
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.85);
   }
 }

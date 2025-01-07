@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { HeaderButtonsComponent } from '../../../../shared/components/header-buttons/header-buttons.component';
-import { HeaderButton } from '../../../../shared/components/header-button/header-button.component';
+import { HeaderButtonProps } from '../../../../shared/components/header-button/header-button.component';
 import { Router } from '@angular/router';
 
 @Component({
@@ -14,7 +14,7 @@ import { Router } from '@angular/router';
 export class UserProfileComponent {
   constructor(private router: Router) {}
 
-  headerButtons: HeaderButton[] = [
+  headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',

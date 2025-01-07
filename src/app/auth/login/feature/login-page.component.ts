@@ -4,7 +4,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
 import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
-import { HeaderButton } from '../../../shared/components/header-button/header-button.component';
+import { HeaderButtonProps } from '../../../shared/components/header-button/header-button.component';
 import { Router, RouterModule } from '@angular/router';
 import {
   catchError,
@@ -322,7 +322,7 @@ export class LoginPageComponent {
       this.passwordInputType === 'password' ? 'text' : 'password';
   }
 
-  headerButtons: HeaderButton[] = [
+  headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',
@@ -330,14 +330,5 @@ export class LoginPageComponent {
         this.router.navigateByUrl('/');
       },
     },
-    // {
-    //   type: 'iconWithBG',
-    //   iconPath: 'assets/icons/header/Question.svg',
-    //   anchor: {
-    //     urlType: 'internal',
-    //     path: '/auth/login',
-    //     target: '_self',
-    //   },
-    // },
   ];
 }

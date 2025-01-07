@@ -1,1 +1,54 @@
-<p>search-home works!</p>
+<div class="search__header">
+  <!-- <app-header-button [props]="backButtonProps"> </app-header-button> -->
+
+  <app-search-bar
+    (search)="searchPageService.triggerSearch($event)"
+  ></app-search-bar>
+</div>
+
+<div class="search__main" pill-tab-parent>
+  <div class="tabs-container">
+    <!-- filler tab to key the main tab centered -->
+    <div class="filler-tab"></div>
+
+    <app-pill-indexed-tabs
+      class="main-tabs"
+      [props]="pillTabsProps"
+    ></app-pill-indexed-tabs>
+
+    <div class="secondary-tabs"></div>
+  </div>
+
+  <div class="search__results clickable-cards" pill-tab-component-transition>
+    @switch (searchPageService.searchPreferences.searchType()) {
+      @case ("movie") {
+        @for (
+          result of searchPageService.movieSearchResults.results;
+          track result.id
+        ) {
+          <app-media-result-card [props]="result"></app-media-result-card>
+        }
+      }
+
+      @case ("series") {
+        @for (
+          result of searchPageService.seriesSearchResults.results;
+          track result.id
+        ) {
+          <app-media-result-card [props]="result"></app-media-result-card>
+        }
+      }
+
+      @case ("person") {
+        @for (
+          result of searchPageService.personSearchResults.results;
+          track result.id
+        ) {
+          <app-person-result-card [props]="result"></app-person-result-card>
+        }
+      }
+    }
+  </div>
+
+  <div class="categories"></div>
+</div>

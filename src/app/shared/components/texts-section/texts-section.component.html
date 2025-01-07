@@ -1,7 +1,5 @@
 <div class="texts-section">
-  <app-section-header-title-and-button
-    [sectionHeaderOptions]="sectionHeaderOptions"
-  ></app-section-header-title-and-button>
+  <app-section-title [props]="sectionTitleOptions"></app-section-title>
 
   <div class="texts-section__texts-container">
     @for (text of textsSectionOptions.texts; let i = $index; track i) {

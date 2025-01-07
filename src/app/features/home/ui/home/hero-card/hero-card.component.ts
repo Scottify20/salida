@@ -1,12 +1,8 @@
-import { Component, Input, OnInit, OnDestroy, Inject } from '@angular/core';
-import { WindowResizeService } from '../../../../../shared/services/dom/window-resize.service';
-import { Subscription } from 'rxjs';
-import { DOCUMENT } from '@angular/common';
+import { Component, Input, OnInit } from '@angular/core';
 import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
-import {
-  MediaSummary,
-  TrendingTitles,
-} from '../../../../../shared/interfaces/models/tmdb/All';
+import { MediaSummary } from '../../../../../shared/interfaces/models/tmdb/All';
+import { MovieDetailsService } from '../../../../details/movie-details/data-access/movie-details.service';
+import { SeriesDetailsService } from '../../../../details/series-details/data-access/series-details.service';
 
 @Component({
   selector: 'app-hero-card',
@@ -15,9 +11,15 @@ import {
   templateUrl: './hero-card.component.html',
   styleUrl: './hero-card.component.scss',
 })
-export class HeroCardComponent {
+export class HeroCardComponent implements OnInit {
+  constructor(
+    private movieDetailsService: MovieDetailsService,
+    private seriesDetailsService: SeriesDetailsService,
+    private platformCheck: PlatformCheckService,
+  ) {}
+
   @Input() cardIndex = 0;
-  @Input() titleDetails: MediaSummary = {
+  @Input({ required: true }) titleDetails: MediaSummary = {
     media_type: 'movie',
     backdrop_path: null,
     id: 0,
@@ -31,53 +33,47 @@ export class HeroCardComponent {
     vote_count: 0,
   };
 
-  constructor(private platformCheck: PlatformCheckService) {}
-
   protected cardOpacity = 'opacity: 0%';
+
+  onCardClick() {
+    if (this.titleDetails.title) {
+      this.movieDetailsService.viewMovieDetails(
+        this.titleDetails.id,
+        this.titleDetails.title as string,
+      );
+    } else if (this.titleDetails.name) {
+      this.seriesDetailsService.viewSeriesDetails(
+        this.titleDetails.id,
+        this.titleDetails.name as string,
+      );
+    }
+  }
 
   ngOnInit() {
     this.setOpacityOfCardDetailsOnLoad();
   }
 
   setOpacityOfCardDetailsOnLoad() {
-    if (this.platformCheck.isServer()) {
-      return;
-    }
-
-    // Consider using CSS transitions or animations for a smoother fade-in effect
-    setTimeout(() => {
-      this.cardOpacity = 'opacity: 100%';
-    }, 0);
+    if (this.platformCheck.isServer()) return;
+    setTimeout(() => (this.cardOpacity = 'opacity: 100%'), 0);
   }
 
   runCallbackOnClick(callback?: () => void) {
-    if (callback) {
-      callback();
-    }
+    if (callback) callback();
   }
 
   getImageSrcBasedOnWidth(): string {
-    if (this.platformCheck.isServer()) {
-      return '';
-    }
+    if (this.platformCheck.isServer()) return '';
 
-    const baseLink = 'https://image.tmdb.org/t/p/'; // Use HTTPS
+    const baseLink = 'https://image.tmdb.org/t/p/';
     const poster_path = this.titleDetails.poster_path || '';
     const windowWidth = window.innerWidth;
 
-    if (windowWidth === 0) {
-      return '';
-    }
-    if (windowWidth <= 320) {
-      return baseLink + 'w300' + poster_path;
-    }
-    if (windowWidth <= 480) {
-      return baseLink + 'w500' + poster_path;
-    }
-    if (windowWidth <= 720) {
+    if (windowWidth === 0) return '';
+    if (windowWidth <= 320) return baseLink + 'w300' + poster_path;
+    if (windowWidth <= 480) return baseLink + 'w500' + poster_path;
+    if (windowWidth <= 720)
       return baseLink + 'w780' + this.titleDetails.backdrop_path;
-    } else {
-      return baseLink + 'w1280' + this.titleDetails.backdrop_path;
-    }
+    return baseLink + 'w1280' + this.titleDetails.backdrop_path;
   }
 }

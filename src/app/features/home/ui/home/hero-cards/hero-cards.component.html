@@ -5,7 +5,7 @@
   <div class="hero__cards-container clickable-cards" id="hero__cards-container">
     <div class="hero-card-filler"></div>
 
-    @for (title of trendingTitles.results; track title; let i = $index) {
+    @for (title of props; track title; let i = $index) {
       <app-hero-card
         class="big-card"
         [cardIndex]="i"
@@ -15,9 +15,8 @@
 
     <div class="hero-card-filler"></div>
   </div>
-
   <div class="page-indicator-container">
-    @for (title of trendingTitles.results; track title; let i = $index) {
+    @for (title of props; track title; let i = $index) {
       <div
         class="dot"
         [id]="'hero-dot--' + i"

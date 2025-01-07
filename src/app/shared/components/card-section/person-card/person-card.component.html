@@ -1,0 +1,26 @@
+<div
+  (click)="runCallbackOnClick(entity.callback)"
+  role="button"
+  class="card circle"
+>
+  <div class="card__image-container">
+    <img
+      [src]="
+        entity.image_path
+          ? 'https://image.tmdb.org/t/p/w154' + entity.image_path
+          : 'assets/icons/placeholders/Profile.svg'
+      "
+      alt=""
+      class="card__image"
+      [class]="entity.image_path ? '' : 'no-image'"
+    />
+  </div>
+  <div class="card__texts">
+    <p class="card__title">{{ entity.name }}</p>
+    @if (entity.otherName) {
+      <p class="card__subtitle">
+        {{ entity.otherName }}
+      </p>
+    }
+  </div>
+</div>

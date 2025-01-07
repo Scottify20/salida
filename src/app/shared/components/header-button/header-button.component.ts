@@ -1,18 +1,13 @@
 import { Component, Input, Signal } from '@angular/core';
+import { ExtractStringService } from '../../services/utility/extract-string.service';
 
-export type HeaderButton =
-  | {
-      type: 'text';
-      text: string | Signal<string | null | undefined> | (() => string);
-      id?: string;
-      onClickCallbackFn?: () => void;
-    }
-  | {
-      type: 'icon';
-      iconPath: string | Signal<string | null | undefined> | (() => string);
-      id?: string;
-      onClickCallbackFn?: () => void;
-    };
+export type HeaderButtonProps = {
+  type: 'text' | 'icon';
+  iconPath?: string | Signal<string | null | undefined> | (() => string);
+  text?: string | Signal<string | null | undefined> | (() => string);
+  onClickCallbackFn?: () => void;
+  id?: string;
+};
 
 @Component({
   selector: 'app-header-button',
@@ -22,17 +17,9 @@ export type HeaderButton =
   styleUrl: './header-button.component.scss',
 })
 export class HeaderButtonComponent {
-  @Input({ required: true }) headerButtonProps!: HeaderButton;
+  @Input({ required: true }) props!: HeaderButtonProps;
 
-  getTextOrIconPath(
-    text:
-      | undefined
-      | string
-      | Signal<string | null | undefined>
-      | (() => string),
-  ): string | null | undefined {
-    return !text ? undefined : typeof text === 'string' ? text : text();
-  }
+  constructor(protected extractStringService: ExtractStringService) {}
 
   callOnClickCallbackFn(callback: undefined | (() => void)) {
     if (callback) {
