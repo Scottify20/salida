@@ -1,7 +1,10 @@
-@if (dropDownPickerTabProps; as props) {
-  <div class="dropdown-tab" (click)="props.callback()">
-    <div class="dropdown-tab__text">{{ getText(props.text) }}</div>
+@if (props) {
+  <div class="dropdown-tab" [attr.id]="props.id" (click)="handleClick()">
+    <div class="dropdown-tab__text">
+      {{ this.extractStringService.extract(props.text) }}
+    </div>
     <img
+      [class]="props.arrowDirection()"
       class="dropdown-tab__icon"
       src="assets/icons/pill-tabs/Arrow-black.svg"
       alt=""

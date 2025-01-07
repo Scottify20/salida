@@ -1,0 +1,21 @@
+<div class="title__metadataContainer">
+  <p class="title__metadata">
+    @if (metadata.year) {
+      <span class="metadata-text">
+        {{ metadata.year }}
+      </span>
+    }
+
+    @if (metadata.rating) {
+      <span class="metadata-rating metadata-text">
+        {{ metadata.rating }}
+      </span>
+    }
+
+    @if (metadata.runtimeOrSeasons) {
+      <span class="metadata-text">
+        {{ metadata.runtimeOrSeasons }}
+      </span>
+    }
+  </p>
+</div>

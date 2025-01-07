@@ -1,0 +1,67 @@
+<div
+  #popover
+  class="popover scroll-lock"
+  [class]="isOpenSig() ? 'open' : 'closed'"
+>
+  <div #popoverArrow class="popover__arrow"></div>
+
+  <div #popoverSectionsContainer class="popover__sections-container">
+    @for (section of props.itemGroupsConfig.groups; track section) {
+      @if (section.items.length > 0) {
+        <ul class="popover__items-section">
+          @for (item of section.items; track item) {
+            <!-- Icon Only Item -->
+            @if (section.contentType === "icon" && itemIsVisible(item)) {
+              <li
+                class="popover__item popover__item--icon"
+                [class.active]="isActiveClass(item.isActive)"
+                (click)="
+                  item.onClickCallback && !item.isActive?.()
+                    ? item.onClickCallback()
+                    : null
+                "
+              >
+                <div class="icon-container">
+                  <img [src]="item.iconPath" height="18" width="18" alt="" />
+                </div>
+              </li>
+            }
+            <!-- Text Only Item -->
+            @if (section.contentType === "text" && itemIsVisible(item)) {
+              <li
+                class="popover__item popover__item--text"
+                [class.active]="isActiveClass(item.isActive)"
+                (click)="
+                  item.onClickCallback && !item.isActive?.()
+                    ? item.onClickCallback()
+                    : null
+                "
+              >
+                <p>{{ getItemText(item.text) }}</p>
+              </li>
+            }
+            <!-- Icon and Text Item -->
+            @if (
+              section.contentType === "icon-and-text" && itemIsVisible(item)
+            ) {
+              <li
+                class="popover__item popover__item--icon-and-text"
+                [class.active]="isActiveClass(item.isActive)"
+                (click)="
+                  item.onClickCallback && !item.isActive?.()
+                    ? item.onClickCallback()
+                    : null
+                "
+              >
+                <div class="icon-container">
+                  <img [src]="item.iconPath" height="18" width="18" alt="" />
+                </div>
+                <p>{{ getItemText(item.text) }}</p>
+              </li>
+            }
+          }
+        </ul>
+      }
+    }
+  </div>
+</div>

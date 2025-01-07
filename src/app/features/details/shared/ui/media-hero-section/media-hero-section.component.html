@@ -5,7 +5,7 @@
 
 <div
   class="buttons-header-bg-and-title"
-  [class]="isHeaderBgAndTitleVisibleSig() ? 'visible' : ''"
+  [class.visible]="isHeaderBgAndTitleVisibleSig()"
 >
   <h4 class="title__hero--title-on-header">
     {{ heroSectionData.title }}
@@ -23,53 +23,14 @@
     alt=""
     class="title__hero-backdrop"
   />
-  <!-- 
-  <div class="title__play-button-parent-container">
-    <div class="title__play-button-container">
-      <div class="title__play-button">
-        <img
-          src="assets/icons/header/Play.svg"
-          alt=""
-          class="title__play-icon"
-        />
-      </div>
-      <p class="title__play-button__label">Watch Trailer</p>
-    </div>
-  </div> -->
   <div class="title__main-details-container">
-    <h4 class="title__title">{{ heroSectionData.title }}</h4>
-    <div class="title__metadataContainer">
-      <p class="title__metadata">
-        @if (heroSectionData.metadata.year) {
-          <span class="title__metadata--year metadata-text">{{
-            heroSectionData.metadata.year
-          }}</span>
-        }
-        @if (heroSectionData.metadata.rating) {
-          <span class="title__metadata--rating metadata-rating metadata-text">{{
-            heroSectionData.metadata.rating
-          }}</span>
-        }
-        @if (heroSectionData.metadata.runtimeOrSeasons) {
-          <span class="title__metadata--rating metadata-text">{{
-            heroSectionData.metadata.runtimeOrSeasons
-          }}</span>
-        }
-      </p>
-    </div>
-    @if (heroSectionData.genres[0]) {
-      <div class="title__genres-container">
-        @for (genre of heroSectionData.genres; track genre.id) {
-          <div class="title__genre">
-            {{ genre.name }}
-          </div>
-        }
-      </div>
-    }
     <img
       [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.poster_path"
       alt=""
       class="title__poster"
     />
+    <h4 class="title__title">{{ heroSectionData.title }}</h4>
+    <app-metadata></app-metadata>
+    <app-genres [props]="genresProps"></app-genres>
   </div>
 </div>

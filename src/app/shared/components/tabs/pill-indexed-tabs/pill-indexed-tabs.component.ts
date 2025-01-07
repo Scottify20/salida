@@ -4,11 +4,15 @@ import {
   EventEmitter,
   Input,
   ElementRef,
+  Signal,
+  signal,
 } from '@angular/core';
 
 export interface PillIndexedTabsProps {
   buttonContent: TabButtonContent;
   tabs: TabItem[];
+  animationType: 'none' | 'slide' | 'fade';
+  defaultTabIndex?: Signal<number>;
 }
 
 export type TabButtonContent = 'text' | 'text-and-icon';
@@ -17,6 +21,7 @@ interface TabItem {
   text: string;
   iconPathActive?: string;
   iconPathDisabled?: string;
+  onClickCallback?: () => void;
 }
 
 @Component({
@@ -29,10 +34,16 @@ interface TabItem {
 export class PillIndexedTabsComponent {
   constructor(private elementRef: ElementRef) {}
 
-  @Input({ required: true }) pillIndexedTabsProps: PillIndexedTabsProps = {
+  @Input({ required: true }) props: PillIndexedTabsProps = {
     buttonContent: 'text',
     tabs: [],
+    defaultTabIndex: signal(0),
+    animationType: 'none',
   };
+
+  ngOnInit() {
+    this.currentTabIndex = this.props.defaultTabIndex?.() || 0;
+  }
 
   @Output() tabIndex = new EventEmitter<number>();
 
@@ -44,6 +55,8 @@ export class PillIndexedTabsComponent {
   }
 
   handleTabClick(newIndex: number) {
+    this.props.tabs[newIndex].onClickCallback?.();
+
     const previousIndex = this.currentTabIndex;
 
     this.setNewTabIndex(newIndex);
@@ -53,24 +66,49 @@ export class PillIndexedTabsComponent {
     }
 
     const direction = newIndex > previousIndex ? 'right' : 'left';
-    const animationClass =
-      direction === 'right' ? 'slide-in-from-right' : 'slide-in-from-left';
+
+    const animationClass = () => {
+      const animationType = this.props.animationType;
+
+      if (animationType === 'none') {
+        return '';
+      }
+
+      // if animation direction is right
+      if (direction === 'right') {
+        return animationType === 'slide'
+          ? 'slide-in-from-right'
+          : animationType === 'fade'
+            ? 'fade-in'
+            : '';
+      }
+
+      // if animation direction is left
+      return animationType === 'slide'
+        ? 'slide-in-from-left'
+        : animationType === 'fade'
+          ? 'fade-in'
+          : '';
+    };
 
     const parentContainer = this.elementRef.nativeElement.closest(
       '[pill-tab-parent]',
     ) as HTMLElement;
     const componentViewsContainer = parentContainer.querySelector(
-      '[pill-tab-transition]',
-    );
+      '[pill-tab-component-transition]',
+    ) as null | HTMLElement;
 
     if (componentViewsContainer) {
       parentContainer.style.overflow = 'hidden';
-      componentViewsContainer.classList.add(animationClass);
+      const animationClassName = animationClass();
+      if (animationClassName) {
+        componentViewsContainer.classList.add(animationClassName);
 
-      componentViewsContainer.addEventListener('animationend', (e) => {
-        componentViewsContainer.classList.remove(animationClass);
-        parentContainer.style.overflow = 'visible';
-      });
+        componentViewsContainer.addEventListener('animationend', (e) => {
+          componentViewsContainer.classList.remove(animationClassName);
+          parentContainer.style.overflow = 'visible';
+        });
+      }
       return;
     }
   }

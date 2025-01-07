@@ -1,0 +1,29 @@
+<!-- If the curret title in view is a TV Series -->
+@if (!this.movieDetailsService.isMovieRoute && castOrCrew() === "cast") {
+  <app-people-cards-section
+    class="title__section"
+    [props]="seriesCastSection"
+  ></app-people-cards-section>
+}
+
+@if (!this.movieDetailsService.isMovieRoute && castOrCrew() === "crew") {
+  <app-people-cards-section
+    class="title__section"
+    [props]="seriesCrewSection"
+  ></app-people-cards-section>
+}
+
+<!-- If the curret title in view is a Movie -->
+@if (this.movieDetailsService.isMovieRoute && castOrCrew() === "cast") {
+  <app-people-cards-section
+    class="title__section"
+    [props]="movieCastSection"
+  ></app-people-cards-section>
+}
+
+@if (this.movieDetailsService.isMovieRoute && castOrCrew() === "crew") {
+  <app-people-cards-section
+    class="title__section"
+    [props]="movieCrewSection"
+  ></app-people-cards-section>
+}

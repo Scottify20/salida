@@ -9,25 +9,45 @@
     <app-pill-indexed-tabs
       class="title-details__primary-tab"
       (tabIndex)="setTabIndex($event)"
-      [pillIndexedTabsProps]="pillIndexedTabsProps"
+      [props]="pillIndexedTabsProps"
     ></app-pill-indexed-tabs>
 
     <!-- secondary tabs for picker, toggle, etc -->
-    @if (false) {
-      <div class="title-details__secondary-tab"></div>
-    }
+    <div class="title-details__secondary-tabs">
+      <!-- 1 is the index of Cast & Crew tab pill indexed tab props -->
+      @if (currentTabIndex === 1) {
+        <app-toggle-switch [props]="castOrCrewSwitchProps"></app-toggle-switch>
+      }
+
+      <!-- 2 is the index of releases tab pill indexed tab props -->
+      @if (currentTabIndex === 2) {
+        <app-toggle-switch
+          [props]="reviewsSourceSwitchProps"
+        ></app-toggle-switch>
+      }
+
+      <!-- 3 is the index of releases tab pill indexed tab props -->
+      @if (currentTabIndex === 3) {
+        <app-toggle-switch [props]="releaseTypeSwitchProps"></app-toggle-switch>
+      }
+    </div>
   </div>
-  <div class="tabbed-component-container" pill-tab-transition>
+
+  <div class="tabbed-components-container" pill-tab-component-transition>
     @if (currentTabIndex === 0) {
       <app-movie-more-details></app-movie-more-details>
     }
 
     @if (currentTabIndex === 1) {
-      <app-releases></app-releases>
+      <app-cast-and-crew></app-cast-and-crew>
     }
 
     @if (currentTabIndex === 2) {
       <app-reviews></app-reviews>
+    }
+
+    @if (currentTabIndex === 3) {
+      <app-releases></app-releases>
     }
   </div>
 </div>

@@ -13,7 +13,7 @@
       <p class="episode__number">{{ episodeData.episode_number }}</p>
 
       <div class="title-runtime-and-date-container">
-        <h4 class="episode__title">{{ episodeData.name }}</h4>
+        <h4 class="episode__title">{{ episodeData["name"] }}</h4>
         <p class="episode__date-and-runtime">
           <span class="episode__release-date">{{
             episodeData.air_date | date: "MMM d, y"
@@ -21,7 +21,7 @@
           @if (episodeData.runtime) {
             <span class="dot-separator"> • </span>
             <span class="episode__runtime">{{
-              episodeData.runtime | duration: "minutes"
+              episodeData.runtime | duration: "min" : ["d", "h", "min"]
             }}</span>
           }
         </p>

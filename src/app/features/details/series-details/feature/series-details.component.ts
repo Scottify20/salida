@@ -1,14 +1,10 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, computed, effect, signal } from '@angular/core';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
-import { RouterOutlet } from '@angular/router';
+import { TemporaryUserPreferencesService } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import {
-  ReviewsPreferences,
-  TemporaryUserPreferencesService,
-} from '../../../../shared/services/preferences/temporary-user-preferences-service';
-import { tap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { DropdownPickerTabComponent } from '../../../../shared/components/tabs/dropdown-picker-tab/dropdown-picker-tab.component';
-import { DropDownPickerTabProps } from '../../../../shared/components/tabs/dropdown-picker-tab/dropdown-picker-tab.interface';
+  DropdownPickerTabComponent,
+  DropDownPickerTabProps,
+} from '../../../../shared/components/tabs/dropdown-picker-tab/dropdown-picker-tab.component';
 import {
   PillIndexedTabsComponent,
   PillIndexedTabsProps,
@@ -17,40 +13,44 @@ import { ReviewsComponent } from '../../shared/ui/reviews/reviews.component';
 import { SeasonsComponent } from '../ui/series-details/seasons/seasons.component';
 import { SeriesMoreDetailsComponent } from '../ui/series-details/series-more-details/series-more-details.component';
 import { SeriesDetailsService } from '../data-access/series-details.service';
+import { CastAndCrewComponent } from '../../shared/ui/cast-and-crew/cast-and-crew.component';
+import { FormatService } from '../../../../shared/services/utility/format.service';
+import {
+  ToggleSwitchProps,
+  ToggleSwitchComponent,
+} from '../../../../shared/components/toggle-switch/toggle-switch.component';
 
 @Component({
   selector: 'app-series-details',
   standalone: true,
   imports: [
     MediaHeroSectionComponent,
-    RouterOutlet,
     DropdownPickerTabComponent,
     PillIndexedTabsComponent,
     ReviewsComponent,
     SeasonsComponent,
     SeriesMoreDetailsComponent,
+    CastAndCrewComponent,
+    ToggleSwitchComponent,
   ],
   templateUrl: '../ui/series-details/series-details.component.html',
   styleUrl: '../ui/series-details/series-details.component.scss',
 })
 export class SeriesDetailsComponent {
   constructor(
-    private preferencesService: TemporaryUserPreferencesService,
-    private destroyRef: DestroyRef,
     protected seriesDetailsService: SeriesDetailsService,
+    private formatService: FormatService,
+    private preferencesService: TemporaryUserPreferencesService,
   ) {
-    this.preferencesService.preferences$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((preferences) => {
-          this.reviewsPreferences =
-            preferences.details.movieAndSeriesDetails.reviews;
-        }),
-      )
-      .subscribe();
+    effect(() => {
+      this.dropDownPickerTabProps.text = this.formatService.truncate(
+        this.seriesDetailsService.selectedSeason(),
+        6,
+        '...',
+        4,
+      );
+    });
   }
-
-  private reviewsPreferences: ReviewsPreferences = {};
 
   previousTabIndex: number | null = null;
   currentTabIndex: number = 0;
@@ -62,26 +62,103 @@ export class SeriesDetailsComponent {
 
   dropDownPickerTabProps: DropDownPickerTabProps = {
     id: 'season-picker-dropdown-tab',
-    text: this.seriesDetailsService.selectedSeason || '',
+    text: '---', // this needs to be updated by the effect in the constructor
     callback: () => {
       this.seriesDetailsService.isSeriesPickerShown$.next(true);
     },
     visibleIf: () => {
       return false;
     },
+    arrowDirection: signal('down'),
   };
 
   pillIndexedTabsProps: PillIndexedTabsProps = {
     buttonContent: 'text',
+    animationType: 'slide',
     tabs: [
       {
         text: 'Details',
       },
+      { text: 'Cast + Crew' },
       {
         text: 'Episodes',
       },
       {
         text: 'Reviews',
+      },
+    ],
+  };
+
+  castOrCrewSwitchProps: ToggleSwitchProps = {
+    buttonsContent: 'icon',
+    buttons: [
+      {
+        onClick: () => {
+          this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
+            'cast',
+          );
+        },
+        isActive: computed(
+          () =>
+            this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew() ===
+            'cast',
+        ),
+        iconPathActive:
+          '/assets/icons/toggle_switch/cast_and_crew/cast_active.svg',
+        iconPathDisabled:
+          '/assets/icons/toggle_switch/cast_and_crew/cast_inactive.svg',
+      },
+      {
+        onClick: () => {
+          this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
+            'crew',
+          );
+        },
+        isActive: computed(
+          () =>
+            this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew() ===
+            'crew',
+        ),
+        iconPathActive:
+          '/assets/icons/toggle_switch/cast_and_crew/crew_active.svg',
+        iconPathDisabled:
+          '/assets/icons/toggle_switch/cast_and_crew/crew_inactive.svg',
+      },
+    ],
+  };
+
+  reviewsSourceSwitchProps: ToggleSwitchProps = {
+    buttonsContent: 'icon',
+    buttons: [
+      {
+        onClick: () => {
+          this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
+            'tmdb',
+          );
+        },
+        isActive: computed(
+          () =>
+            this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource() ===
+            'tmdb',
+        ),
+        iconPathActive: '/assets/icons/toggle_switch/reviews/tmdb_active.svg',
+        iconPathDisabled:
+          '/assets/icons/toggle_switch/reviews/tmdb_inactive.svg',
+      },
+      {
+        onClick: () => {
+          this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
+            'salida',
+          );
+        },
+        isActive: computed(
+          () =>
+            this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource() ===
+            'salida',
+        ),
+        iconPathActive: '/assets/icons/toggle_switch/reviews/salida_active.svg',
+        iconPathDisabled:
+          '/assets/icons/toggle_switch/reviews/salida_inactive.svg',
       },
     ],
   };

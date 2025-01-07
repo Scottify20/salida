@@ -1,21 +1,19 @@
 <div
-  [id]="headerButtonProps.id"
+  [id]="props.id"
   tabindex="1"
   role="headerButtonProps"
   class="header__button"
   [class]="
-    headerButtonProps.type === 'text'
-      ? 'header__button--text'
-      : 'header__button--icon'
+    props.type === 'text' ? 'header__button--text' : 'header__button--icon'
   "
-  (click)="callOnClickCallbackFn(headerButtonProps.onClickCallbackFn)"
+  (click)="callOnClickCallbackFn(props.onClickCallbackFn)"
 >
-  @if (headerButtonProps.type === "icon") {
-    <img [src]="getTextOrIconPath(headerButtonProps.iconPath)" alt="" />
+  @if (props.type === "icon") {
+    <img [src]="this.extractStringService.extract(props.iconPath)" alt="" />
   }
-  @if (headerButtonProps.type === "text") {
+  @if (props.type === "text") {
     <p class="header__button-label-text">
-      {{ getTextOrIconPath(headerButtonProps.text) }}
+      {{ this.extractStringService.extract(props.text) }}
     </p>
   }
 </div>

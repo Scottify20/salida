@@ -1,0 +1,17 @@
+<div
+  class="section-header"
+  (click)="props.viewAllButtonProps?.onClick()"
+  [class]="props.viewAllButtonProps?.onClick ? 'clickable' : ''"
+>
+  <h4 class="section-header__title">
+    {{ this.extractStringService.extract(props.sectionTitle) }}
+  </h4>
+
+  @if (props.viewAllButtonProps) {
+    <div class="section-header__button" role="button">
+      <div class="section-header__button--icon">
+        <img src="assets/icons/ArrowToRight.svg" alt="" />
+      </div>
+    </div>
+  }
+</div>

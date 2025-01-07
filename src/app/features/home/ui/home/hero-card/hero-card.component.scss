@@ -3,15 +3,13 @@
   position: relative;
   scroll-snap-align: center;
   scroll-snap-stop: always;
-
   flex-shrink: 0;
   width: 65vw;
-  aspect-ratio: 1/1.5;
+  aspect-ratio: 1 / 1.5;
   max-width: 720px;
   max-height: calc(700px * 9 / 16);
   border-radius: 1rem;
   overflow: hidden;
-
   transform-origin: center center;
   transition:
     transform 0.15s linear,
@@ -31,28 +29,6 @@
   }
 }
 
-// .hero-card__poster {
-//   opacity: 0%;
-//   animation: cardImageBlurBeforeLoaded 0.5s ease-in forwards;
-// }
-
-// @keyframes cardImageBlurBeforeLoaded {
-//   0% {
-//     opacity: 0%;
-//   }
-//   100% {
-//     opacity: 100%;
-//   }
-// }
-
-.hero-card__details {
-  transition: opacity 0.25s ease-in-out;
-}
-
-.hero-card__details.hidden {
-  opacity: 0%;
-}
-
 .hero-card__logo {
   z-index: 1;
   width: 33%;
@@ -62,31 +38,27 @@
 .hero-card__texts {
   z-index: 1;
   display: flex;
-  flex-flow: column nowrap;
-  row-gap: 0.35rem;
+  flex-direction: column;
+  gap: 0.35rem;
   width: 100%;
   overflow: hidden;
 }
+
 .hero-card__title {
   font-size: 1.44rem;
   font-weight: 600;
-}
-
-.hero-card__metadata {
 }
 
 .hero-card__plot {
   max-height: calc(1.5 * 1rem * 3);
   line-height: 1.5;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 300;
   opacity: 80%;
 }
 
 @media (max-width: 720px) {
-  .hero-card__metadata {
-    display: none;
-  }
+  .hero-card__metadata,
   .hero-card__plot {
     display: none;
   }
@@ -106,7 +78,6 @@
     inset: 0;
     position: absolute;
 
-    // for the radial gradient background
     &::after {
       z-index: 0;
       content: "";
@@ -124,9 +95,8 @@
     }
   }
 
-  // when a backdrop image is shown instead of poster
   .hero-card {
-    aspect-ratio: 16/9;
+    aspect-ratio: 16 / 9;
     width: 75vw;
   }
 }

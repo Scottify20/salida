@@ -1,91 +1,66 @@
-import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable } from 'rxjs';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 
 @Injectable({
   providedIn: 'root',
 })
 export class TemporaryUserPreferencesService {
-  private _preferences = new BehaviorSubject<UserPreferences>(
-    this.defaultPreferences
-  );
-
-  preferences$: Observable<UserPreferences> = this._preferences.asObservable();
+  preferences: UserPreferences = { ...this.defaultPreferences };
 
   private get defaultPreferences(): UserPreferences {
     return {
+      user: {
+        localCountryCode: signal(''),
+        showAdultContent: signal(false),
+      },
       theme: {
-        colorScheme: 'dark',
-        accentColor: '#FFFFFF',
+        colorScheme: signal('dark'),
+        accentColor: signal('#FFFFFF'),
       },
       details: {
         movieAndSeriesDetails: {
           reviews: {
-            reviewsSource: 'tmdb',
-            dateOrder: 'newest-first',
-            ratingOrder: 'highest-first',
-            orderBy: 'date',
+            reviewsSource: signal('tmdb'),
+            dateOrder: signal('latest-first'),
+            ratingOrder: signal('highest-first'),
+            orderBy: signal('date'),
           },
+          castOrCrew: signal('cast'),
         },
         movieDetails: {
           releases: {
-            groupBy: 'country',
-            dateOrder: 'oldest-first',
-            countryOrder: 'a-z',
-            localCountryCode: '',
+            groupBy: signal('release-type'),
+            dateOrder: signal('earliest-first'),
+            countryOrder: signal('a-z'),
+            showLocalCountryFirst: signal(true),
           },
         },
         personDetails: {},
       },
     };
   }
-
-  updateMovieAndSeriesDetailsOverlapPreferences(
-    newMovieAndSeriesOverlapPref: MovieAndSeriesDetailsOverlapPreferences
-  ) {
-    this.updatePreferences((prev) => ({
-      ...prev,
-      details: {
-        ...prev.details,
-        movieAndSeriesDetails: newMovieAndSeriesOverlapPref,
-      },
-    }));
-  }
-
-  updateMovieDetailsExclusivePreferences(
-    newMoviePref: MovieDetailsSpecificPreferences
-  ) {
-    this.updatePreferences((prev) => ({
-      ...prev,
-      details: {
-        ...prev.details,
-        movieDetails: newMoviePref,
-      },
-    }));
-  }
-
-  private updatePreferences(
-    updater: (prev: UserPreferences) => UserPreferences
-  ) {
-    this._preferences.next(updater(this._preferences.value));
-  }
 }
 
 export interface UserPreferences {
-  theme: { colorScheme: ThemeColorScheme; accentColor: string };
   details: {
     movieAndSeriesDetails: MovieAndSeriesDetailsOverlapPreferences;
     movieDetails: MovieDetailsSpecificPreferences;
     personDetails: PersonDetailsPreferences;
   };
+  theme: { colorScheme: ThemeColorScheme; accentColor: WritableSignal<string> };
+  user: {
+    showAdultContent: WritableSignal<boolean>;
+    localCountryCode: WritableSignal<string>;
+  };
 }
 
-type ThemeColorScheme = 'dark' | 'light' | 'system';
+type ThemeColorScheme = WritableSignal<'dark' | 'light' | 'system'>;
 
 export interface MovieDetailsPreferences
   extends MovieDetailsSpecificPreferences,
     MovieAndSeriesDetailsOverlapPreferences {}
 
 export interface MovieAndSeriesDetailsOverlapPreferences {
+  castOrCrew: WritableSignal<'cast' | 'crew'>;
   reviews: ReviewsPreferences;
 }
 
@@ -94,19 +69,20 @@ export interface MovieDetailsSpecificPreferences {
 }
 
 export interface MovieReleasesPreferences {
-  groupBy?: 'release-type' | 'country';
-  dateOrder?: DateOrder;
-  countryOrder?: 'a-z' | 'z-a';
-  localCountryCode?: string;
+  groupBy: WritableSignal<'release-type' | 'country'>;
+  dateOrder: DateOrder;
+  countryOrder: WritableSignal<'a-z' | 'z-a'>;
+  showLocalCountryFirst: WritableSignal<boolean>;
 }
 
 export interface ReviewsPreferences {
-  reviewsSource?: 'tmdb' | 'salida';
-  dateOrder?: DateOrder;
-  ratingOrder?: 'highest-first' | 'lowest-first';
-  orderBy?: 'date' | 'rating';
+  reviewsSource: ReviewsSource;
+  dateOrder: DateOrder;
+  ratingOrder: WritableSignal<'highest-first' | 'lowest-first'>;
+  orderBy: WritableSignal<'date' | 'rating'>;
 }
 
 export interface PersonDetailsPreferences {}
 
-type DateOrder = 'newest-first' | 'oldest-first';
+type DateOrder = WritableSignal<'latest-first' | 'earliest-first'>;
+export type ReviewsSource = WritableSignal<'tmdb' | 'salida'>;

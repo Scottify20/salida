@@ -12,6 +12,7 @@ import { PlatformCheckService } from '../../services/dom/platform-check.service'
 import { DOCUMENT } from '@angular/common';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 import { LoadingDotsComponent } from '../animated/loading-dots/loading-dots.component';
+import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 export interface LoadingModalProps {
   config: {
@@ -40,6 +41,7 @@ export class LoadingModalComponent {
     @Inject(DOCUMENT) private document: Document,
     private scrollDisablerService: ScrollDisablerService,
     private elementRef: ElementRef,
+    protected extractStringService: ExtractStringService,
   ) {
     // disables or enables the scrolling of the body element whenever the state of the isOpenSig changes
     effect(() => {
@@ -76,16 +78,6 @@ export class LoadingModalComponent {
     }
 
     this.document.body.appendChild(this.elementRef.nativeElement);
-  }
-
-  getTextFromTextItem(
-    text:
-      | undefined
-      | string
-      | Signal<string | null | undefined>
-      | (() => string),
-  ): string | null | undefined {
-    return !text ? undefined : typeof text === 'string' ? text : text();
   }
 
   ngOnDestroy() {

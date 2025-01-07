@@ -13,9 +13,10 @@ import {
 import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
-import { delay, fromEvent, tap } from 'rxjs';
+import { fromEvent, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { LoadingDotsComponent } from '../animated/loading-dots/loading-dots.component';
+import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 export interface DialogProps {
   config: {
@@ -63,6 +64,7 @@ export class DialogComponent {
     private platformCheckService: PlatformCheckService,
     private scrollDisablerService: ScrollDisablerService,
     private destroyRef: DestroyRef,
+    protected extractStringService: ExtractStringService,
   ) {
     // disables or enables the scrolling of the body element whenever the state of the isOpenSig changes
     effect(() => {
@@ -182,16 +184,6 @@ export class DialogComponent {
     primaryButton.isHiddenSig?.set(false);
     secondaryButton?.isBusySig?.set(false);
     secondaryButton?.isHiddenSig?.set(false);
-  }
-
-  getTextFromTextItem(
-    text:
-      | undefined
-      | string
-      | Signal<string | null | undefined>
-      | (() => string),
-  ): string | null | undefined {
-    return !text ? undefined : typeof text === 'string' ? text : text();
   }
 
   onPrimaryButtonClicked() {

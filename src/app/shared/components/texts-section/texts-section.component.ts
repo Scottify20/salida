@@ -1,14 +1,13 @@
 import { Component, Input, OnChanges } from '@angular/core';
 import {
-  SectionHeaderOptions,
-  SectionHeaderTitleAndButtonComponent,
-} from '../section-header-title-and-button/section-header-title-and-button.component';
-
+  SectionTitleProps,
+  SectionTitleComponent,
+} from '../section-title/section-title.component';
 
 @Component({
   selector: 'app-texts-section',
   standalone: true,
-  imports: [SectionHeaderTitleAndButtonComponent],
+  imports: [SectionTitleComponent],
   templateUrl: './texts-section.component.html',
   styleUrl: './texts-section.component.scss',
 })
@@ -17,18 +16,22 @@ export class TextsSectionComponent implements OnChanges {
     sectionTitle: '',
     sectionTitlePlural: '',
     texts: [],
-    buttonProps: { type: 'text', textOrIconPath: '', callback: () => {} },
+    viewAllButtonProps: {
+      onClick: () => {
+        return false;
+      },
+    },
   };
 
-  sectionHeaderOptions: SectionHeaderOptions = {
+  sectionTitleOptions: SectionTitleProps = {
     sectionTitle: this.textsSectionOptions.sectionTitle,
-    buttonProps: this.textsSectionOptions.buttonProps,
+    viewAllButtonProps: this.textsSectionOptions.viewAllButtonProps,
   };
 
   ngOnChanges() {
-    this.sectionHeaderOptions = {
+    this.sectionTitleOptions = {
       sectionTitle: this.textsSectionOptions.sectionTitle,
-      buttonProps: this.textsSectionOptions.buttonProps,
+      viewAllButtonProps: this.textsSectionOptions.viewAllButtonProps,
     };
 
     const pluralTitle = this.textsSectionOptions.sectionTitlePlural;
@@ -38,11 +41,11 @@ export class TextsSectionComponent implements OnChanges {
       pluralTitle != '' &&
       this.textsSectionOptions.texts.length > 1
     ) {
-      this.sectionHeaderOptions.sectionTitle = pluralTitle;
+      this.sectionTitleOptions.sectionTitle = pluralTitle;
     }
   }
 }
 
-export interface TextsSectionOptions extends SectionHeaderOptions {
+export interface TextsSectionOptions extends SectionTitleProps {
   texts: string[];
 }

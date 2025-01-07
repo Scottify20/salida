@@ -3,8 +3,8 @@
     *ngIf="selectedSeason == season.name"
     [seasonData]="season"
   ></app-episode-group>
-</div>
-<app-popup-or-bottom-sheet
+</div> -->
+<!-- <app-popup-or-bottom-sheet
   [popUpOrBottomSheetConfig]="seasonPickerConfig"
 ></app-popup-or-bottom-sheet> -->
 
@@ -15,5 +15,5 @@
   ></app-episode-group>
 </div>
 <app-popup-or-bottom-sheet
-  [popUpOrBottomSheetConfig]="seasonPickerConfig"
+  [props]="seasonPickerConfig"
 ></app-popup-or-bottom-sheet>

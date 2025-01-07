@@ -9,6 +9,7 @@ import {
   MediaImages,
   Genre,
   MediaSummary,
+  BaseMedia,
 } from './All';
 
 type EpisodeType = 'Regular' | 'Special' | 'Bonus' | 'finale' | 'standard';
@@ -69,6 +70,7 @@ export interface Series extends Media {
     total_pages: number;
     total_results: number;
   };
+  overview: string; // Ensure overview is always a string
 }
 
 export interface TrendingSeries {
@@ -79,10 +81,18 @@ export interface TrendingSeries {
 }
 
 export interface SeriesSummary extends MediaSummary {
+  media_type?: 'tv'; // not present in some responses
   first_air_date: string;
   name: string;
   original_name: string;
   origin_country: string[];
+}
+
+export interface SeriesSummaryResults {
+  page: number;
+  results: SeriesSummary[];
+  total_pages: number;
+  total_results: number;
 }
 
 interface SeriesExternalIds {
@@ -208,20 +218,15 @@ export interface Season {
   images: MediaImages;
 }
 
-export interface Episode {
+export interface Episode extends BaseMedia {
   air_date: string;
   episode_number: number;
   episode_type: EpisodeType;
-  id: number;
-  name: string;
-  overview: string;
   production_code: string;
   runtime: number | null;
   season_number: number;
   show_id: number;
   still_path: string | null;
-  vote_average: number;
-  vote_count: number;
   crew: EpisodeCrewCredit[];
   guest_stars: EpisodeCastCredit[];
 }

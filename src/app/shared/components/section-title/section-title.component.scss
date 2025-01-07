@@ -1,0 +1,57 @@
+.section-header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: flex-start;
+  column-gap: 0.75rem;
+  align-items: center;
+  width: 100%;
+  position: relative;
+  pointer-events: none;
+
+  font-size: 1.2rem;
+
+  &.clickable {
+    pointer-events: all;
+    cursor: pointer;
+  }
+
+  &.clickable:hover::after {
+    content: "";
+    position: absolute;
+    inset: -0.5em;
+
+    background-color: rgba(255, 255, 255, 0.05);
+    border-radius: 0.5em;
+  }
+
+  &.clickable:active {
+    opacity: 50%;
+  }
+
+  & .section-header__button--icon {
+    transform: translateX(0%) scale(1.1);
+    transition: all var(--material-easing) 0.15s;
+  }
+
+  &:hover .section-header__button--icon,
+  &:active .section-header__button--icon {
+    transform: translateX(50%) scale(1.2);
+  }
+}
+
+.section-header__title {
+  user-select: none;
+  z-index: 2;
+  font-size: inherit;
+  color: var(--text-color);
+  opacity: 90%;
+  font-weight: 600;
+}
+
+.section-header__button {
+  height: 100%;
+
+  &:active {
+    filter: brightness(150%);
+  }
+}

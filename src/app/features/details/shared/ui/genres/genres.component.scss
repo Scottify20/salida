@@ -1,0 +1,28 @@
+.title__genres-container {
+  margin-top: 0.15rem;
+  display: flex;
+  flex-flow: row nowrap;
+  column-gap: 0.5rem;
+  overflow-x: auto;
+
+  .title__genre {
+    color: var(--text-color-subtle);
+    cursor: pointer;
+    border: 1px solid var(--divider-color);
+    outline: 1px solid var(--divider-color);
+    outline-offset: -1px;
+    font-weight: 400;
+    border-radius: 100px;
+    padding: 0.35rem 0.7rem;
+    font-size: 0.8rem;
+
+    white-space: nowrap;
+  }
+}
+
+@media (hover: none) {
+  .title__genres-container {
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+}

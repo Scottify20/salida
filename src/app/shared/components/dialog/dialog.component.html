@@ -28,7 +28,7 @@
       <img [src]="iconPath" alt="" class="dialog__icon" />
     }
     <h4 class="dialog__title">
-      {{ getTextFromTextItem(dialogProps.mainContent.title) }}
+      {{ this.extractStringService.extract(dialogProps.mainContent.title) }}
     </h4>
 
     @if (dialogProps.mainContent.textItems; as textItems) {
@@ -39,7 +39,7 @@
               <div class="dialog__text-item-bullet">•</div>
             }
             <p class="dialog__text-item-text">
-              {{ getTextFromTextItem(textItem) }}
+              {{ this.extractStringService.extract(textItem) }}
             </p>
           </li>
         }
@@ -64,7 +64,7 @@
         @if (secondaryButton.isBusySig()) {
           <app-loading-dots [dotsCount]="3"></app-loading-dots>
         } @else {
-          {{ getTextFromTextItem(secondaryButton.label) }}
+          {{ this.extractStringService.extract(secondaryButton.label) }}
         }
       </div>
     }
@@ -86,7 +86,7 @@
         @if (primaryButton.isBusySig()) {
           <app-loading-dots [dotsCount]="3"></app-loading-dots>
         } @else {
-          {{ getTextFromTextItem(primaryButton.label) }}
+          {{ this.extractStringService.extract(primaryButton.label) }}
         }
       </div>
     }

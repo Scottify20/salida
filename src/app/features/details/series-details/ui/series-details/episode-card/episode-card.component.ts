@@ -27,5 +27,11 @@ export class EpisodeCardComponent {
     vote_count: 0,
     crew: [],
     guest_stars: [],
+    backdrop_path: null,
+    poster_path: null,
+    adult: false,
+    original_language: '',
+    genre_ids: [],
+    popularity: 0,
   };
 }

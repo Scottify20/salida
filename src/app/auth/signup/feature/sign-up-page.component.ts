@@ -7,7 +7,7 @@ import {
 } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
-import { HeaderButton } from '../../../shared/components/header-button/header-button.component';
+import { HeaderButtonProps } from '../../../shared/components/header-button/header-button.component';
 import { CommonModule } from '@angular/common';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
 import { SocialsSignInComponent } from '../../shared/ui/socials-sign-in/socials-sign-in.component';
@@ -365,7 +365,7 @@ export class SignUpPageComponent {
     steps: 2,
   };
 
-  headerButtons: HeaderButton[] = [
+  headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
       iconPath: 'assets/icons/header/Back.svg',

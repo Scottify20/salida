@@ -1,0 +1,46 @@
+:host {
+  --card-title-line-height: 1.25;
+  --card-title-max-lines: 2;
+
+  --card-subtitle-line-height: 1.25;
+  --card-subtitle-max-lines: 10;
+}
+
+.card {
+  width: 7.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 0.75rem;
+}
+
+.card__image {
+  border-radius: 0.5rem;
+  object-fit: cover;
+}
+
+.card__texts {
+  overflow-y: hidden;
+  display: grid;
+  row-gap: 0.25rem;
+}
+
+.card__title {
+  font-size: 1rem;
+  color: var(--text-color);
+  opacity: 100%;
+  font-weight: 300;
+}
+
+.card__title {
+  max-height: calc(
+    var(--card-title-max-lines) * 1em * var(--card-title-line-height)
+  );
+  line-height: var(--card-title-line-height);
+
+  display: -webkit-box;
+  overflow: hidden;
+
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: var(--card-title-max-lines);
+  line-clamp: var(--card-title-max-lines);
+}

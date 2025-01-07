@@ -1,7 +1,7 @@
-@if (pillIndexedTabsProps; as pillNavProps) {
+@if (props) {
   <div class="pill-indexed-tabs">
     <div class="pill-indexed-tabs__tab-container">
-      @for (tab of pillNavProps.tabs; track tab; let i = $index) {
+      @for (tab of props.tabs; track tab; let i = $index) {
         <div
           (click)="handleTabClick(i)"
           class="pill-indexed-tabs__tab"

@@ -3,31 +3,22 @@ import {
   TextsSectionComponent,
   TextsSectionOptions,
 } from '../../../../../../shared/components/texts-section/texts-section.component';
-import {
-  CardsSectionComponent,
-  CardsSectionOptions,
-} from '../../../../../../shared/components/cards-section/cards-section.component';
-import {
-  Series,
-  SeriesCastCredit,
-  SeriesCrewCredit,
-} from '../../../../../../shared/interfaces/models/tmdb/Series';
+import { Series } from '../../../../../../shared/interfaces/models/tmdb/Series';
 import { tap } from 'rxjs';
 import { SeriesDetailsService } from '../../../data-access/series-details.service';
-import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import {
   CollapsibleTextSectionComponent,
   CollapsibleTextSectionOptions,
 } from '../../../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 
 @Component({
   selector: 'app-series-more-details',
   standalone: true,
   imports: [
     TextsSectionComponent,
-    CardsSectionComponent,
     CommonModule,
     CollapsibleTextSectionComponent,
   ],
@@ -37,8 +28,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 export class SeriesMoreDetailsComponent {
   constructor(
     private seriesDetailsService: SeriesDetailsService,
-    private router: Router,
     private destroyRef: DestroyRef,
+    private tmdbConfigService: TmdbConfigService,
   ) {
     this.seriesDetailsService.seriesData$
       .pipe(
@@ -46,6 +37,7 @@ export class SeriesMoreDetailsComponent {
         tap((series) => {
           if (series) {
             this.seriesData = series;
+            this.updateCountryNames();
           }
         }),
       )
@@ -53,6 +45,7 @@ export class SeriesMoreDetailsComponent {
   }
 
   seriesData: Series | undefined;
+  countries: string[] = [];
 
   isTextsSectionDoubleColumn(
     sectionA: TextsSectionOptions,
@@ -105,16 +98,22 @@ export class SeriesMoreDetailsComponent {
     };
   }
 
-  get countriesSection(): TextsSectionOptions {
-    const countries =
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.origin_country
-        : [];
+  updateCountryNames() {
+    if (this.seriesData) {
+      const countryCodes = this.seriesData.origin_country;
+      this.tmdbConfigService.getCountryCodes().subscribe(() => {
+        this.countries = countryCodes
+          .map((code) => this.tmdbConfigService.getCountryNameFromCode(code))
+          .filter((name): name is string => name !== undefined);
+      });
+    }
+  }
 
+  get countriesSection(): TextsSectionOptions {
     return {
       sectionTitle: 'Country of Origin',
       sectionTitlePlural: 'Countries of Origin',
-      texts: countries,
+      texts: this.countries,
     };
   }
 
@@ -163,64 +162,4 @@ export class SeriesMoreDetailsComponent {
   //     },
   //   ],
   // };
-
-  get crewSection(): CardsSectionOptions {
-    const getCrewMemberEntity = (crewMember: SeriesCrewCredit) => ({
-      id: crewMember.id + crewMember.department,
-      name: crewMember.name,
-      image_path: crewMember.profile_path ?? null,
-      otherName: (crewMember as SeriesCrewCredit).jobs
-        .map((job) => job.job)
-        .join(' / '),
-      callback: () => {
-        this.router.navigate(['/people/', crewMember.id, 'details']);
-      },
-    });
-
-    const crew =
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.crew.map(getCrewMemberEntity)
-        : [];
-
-    return {
-      sectionTitle: 'Crew',
-      cardShape: 'circle',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: () => {},
-      },
-      maxNoOfCards: 10,
-      entities: crew,
-    };
-  }
-
-  get castSection(): CardsSectionOptions {
-    const getCastMemberEntity = (castMember: SeriesCastCredit) => ({
-      id: castMember.id + castMember.roles.join('-'),
-      name: castMember.name,
-      image_path: castMember.profile_path ?? null,
-      otherName: (castMember as SeriesCastCredit).roles[0]?.character ?? '',
-      callback: () => {
-        this.router.navigate(['/people/', castMember.id, 'details']);
-      },
-    });
-
-    const cast =
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.cast.map(getCastMemberEntity)
-        : [];
-
-    return {
-      sectionTitle: 'Cast',
-      cardShape: 'circle',
-      buttonProps: {
-        type: 'text',
-        textOrIconPath: 'See all',
-        callback: () => {},
-      },
-      maxNoOfCards: 10,
-      entities: cast,
-    };
-  }
 }

@@ -45,7 +45,7 @@ export type UserDataInFireStore = {
 interface SignInProvider {
   providerId: string; // google.com, phone, password, etc
   uid: string;
-  displayName?: string;
+  displayName: string | null;
   email?: string;
   phoneNumber?: string;
   photoURL?: string;

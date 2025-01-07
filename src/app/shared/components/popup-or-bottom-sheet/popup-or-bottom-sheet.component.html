@@ -20,7 +20,7 @@
     <ul class="dialog__items-container">
       <li
         (click)="item.callback(); hideDialog()"
-        *ngFor="let item of popUpOrBottomSheetConfig.items"
+        *ngFor="let item of props.items"
         class="dialog__item"
         [ngClass]="item.isSelected() ? 'selected' : ''"
       >

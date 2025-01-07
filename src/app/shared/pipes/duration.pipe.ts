@@ -1,46 +1,38 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { FormatService } from '../services/utility/format.service';
 
+type DurationUnits = 'y' | 'mo' | 'w' | 'd' | 'h' | 'min' | 's' | 'ms';
+
+/**
+ * This pipe transforms a given duration in milliseconds, seconds, minutes, hours, or weeks into a human-readable string format.
+ *
+ * @param value - The duration value to be transformed.
+ * @param inputUnit - The unit of the input value. Can be 'milliseconds', 'seconds', 'minutes', 'hours', or 'weeks'.
+ * @param units - An array of units to be included in the output. The units must be in order from largest to smallest.
+ *                The available units are:
+ *                'y'  - years
+ *                'mo' - months
+ *                'w'  - weeks
+ *                'd'  - days
+ *                'h'  - hours
+ *                'mn' - minutes
+ *                's'  - seconds
+ *                'ms' - milliseconds
+ * @param decimals - The number of decimal places to include for the highest unit not fully represented by lower units.
+ * @returns A human-readable string representing the duration.
+ */
 @Pipe({
   name: 'duration',
   standalone: true,
 })
 export class DurationPipe implements PipeTransform {
+  constructor(private formatService: FormatService) {}
+
   transform(
-    value: number,
-    inputUnit: 'seconds' | 'minutes' | 'hours' | 'weeks' = 'seconds',
+    value: number | string,
+    inputUnit: DurationUnits = 's',
+    units: DurationUnits[] = ['y', 'mo', 'w', 'd', 'h', 'min', 's', 'ms'],
   ): string {
-    if (isNaN(value) || value < 0) {
-      return 'Invalid Input';
-    }
-
-    let seconds: number;
-    switch (inputUnit) {
-      case 'seconds':
-        seconds = value;
-        break;
-      case 'minutes':
-        seconds = value * 60;
-        break;
-      case 'hours':
-        seconds = value * 3600;
-        break;
-      case 'weeks':
-        seconds = value * 604800; // 60 seconds * 60 minutes * 24 hours * 7 days
-        break;
-      default:
-        seconds = value;
-    }
-
-    const weeks = Math.floor(seconds / 604800);
-    const days = Math.floor((seconds % 604800) / 86400);
-    const hours = Math.floor((seconds % 86400) / 3600);
-    const minutes = Math.floor((seconds % 3600) / 60);
-
-    const weeksString = weeks > 0 ? `${weeks}w ` : '';
-    const daysString = days > 0 ? `${days}d ` : '';
-    const hoursString = hours > 0 ? `${hours}h ` : '';
-    const minutesString = minutes > 0 ? `${minutes}m` : '';
-
-    return weeksString + daysString + hoursString + minutesString;
+    return this.formatService.formatDuration(value, inputUnit, units);
   }
 }

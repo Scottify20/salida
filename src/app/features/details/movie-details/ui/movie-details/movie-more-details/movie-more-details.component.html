@@ -35,20 +35,6 @@
     </div>
   }
 
-  @if (castSection.entities[0]) {
-    <app-cards-section
-      class="title__section"
-      [cardsSectionOptions]="castSection"
-    ></app-cards-section>
-  }
-
-  @if (crewSection.entities[0]) {
-    <app-cards-section
-      class="title__section"
-      [cardsSectionOptions]="crewSection"
-    ></app-cards-section>
-  }
-
   @if (languagesSection.texts[0] || countriesSection.texts[0]) {
     <div
       class="title__section-two-columns-container"

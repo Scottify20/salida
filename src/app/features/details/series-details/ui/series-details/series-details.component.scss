@@ -7,7 +7,7 @@
 }
 
 .title-details__tabs {
-  padding: 0 0.5rem;
+  padding: 0 0.45rem;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -16,20 +16,23 @@
 
   display: grid;
   grid-template-areas: "left-sec prim right-sec";
-  grid-template-columns: minmax(auto, 1fr) min-content 1fr;
+  grid-template-columns: minmax(auto, 1fr) auto 1fr;
 
   .title-details__filler-tab {
     grid-area: left-sec;
-    margin-left: 0.5rem;
-  }
-
-  .title-details__primary-tab {
-    grid-area: prim;
-    margin: 0 0.5rem;
-  }
-
-  .title-details__secondary-tab {
-    grid-area: right-sec;
     margin-right: 0.5rem;
+  }
+
+  app-pill-indexed-tabs.title-details__primary-tab {
+    overflow-x: auto;
+    border-radius: 1000px;
+
+    scrollbar-width: thin;
+    grid-area: prim;
+  }
+
+  .title-details__secondary-tabs {
+    grid-area: right-sec;
+    margin-left: 0.5rem;
   }
 }

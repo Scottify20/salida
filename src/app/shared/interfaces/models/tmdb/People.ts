@@ -54,17 +54,56 @@ interface KnownForTvSeries extends KnownForBaseItem {
   origin_country: string[]; // Assuming this is always present for TV series
 }
 
+export const KnownForDepartmentLabelEnum: Record<
+  KnownForDepartmentKey,
+  string
+> = {
+  Acting: 'Actor',
+  Art: 'Art Department',
+  Sound: 'Sound',
+  Camera: 'Photography',
+  'Costume & Make-Up': 'Costume & Make-Up',
+  Directing: 'Directing',
+  Writing: 'Writing',
+  Editing: 'Editing',
+  Lighting: 'Lighting',
+  'Visual Effects': 'Visual Effects',
+  Production: 'Production',
+  Crew: '',
+};
+
+export type KnownForDepartmentKey =
+  | 'Acting' //
+  | 'Art' //
+  | 'Sound' //
+  | 'Camera' //
+  | 'Costume & Make-Up' //
+  | 'Directing' //
+  | 'Writing' //
+  | 'Editing' //
+  | 'Lighting' //
+  | 'Visual Effects' //
+  | 'Production' //
+  | 'Crew'; //
+
 interface PersonSummary {
   id: number;
   name: string;
   original_name: string;
-  media_type: 'person';
+  media_type?: 'person';
   adult: boolean;
   popularity: number;
   gender: number;
-  known_for_department: string;
+  known_for_department: KnownForDepartmentKey;
   profile_path: string | null;
   known_for: (KnownForMovie | KnownForTvSeries)[];
+}
+
+export interface PersonSummaryResults {
+  page: number;
+  results: PersonSummary[];
+  total_pages: number;
+  total_results: number;
 }
 
 interface ExternalIds {

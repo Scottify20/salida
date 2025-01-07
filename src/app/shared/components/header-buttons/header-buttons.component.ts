@@ -1,7 +1,8 @@
 import { Component, Input, Signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { HeaderButton } from '../header-button/header-button.component';
+import { HeaderButtonProps } from '../header-button/header-button.component';
+import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 @Component({
   selector: 'app-header-buttons',
@@ -11,17 +12,9 @@ import { HeaderButton } from '../header-button/header-button.component';
   styleUrl: './header-buttons.component.scss',
 })
 export class HeaderButtonsComponent {
-  @Input() headerButtons: HeaderButton[] = [];
+  @Input() headerButtons: HeaderButtonProps[] = [];
 
-  getTextOrIconPath(
-    text:
-      | undefined
-      | string
-      | Signal<string | null | undefined>
-      | (() => string),
-  ): string | null | undefined {
-    return !text ? undefined : typeof text === 'string' ? text : text();
-  }
+  constructor(protected extractStringService: ExtractStringService) {}
 
   callOnClickCallbackFn(callback: undefined | (() => void)) {
     if (callback) {

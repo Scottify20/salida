@@ -10,6 +10,7 @@
 
   transition: all 0.2s ease-in-out;
   transform: scale(1);
+  height: 2.25rem;
 
   filter: drop-shadow(1px 1px 1px rgba(var(--bg-color), 0.4));
 
@@ -35,7 +36,6 @@
 
 .header__button--icon {
   padding: 0;
-  width: 2.125rem;
   aspect-ratio: 1/1;
 }
 

@@ -3,7 +3,7 @@
   role="button"
   [id]="'hero-card--' + titleDetails.id"
   [attr.data-card-index]="cardIndex"
-  (click)="runCallbackOnClick(titleDetails.callback)"
+  (click)="onCardClick()"
 >
   @if (getImageSrcBasedOnWidth()) {
     <img
@@ -18,13 +18,10 @@
     [id]="cardIndex === 0 ? 'hero-card__details--0' : ''"
     [style]="cardOpacity"
   >
-    <!-- <img
-    [src]="'https://image.tmdb.org/t/p/w500' + titleDetails"
-    alt=""
-    class="hero-card__logo"
-    /> -->
     <div class="hero-card__texts">
-      <h4 class="hero-card__title">{{ titleDetails.title }}</h4>
+      <h4 class="hero-card__title">
+        {{ titleDetails.title || titleDetails.name }}
+      </h4>
       <div class="hero-card__metadata"></div>
       <p class="hero-card__plot">{{ titleDetails.overview }}</p>
     </div>
