@@ -1,5 +1,7 @@
 <div
   (click)="runCallbackOnClick(entity.callback)"
+  tabindex="0"
+  (keydown.enter)="runCallbackOnClick(entity.callback)"
   role="button"
   class="card circle"
 >

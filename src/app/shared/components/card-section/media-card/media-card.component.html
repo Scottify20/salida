@@ -1,4 +1,10 @@
-<div (click)="props.onClick()" role="button" class="card">
+<div
+  (click)="props.onClick()"
+  (keydown.enter)="props.onClick()"
+  tabindex="0"
+  role="button"
+  class="card"
+>
   <div class="card__image-container">
     <img
       [src]="

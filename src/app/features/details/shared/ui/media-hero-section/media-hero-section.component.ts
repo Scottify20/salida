@@ -24,16 +24,15 @@ export interface HeroSectionData {
 }
 
 @Component({
-  selector: 'app-media-hero-section',
-  standalone: true,
-  imports: [
-    CommonModule,
-    HeaderButtonsComponent,
-    MetadataComponent,
-    GenresComponent,
-  ],
-  templateUrl: './media-hero-section.component.html',
-  styleUrl: './media-hero-section.component.scss',
+    selector: 'app-media-hero-section',
+    imports: [
+        CommonModule,
+        HeaderButtonsComponent,
+        MetadataComponent,
+        GenresComponent,
+    ],
+    templateUrl: './media-hero-section.component.html',
+    styleUrl: './media-hero-section.component.scss'
 })
 export class MediaHeroSectionComponent {
   constructor(

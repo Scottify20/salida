@@ -2,11 +2,10 @@ import { Component, Input } from '@angular/core';
 import { ProgressIndicatorProps } from './progress-indicator.model';
 
 @Component({
-  selector: 'app-progress-indicator',
-  standalone: true,
-  imports: [],
-  templateUrl: './progress-indicator.component.html',
-  styleUrl: './progress-indicator.component.scss',
+    selector: 'app-progress-indicator',
+    imports: [],
+    templateUrl: './progress-indicator.component.html',
+    styleUrl: './progress-indicator.component.scss'
 })
 export class ProgressIndicatorComponent {
   @Input({ required: true }) progressIndicatorProps: ProgressIndicatorProps = {

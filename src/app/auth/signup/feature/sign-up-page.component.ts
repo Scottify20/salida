@@ -53,22 +53,21 @@ interface SignupErrorMessages {
 }
 
 @Component({
-  selector: 'app-sign-up-page',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CommonModule,
-    CapsLockDetectorDirective,
-    SocialsSignInComponent,
-    RouterModule,
-    ProgressIndicatorComponent,
-    DividerWithTitleComponent,
-    LoadingDotsComponent,
-    HeaderButtonsComponent,
-    LoadingModalComponent,
-  ],
-  templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
-  styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
+    selector: 'app-sign-up-page',
+    imports: [
+        ReactiveFormsModule,
+        CommonModule,
+        CapsLockDetectorDirective,
+        SocialsSignInComponent,
+        RouterModule,
+        ProgressIndicatorComponent,
+        DividerWithTitleComponent,
+        LoadingDotsComponent,
+        HeaderButtonsComponent,
+        LoadingModalComponent,
+    ],
+    templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
+    styleUrl: '../ui/sign-up-page/sign-up-page.component.scss'
 })
 export class SignUpPageComponent {
   constructor(

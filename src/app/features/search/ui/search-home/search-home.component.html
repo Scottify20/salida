@@ -2,7 +2,8 @@
   <!-- <app-header-button [props]="backButtonProps"> </app-header-button> -->
 
   <app-search-bar
-    (search)="searchPageService.triggerSearch($event)"
+    [defaultValue]="defaultSearchValue"
+    (search)="triggerSearch($event)"
   ></app-search-bar>
 </div>
 
@@ -21,33 +22,48 @@
 
   <div class="search__results clickable-cards" pill-tab-component-transition>
     @switch (searchPageService.searchPreferences.searchType()) {
+      @case ("all") {
+        @for (
+          entity of searchPageService.allSearchResults.results;
+          track entity.id
+        ) {
+          @if (searchPageService.isMediaResultCardProps(entity)) {
+            <app-media-result-card [props]="entity"></app-media-result-card>
+          } @else {
+            <app-person-result-card [props]="entity"></app-person-result-card>
+          }
+        }
+      }
+
       @case ("movie") {
         @for (
-          result of searchPageService.movieSearchResults.results;
-          track result.id
+          movie of searchPageService.movieSearchResults.results;
+          track movie.id
         ) {
-          <app-media-result-card [props]="result"></app-media-result-card>
+          <app-media-result-card [props]="movie"></app-media-result-card>
         }
       }
 
       @case ("series") {
         @for (
-          result of searchPageService.seriesSearchResults.results;
-          track result.id
+          series of searchPageService.seriesSearchResults.results;
+          track series.id
         ) {
-          <app-media-result-card [props]="result"></app-media-result-card>
+          <app-media-result-card [props]="series"></app-media-result-card>
         }
       }
 
       @case ("person") {
         @for (
-          result of searchPageService.personSearchResults.results;
-          track result.id
+          person of searchPageService.peopleSearchResults.results;
+          track person.id
         ) {
-          <app-person-result-card [props]="result"></app-person-result-card>
+          <app-person-result-card [props]="person"></app-person-result-card>
         }
       }
     }
+
+    <div #bottomIntersectionElement></div>
   </div>
 
   <div class="categories"></div>

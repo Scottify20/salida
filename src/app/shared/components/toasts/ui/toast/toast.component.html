@@ -3,7 +3,7 @@
   [class]="toastProps.actionButton?.type"
   [class]="closed ? 'closed' : ''"
   [attr.id]="toastProps.idBasedOnContent"
-  >
+>
   @if (toastProps.iconPath) {
     <img
       [src]="toastProps.iconPath"
@@ -11,7 +11,7 @@
       width="24px"
       height="24px"
       class="toast__icon"
-      />
+    />
   }
   <div class="toast__text">
     {{ toastProps.text }}
@@ -21,42 +21,45 @@
   @if (!toastProps.actionButton) {
     <div
       role="button"
-      tabindex="1"
+      tabindex="0"
+      (keydown.enter)="closeToast()"
       (click)="closeToast()"
       class="toast__action-button--icon toast__action-button"
-      >
+    >
       <img
         src="/assets/icons/toast/close.svg"
         alt=""
         class="action-button--icon"
-        />
+      />
+    </div>
+  }
+
+  @if (toastProps.actionButton; as button) {
+    <!-- if button is a text labelled button -->
+    @if (button.label && button.callback) {
+      <div
+        role="button"
+        tabindex="0"
+        (keydown.enter)="closeToast().then(); button.callback()"
+        (click)="closeToast().then(); button.callback()"
+        class="toast__action-button--text toast__action-button"
+        [class]="button.type"
+      >
+        {{ button.label }}
       </div>
     }
-
-    @if (toastProps.actionButton; as button) {
-      <!-- if button is a text labelled button -->
-      @if (button.label && button.callback) {
-        <div
-          role="button"
-          tabindex="1"
-          (click)="closeToast().then(); button.callback()"
-          class="toast__action-button--text toast__action-button"
-          [class]="button.type"
-          >
-          {{ button.label }}
-        </div>
-      }
-      <!-- if button is a custom icon button -->
-      @if (button.iconPath) {
-        <div
-          role="button"
-          tabindex="1"
-          (click)="closeToast()"
-          class="toast__action-button--icon toast__action-button"
-          [class]="button.type"
-          >
-          <img [src]="button.iconPath" alt="" class="action-button--icon" />
-        </div>
-      }
+    <!-- if button is a custom icon button -->
+    @if (button.iconPath) {
+      <div
+        role="button"
+        tabindex="0"
+        (keydown.enter)="closeToast()"
+        (click)="closeToast()"
+        class="toast__action-button--icon toast__action-button"
+        [class]="button.type"
+      >
+        <img [src]="button.iconPath" alt="" class="action-button--icon" />
+      </div>
     }
-  </div>
+  }
+</div>

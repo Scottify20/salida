@@ -1,4 +1,4 @@
-<article class="card" (click)="props.onClick()">
+<article class="card" tabindex="0" role="button" (click)="props.onClick()">
   <img
     [src]="'https://image.tmdb.org/t/p/w185/' + props.profilePhotoURL"
     [alt]="'A photo of ' + props.name"
@@ -19,9 +19,15 @@
         </div>
       </div>
       <div class="card-media-container large">
-        @for (media of props.knownForMedia; let i = $index; track media) {
+        @for (media of props.knownForMedia; let i = $index; track i) {
           <!-- for larger screens -->
-          <div class="card-media" (click)="media.onClick()">
+          <div
+            tabindex="0"
+            (keydown.enter)="media.onClick()"
+            role="button"
+            class="card-media"
+            (click)="onMediaClick($event, media.onClick)"
+          >
             <img
               [src]="'https://image.tmdb.org/t/p/w185/' + media.backdropURL"
               alt=""
@@ -33,11 +39,14 @@
       </div>
 
       <p class="card-media-container small">
-        @for (media of props.knownForMedia; let i = $index; track media) {
+        @for (media of props.knownForMedia; let i = $index; track i) {
           <!-- for smaller screens -->
 
           <span
-            (click)="onMediaTitleClick($event, media.onClick)"
+            tabindex="0"
+            (keydown.enter)="media.onClick()"
+            role="button"
+            (click)="onMediaClick($event, media.onClick)"
             class="card-media-title"
             >{{ media.title }}</span
           >

@@ -29,11 +29,10 @@ export interface LoadingModalProps {
 }
 
 @Component({
-  selector: 'app-loading-modal',
-  standalone: true,
-  imports: [LoadingDotsComponent],
-  templateUrl: './loading-modal.component.html',
-  styleUrl: './loading-modal.component.scss',
+    selector: 'app-loading-modal',
+    imports: [LoadingDotsComponent],
+    templateUrl: './loading-modal.component.html',
+    styleUrl: './loading-modal.component.scss'
 })
 export class LoadingModalComponent {
   constructor(

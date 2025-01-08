@@ -1,7 +1,6 @@
 import { Component, DestroyRef, signal } from '@angular/core';
 import { ProgressIndicatorProps } from '../progress-indicator/progress-indicator.model';
 import { ProgressIndicatorComponent } from '../progress-indicator/progress-indicator.component';
-import { DividerWithTitleComponent } from '../divider-with-title/divider-with-title.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import {
   DialogComponent,
@@ -28,13 +27,7 @@ import { PlatformCheckService } from '../../../../shared/services/dom/platform-c
 
 @Component({
   selector: 'app-username-setting-page',
-  standalone: true,
-  imports: [
-    ProgressIndicatorComponent,
-    DividerWithTitleComponent,
-    ReactiveFormsModule,
-    DialogComponent,
-  ],
+  imports: [ProgressIndicatorComponent, ReactiveFormsModule, DialogComponent],
   templateUrl: './username-setting-page.component.html',
   styleUrl: './username-setting-page.component.scss',
 })

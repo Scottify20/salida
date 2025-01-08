@@ -25,11 +25,10 @@ interface TabItem {
 }
 
 @Component({
-  selector: 'app-pill-indexed-tabs',
-  standalone: true,
-  imports: [],
-  templateUrl: './pill-indexed-tabs.component.html',
-  styleUrl: './pill-indexed-tabs.component.scss',
+    selector: 'app-pill-indexed-tabs',
+    imports: [],
+    templateUrl: './pill-indexed-tabs.component.html',
+    styleUrl: './pill-indexed-tabs.component.scss'
 })
 export class PillIndexedTabsComponent {
   constructor(private elementRef: ElementRef) {}

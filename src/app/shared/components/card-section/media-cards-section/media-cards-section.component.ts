@@ -10,11 +10,10 @@ import {
 } from '../media-card/media-card.component';
 
 @Component({
-  selector: 'app-media-cards-section',
-  standalone: true,
-  imports: [SectionTitleComponent, ScrollButtonsComponent, MediaCardComponent],
-  templateUrl: './media-cards-section.component.html',
-  styleUrl: './media-cards-section.component.scss',
+    selector: 'app-media-cards-section',
+    imports: [SectionTitleComponent, ScrollButtonsComponent, MediaCardComponent],
+    templateUrl: './media-cards-section.component.html',
+    styleUrl: './media-cards-section.component.scss'
 })
 export class MediaCardsSectionComponent {
   @Input() props: MediaCardsSectionProps = {

@@ -50,7 +50,9 @@
     @if (dialogProps.buttons.secondary; as secondaryButton) {
       <div
         #secondaryButton
-        tabindex="1"
+        tabindex="0"
+        role="button"
+        (keydown.enter)="onSecondaryButtonClicked()"
         class="dialog__button secondary"
         [class]="
           secondaryButton.isBusySig()
@@ -72,7 +74,9 @@
     @if (dialogProps.buttons.primary; as primaryButton) {
       <div
         #primaryButton
-        tabindex="1"
+        tabindex="0"
+        role="button"
+        (keydown.enter)="onPrimaryButtonClicked()"
         class="dialog__button primary"
         (click)="onPrimaryButtonClicked()"
         [class]="

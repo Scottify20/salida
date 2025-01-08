@@ -56,11 +56,10 @@ export interface MenuItem {
 }
 
 @Component({
-  selector: 'app-popover-menu',
-  standalone: true,
-  imports: [],
-  templateUrl: './popover-menu.component.html',
-  styleUrl: './popover-menu.component.scss',
+    selector: 'app-popover-menu',
+    imports: [],
+    templateUrl: './popover-menu.component.html',
+    styleUrl: './popover-menu.component.scss'
 })
 export class PopoverMenuComponent {
   constructor(

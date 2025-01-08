@@ -1,4 +1,10 @@
-<article class="card" (click)="props.onClick()">
+<article
+  class="card"
+  role="button"
+  (click)="props.onClick()"
+  tabindex="0"
+  (keydown.enter)="props.onClick()"
+>
   <img
     [src]="'https://image.tmdb.org/t/p/w185/' + props.posterURL"
     [alt]="props.title + ' poster'"
@@ -13,7 +19,7 @@
           <span class="card-original-title">{{ props.original_title }}</span>
         </p>
         <div class="card-meta">
-          @for (data of props.metadata; let i = $index; track data) {
+          @for (data of props.metadata; let i = $index; track i) {
             <span class="meta-info">{{ data }}</span>
             @if (
               i !== props.metadata.length - 1 &&

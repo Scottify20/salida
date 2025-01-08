@@ -19,7 +19,6 @@ export interface PersonResultCardProps {
 
 @Component({
   selector: 'app-person-result-card',
-  standalone: true,
   imports: [],
   templateUrl: './person-result-card.component.html',
   styleUrl: './person-result-card.component.scss',
@@ -27,10 +26,8 @@ export interface PersonResultCardProps {
 export class PersonResultCardComponent {
   @Input({ required: true }) props!: PersonResultCardProps;
 
-  onMediaTitleClick(event: Event, onClick: () => void) {
+  onMediaClick(event: Event, onClick: () => void) {
     event.stopPropagation();
-    event.preventDefault();
-
     onClick();
   }
 }

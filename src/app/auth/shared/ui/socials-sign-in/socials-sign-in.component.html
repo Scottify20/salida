@@ -5,8 +5,9 @@
 <div class="login__socials-container">
   <div
     (click)="loginWithGoogle()"
+    (keydown.enter)="loginWithGoogle()"
     role="button"
-    tabindex="1"
+    tabindex="0"
     class="login__social-login-button login__button--google"
   >
     <img
@@ -19,7 +20,7 @@
     <p class="login__button-label">Google</p>
   </div>
   <div
-    tabindex="1"
+    tabindex="0"
     role="button"
     class="login__social-login-button login__button--facebook disabled"
   >

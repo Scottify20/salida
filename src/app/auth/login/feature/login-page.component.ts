@@ -37,19 +37,18 @@ interface LoginErrorMessages {
 }
 
 @Component({
-  selector: 'app-login-page',
-  standalone: true,
-  imports: [
-    ReactiveFormsModule,
-    CapsLockDetectorDirective,
-    SocialsSignInComponent,
-    RouterModule,
-    LoadingDotsComponent,
-    DividerWithTitleComponent,
-    HeaderButtonsComponent,
-  ],
-  templateUrl: '../ui/login-page/login-page.component.html',
-  styleUrl: '../ui/login-page/login-page.component.scss',
+    selector: 'app-login-page',
+    imports: [
+        ReactiveFormsModule,
+        CapsLockDetectorDirective,
+        SocialsSignInComponent,
+        RouterModule,
+        LoadingDotsComponent,
+        DividerWithTitleComponent,
+        HeaderButtonsComponent,
+    ],
+    templateUrl: '../ui/login-page/login-page.component.html',
+    styleUrl: '../ui/login-page/login-page.component.scss'
 })
 export class LoginPageComponent {
   constructor(

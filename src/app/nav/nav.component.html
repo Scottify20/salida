@@ -3,12 +3,14 @@
     <div class="nav__items-container">
       @for (item of navItems; track item; let i = $index) {
         <div
+          #navButton
           role="button"
           class="nav__item"
           [routerLink]="item.routerPath"
           [routerLinkActiveOptions]="{ exact: item.exact }"
           routerLinkActive="active"
-          >
+          (keydown.enter)="navButton.click()"
+        >
           <img [src]="getIconPath(i)" class="nav__item__icon" />
           <div class="nav__item__label">
             {{ item.label }}

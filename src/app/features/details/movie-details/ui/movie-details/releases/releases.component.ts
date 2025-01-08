@@ -40,11 +40,10 @@ const RELEASE_TYPES = [
 ];
 
 @Component({
-  selector: 'app-releases',
-  standalone: true,
-  imports: [DatePipe, ScrollingModule, CommonModule],
-  templateUrl: './releases.component.html',
-  styleUrl: './releases.component.scss',
+    selector: 'app-releases',
+    imports: [DatePipe, ScrollingModule, CommonModule],
+    templateUrl: './releases.component.html',
+    styleUrl: './releases.component.scss'
 })
 export class ReleasesComponent {
   countryCodes: Country[] = [];

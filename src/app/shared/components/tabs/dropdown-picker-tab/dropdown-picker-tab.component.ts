@@ -12,11 +12,10 @@ export interface DropDownPickerTabProps {
 }
 
 @Component({
-  selector: 'app-dropdown-picker',
-  standalone: true,
-  imports: [],
-  templateUrl: './dropdown-picker-tab.component.html',
-  styleUrl: './dropdown-picker-tab.component.scss',
+    selector: 'app-dropdown-picker',
+    imports: [],
+    templateUrl: './dropdown-picker-tab.component.html',
+    styleUrl: './dropdown-picker-tab.component.scss'
 })
 export class DropdownPickerTabComponent {
   constructor(protected extractStringService: ExtractStringService) {}

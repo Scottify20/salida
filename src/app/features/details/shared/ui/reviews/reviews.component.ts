@@ -19,11 +19,10 @@ import { CollapsibleTextSectionComponent } from '../../../../../shared/component
 import removeMd from 'remove-markdown';
 
 @Component({
-  selector: 'app-reviews',
-  standalone: true,
-  imports: [CommonModule, CollapsibleTextSectionComponent],
-  templateUrl: './reviews.component.html',
-  styleUrl: './reviews.component.scss',
+    selector: 'app-reviews',
+    imports: [CommonModule, CollapsibleTextSectionComponent],
+    templateUrl: './reviews.component.html',
+    styleUrl: './reviews.component.scss'
 })
 export class ReviewsComponent {
   constructor(

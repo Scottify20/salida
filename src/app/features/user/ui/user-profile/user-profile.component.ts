@@ -5,11 +5,10 @@ import { HeaderButtonProps } from '../../../../shared/components/header-button/h
 import { Router } from '@angular/router';
 
 @Component({
-  selector: 'app-user-profile',
-  standalone: true,
-  imports: [HeaderButtonsComponent],
-  templateUrl: './user-profile.component.html',
-  styleUrl: './user-profile.component.scss',
+    selector: 'app-user-profile',
+    imports: [HeaderButtonsComponent],
+    templateUrl: './user-profile.component.html',
+    styleUrl: './user-profile.component.scss'
 })
 export class UserProfileComponent {
   constructor(private router: Router) {}

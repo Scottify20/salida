@@ -51,11 +51,10 @@ interface DialogButton {
 }
 
 @Component({
-  selector: 'app-dialog',
-  standalone: true,
-  imports: [LoadingDotsComponent],
-  templateUrl: './dialog.component.html',
-  styleUrl: './dialog.component.scss',
+    selector: 'app-dialog',
+    imports: [LoadingDotsComponent],
+    templateUrl: './dialog.component.html',
+    styleUrl: './dialog.component.scss'
 })
 export class DialogComponent {
   constructor(

@@ -1,9 +1,11 @@
 <div
   class="hero-card"
-  role="button"
   [id]="'hero-card--' + titleDetails.id"
   [attr.data-card-index]="cardIndex"
   (click)="onCardClick()"
+  role="button"
+  (keydown.enter)="onCardClick()"
+  tabindex="0"
 >
   @if (getImageSrcBasedOnWidth()) {
     <img

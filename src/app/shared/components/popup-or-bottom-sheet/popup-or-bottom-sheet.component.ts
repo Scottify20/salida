@@ -35,11 +35,10 @@ export interface AnchoringInfo {
 }
 
 @Component({
-  selector: 'app-popup-or-bottom-sheet',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './popup-or-bottom-sheet.component.html',
-  styleUrl: './popup-or-bottom-sheet.component.scss',
+    selector: 'app-popup-or-bottom-sheet',
+    imports: [CommonModule],
+    templateUrl: './popup-or-bottom-sheet.component.html',
+    styleUrl: './popup-or-bottom-sheet.component.scss'
 })
 export class PopupOrBottomSheetComponent
   implements OnInit, OnDestroy, AfterViewInit

@@ -32,7 +32,6 @@
       <div class="field">
         <label for="email" class="label">EMAIL</label>
         <input
-          tabindex="1"
           placeholder="Example: name@example.com"
           type="text"
           class="input"
@@ -60,7 +59,6 @@
             #passwordInput
             autocomplete="on"
             appCapsLockDetector
-            tabindex="1"
             placeholder="Create a strong password"
             [type]="passwordInputType"
             class="input password"
@@ -96,11 +94,13 @@
           </div>
 
           <div
-            tabindex="1"
+            #togglePasswordVisibilitBtn
+            tabindex="0"
             role="button"
             class="login__password-visibility-toggle"
             (click)="togglePasswordVisibility()"
             (click)="passwordInput.focus()"
+            (keydown.enter)="togglePasswordVisibilitBtn.click()"
           >
             <img
               [src]="
@@ -133,7 +133,8 @@
         <button
           #signupButton
           [class]="isSignupButtonDisabled() ? 'disabled' : ''"
-          tabindex="1"
+          tabindex="0"
+          (keydown.enter)="signupButton.click()"
           type="submit"
           class="login-button"
         >
@@ -149,8 +150,11 @@
 
     <div class="login__other-links-container">
       <p
-        tabindex="1"
+        #loginInsteadBtn
+        tabindex="0"
+        role="button"
         [routerLink]="['/auth/login']"
+        (keydown.enter)="loginInsteadBtn.click()"
         class="login__other-link login__other-link--primary"
       >
         Already have an account?

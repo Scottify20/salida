@@ -14,11 +14,10 @@ interface TabOrMenuItem {
 }
 
 @Component({
-  selector: 'app-pill-tabs-or-dropdown-menu',
-  standalone: true,
-  imports: [],
-  templateUrl: './pill-tabs-or-dropdown-menu.component.html',
-  styleUrl: './pill-tabs-or-dropdown-menu.component.scss',
+    selector: 'app-pill-tabs-or-dropdown-menu',
+    imports: [],
+    templateUrl: './pill-tabs-or-dropdown-menu.component.html',
+    styleUrl: './pill-tabs-or-dropdown-menu.component.scss'
 })
 export class PillTabsOrDropdownMenuComponent {
   @Input() props: PillTabsOrDropdownMenuProps = {

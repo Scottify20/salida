@@ -32,21 +32,20 @@ import {
 } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
 
 @Component({
-  selector: 'app-home',
-  standalone: true,
-  templateUrl: '../ui/home/home.component.html',
-  styleUrls: ['../ui/home/home.component.scss'],
-  imports: [
-    HeroCardsComponent,
-    UserActionsMenuPopoverComponent,
-    HeaderButtonComponent,
-    DropdownPickerTabComponent,
-    PopoverMenuComponent,
-    PillIndexedTabsComponent,
-    AsyncPipe,
-    CommonModule,
-    MediaCardsSectionComponent,
-  ],
+    selector: 'app-home',
+    templateUrl: '../ui/home/home.component.html',
+    styleUrls: ['../ui/home/home.component.scss'],
+    imports: [
+        HeroCardsComponent,
+        UserActionsMenuPopoverComponent,
+        HeaderButtonComponent,
+        DropdownPickerTabComponent,
+        PopoverMenuComponent,
+        PillIndexedTabsComponent,
+        AsyncPipe,
+        CommonModule,
+        MediaCardsSectionComponent,
+    ]
 })
 export class HomeComponent {
   constructor(

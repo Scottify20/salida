@@ -15,15 +15,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 
 @Component({
-  selector: 'app-series-more-details',
-  standalone: true,
-  imports: [
-    TextsSectionComponent,
-    CommonModule,
-    CollapsibleTextSectionComponent,
-  ],
-  templateUrl: './series-more-details.component.html',
-  styleUrl: './series-more-details.component.scss',
+    selector: 'app-series-more-details',
+    imports: [
+        TextsSectionComponent,
+        CommonModule,
+        CollapsibleTextSectionComponent,
+    ],
+    templateUrl: './series-more-details.component.html',
+    styleUrl: './series-more-details.component.scss'
 })
 export class SeriesMoreDetailsComponent {
   constructor(

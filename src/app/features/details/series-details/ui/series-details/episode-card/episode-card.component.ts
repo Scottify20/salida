@@ -4,11 +4,10 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { DurationPipe } from '../../../../../../shared/pipes/duration.pipe';
 
 @Component({
-  selector: 'app-episode-card',
-  standalone: true,
-  imports: [DatePipe, CommonModule, DurationPipe],
-  templateUrl: './episode-card.component.html',
-  styleUrl: './episode-card.component.scss',
+    selector: 'app-episode-card',
+    imports: [DatePipe, CommonModule, DurationPipe],
+    templateUrl: './episode-card.component.html',
+    styleUrl: './episode-card.component.scss'
 })
 export class EpisodeCardComponent {
   @Input() episodeData: Episode = {

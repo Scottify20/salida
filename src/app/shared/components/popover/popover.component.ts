@@ -21,11 +21,10 @@ import { NavigationStart, Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-popover',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './popover.component.html',
-  styleUrl: './popover.component.scss',
+    selector: 'app-popover',
+    imports: [CommonModule],
+    templateUrl: './popover.component.html',
+    styleUrl: './popover.component.scss'
 })
 export class PopoverComponent {
   // Inject services
