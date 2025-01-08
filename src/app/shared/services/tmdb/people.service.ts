@@ -31,7 +31,7 @@ export class PeopleService {
     if (!this.cachedPerson[personIdString]) {
       this.cachedPerson[personIdString] = this.http
         .get<Person>(
-          `${this.tmdbConfig.baseUrl}/person/${personIdString}?append_to_response=external_ids,images,latest,movie_credits,tv_credits`,
+          `${this.tmdbConfig.baseUrl}/person/${personIdString}?append_to_response=external_ids,images,latest,movie_credits,tv_credits&include_image_language=en,null`,
         )
         .pipe(
           retry(2),

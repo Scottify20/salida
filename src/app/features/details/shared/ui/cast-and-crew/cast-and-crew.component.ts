@@ -31,11 +31,10 @@ import { TemporaryUserPreferencesService } from '../../../../../shared/services/
 import { TmdbEntityForCard } from '../../../../../shared/components/card-section/person-card/person-card.component';
 
 @Component({
-  selector: 'app-cast-and-crew',
-  standalone: true,
-  imports: [PeopleCardsSectionComponent],
-  templateUrl: './cast-and-crew.component.html',
-  styleUrl: './cast-and-crew.component.scss',
+    selector: 'app-cast-and-crew',
+    imports: [PeopleCardsSectionComponent],
+    templateUrl: './cast-and-crew.component.html',
+    styleUrl: './cast-and-crew.component.scss'
 })
 export class CastAndCrewComponent {
   seriesCrewSection: CardsSectionProps;

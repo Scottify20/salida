@@ -4,15 +4,13 @@ import {
   ViewChild,
   ViewContainerRef,
 } from '@angular/core';
-import { ToastComponent } from '../ui/toast/toast.component';
 
 import { ToastsService } from '../data-access/toasts.service';
 import { PlatformCheckService } from '../../../services/dom/platform-check.service';
 
 @Component({
   selector: 'app-toasts-container',
-  standalone: true,
-  imports: [ToastComponent],
+  imports: [],
   templateUrl: '../ui/toasts-container/toasts-container.component.html',
   styleUrl: '../ui/toasts-container//toasts-container.component.scss',
 })

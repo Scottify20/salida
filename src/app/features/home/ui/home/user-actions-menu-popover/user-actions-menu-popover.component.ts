@@ -55,11 +55,10 @@ export interface MenuItem {
 }
 
 @Component({
-  selector: 'app-user-actions-menu-popover',
-  standalone: true,
-  imports: [],
-  templateUrl: './user-actions-menu-popover.component.html',
-  styleUrl: './user-actions-menu-popover.component.scss',
+    selector: 'app-user-actions-menu-popover',
+    imports: [],
+    templateUrl: './user-actions-menu-popover.component.html',
+    styleUrl: './user-actions-menu-popover.component.scss'
 })
 export class UserActionsMenuPopoverComponent {
   // Inject services

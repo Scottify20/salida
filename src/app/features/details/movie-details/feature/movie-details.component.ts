@@ -15,19 +15,18 @@ import {
 } from '../../../../shared/components/toggle-switch/toggle-switch.component';
 
 @Component({
-  selector: 'app-movie-details',
-  standalone: true,
-  imports: [
-    MediaHeroSectionComponent,
-    PillIndexedTabsComponent,
-    MovieMoreDetailsComponent,
-    ReleasesComponent,
-    ReviewsComponent,
-    CastAndCrewComponent,
-    ToggleSwitchComponent,
-  ],
-  templateUrl: '../ui/movie-details/movie-details.component.html',
-  styleUrl: '../ui/movie-details/movie-details.component.scss',
+    selector: 'app-movie-details',
+    imports: [
+        MediaHeroSectionComponent,
+        PillIndexedTabsComponent,
+        MovieMoreDetailsComponent,
+        ReleasesComponent,
+        ReviewsComponent,
+        CastAndCrewComponent,
+        ToggleSwitchComponent,
+    ],
+    templateUrl: '../ui/movie-details/movie-details.component.html',
+    styleUrl: '../ui/movie-details/movie-details.component.scss'
 })
 export class MovieDetailsComponent {
   constructor(private preferencesService: TemporaryUserPreferencesService) {}

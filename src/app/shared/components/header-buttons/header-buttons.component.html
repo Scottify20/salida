@@ -2,13 +2,14 @@
   @for (button of headerButtons; track button; let buttonIndex = $index) {
     <div
       [id]="button.id"
-      tabindex="1"
+      tabindex="0"
       role="button"
       class="header__button"
       [class]="
         button.type === 'text' ? 'header__button--text' : 'header__button--icon'
       "
       (click)="callOnClickCallbackFn(button.onClickCallbackFn)"
+      (keydown.enter)="callOnClickCallbackFn(button.onClickCallbackFn)"
     >
       @if (button.type === "icon") {
         <img

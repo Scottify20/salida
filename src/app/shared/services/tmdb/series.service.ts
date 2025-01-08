@@ -69,7 +69,7 @@ export class SeriesService {
     if (!this.cachedSeries[seriesIdString]) {
       this.cachedSeries[seriesIdString] = this.http
         .get<Series>(
-          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}?append_to_response=images,videos,aggregate_credits,external_ids,content_ratings,keywords,recommendations,watch/providers,reviews`,
+          `${this.tmdbConfig.baseUrl}/tv/${seriesIdString}?append_to_response=images,videos,aggregate_credits,external_ids,content_ratings,keywords,recommendations,watch/providers,reviews&include_image_language=en,null`,
         )
         .pipe(
           retry(2),

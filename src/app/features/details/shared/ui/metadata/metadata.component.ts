@@ -15,11 +15,10 @@ interface TitleMetadata {
 }
 
 @Component({
-  selector: 'app-metadata',
-  standalone: true,
-  imports: [],
-  templateUrl: './metadata.component.html',
-  styleUrl: './metadata.component.scss',
+    selector: 'app-metadata',
+    imports: [],
+    templateUrl: './metadata.component.html',
+    styleUrl: './metadata.component.scss'
 })
 export class MetadataComponent {
   constructor(

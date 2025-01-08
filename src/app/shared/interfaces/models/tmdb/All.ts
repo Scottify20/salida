@@ -40,8 +40,11 @@ export interface MediaSummary extends BaseMedia {
 }
 
 export interface PersonSummary {
+  adult: boolean;
   id: number;
   name: string;
+  gender: number;
+  original_name: string;
   popularity: number;
   profile_path: string | null;
   known_for: MediaSummary[];

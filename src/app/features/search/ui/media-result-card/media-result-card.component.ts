@@ -13,11 +13,10 @@ export interface MediaResultCardProps {
 }
 
 @Component({
-  selector: 'app-media-result-card',
-  standalone: true,
-  imports: [],
-  templateUrl: './media-result-card.component.html',
-  styleUrl: './media-result-card.component.scss',
+    selector: 'app-media-result-card',
+    imports: [],
+    templateUrl: './media-result-card.component.html',
+    styleUrl: './media-result-card.component.scss'
 })
 export class MediaResultCardComponent {
   @Input({ required: true }) props!: MediaResultCardProps;

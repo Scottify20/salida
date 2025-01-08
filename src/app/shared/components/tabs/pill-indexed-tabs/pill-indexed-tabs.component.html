@@ -3,7 +3,10 @@
     <div class="pill-indexed-tabs__tab-container">
       @for (tab of props.tabs; track tab; let i = $index) {
         <div
+          tabindex="0"
+          role="button"
           (click)="handleTabClick(i)"
+          (keydown.enter)="handleTabClick(i)"
           class="pill-indexed-tabs__tab"
           [class]="currentTabIndex === i ? 'active' : ''"
         >

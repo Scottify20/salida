@@ -1,6 +1,5 @@
 import { Component, DestroyRef, signal } from '@angular/core';
 import { FirebaseAuthService } from '../../../../core/auth/firebase-auth.service';
-import { AsyncPipe } from '@angular/common';
 import { catchError, of, take, tap } from 'rxjs';
 import { ToastsService } from '../../../../shared/components/toasts/data-access/toasts.service';
 import { Router } from '@angular/router';
@@ -16,8 +15,7 @@ import {
 
 @Component({
   selector: 'app-socials-sign-in',
-  standalone: true,
-  imports: [AsyncPipe, LoadingModalComponent],
+  imports: [LoadingModalComponent],
   templateUrl: './socials-sign-in.component.html',
   styleUrl: './socials-sign-in.component.scss',
 })

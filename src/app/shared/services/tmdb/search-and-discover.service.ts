@@ -59,7 +59,7 @@ export class SearchAndDiscoverService {
     includeAdult,
     year,
     primaryReleaseYear,
-  }: SearchParams): Observable<MultiSearchSummaryResults> {
+  }: SearchParams): Observable<MovieSummaryResults> {
     let params = new HttpParams();
 
     includeAdult ? (params = params.set('include_adult', 'true')) : null;
@@ -73,7 +73,7 @@ export class SearchAndDiscoverService {
 
     const url = `${this.tmdbConfig.baseUrl}/search/movie?${params.toString()}`;
 
-    return this.httpClient.get<MultiSearchSummaryResults>(url).pipe(
+    return this.httpClient.get<MovieSummaryResults>(url).pipe(
       retry(2),
       shareReplay(1),
       catchError((err) =>
@@ -89,7 +89,7 @@ export class SearchAndDiscoverService {
     includeAdult,
     year,
     firstAirDateYear,
-  }: SearchParams): Observable<MultiSearchSummaryResults> {
+  }: SearchParams): Observable<SeriesSummaryResults> {
     let params = new HttpParams();
 
     includeAdult ? (params = params.set('include_adult', 'true')) : null;
@@ -103,7 +103,7 @@ export class SearchAndDiscoverService {
 
     const url = `${this.tmdbConfig.baseUrl}/search/tv?${params.toString()}`;
 
-    return this.httpClient.get<MultiSearchSummaryResults>(url).pipe(
+    return this.httpClient.get<SeriesSummaryResults>(url).pipe(
       retry(2),
       shareReplay(1),
       catchError((err) =>
@@ -117,7 +117,7 @@ export class SearchAndDiscoverService {
     query,
     language,
     includeAdult,
-  }: SearchParams): Observable<MultiSearchSummaryResults> {
+  }: SearchParams): Observable<PersonSummaryResults> {
     let params = new HttpParams();
 
     includeAdult ? (params = params.set('include_adult', 'true')) : null;
@@ -127,7 +127,7 @@ export class SearchAndDiscoverService {
 
     const url = `${this.tmdbConfig.baseUrl}/search/person?${params.toString()}`;
 
-    return this.httpClient.get<MultiSearchSummaryResults>(url).pipe(
+    return this.httpClient.get<PersonSummaryResults>(url).pipe(
       retry(2),
       shareReplay(1),
       catchError((err) =>

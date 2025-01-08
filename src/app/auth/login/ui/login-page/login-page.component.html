@@ -25,7 +25,7 @@
       <div class="field">
         <label for="email" class="label">USERNAME / EMAIL</label>
         <input
-          tabindex="1"
+          tabindex="0"
           placeholder="Enter username or email"
           type="text"
           class="input"
@@ -48,16 +48,17 @@
         <div class="password-input-and-toggle-container">
           <input
             appCapsLockDetector
-            tabindex="1"
+            tabindex="0"
             placeholder="Enter password"
             [type]="passwordInputType"
             class="input password"
             formControlName="password"
           />
           <div
-            tabindex="1"
+            tabindex="0"
             role="button"
             class="login__password-visibility-toggle"
+            (keydown.enter)="togglePasswordVisibility()"
             (click)="togglePasswordVisibility()"
           >
             <img
@@ -93,7 +94,6 @@
         <button
           #loginButton
           [class]="isLoginButtonDisabled() ? 'disabled' : ''"
-          tabindex="1"
           type="submit"
           class="login-button"
         >
@@ -109,15 +109,21 @@
 
     <div class="login__other-links-container">
       <p
+        #createAccountInsteadBtn
         [routerLink]="['/auth/signup']"
-        tabindex="1"
+        tabindex="0"
+        (keydown.enter)="createAccountInsteadBtn.click()"
+        role="button"
         class="login__other-link login__other-link--primary"
       >
         Create an Account
       </p>
       <p
+        #forgotPasswordBtn
         [routerLink]="['/auth/forgot-password']"
-        tabindex="1"
+        tabindex="0"
+        (keydown.enter)="forgotPasswordBtn.click()"
+        role="button"
         class="login__other-link login__other-link--secondary"
       >
         Forgot Password?

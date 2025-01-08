@@ -24,11 +24,10 @@ export interface CardsSectionProps extends SectionTitleProps {
 export type CardSectionButtonType = 'text' | 'icon' | 'none';
 
 @Component({
-  selector: 'app-people-cards-section',
-  standalone: true,
-  imports: [SectionTitleComponent, ScrollButtonsComponent, PersonCardComponent],
-  templateUrl: './people-cards-section.component.html',
-  styleUrl: './people-cards-section.component.scss',
+    selector: 'app-people-cards-section',
+    imports: [SectionTitleComponent, ScrollButtonsComponent, PersonCardComponent],
+    templateUrl: './people-cards-section.component.html',
+    styleUrl: './people-cards-section.component.scss'
 })
 export class PeopleCardsSectionComponent implements OnChanges {
   @Input() props: CardsSectionProps = {

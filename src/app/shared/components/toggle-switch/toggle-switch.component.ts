@@ -14,11 +14,10 @@ interface ToggleButtonProps {
 }
 
 @Component({
-  selector: 'app-toggle-switch',
-  standalone: true,
-  imports: [],
-  templateUrl: './toggle-switch.component.html',
-  styleUrl: './toggle-switch.component.scss',
+    selector: 'app-toggle-switch',
+    imports: [],
+    templateUrl: './toggle-switch.component.html',
+    styleUrl: './toggle-switch.component.scss'
 })
 export class ToggleSwitchComponent {
   @Input({ required: true }) props: ToggleSwitchProps = {

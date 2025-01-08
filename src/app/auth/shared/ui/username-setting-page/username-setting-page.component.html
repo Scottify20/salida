@@ -34,7 +34,6 @@
 
           <div class="username-input-and-checker-container">
             <input
-              tabindex="1"
               placeholder="Enter a unique username"
               type="text"
               class="username-input"
@@ -82,7 +81,6 @@
           <button
             (click)="onSkip()"
             id="skip-username-setting-button"
-            tabindex="1"
             class="skip-username-setting-button"
           >
             Skip
@@ -91,7 +89,6 @@
             (click)="onSetUsernameButtonClicked()"
             id="username-setting-button"
             [class]="isSetUsernameButtonDisabled() ? 'disabled' : ''"
-            tabindex="1"
             class="username-setting-button"
           >
             Set username

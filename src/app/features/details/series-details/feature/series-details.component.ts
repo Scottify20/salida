@@ -21,20 +21,19 @@ import {
 } from '../../../../shared/components/toggle-switch/toggle-switch.component';
 
 @Component({
-  selector: 'app-series-details',
-  standalone: true,
-  imports: [
-    MediaHeroSectionComponent,
-    DropdownPickerTabComponent,
-    PillIndexedTabsComponent,
-    ReviewsComponent,
-    SeasonsComponent,
-    SeriesMoreDetailsComponent,
-    CastAndCrewComponent,
-    ToggleSwitchComponent,
-  ],
-  templateUrl: '../ui/series-details/series-details.component.html',
-  styleUrl: '../ui/series-details/series-details.component.scss',
+    selector: 'app-series-details',
+    imports: [
+        MediaHeroSectionComponent,
+        DropdownPickerTabComponent,
+        PillIndexedTabsComponent,
+        ReviewsComponent,
+        SeasonsComponent,
+        SeriesMoreDetailsComponent,
+        CastAndCrewComponent,
+        ToggleSwitchComponent,
+    ],
+    templateUrl: '../ui/series-details/series-details.component.html',
+    styleUrl: '../ui/series-details/series-details.component.scss'
 })
 export class SeriesDetailsComponent {
   constructor(

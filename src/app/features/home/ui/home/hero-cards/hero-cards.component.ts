@@ -8,11 +8,10 @@ import { HeroCardComponent } from '../hero-card/hero-card.component';
 import { HeroCardsService } from '../../../data-access/hero-cards.service';
 
 @Component({
-  selector: 'app-hero-cards',
-  standalone: true,
-  imports: [CommonModule, HeroCardComponent, ScrollButtonsComponent],
-  templateUrl: './hero-cards.component.html',
-  styleUrl: './hero-cards.component.scss',
+    selector: 'app-hero-cards',
+    imports: [CommonModule, HeroCardComponent, ScrollButtonsComponent],
+    templateUrl: './hero-cards.component.html',
+    styleUrl: './hero-cards.component.scss'
 })
 export class HeroCardsComponent implements AfterViewInit, OnDestroy {
   constructor(

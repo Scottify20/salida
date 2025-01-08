@@ -10,11 +10,10 @@ export interface TmdbEntityForCard {
 }
 
 @Component({
-  selector: 'app-person-card',
-  standalone: true,
-  imports: [],
-  templateUrl: './person-card.component.html',
-  styleUrl: './person-card.component.scss',
+    selector: 'app-person-card',
+    imports: [],
+    templateUrl: './person-card.component.html',
+    styleUrl: './person-card.component.scss'
 })
 export class PersonCardComponent {
   @Input({ required: true }) entity: TmdbEntityForCard = {

@@ -29,11 +29,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  standalone: true,
-  imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
-  selector: 'app-seasons',
-  templateUrl: './seasons.component.html',
-  styleUrls: ['./seasons.component.scss'],
+    imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
+    selector: 'app-seasons',
+    templateUrl: './seasons.component.html',
+    styleUrls: ['./seasons.component.scss']
 })
 export class SeasonsComponent {
   constructor(

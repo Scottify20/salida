@@ -10,11 +10,10 @@ export type HeaderButtonProps = {
 };
 
 @Component({
-  selector: 'app-header-button',
-  standalone: true,
-  imports: [],
-  templateUrl: './header-button.component.html',
-  styleUrl: './header-button.component.scss',
+    selector: 'app-header-button',
+    imports: [],
+    templateUrl: './header-button.component.html',
+    styleUrl: './header-button.component.scss'
 })
 export class HeaderButtonComponent {
   @Input({ required: true }) props!: HeaderButtonProps;

@@ -3,11 +3,10 @@ import { ToastsService } from '../../data-access/toasts.service';
 import { ToastItem } from '../../data-access/toast.model';
 
 @Component({
-  selector: 'app-toast',
-  standalone: true,
-  imports: [],
-  templateUrl: './toast.component.html',
-  styleUrl: './toast.component.scss',
+    selector: 'app-toast',
+    imports: [],
+    templateUrl: './toast.component.html',
+    styleUrl: './toast.component.scss'
 })
 export class ToastComponent {
   constructor(protected toastsService: ToastsService) {}

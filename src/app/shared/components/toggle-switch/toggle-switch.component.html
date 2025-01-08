@@ -3,6 +3,9 @@
     @if (props.buttonsContent === "text") {
       @for (button of props.buttons; track button) {
         <div
+          (keydown.enter)="button.onClick()"
+          tabindex="0"
+          role="button"
           (click)="button.onClick()"
           class="toggle-switch__button text"
           [class]="button.isActive() ? 'active' : ''"
@@ -15,6 +18,9 @@
     @if (props.buttonsContent === "icon") {
       @for (button of props.buttons; track button) {
         <div
+          (keydown.enter)="button.onClick()"
+          tabindex="0"
+          role="button"
           (click)="button.onClick()"
           class="toggle-switch__button icon"
           [class]="button.isActive() ? 'active' : ''"

@@ -15,11 +15,10 @@ export type ViewAllButtonProps = {
 };
 
 @Component({
-  selector: 'app-section-title',
-  standalone: true,
-  imports: [],
-  templateUrl: './section-title.component.html',
-  styleUrl: './section-title.component.scss',
+    selector: 'app-section-title',
+    imports: [],
+    templateUrl: './section-title.component.html',
+    styleUrl: './section-title.component.scss'
 })
 export class SectionTitleComponent {
   @Input({ required: true }) props: SectionTitleProps = {

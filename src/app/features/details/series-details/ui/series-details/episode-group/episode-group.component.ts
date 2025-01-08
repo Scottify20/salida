@@ -3,11 +3,10 @@ import { Season } from '../../../../../../shared/interfaces/models/tmdb/Series';
 import { EpisodeCardComponent } from '../episode-card/episode-card.component';
 
 @Component({
-  selector: 'app-episode-group',
-  standalone: true,
-  imports: [EpisodeCardComponent],
-  templateUrl: './episode-group.component.html',
-  styleUrl: './episode-group.component.scss',
+    selector: 'app-episode-group',
+    imports: [EpisodeCardComponent],
+    templateUrl: './episode-group.component.html',
+    styleUrl: './episode-group.component.scss'
 })
 export class EpisodeGroupComponent {
   @Input() seasonData: Season = {

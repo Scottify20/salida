@@ -17,11 +17,10 @@ export interface CollapsibleTextSectionOptions {
 }
 
 @Component({
-  selector: 'app-collapsible-text-section',
-  standalone: true,
-  imports: [CommonModule],
-  templateUrl: './collapsible-text-section.component.html',
-  styleUrl: './collapsible-text-section.component.scss',
+    selector: 'app-collapsible-text-section',
+    imports: [CommonModule],
+    templateUrl: './collapsible-text-section.component.html',
+    styleUrl: './collapsible-text-section.component.scss'
 })
 export class CollapsibleTextSectionComponent {
   constructor(private platformCheckService: PlatformCheckService) {}

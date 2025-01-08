@@ -38,7 +38,7 @@ export class MovieService {
       return this.cachedMovies[movieIdString]; // Return cached observable if available
     }
 
-    const url = `${this.tmdbConfig.baseUrl}/movie/${movieIdString}?append_to_response=images,videos,credits,external_ids,release_dates,keywords,recommendations,watch/providers,reviews`;
+    const url = `${this.tmdbConfig.baseUrl}/movie/${movieIdString}?append_to_response=images,videos,credits,external_ids,release_dates,keywords,recommendations,watch/providers,reviews&include_image_language=en,null`;
 
     this.cachedMovies[movieIdString] = this.http.get<Movie>(url).pipe(
       retry(2),

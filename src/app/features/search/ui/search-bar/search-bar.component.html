@@ -1,17 +1,32 @@
-<form class="search-bar" [formGroup]="searchForm" (ngSubmit)="onSubmit($event)">
+<form class="search-bar" [formGroup]="searchForm" (submit)="onSubmit($event)">
   <input
-    formControlName="searchQuery"
-    type="search"
+    #searchInput
     class="search-bar__input"
+    type="search"
+    placeholder="Search"
+    tabindex="0"
+    formControlName="searchQuery"
+    (keydown.enter)="onSubmit($event)"
   />
 
   @if (hasValue) {
-    <button type="button" (click)="onClear()" class="search-bar__clear-button">
+    <button
+      (click)="onClear()"
+      tabindex="0"
+      type="button"
+      class="search-bar__clear-button"
+    >
       <img src="assets/icons/search/clear.svg" alt="Clear" />
     </button>
   }
 
-  <button class="search-bar__submit-button" type="submit">
+  <button
+    #searchButton
+    tabindex="0"
+    (keydown.enter)="searchButton.click()"
+    class="search-bar__submit-button"
+    type="submit"
+  >
     <img src="assets/icons/search/search.svg" alt="Search" />
   </button>
 </form>

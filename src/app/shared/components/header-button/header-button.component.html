@@ -1,12 +1,13 @@
 <div
   [id]="props.id"
-  tabindex="1"
-  role="headerButtonProps"
+  tabindex="0"
+  role="button"
   class="header__button"
   [class]="
     props.type === 'text' ? 'header__button--text' : 'header__button--icon'
   "
   (click)="callOnClickCallbackFn(props.onClickCallbackFn)"
+  (keydown.enter)="callOnClickCallbackFn(props.onClickCallbackFn)"
 >
   @if (props.type === "icon") {
     <img [src]="this.extractStringService.extract(props.iconPath)" alt="" />
