@@ -25,17 +25,22 @@ export class SearchBarComponent {
 
   @ViewChild('searchInput') searchInput!: ElementRef;
   @Input({ required: true }) defaultValue!: Signal<string>;
-  // this sets the default value of the search bar with the value passed by the  parent (useful for maintaining the value even if the searchbar is destroyed)
+  // this sets the default value of the search bar with the value passed by the  parent (for maintaining the value even if the searchbar is destroyed)
   ngAfterViewInit() {
+    if (!this.defaultValue()) {
+      return;
+    }
     const searchInputEl = this.searchInput.nativeElement as HTMLInputElement;
     searchInputEl.value = this.defaultValue();
+    this.hasValue.set(true);
   }
 
   searchForm = this.fb.group({
     searchQuery: ['', Validators.required],
   });
 
-  hasValue = false;
+  hasValue = signal(false);
+  previousValue = '';
 
   private destroyRef = inject(DestroyRef);
   constructor(private fb: FormBuilder) {
@@ -44,21 +49,31 @@ export class SearchBarComponent {
     this.searchForm.valueChanges
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((value) => {
-        this.hasValue = !!value.searchQuery;
+        this.hasValue.set(!!value.searchQuery);
       });
   }
 
   onClear() {
-    // outputs an empty string '' when the clear (X) button is clicked
+    // outputs 'clear-search-bar' when the clear (X) button is clicked
     this.searchForm.reset();
-    this.search.emit('');
+    this.hasValue.set(false);
+    this.emitValue('cleared-search-bar');
   }
 
   onSubmit(event: Event) {
     event.preventDefault();
-    // outputs a non-empty string when the search or enter button is pushed/clicked
+    // outputs the typed string when the search or enter button is pushed/clicked
     if (this.searchForm.valid) {
-      this.search.emit(this.searchForm.value.searchQuery || undefined);
+      this.emitValue(this.searchForm.value.searchQuery || '');
     }
+  }
+
+  emitValue(value: string) {
+    if (value === this.previousValue) {
+      return;
+    }
+
+    this.search.emit(value);
+    this.previousValue = value;
   }
 }

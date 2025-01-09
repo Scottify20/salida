@@ -1,17 +1,20 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
-import { IntersectionObserverService } from '../../../../../shared/services/dom/intersection-observer.service';
-import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
-import { ScrollButtonsComponent } from '../../../../../shared/components/scroll-buttons/scroll-buttons.component';
-import { MediaSummary } from '../../../../../shared/interfaces/models/tmdb/All';
-import { HeroCardComponent } from '../hero-card/hero-card.component';
-import { HeroCardsService } from '../../../data-access/hero-cards.service';
+import { IntersectionObserverService } from '../../../../shared/services/dom/intersection-observer.service';
+import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
+import { ScrollButtonsComponent } from '../../../../shared/components/scroll-buttons/scroll-buttons.component';
+import { MediaSummary } from '../../../../shared/interfaces/models/tmdb/All';
+import {
+  HeroCardComponent,
+  HeroCardProps,
+} from '../hero-card/hero-card.component';
+import { HeroCardsService } from '../../data-access/hero-cards.service';
 
 @Component({
-    selector: 'app-hero-cards',
-    imports: [CommonModule, HeroCardComponent, ScrollButtonsComponent],
-    templateUrl: './hero-cards.component.html',
-    styleUrl: './hero-cards.component.scss'
+  selector: 'app-hero-cards',
+  imports: [CommonModule, HeroCardComponent, ScrollButtonsComponent],
+  templateUrl: './hero-cards.component.html',
+  styleUrl: './hero-cards.component.scss',
 })
 export class HeroCardsComponent implements AfterViewInit, OnDestroy {
   constructor(
@@ -22,7 +25,7 @@ export class HeroCardsComponent implements AfterViewInit, OnDestroy {
 
   indexOfFullyVisibleCard: number = 0;
 
-  @Input({ required: true }) props: MediaSummary[] = [];
+  @Input({ required: true }) props: HeroCardProps[] = [];
 
   ngAfterViewInit() {
     try {

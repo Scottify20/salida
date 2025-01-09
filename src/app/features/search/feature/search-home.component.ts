@@ -1,6 +1,12 @@
-import { Component, computed, ElementRef, ViewChild } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { SearchBarComponent } from '../ui/search-bar/search-bar.component';
-import { HeaderButtonProps } from '../../../shared/components/header-button/header-button.component';
 import {
   PillIndexedTabsComponent,
   PillIndexedTabsProps,
@@ -10,6 +16,8 @@ import { MediaResultCardComponent } from '../ui/media-result-card/media-result-c
 import { SearchPageService } from '../data-access/search-page.service';
 import { PersonResultCardComponent } from '../ui/person-result-card/person-result-card.component';
 import { IntersectionObserverService } from '../../../shared/services/dom/intersection-observer.service';
+import { debounceTime, Subject, tap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-search-home',
@@ -19,123 +27,119 @@ import { IntersectionObserverService } from '../../../shared/services/dom/inters
     MediaResultCardComponent,
     PersonResultCardComponent,
   ],
-  templateUrl: '../ui/search-home/search-home.component.html',
-  styleUrl: '../ui/search-home/search-home.component.scss',
+  templateUrl: '../ui/search-home.component.html',
+  styleUrl: '../ui/search-home.component.scss',
 })
 export class SearchHomeComponent {
-  constructor(
-    protected searchPageService: SearchPageService,
-    private intersectionObserver: IntersectionObserverService,
-  ) {}
+  protected searchTrigger$ = new Subject<string>();
 
-  // must be refactored for long variable names and repeating reference to the search page service
-  // the search feature is has bugs when changing the search queries, it doesn't reset the page
-  // the search feature is has bugs when resubmitting the search input, it repeats the search appends duplicated results
-  // the changes in filters should also be considered
+  // TODO
   // the genres are still numbers
   // blank posters
   // sticky search bar and tabs
   // back button?
   // categories
+  // role label for people results
 
-  @ViewChild('bottomIntersectionElement')
-  bottomIntersectionElement!: ElementRef;
-
-  defaultSearchValue = this.searchPageService.searchPreferences.all.query;
-
-  ngAfterViewInit() {
-    this.startResultsBottomIntersectionObserver();
+  constructor(
+    protected spService: SearchPageService,
+    private intersectionObserver: IntersectionObserverService,
+    private destroyRef: DestroyRef,
+  ) {
+    this.searchTrigger$
+      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
+      .subscribe((query) => this.spService.triggerSearch(query));
   }
 
-  startResultsBottomIntersectionObserver() {
-    const element = this.bottomIntersectionElement
-      .nativeElement as HTMLDivElement;
+  @ViewChild('bottomIntersectionElement')
+  bottomIntersectionRef!: ElementRef;
 
-    const options: IntersectionObserverInit = { rootMargin: '600px' };
+  bottomIntersectionElement!: HTMLDivElement;
+
+  // for maintaining the value even if the user leaves the search page
+  defaultSearchValue = this.spService.searchParams.all.query;
+
+  ngAfterViewInit() {
+    this.startResultsBottomObserver();
+  }
+
+  ngOnDestroy() {
+    this.intersectionObserver.unobserve(this.bottomIntersectionElement);
+  }
+
+  // intersection observer for the bottom of the results
+  // triggers search for more search results pages
+  startResultsBottomObserver() {
+    const element = this.bottomIntersectionRef.nativeElement as HTMLDivElement;
+    this.bottomIntersectionElement = element;
+
+    const options = { rootMargin: '600px' };
 
     const intersectionCallback = (entries: IntersectionObserverEntry[]) => {
-      const currentSearchType =
-        this.searchPageService.searchPreferences.searchType();
+      const currentSearchType = this.spService.searchParams.searchType();
 
-      let isNoFirstPageResultsYet =
-        this.searchPageService.isNoFirstPageResultsYet(currentSearchType);
-
-      if (isNoFirstPageResultsYet) {
+      if (
+        this.spService.isNoFirstPageResultsYet(currentSearchType) ||
+        !entries[0].isIntersecting
+      ) {
         return;
       }
 
-      this.triggerSearch(this.searchPageService.searchPreferences.all.query());
+      this.searchTrigger$.next(this.spService.searchParams.all.query());
     };
 
     this.intersectionObserver.observe(element, intersectionCallback, options);
   }
 
-  triggerSearch(query: string) {
-    this.searchPageService.triggerSearch(query);
-  }
-
   pillTabsProps: PillIndexedTabsProps = {
     defaultTabIndex: computed(() => {
-      return this.searchPageService.getSearchTypeIndexInPillTabs(
-        this.searchPageService.searchPreferences.searchType(),
+      return this.spService.getSearchTypeIndexInPillTabs(
+        this.spService.searchParams.searchType(),
       );
     }),
     buttonContent: 'text',
-    animationType: 'none',
+    animationType: 'fade',
     tabs: [
       {
         text: 'All',
         onClickCallback: () => {
-          this.searchPageService.searchPreferences.searchType.set('all');
+          this.spService.searchParams.searchType.set('all');
 
-          if (this.searchPageService.isNoFirstPageResultsYet('all')) {
-            this.triggerSearch(
-              this.searchPageService.searchPreferences.all.query(),
-            );
+          if (this.spService.isNoFirstPageResultsYet('all')) {
+            this.searchTrigger$.next(this.spService.searchParams.all.query());
           }
         },
       },
       {
         text: 'Movies',
         onClickCallback: () => {
-          this.searchPageService.searchPreferences.searchType.set('movie');
+          this.spService.searchParams.searchType.set('movie');
 
-          if (this.searchPageService.isNoFirstPageResultsYet('movie')) {
-            this.triggerSearch(
-              this.searchPageService.searchPreferences.all.query(),
-            );
+          if (this.spService.isNoFirstPageResultsYet('movie')) {
+            this.searchTrigger$.next(this.spService.searchParams.all.query());
           }
         },
       },
       {
         text: 'Series',
         onClickCallback: () => {
-          this.searchPageService.searchPreferences.searchType.set('series');
+          this.spService.searchParams.searchType.set('series');
 
-          if (this.searchPageService.isNoFirstPageResultsYet('series')) {
-            this.triggerSearch(
-              this.searchPageService.searchPreferences.all.query(),
-            );
+          if (this.spService.isNoFirstPageResultsYet('series')) {
+            this.searchTrigger$.next(this.spService.searchParams.all.query());
           }
         },
       },
       {
         text: 'People',
         onClickCallback: () => {
-          this.searchPageService.searchPreferences.searchType.set('person');
+          this.spService.searchParams.searchType.set('person');
 
-          if (this.searchPageService.isNoFirstPageResultsYet('person')) {
-            this.triggerSearch(
-              this.searchPageService.searchPreferences.all.query(),
-            );
+          if (this.spService.isNoFirstPageResultsYet('person')) {
+            this.searchTrigger$.next(this.spService.searchParams.all.query());
           }
         },
       },
     ],
-  };
-
-  backButtonProps: HeaderButtonProps = {
-    type: 'icon',
-    iconPath: 'assets/icons/header/Back.svg',
   };
 }

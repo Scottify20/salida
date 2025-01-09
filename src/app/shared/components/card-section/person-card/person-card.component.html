@@ -12,7 +12,7 @@
           ? 'https://image.tmdb.org/t/p/w154' + entity.image_path
           : 'assets/icons/placeholders/Profile.svg'
       "
-      alt=""
+      [alt]="entity.name + ' profile photo'"
       class="card__image"
       [class]="entity.image_path ? '' : 'no-image'"
     />

@@ -152,11 +152,12 @@
 
     .card-media-title {
       color: var(--color-accent);
+      filter: brightness(110%) saturate(80%);
       cursor: pointer;
 
       &:hover {
         text-decoration: underline;
-        filter: brightness(130%);
+        filter: brightness(180%) saturate(150%);
       }
 
       &:active {

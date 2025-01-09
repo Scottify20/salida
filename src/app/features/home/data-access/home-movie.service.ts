@@ -24,11 +24,13 @@ export class HomeMovieService {
       .getPopularMovies$()
       .pipe(
         map((movies) =>
-          movies.results.filter((movie) =>
-            ['en', 'es', 'ko', 'ja', 'tl', 'hi'].includes(
-              movie.original_language,
-            ),
-          ),
+          movies.results
+            .filter((movie) =>
+              ['en', 'es', 'ko', 'ja', 'tl', 'hi'].includes(
+                movie.original_language,
+              ),
+            )
+            .map((movie) => ({ ...movie, media_type: 'movie' })),
         ),
       );
   }
@@ -48,6 +50,7 @@ export class HomeMovieService {
         this.transformMoviesToCardSectionProps('Upcoming', movies),
       ),
       filter((section) => section.titles.length >= 8),
+      map((movie) => ({ ...movie, media_type: 'movie' })),
     );
   }
 
@@ -94,6 +97,7 @@ export class HomeMovieService {
       maxNoOfTitles: 20,
       titles: moviesResponse.results.map((movie) => ({
         ...movie,
+        media_type: 'movie',
         onClick: () => {
           this.movieDetailsService.viewMovieDetails(movie.id, movie.title);
         },

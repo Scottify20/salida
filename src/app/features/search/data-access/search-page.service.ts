@@ -1,4 +1,10 @@
-import { DestroyRef, Injectable, signal, WritableSignal } from '@angular/core';
+import {
+  DestroyRef,
+  effect,
+  Injectable,
+  signal,
+  WritableSignal,
+} from '@angular/core';
 import {
   SearchAndDiscoverService,
   SearchParams,
@@ -41,95 +47,103 @@ export class SearchPageService {
     private seriesDetailsService: SeriesDetailsService,
     private movieDetailsService: MovieDetailsService,
     private preferencesService: TemporaryUserPreferencesService,
-  ) {}
+  ) {
+    effect(() => {
+      // this effect listens for changes in the searchParams
+      // then resets the results for all content type
+      const p = this.searchParams;
+      const valuesToWatch: (string | number | boolean)[] = [
+        p.all.query(),
+        p.all.language(),
+        p.all.includeAdult(),
+        p.movie.year(),
+        p.movie.primaryReleaseYear(),
+        p.series.year(),
+        p.series.firstAirDateYear(),
+      ];
 
-  private previousQuery = signal('this-is-a-filler-string');
-  private previousSearchType: WritableSignal<SearchType | ''> = signal('');
+      this.resetResults();
+
+      return valuesToWatch;
+    });
+  }
+
+  searchParams = {
+    searchType: signal('all') as WritableSignal<SearchType>,
+    all: {
+      query: signal(''),
+      language: signal('en-US'),
+      includeAdult: this.preferencesService.preferences.user.showAdultContent,
+    },
+
+    movie: {
+      year: signal(''),
+      primaryReleaseYear: signal(''),
+    },
+
+    series: {
+      year: signal(''),
+      firstAirDateYear: signal(''),
+    },
+
+    person: {},
+  };
 
   triggerSearch(searchQuery: string) {
-    if (
-      searchQuery === ''
-      //  ||
-      // (this.previousQuery() === this.searchPreferences.all.query() &&
-      //   this.searchPreferences.searchType() === this.previousSearchType())
-    ) {
-      this.resetResultsAndQuery();
+    if (searchQuery === 'cleared-search-bar') {
+      // sets the query signal to '' which also triggers the reset caused by the effect in the constructor
+      this.searchParams.all.query.set('');
       return;
     }
 
-    // this.previousSearchType.set(this.searchPreferences.searchType());
-    this.previousQuery.set(this.searchPreferences.all.query());
-    this.searchPreferences.all.query.set(searchQuery);
+    this.searchParams.all.query.set(searchQuery);
 
-    switch (this.searchPreferences.searchType()) {
+    switch (this.searchParams.searchType()) {
       case 'all':
-        this.searchAll();
+        this.isMaxPageReached('all') ? null : this.searchAll();
         break;
       case 'movie':
-        this.searchMovies();
+        this.isMaxPageReached('movie') ? null : this.searchMovies();
         break;
       case 'series':
-        this.searchSeries();
+        this.isMaxPageReached('series') ? null : this.searchSeries();
         break;
       case 'person':
-        this.searchPeople();
+        this.isMaxPageReached('person') ? null : this.searchPeople();
     }
-  }
-
-  resetResultsAndQuery() {
-    this.searchPreferences.all.query.set('');
-
-    this.movieSearchResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
-
-    this.seriesSearchResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
-
-    this.allSearchResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
-
-    this.peopleSearchResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
   }
 
   searchAll() {
     const preferences = this.convertSignalsToValue({
-      ...this.searchPreferences.all,
-      page: signal(
-        this.allSearchResults.page ? this.allSearchResults.page + 1 : 1,
-      ),
+      ...this.searchParams.all,
+      page: signal(this.allResults.page ? this.allResults.page + 1 : 1),
     }) as SearchParams;
 
     this.searchAndDiscoverService
       .searchAll(preferences)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((apiResults) => {
-        this.allSearchResults = {
-          ...this.allSearchResults,
+        const uniqueIds: string[] = [];
+
+        this.allResults = {
+          ...this.allResults,
           results: [
-            ...this.allSearchResults.results,
+            ...this.allResults.results,
             ...apiResults.results.map((entity) =>
               this.transformAny(
                 entity as MovieSummary | SeriesSummary | PersonSummary,
               ),
             ),
-          ],
+          ].filter((entity) => {
+            if (uniqueIds.indexOf(entity.id) < 0) {
+              // if id does not exist yet include it then push its id
+              uniqueIds.push(entity.id);
+              return true;
+            }
+
+            // if id already exists yet include it
+            return false;
+          }),
           page: apiResults.page,
           total_pages: apiResults.total_pages,
           total_results: apiResults.total_results,
@@ -139,11 +153,9 @@ export class SearchPageService {
 
   searchMovies() {
     const preferences = this.convertSignalsToValue({
-      ...this.searchPreferences.all,
-      ...this.searchPreferences.movie,
-      page: signal(
-        this.movieSearchResults.page ? this.movieSearchResults.page + 1 : 1,
-      ),
+      ...this.searchParams.all,
+      ...this.searchParams.movie,
+      page: signal(this.movieResults.page ? this.movieResults.page + 1 : 1),
     }) as SearchParams;
 
     this.searchAndDiscoverService
@@ -153,20 +165,18 @@ export class SearchPageService {
         const transformedResults: MediaResultCardProps[] =
           apiResults.results.map((movie) => this.transformMovie(movie));
 
-        this.movieSearchResults = {
+        this.movieResults = {
           ...apiResults,
-          results: [...this.movieSearchResults.results, ...transformedResults],
+          results: [...this.movieResults.results, ...transformedResults],
         };
       });
   }
 
   searchSeries() {
     const preferences = this.convertSignalsToValue({
-      ...this.searchPreferences.all,
-      ...this.searchPreferences.series,
-      page: signal(
-        this.seriesSearchResults.page ? this.seriesSearchResults.page + 1 : 1,
-      ),
+      ...this.searchParams.all,
+      ...this.searchParams.series,
+      page: signal(this.seriesResults.page ? this.seriesResults.page + 1 : 1),
     }) as SearchParams;
 
     this.searchAndDiscoverService
@@ -176,19 +186,17 @@ export class SearchPageService {
         const transformedResults: MediaResultCardProps[] =
           apiResults.results.map((series) => this.transformSeries(series));
 
-        this.seriesSearchResults = {
+        this.seriesResults = {
           ...apiResults,
-          results: [...this.seriesSearchResults.results, ...transformedResults],
+          results: [...this.seriesResults.results, ...transformedResults],
         };
       });
   }
 
   searchPeople() {
     const preferences = this.convertSignalsToValue({
-      ...this.searchPreferences.all,
-      page: signal(
-        this.peopleSearchResults.page ? this.peopleSearchResults.page + 1 : 1,
-      ),
+      ...this.searchParams.all,
+      page: signal(this.peopleResults.page ? this.peopleResults.page + 1 : 1),
     }) as SearchParams;
 
     this.searchAndDiscoverService
@@ -198,16 +206,16 @@ export class SearchPageService {
         const transformedResults: PersonResultCardProps[] =
           apiResults.results.map((person) => this.transformPerson(person));
 
-        this.peopleSearchResults = {
+        this.peopleResults = {
           ...apiResults,
-          results: [...this.peopleSearchResults.results, ...transformedResults],
+          results: [...this.peopleResults.results, ...transformedResults],
         };
       });
   }
 
   transformMovie(movie: MovieSummary): MediaResultCardProps {
     return {
-      id: movie.id,
+      id: 'm-' + movie.id,
       onClick: () => {
         this.movieDetailsService.viewMovieDetails(movie.id, movie.title);
       },
@@ -226,14 +234,14 @@ export class SearchPageService {
           ? (movie.vote_average * 10).toFixed().toString() + '%'
           : null,
       ],
-      genres: movie.genre_ids.slice(0, 3).map((id) => id.toString()),
+      genres: movie.genre_ids.map((id) => id.toString()),
       overview: movie.overview,
     };
   }
 
   transformSeries(series: SeriesSummary): MediaResultCardProps {
     return {
-      id: series.id,
+      id: 's-' + series.id,
       type: 'series',
       onClick: () => {
         this.seriesDetailsService.viewSeriesDetails(series.id, series.name);
@@ -259,7 +267,7 @@ export class SearchPageService {
   transformPerson(person: PersonSummary): PersonResultCardProps {
     return {
       type: 'person',
-      id: person.id,
+      id: 'p-' + person.id,
       name: person.name,
       originalName:
         person.original_name &&
@@ -273,26 +281,28 @@ export class SearchPageService {
       onClick: () => {
         console.log('View person page not available yet - search result card');
       },
-      knownForMedia: person.known_for.slice(0, 3).map((media) => ({
-        id: media.id,
-        type: media.media_type as 'movie' | 'tv',
-        title: media.name || media.title || null,
-        backdropURL: media.backdrop_path,
-        onClick:
-          media.media_type === 'movie'
-            ? () => {
-                this.movieDetailsService.viewMovieDetails(
-                  media.id,
-                  media.title || '',
-                );
-              }
-            : () => {
-                this.seriesDetailsService.viewSeriesDetails(
-                  media.id,
-                  media.title || '',
-                );
-              },
-      })),
+      knownForMedia: person.known_for
+        ? person.known_for.map((media) => ({
+            id: media.id,
+            type: media.media_type as 'movie' | 'tv',
+            title: media.name || media.title || null,
+            backdropURL: media.backdrop_path,
+            onClick:
+              media.media_type === 'movie'
+                ? () => {
+                    this.movieDetailsService.viewMovieDetails(
+                      media.id,
+                      media.title || '',
+                    );
+                  }
+                : () => {
+                    this.seriesDetailsService.viewSeriesDetails(
+                      media.id,
+                      media.title || '',
+                    );
+                  },
+          }))
+        : [],
     };
   }
 
@@ -301,14 +311,22 @@ export class SearchPageService {
   ): MediaResultCardProps | PersonResultCardProps {
     const type = this.getEntityType(entity);
 
+    let transformedEntity!: MediaResultCardProps | PersonResultCardProps;
+
     switch (type) {
       case 'movie':
-        return this.transformMovie(entity as MovieSummary);
-      case 'person':
-        return this.transformPerson(entity as PersonSummary);
+        transformedEntity = this.transformMovie(entity as MovieSummary);
+        transformedEntity.metadata.unshift('Movie');
+        break;
+      case 'series':
+        transformedEntity = this.transformSeries(entity as SeriesSummary);
+        transformedEntity.metadata.unshift('TV Show');
+        break;
       default:
-        return this.transformSeries(entity as SeriesSummary);
+        transformedEntity = this.transformPerson(entity as PersonSummary);
     }
+
+    return transformedEntity;
   }
 
   convertSignalsToValue(object: {
@@ -341,43 +359,22 @@ export class SearchPageService {
   isNoFirstPageResultsYet(type: SearchType) {
     switch (type) {
       case 'all':
-        return this.allSearchResults.page === 0;
+        return this.allResults.page === 0;
       case 'movie':
-        return this.movieSearchResults.page === 0;
+        return this.movieResults.page === 0;
       case 'person':
-        return this.peopleSearchResults.page === 0;
+        return this.peopleResults.page === 0;
       case 'series':
-        return this.seriesSearchResults.page === 0;
+        return this.seriesResults.page === 0;
     }
   }
-
-  searchPreferences = {
-    searchType: signal('all') as WritableSignal<SearchType>,
-    all: {
-      query: signal(''),
-      language: signal('en-US'),
-      includeAdult: this.preferencesService.preferences.user.showAdultContent,
-    },
-
-    movie: {
-      year: signal(''),
-      primaryReleaseYear: signal(''),
-    },
-
-    series: {
-      year: signal(''),
-      firstAirDateYear: signal(''),
-    },
-
-    person: { query: signal(''), previousQuery: signal('') },
-  };
 
   getSearchTypeIndexInPillTabs(tab: SearchType): number {
     const tabs: SearchType[] = ['all', 'movie', 'series', 'person'];
     return tabs.indexOf(tab);
   }
 
-  allSearchResults: {
+  allResults: {
     page: number;
     results: (MediaResultCardProps | PersonResultCardProps)[];
     total_pages: number;
@@ -389,7 +386,7 @@ export class SearchPageService {
     total_results: 0,
   };
 
-  movieSearchResults: {
+  movieResults: {
     page: number;
     results: MediaResultCardProps[];
     total_pages: number;
@@ -401,7 +398,7 @@ export class SearchPageService {
     total_results: 0,
   };
 
-  seriesSearchResults: {
+  seriesResults: {
     page: number;
     results: MediaResultCardProps[];
     total_pages: number;
@@ -413,7 +410,7 @@ export class SearchPageService {
     total_results: 0,
   };
 
-  peopleSearchResults: {
+  peopleResults: {
     page: number;
     results: PersonResultCardProps[];
     total_pages: number;
@@ -424,4 +421,63 @@ export class SearchPageService {
     total_pages: 0,
     total_results: 0,
   };
+
+  isMaxPageReached(type: SearchType): boolean {
+    switch (type) {
+      case 'all':
+        return (
+          (this.allResults.total_pages === this.allResults.page &&
+            this.allResults.page !== 0) ||
+          this.allResults.page === 10
+        );
+      case 'movie':
+        return (
+          (this.movieResults.total_pages === this.movieResults.page &&
+            this.movieResults.page !== 0) ||
+          this.movieResults.page === 10
+        );
+      case 'series':
+        return (
+          (this.seriesResults.total_pages === this.seriesResults.page &&
+            this.seriesResults.page !== 0) ||
+          this.seriesResults.page === 10
+        );
+      case 'person':
+        return (
+          (this.peopleResults.total_pages === this.peopleResults.page &&
+            this.peopleResults.page !== 0) ||
+          this.peopleResults.page === 10
+        );
+    }
+  }
+
+  private resetResults() {
+    this.movieResults = {
+      page: 0,
+      results: [],
+      total_pages: 0,
+      total_results: 0,
+    };
+
+    this.seriesResults = {
+      page: 0,
+      results: [],
+      total_pages: 0,
+      total_results: 0,
+    };
+
+    this.allResults = {
+      page: 0,
+      results: [],
+      total_pages: 0,
+      total_results: 0,
+    };
+
+    this.peopleResults = {
+      page: 0,
+      results: [],
+      total_pages: 0,
+      total_results: 0,
+    };
+  }
 }

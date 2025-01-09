@@ -25,22 +25,24 @@ export class HomeSeriesService {
       .getPopularSeries$()
       .pipe(
         map((series) =>
-          series.results.filter((series) =>
-            series.origin_country.some((country) =>
-              [
-                'US',
-                'PH',
-                'KR',
-                'JP',
-                'ES',
-                'PH',
-                'UK',
-                'CA',
-                'AU',
-                'IN',
-              ].includes(country),
-            ),
-          ),
+          series.results
+            .filter((series) =>
+              series.origin_country.some((country) =>
+                [
+                  'US',
+                  'PH',
+                  'KR',
+                  'JP',
+                  'ES',
+                  'PH',
+                  'UK',
+                  'CA',
+                  'AU',
+                  'IN',
+                ].includes(country),
+              ),
+            )
+            .map((series) => ({ ...series, media_type: 'tv' })),
         ),
       );
   }
@@ -87,6 +89,7 @@ export class HomeSeriesService {
       maxNoOfTitles: 20,
       titles: seriesResponse.results.map((series) => ({
         ...series,
+        media_type: 'tv',
         onClick: () => {
           this.seriesDetailsService.viewSeriesDetails(series.id, series.name);
         },
