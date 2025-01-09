@@ -7,7 +7,7 @@
 >
   <img
     [src]="'https://image.tmdb.org/t/p/w185/' + props.posterURL"
-    [alt]="props.title + ' poster'"
+    [alt]="getPosterAlt()"
     loading="lazy"
     class="card-poster"
   />

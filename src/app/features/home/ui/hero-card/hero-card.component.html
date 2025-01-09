@@ -1,6 +1,6 @@
 <div
   class="hero-card"
-  [id]="'hero-card--' + titleDetails.id"
+  [id]="'hero-card--' + props.id"
   [attr.data-card-index]="cardIndex"
   (click)="onCardClick()"
   role="button"
@@ -11,7 +11,7 @@
     <img
       class="hero-card__poster"
       [src]="getImageSrcBasedOnWidth()"
-      alt=""
+      [alt]="getPosterOrBackdropAlt"
       [attr.data-card-index]="cardIndex"
     />
   }
@@ -22,10 +22,10 @@
   >
     <div class="hero-card__texts">
       <h4 class="hero-card__title">
-        {{ titleDetails.title || titleDetails.name }}
+        {{ props.title || props.name }}
       </h4>
       <div class="hero-card__metadata"></div>
-      <p class="hero-card__plot">{{ titleDetails.overview }}</p>
+      <p class="hero-card__plot">{{ props.overview }}</p>
     </div>
   </div>
 </div>

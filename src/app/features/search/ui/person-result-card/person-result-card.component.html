@@ -1,7 +1,7 @@
 <article class="card" tabindex="0" role="button" (click)="props.onClick()">
   <img
     [src]="'https://image.tmdb.org/t/p/w185/' + props.profilePhotoURL"
-    [alt]="'A photo of ' + props.name"
+    [alt]="props.name + ' profile photo'"
     loading="lazy"
     class="card-poster"
   />

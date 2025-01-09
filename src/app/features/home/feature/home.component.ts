@@ -1,11 +1,9 @@
 import { Component, signal, ElementRef } from '@angular/core';
-import { HeroCardsComponent } from '../ui/home/hero-cards/hero-cards.component';
 import {
   HeaderButtonProps,
   HeaderButtonComponent,
 } from '../../../shared/components/header-button/header-button.component';
 import { UserService } from '../../../core/user/user.service';
-import { UserActionsMenuPopoverComponent } from '../ui/home/user-actions-menu-popover/user-actions-menu-popover.component';
 import {
   DropdownPickerTabComponent,
   DropDownPickerTabProps,
@@ -30,22 +28,25 @@ import {
   MediaCardsSectionProps,
   MediaCardsSectionComponent,
 } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
+import { HeroCardProps } from '../ui/hero-card/hero-card.component';
+import { HeroCardsComponent } from '../ui/hero-cards/hero-cards.component';
+import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover/user-actions-menu-popover.component';
 
 @Component({
-    selector: 'app-home',
-    templateUrl: '../ui/home/home.component.html',
-    styleUrls: ['../ui/home/home.component.scss'],
-    imports: [
-        HeroCardsComponent,
-        UserActionsMenuPopoverComponent,
-        HeaderButtonComponent,
-        DropdownPickerTabComponent,
-        PopoverMenuComponent,
-        PillIndexedTabsComponent,
-        AsyncPipe,
-        CommonModule,
-        MediaCardsSectionComponent,
-    ]
+  selector: 'app-home',
+  templateUrl: '../ui/home.component.html',
+  styleUrls: ['../ui/home.component.scss'],
+  imports: [
+    HeaderButtonComponent,
+    UserActionsMenuPopoverComponent,
+    DropdownPickerTabComponent,
+    PopoverMenuComponent,
+    PillIndexedTabsComponent,
+    AsyncPipe,
+    CommonModule,
+    MediaCardsSectionComponent,
+    HeroCardsComponent,
+  ],
 })
 export class HomeComponent {
   constructor(
@@ -55,6 +56,7 @@ export class HomeComponent {
     private homeMovieService: HomeMovieService,
     private homeSeriesService: HomeSeriesService,
   ) {}
+  // TODO the scrollLeft of each heroCards carousel must be seperate for each content type
 
   heroCardsTitlesPropsForMoviesAndSeries$: Observable<MediaSummary[]> =
     this.homeService.getPopularMoviesAndSeries$();
@@ -63,6 +65,10 @@ export class HomeComponent {
     this.homeMovieService
       .getPopularMovies$()
       .pipe(map((movies) => movies.slice(0, 5)));
+
+  isHeroCardProps(media: MediaSummary[]): media is HeroCardProps[] {
+    return media[0].media_type === 'movie' || media[0].media_type === 'tv';
+  }
 
   heroCardsTitlesPropsForSeries$: Observable<SeriesSummary[]> =
     this.homeSeriesService

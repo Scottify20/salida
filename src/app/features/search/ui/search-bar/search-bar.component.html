@@ -9,7 +9,7 @@
     (keydown.enter)="onSubmit($event)"
   />
 
-  @if (hasValue) {
+  @if (hasValue()) {
     <button
       (click)="onClear()"
       tabindex="0"

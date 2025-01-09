@@ -42,7 +42,9 @@
           heroCardsTitlesPropsForMoviesAndSeries$ | async;
           as heroCardProps
         ) {
-          <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          @if (isHeroCardProps(heroCardProps)) {
+            <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          }
         }
 
         <ng-container
@@ -76,7 +78,9 @@
       <!-- Movies Section -->
       @if (homeService.selectedContentTypeName() === "Movies") {
         @if (heroCardsTitlesPropsForMovies$ | async; as heroCardProps) {
-          <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          @if (isHeroCardProps(heroCardProps)) {
+            <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          }
         }
 
         @if (moviesInTheatresProps$ | async; as moviesInTheatresProps) {
@@ -105,7 +109,9 @@
       <!-- Series Section -->
       @if (homeService.selectedContentTypeName() === "TV Shows") {
         @if (heroCardsTitlesPropsForSeries$ | async; as heroCardProps) {
-          <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          @if (isHeroCardProps(heroCardProps)) {
+            <app-hero-cards [props]="heroCardProps"></app-hero-cards>
+          }
         }
 
         @if (seriesFromProvidersProps$ | async; as providersProps) {

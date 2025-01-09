@@ -1,7 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 export interface PersonResultCardProps {
-  id: number;
+  id: string;
   type: 'person';
   name: string | null;
   originalName: string | null;
