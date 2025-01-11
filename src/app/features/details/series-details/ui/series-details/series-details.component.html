@@ -36,23 +36,24 @@
       }
     </div>
   </div>
+  <div class="transition-overflow-clipper" pill-tab-overflow-clipper>
+    <div class="tabbed-component-container" pill-tab-component-transition>
+      @if (currentTabIndex === 0) {
+        <app-series-more-details></app-series-more-details>
+      }
 
-  <div class="tabbed-component-container" pill-tab-component-transition>
-    @if (currentTabIndex === 0) {
-      <app-series-more-details></app-series-more-details>
-    }
+      @if (currentTabIndex === 1) {
+        <app-cast-and-crew></app-cast-and-crew>
+      }
 
-    @if (currentTabIndex === 1) {
-      <app-cast-and-crew></app-cast-and-crew>
-    }
-
-    @if (currentTabIndex === 2) {
-      <app-seasons
-        [dropdownPickerArrowDirection]="dropDownPickerTabProps.arrowDirection"
-      ></app-seasons>
-    }
-    @if (currentTabIndex === 3) {
-      <app-reviews></app-reviews>
-    }
+      @if (currentTabIndex === 2) {
+        <app-seasons
+          [dropdownPickerArrowDirection]="dropDownPickerTabProps.arrowDirection"
+        ></app-seasons>
+      }
+      @if (currentTabIndex === 3) {
+        <app-reviews></app-reviews>
+      }
+    </div>
   </div>
 </div>

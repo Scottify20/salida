@@ -18,6 +18,10 @@ import { PersonResultCardComponent } from '../ui/person-result-card/person-resul
 import { IntersectionObserverService } from '../../../shared/services/dom/intersection-observer.service';
 import { debounceTime, Subject, tap } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import {
+  CategoryChipComponent,
+  CategoryChipProps,
+} from '../ui/category-chip/category-chip.component';
 
 @Component({
   selector: 'app-search-home',
@@ -26,6 +30,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     PillIndexedTabsComponent,
     MediaResultCardComponent,
     PersonResultCardComponent,
+    CategoryChipComponent,
   ],
   templateUrl: '../ui/search-home.component.html',
   styleUrl: '../ui/search-home.component.scss',
@@ -98,7 +103,7 @@ export class SearchHomeComponent {
       );
     }),
     buttonContent: 'text',
-    animationType: 'fade',
+    animationType: 'slide',
     tabs: [
       {
         text: 'All',
@@ -142,4 +147,105 @@ export class SearchHomeComponent {
       },
     ],
   };
+
+  categoryChips: CategoryChipProps[] = [
+    {
+      label: 'Action',
+      iconURL: 'assets/icons/search/catergory-chips/Action.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Adventure',
+      iconURL: 'assets/icons/search/catergory-chips/Adventure.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Animation',
+      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Comedy',
+      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Crime',
+      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Documentary',
+      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Drama',
+      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Fantasy',
+      iconURL: 'assets/icons/search/catergory-chips/Fantasy.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Romance',
+      iconURL: 'assets/icons/search/catergory-chips/Romance.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Sci - Fi',
+      iconURL: 'assets/icons/search/catergory-chips/Sci-Fi.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'History',
+      iconURL: 'assets/icons/search/catergory-chips/History.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Horror',
+      iconURL: 'assets/icons/search/catergory-chips/Horror.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Mystery',
+      iconURL: 'assets/icons/search/catergory-chips/Mystery.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Western',
+      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      onClick: () => {
+        return;
+      },
+    },
+  ];
 }

@@ -1,3 +1,7 @@
+<h4 sticky-element class="cast-or-crew-title">
+  {{ castOrCrew() === "cast" ? "Cast" : "Crew" }}
+</h4>
+
 <!-- If the curret title in view is a TV Series -->
 @if (!this.movieDetailsService.isMovieRoute && castOrCrew() === "cast") {
   <app-people-cards-section

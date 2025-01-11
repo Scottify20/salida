@@ -1,0 +1,39 @@
+.catergory-chip {
+  height: 4rem;
+  background-color: var(--category-chip-bg-color);
+  border-radius: 1rem;
+  padding: 1rem;
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+
+  transition: all 0.15s ease-in-out;
+  transform: scale(1);
+
+  &:hover {
+    filter: brightness(140%);
+  }
+
+  &:focus {
+    outline: 2px dotted var(--accent-color);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    filter: brightness(80%);
+    transform: scale(0.95);
+  }
+
+  &__label {
+    user-select: none;
+    opacity: 90%;
+  }
+
+  &__icon {
+    width: 1.5rem;
+    aspect-ratio: 1;
+    opacity: 75%;
+  }
+}

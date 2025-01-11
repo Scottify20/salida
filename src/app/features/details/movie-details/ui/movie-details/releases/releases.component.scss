@@ -1,5 +1,5 @@
 .releases.release-type {
-  padding: 0.75rem 1rem;
+  padding: 0 1rem;
   display: flex;
   flex-flow: column nowrap;
 
@@ -76,12 +76,9 @@
 }
 
 .release__type-name {
-  position: sticky;
-  top: 3.98rem;
   width: 100%;
-  background-color: var(--body-bg-color);
-  opacity: 98%;
-  padding-bottom: 1.25rem;
+  padding: 0.5rem 0;
+  margin-bottom: 1rem;
 
   font-size: 1.25rem;
   color: var(--text-color);
@@ -89,17 +86,13 @@
 }
 
 .releases.country {
-  padding: 0.75rem 1rem;
+  padding: 0 1rem;
   display: flex;
   flex-flow: column nowrap;
 
   .releases__type-container {
     display: flex;
     flex-flow: column nowrap;
-
-    .release__type-name {
-      padding-bottom: 1.25rem;
-    }
   }
 
   .releases__country-container {
@@ -208,5 +201,19 @@
     .releases__type-container {
       // width: calc((100% - 2rem) / 2);
     }
+  }
+}
+
+.release__type-name.sticky {
+  z-index: 999;
+  background-color: var(--body-bg-color);
+  opacity: 95%;
+  position: sticky;
+  top: calc(3.98rem + 38.4px + 0.98rem);
+}
+
+@media (max-width: 376px) {
+  .release__type-name.sticky {
+    top: calc(3.98rem + 33.6px + 0.98rem);
   }
 }

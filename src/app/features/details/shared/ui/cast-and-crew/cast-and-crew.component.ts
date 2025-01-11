@@ -6,6 +6,8 @@ import {
   WritableSignal,
   ChangeDetectorRef,
   effect,
+  ElementRef,
+  inject,
 } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -31,16 +33,16 @@ import { TemporaryUserPreferencesService } from '../../../../../shared/services/
 import { TmdbEntityForCard } from '../../../../../shared/components/card-section/person-card/person-card.component';
 
 @Component({
-    selector: 'app-cast-and-crew',
-    imports: [PeopleCardsSectionComponent],
-    templateUrl: './cast-and-crew.component.html',
-    styleUrl: './cast-and-crew.component.scss'
+  selector: 'app-cast-and-crew',
+  imports: [PeopleCardsSectionComponent],
+  templateUrl: './cast-and-crew.component.html',
+  styleUrl: './cast-and-crew.component.scss',
 })
 export class CastAndCrewComponent {
-  seriesCrewSection: CardsSectionProps;
-  seriesCastSection: CardsSectionProps;
-  movieCrewSection: CardsSectionProps;
-  movieCastSection: CardsSectionProps;
+  seriesCrewSection!: CardsSectionProps;
+  seriesCastSection!: CardsSectionProps;
+  movieCrewSection!: CardsSectionProps;
+  movieCastSection!: CardsSectionProps;
 
   constructor(
     protected movieDetailsService: MovieDetailsService,
@@ -51,40 +53,27 @@ export class CastAndCrewComponent {
     private cdr: ChangeDetectorRef,
   ) {
     this.initializeMovieOrSeriesData();
+    this.initializeSectionProps();
 
     effect(() => {
       this.castOrCrew();
       this.initializeMovieOrSeriesData();
     });
+  }
 
-    this.seriesCrewSection = this.createSectionProps(
-      'Crew',
-      'grid',
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.crew.map(this.getCrewMemberEntity)
-        : [],
-    );
-    this.seriesCastSection = this.createSectionProps(
-      'Cast',
-      'grid',
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.cast.map(this.getCastMemberEntity)
-        : [],
-    );
-    this.movieCrewSection = this.createSectionProps(
-      'Crew',
-      'grid',
-      this.movieData
-        ? this.movieData.credits.crew.map(this.getMovieCrewMemberEntity)
-        : [],
-    );
-    this.movieCastSection = this.createSectionProps(
-      'Cast',
-      'grid',
-      this.movieData
-        ? this.movieData.credits.cast.map(this.getMovieCastMemberEntity)
-        : [],
-    );
+  // to prevent glitching of the [sticky-element] s during tab transition
+  private elRef: ElementRef = inject(ElementRef);
+  ngAfterViewChecked() {
+    const el = this.elRef.nativeElement as HTMLElement;
+    const stickyEls = Array.from(
+      el.querySelectorAll('[sticky-element]'),
+    ) as HTMLElement[];
+
+    setTimeout(() => {
+      stickyEls.forEach((el) => {
+        el.classList.add('sticky');
+      });
+    }, 350);
   }
 
   castOrCrew =
@@ -93,6 +82,37 @@ export class CastAndCrewComponent {
 
   seriesData: Series | undefined;
   movieData: Movie | undefined;
+
+  initializeSectionProps() {
+    this.seriesCrewSection = this.createSectionProps(
+      '',
+      'grid',
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.aggregate_credits.crew.map(this.getCrewMemberEntity)
+        : [],
+    );
+    this.seriesCastSection = this.createSectionProps(
+      '',
+      'grid',
+      this.seriesDetailsService.isSeriesRoute && this.seriesData
+        ? this.seriesData.aggregate_credits.cast.map(this.getCastMemberEntity)
+        : [],
+    );
+    this.movieCrewSection = this.createSectionProps(
+      '',
+      'grid',
+      this.movieData
+        ? this.movieData.credits.crew.map(this.getMovieCrewMemberEntity)
+        : [],
+    );
+    this.movieCastSection = this.createSectionProps(
+      '',
+      'grid',
+      this.movieData
+        ? this.movieData.credits.cast.map(this.getMovieCastMemberEntity)
+        : [],
+    );
+  }
 
   extractEntities(
     entities: TmdbEntityForCard[] | WritableSignal<TmdbEntityForCard[]>,

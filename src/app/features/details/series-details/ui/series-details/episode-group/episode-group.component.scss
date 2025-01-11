@@ -10,16 +10,12 @@
 }
 
 .epsode-group__header {
-  background-color: var(--body-bg-color);
-  z-index: 996;
-  top: 3.98rem;
-  position: sticky;
   width: 100%;
   display: flex;
   flex-flow: row nowrap;
   justify-content: space-between;
-  padding: 0.5rem 0 1rem 0;
-  opacity: 98%;
+  padding: 1rem 0 0.5rem 0rem;
+  margin-bottom: 0.5rem;
 
   .episode-group__main-info-container {
     display: flex;
@@ -53,4 +49,18 @@
   display: flex;
   flex-flow: column nowrap;
   row-gap: 1rem;
+}
+
+.epsode-group__header.sticky {
+  background-color: var(--body-bg-color);
+  opacity: 95%;
+  z-index: 996;
+  position: sticky;
+  top: calc(3.98rem + 38.4px + 1rem);
+}
+
+@media (max-width: 376px) {
+  .epsode-group__header.sticky {
+    top: calc(3.98rem + 33.6px + 1rem);
+  }
 }

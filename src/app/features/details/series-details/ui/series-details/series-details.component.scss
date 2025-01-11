@@ -1,18 +1,20 @@
 .title-details {
   display: flex;
   flex-flow: column nowrap;
-  row-gap: 1rem;
+  row-gap: 0.5rem;
   min-height: 200vh;
   width: 100%;
 }
 
 .title-details__tabs {
-  padding: 0 0.45rem;
+  background-color: rgba(var(--body-bg-color-rgb), 0.95);
+  padding: 0.5rem;
+  z-index: 10000;
+  position: sticky;
+  top: 3.98rem;
   margin: 0 auto;
   width: 100%;
   display: flex;
-
-  overflow: hidden;
 
   display: grid;
   grid-template-areas: "left-sec prim right-sec";

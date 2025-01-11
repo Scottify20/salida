@@ -8,51 +8,64 @@
 </div>
 
 <div class="search__main" pill-tab-parent>
-  <div class="tabs-container">
-    <!-- filler tab to key the main tab centered -->
-    <div class="filler-tab"></div>
+  @if (this.spService.searchParams.all.query() !== "") {
+    <div class="tabs-container">
+      <!-- filler tab to key the main tab centered -->
+      <div class="filler-tab"></div>
 
-    <app-pill-indexed-tabs
-      class="main-tabs"
-      [props]="pillTabsProps"
-    ></app-pill-indexed-tabs>
+      <app-pill-indexed-tabs
+        class="main-tabs"
+        [props]="pillTabsProps"
+      ></app-pill-indexed-tabs>
 
-    <div class="secondary-tabs"></div>
-  </div>
+      <div class="secondary-tabs"></div>
+    </div>
 
-  <div class="search__results clickable-cards" pill-tab-component-transition>
-    @switch (spService.searchParams.searchType()) {
-      @case ("all") {
-        @for (entity of spService.allResults.results; track entity.id) {
-          @if (spService.isMediaResultCardProps(entity)) {
-            <app-media-result-card [props]="entity"></app-media-result-card>
-          } @else {
-            <app-person-result-card [props]="entity"></app-person-result-card>
+    <div pill-tab-overflow-clipper>
+      <div
+        class="search__results clickable-cards"
+        pill-tab-component-transition
+      >
+        @switch (spService.searchParams.searchType()) {
+          @case ("all") {
+            @for (entity of spService.allResults.results; track entity.id) {
+              @if (spService.isMediaResultCardProps(entity)) {
+                <app-media-result-card [props]="entity"></app-media-result-card>
+              } @else {
+                <app-person-result-card
+                  [props]="entity"
+                ></app-person-result-card>
+              }
+            }
+          }
+
+          @case ("movie") {
+            @for (movie of spService.movieResults.results; track movie.id) {
+              <app-media-result-card [props]="movie"></app-media-result-card>
+            }
+          }
+
+          @case ("series") {
+            @for (series of spService.seriesResults.results; track series.id) {
+              <app-media-result-card [props]="series"></app-media-result-card>
+            }
+          }
+
+          @case ("person") {
+            @for (person of spService.peopleResults.results; track person.id) {
+              <app-person-result-card [props]="person"></app-person-result-card>
+            }
           }
         }
+      </div>
+    </div>
+  } @else {
+    <div class="category-chips-container">
+      @for (chip of categoryChips; let i = $index; track i) {
+        <app-category-chip [props]="chip"></app-category-chip>
       }
-
-      @case ("movie") {
-        @for (movie of spService.movieResults.results; track movie.id) {
-          <app-media-result-card [props]="movie"></app-media-result-card>
-        }
-      }
-
-      @case ("series") {
-        @for (series of spService.seriesResults.results; track series.id) {
-          <app-media-result-card [props]="series"></app-media-result-card>
-        }
-      }
-
-      @case ("person") {
-        @for (person of spService.peopleResults.results; track person.id) {
-          <app-person-result-card [props]="person"></app-person-result-card>
-        }
-      }
-    }
-
-    <div #bottomIntersectionElement></div>
-  </div>
-
-  <div class="categories"></div>
+    </div>
+  }
 </div>
+
+<div #bottomIntersectionElement></div>
