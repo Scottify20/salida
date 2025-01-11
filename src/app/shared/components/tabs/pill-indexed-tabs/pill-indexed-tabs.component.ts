@@ -25,10 +25,10 @@ interface TabItem {
 }
 
 @Component({
-    selector: 'app-pill-indexed-tabs',
-    imports: [],
-    templateUrl: './pill-indexed-tabs.component.html',
-    styleUrl: './pill-indexed-tabs.component.scss'
+  selector: 'app-pill-indexed-tabs',
+  imports: [],
+  templateUrl: './pill-indexed-tabs.component.html',
+  styleUrl: './pill-indexed-tabs.component.scss',
 })
 export class PillIndexedTabsComponent {
   constructor(private elementRef: ElementRef) {}
@@ -93,19 +93,24 @@ export class PillIndexedTabsComponent {
     const parentContainer = this.elementRef.nativeElement.closest(
       '[pill-tab-parent]',
     ) as HTMLElement;
+
+    const overflowClipper = parentContainer.querySelector(
+      '[pill-tab-overflow-clipper]',
+    ) as HTMLElement;
+
     const componentViewsContainer = parentContainer.querySelector(
       '[pill-tab-component-transition]',
     ) as null | HTMLElement;
 
     if (componentViewsContainer) {
-      parentContainer.style.overflow = 'hidden';
+      overflowClipper.style.overflow = 'hidden';
       const animationClassName = animationClass();
       if (animationClassName) {
         componentViewsContainer.classList.add(animationClassName);
 
         componentViewsContainer.addEventListener('animationend', (e) => {
           componentViewsContainer.classList.remove(animationClassName);
-          parentContainer.style.overflow = 'visible';
+          overflowClipper.style.overflow = 'visible';
         });
       }
       return;

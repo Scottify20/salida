@@ -28,15 +28,14 @@ app-header-buttons {
   max-width: var(--main-max-width);
   height: 4rem;
   padding: 0 4rem;
+
   z-index: 1000;
+  background-color: rgba(var(--body-bg-color-rgb), 0.95);
 
-  background-color: var(--body-bg-color);
   opacity: 0%;
-
   transition: opacity ease-out 0.175s;
-
   &.visible {
-    opacity: 95%;
+    opacity: 100%;
   }
 
   .title__hero--title-on-header {

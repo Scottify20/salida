@@ -33,21 +33,23 @@
     </div>
   </div>
 
-  <div class="tabbed-components-container" pill-tab-component-transition>
-    @if (currentTabIndex === 0) {
-      <app-movie-more-details></app-movie-more-details>
-    }
+  <div class="transition-overflow-clipper" pill-tab-overflow-clipper>
+    <div class="tabbed-components-container" pill-tab-component-transition>
+      @if (currentTabIndex === 0) {
+        <app-movie-more-details></app-movie-more-details>
+      }
 
-    @if (currentTabIndex === 1) {
-      <app-cast-and-crew></app-cast-and-crew>
-    }
+      @if (currentTabIndex === 1) {
+        <app-cast-and-crew></app-cast-and-crew>
+      }
 
-    @if (currentTabIndex === 2) {
-      <app-reviews></app-reviews>
-    }
+      @if (currentTabIndex === 2) {
+        <app-reviews></app-reviews>
+      }
 
-    @if (currentTabIndex === 3) {
-      <app-releases></app-releases>
-    }
+      @if (currentTabIndex === 3) {
+        <app-releases></app-releases>
+      }
+    </div>
   </div>
 </div>

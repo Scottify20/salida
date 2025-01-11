@@ -1,0 +1,16 @@
+<div
+  tabindex="0"
+  role="button"
+  (click)="props.onClick()"
+  (keydown.enter)="props.onClick()"
+  class="catergory-chip"
+>
+  <p class="catergory-chip__label">{{ props.label }}</p>
+  <img
+    class="catergory-chip__icon"
+    width="24px"
+    height="24px"
+    [src]="props.iconURL"
+    alt=""
+  />
+</div>

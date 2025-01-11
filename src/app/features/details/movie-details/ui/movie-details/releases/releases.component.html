@@ -4,7 +4,7 @@
     @for (releaseType of orderedReleaseTypes; track releaseType) {
       @if (releasesByType[releaseType][0]) {
         <div class="releases__type-container">
-          <h4 class="release__type-name">
+          <h4 sticky-element class="release__type-name">
             {{ releaseType }}
           </h4>
           <!-- Display releases grouped by release type -->
@@ -80,7 +80,7 @@
 @if (releasesPreferences.groupBy() == "country") {
   <div [class]="isLoading ? 'loading' : ''" class="releases country">
     <div class="releases__type-container">
-      <h4 class="release__type-name">Country</h4>
+      <h4 sticky-element class="release__type-name">Country</h4>
       <div class="releases__countries-container">
         @for (country of releasesByCountry; track country.iso_3166_1) {
           <div class="releases__country-container">

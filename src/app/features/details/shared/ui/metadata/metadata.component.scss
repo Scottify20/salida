@@ -1,16 +1,15 @@
 .title__metadataContainer {
-  position: relative;
   margin-bottom: 0.75rem;
   opacity: 90%;
   display: flex;
   flex-flow: row nowrap;
   font-size: 1rem;
   align-items: center;
+  align-content: center;
 
   .title__metadata {
     .metadata-text {
       color: var(--text-color-subtle);
-      position: relative;
     }
 
     .metadata-text.metadata-rating {
@@ -18,30 +17,15 @@
       font-size: 0.7rem;
       border: 1px solid var(--text-color-subtle);
       width: min-content;
-      margin: 0 1.25em;
-      padding: 0.15em 0.5em;
+      margin: 0 0.5em;
+      padding: 0.15em 0.25em;
       border-radius: 0.25rem;
+      place-content: center;
     }
 
-    .metadata-text:first-of-type {
-      margin-left: 0;
-    }
-
-    .metadata-text:not(:last-of-type) {
-      &::after {
-        font-size: 0.8333rem;
-        position: absolute;
-        display: inline-block;
-        transform: scale(0.6);
-        content: "•";
-        padding: 0 0.25em;
-        color: var(--text-color-disabled);
-        top: 7.5%;
-      }
-
-      &::after {
-        right: -0.9rem;
-      }
+    .meta-divider {
+      padding: 0.15em;
+      opacity: 0.2;
     }
   }
 }

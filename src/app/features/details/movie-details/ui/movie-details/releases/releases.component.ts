@@ -1,10 +1,18 @@
-import { Component, DestroyRef, effect } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  inject,
+  ViewChild,
+} from '@angular/core';
 import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 import {
   Country,
   ReleaseDate,
 } from '../../../../../../shared/interfaces/models/tmdb/All';
-import { filter, map, of, switchMap } from 'rxjs';
+import { filter, of, switchMap } from 'rxjs';
 import {
   Movie,
   ReleasesOfCountry,
@@ -40,10 +48,10 @@ const RELEASE_TYPES = [
 ];
 
 @Component({
-    selector: 'app-releases',
-    imports: [DatePipe, ScrollingModule, CommonModule],
-    templateUrl: './releases.component.html',
-    styleUrl: './releases.component.scss'
+  selector: 'app-releases',
+  imports: [DatePipe, ScrollingModule, CommonModule],
+  templateUrl: './releases.component.html',
+  styleUrl: './releases.component.scss',
 })
 export class ReleasesComponent {
   countryCodes: Country[] = [];
@@ -63,12 +71,29 @@ export class ReleasesComponent {
     private userPreferencesService: TemporaryUserPreferencesService,
     private destroyRef: DestroyRef,
     protected platformCheckService: PlatformCheckService,
+    private cdr: ChangeDetectorRef,
   ) {
     effect(() =>
       this.releasesPreferences.groupBy() === 'release-type'
         ? this.loadMovieData()
         : this.loadMovieData(),
     );
+  }
+
+  // to prevent glitching of the [sticky-element] s during tab transition
+  private elRef: ElementRef = inject(ElementRef);
+
+  ngAfterViewChecked() {
+    const el = this.elRef.nativeElement as HTMLElement;
+    const stickyEls = Array.from(
+      el.querySelectorAll('[sticky-element]'),
+    ) as HTMLElement[];
+
+    setTimeout(() => {
+      stickyEls.forEach((el) => {
+        el.classList.add('sticky');
+      });
+    }, 350);
   }
 
   releasesPreferences: MovieReleasesPreferences =

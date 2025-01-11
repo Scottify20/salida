@@ -1,6 +1,24 @@
 :host {
-  padding: 1rem;
+  padding: 0 1rem;
   display: flex;
   flex-flow: column nowrap;
-  gap: 1rem;
+}
+
+.cast-or-crew-title {
+  font-size: 1.2rem;
+  padding: 0.5rem 0;
+}
+
+.cast-or-crew-title.sticky {
+  background-color: var(--body-bg-color);
+  opacity: 95%;
+  z-index: 996;
+  position: sticky;
+  top: calc(3.98rem + 38.4px + 1rem);
+}
+
+@media (max-width: 376px) {
+  .cast-or-crew-title.sticky {
+    top: calc(3.98rem + 33.6px + 1rem);
+  }
 }

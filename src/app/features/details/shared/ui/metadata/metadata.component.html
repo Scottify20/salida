@@ -4,12 +4,20 @@
       <span class="metadata-text">
         {{ metadata.year }}
       </span>
+
+      @if (metadata.rating || metadata.runtimeOrSeasons) {
+        <span class="meta-divider">•</span>
+      }
     }
 
     @if (metadata.rating) {
       <span class="metadata-rating metadata-text">
         {{ metadata.rating }}
       </span>
+
+      @if (metadata.runtimeOrSeasons) {
+        <span class="meta-divider">•</span>
+      }
     }
 
     @if (metadata.runtimeOrSeasons) {

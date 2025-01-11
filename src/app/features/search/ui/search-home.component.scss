@@ -6,7 +6,9 @@
 }
 
 .search__header {
-  position: relative;
+  z-index: 10000;
+  top: 0;
+  position: sticky;
   gap: 1rem;
   display: flex;
   flex-flow: row nowrap;
@@ -14,19 +16,23 @@
 
   border-bottom: 1px solid var(--divider-color);
   padding: 1rem;
-}
 
-.search__main {
-  padding: 1rem;
-  padding-bottom: 0;
-  margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
+  background-color: rgba(var(--body-bg-color-rgb), 0.9);
+  // border: 1px solid red;
 
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 1rem;
+  & app-search-bar {
+    max-width: 500px;
+    margin: 0 auto;
+  }
 }
 
 .tabs-container {
+  z-index: 9999;
+  position: sticky;
+  background-color: rgba(var(--body-bg-color-rgb), 0.9);
+  padding: 1rem 0;
+
+  top: 72px;
   margin: 0 auto;
   width: 100%;
   display: flex;
@@ -56,8 +62,28 @@
   }
 }
 
+.search__main {
+  margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
+
+  display: flex;
+  flex-flow: column nowrap;
+}
+
 .search__results {
+  padding: 0 1rem;
+  // border: 1px solid red;
   display: flex;
   flex-flow: column nowrap;
   gap: 1rem;
+}
+
+.category-chips-container {
+  padding: 1rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+
+  margin: 0 auto;
+  width: 100%;
+  max-width: 500px;
 }

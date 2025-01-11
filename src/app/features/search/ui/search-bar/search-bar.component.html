@@ -1,6 +1,12 @@
-<form class="search-bar" [formGroup]="searchForm" (submit)="onSubmit($event)">
+<form
+  class="search-bar"
+  name="search-bar-component"
+  [formGroup]="searchForm"
+  (submit)="onSubmit($event)"
+>
   <input
     #searchInput
+    name="search-bar__input"
     class="search-bar__input"
     type="search"
     placeholder="Search"
