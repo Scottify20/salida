@@ -61,6 +61,11 @@
     margin-left: 0.5rem;
   }
 }
+@media (max-width: 376px) {
+  .tabs-container {
+    top: 63px;
+  }
+}
 
 .search__main {
   margin-bottom: calc(var(--navbar-height) + var(--navbar-bottom));
