@@ -1,6 +1,6 @@
 <!-- if the shown are set to tmdb -->
 @if (reviewsSource() === "tmdb") {
-  <div class="reviews" [ngClass]="isLoading ? 'loading' : ''">
+  <div class="reviews">
     @for (review of tmdbReviewsData.results; track review.id) {
       <div class="review">
         @if (review.author_details.avatar_path) {
@@ -56,7 +56,7 @@
 <!-- if the shown are set to salida -->
 
 @if (reviewsSource() === "salida") {
-  <div class="reviews" [ngClass]="isLoading ? 'loading' : ''">
+  <div class="reviews">
     @for (review of salidaReviews.results.reverse(); track review) {
       <div class="review">
         @if (review.author_details.avatar_path) {

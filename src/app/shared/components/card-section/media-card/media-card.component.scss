@@ -16,6 +16,8 @@
 .card__image {
   border-radius: 0.5rem;
   object-fit: cover;
+  aspect-ratio: 2/3;
+  width: 7.5rem;
 }
 
 .card__texts {
@@ -43,4 +45,15 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--card-title-max-lines);
   line-clamp: var(--card-title-max-lines);
+}
+
+.card .card__image.loading {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05),
+    rgba(200, 200, 200, 0.025),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: SkeletonFade 2s linear infinite;
 }

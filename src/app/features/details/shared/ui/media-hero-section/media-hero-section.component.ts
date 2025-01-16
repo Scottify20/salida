@@ -24,15 +24,15 @@ export interface HeroSectionData {
 }
 
 @Component({
-    selector: 'app-media-hero-section',
-    imports: [
-        CommonModule,
-        HeaderButtonsComponent,
-        MetadataComponent,
-        GenresComponent,
-    ],
-    templateUrl: './media-hero-section.component.html',
-    styleUrl: './media-hero-section.component.scss'
+  selector: 'app-media-hero-section',
+  imports: [
+    CommonModule,
+    HeaderButtonsComponent,
+    MetadataComponent,
+    GenresComponent,
+  ],
+  templateUrl: './media-hero-section.component.html',
+  styleUrl: './media-hero-section.component.scss',
 })
 export class MediaHeroSectionComponent {
   constructor(
@@ -58,6 +58,12 @@ export class MediaHeroSectionComponent {
     logo_path: null,
     poster_path: null,
   };
+
+  get getBackdropAlt() {
+    return this.heroSectionData.mediaType === 'movie'
+      ? `${this.heroSectionData.title} movie backdrop`
+      : `${this.heroSectionData.title} TV Series backdrop`;
+  }
 
   genresProps: Genre[] = [];
 

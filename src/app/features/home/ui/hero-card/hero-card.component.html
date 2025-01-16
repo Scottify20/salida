@@ -9,10 +9,14 @@
 >
   @if (getImageSrcBasedOnWidth()) {
     <img
-      class="hero-card__poster"
+      class="hero-card__poster loading"
+      #poster
+      (load)="poster.classList.remove('loading')"
       [src]="getImageSrcBasedOnWidth()"
       [alt]="getPosterOrBackdropAlt"
       [attr.data-card-index]="cardIndex"
+      [attr.fetchpriority]="cardIndex === 0 ? 'high' : ''"
+      [attr.loading]="cardIndex === 0 ? 'eager' : ''"
     />
   }
   <div

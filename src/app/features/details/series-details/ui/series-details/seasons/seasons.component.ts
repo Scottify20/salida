@@ -29,10 +29,10 @@ import {
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-    imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
-    selector: 'app-seasons',
-    templateUrl: './seasons.component.html',
-    styleUrls: ['./seasons.component.scss']
+  imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
+  selector: 'app-seasons',
+  templateUrl: './seasons.component.html',
+  styleUrls: ['./seasons.component.scss'],
 })
 export class SeasonsComponent {
   constructor(
@@ -75,7 +75,6 @@ export class SeasonsComponent {
 
   selectedSeason: string | null = null;
 
-  isLoading = false;
   isFetchingFailed = false;
 
   initiateSeasonDataAndPicker() {
@@ -129,7 +128,6 @@ export class SeasonsComponent {
             return;
           }
           this.seasonData = seasonData;
-          this.isLoading = false;
         }),
         catchError((err) => {
           console.log(err);

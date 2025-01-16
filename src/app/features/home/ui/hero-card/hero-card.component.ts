@@ -20,7 +20,6 @@ export class HeroCardComponent implements OnInit {
     private seriesDetailsService: SeriesDetailsService,
     private platformCheck: PlatformCheckService,
   ) {}
-
   @Input() cardIndex = 0;
   @Input({ required: true }) props: MediaSummary = {
     media_type: 'movie',

@@ -12,16 +12,19 @@
   </h4>
 </div>
 
-<div class="title__hero" [class]="isLoading ? 'loading' : ''">
+<div class="title__hero">
   <img
     #backdrop
+    (load)="backdrop.classList.remove('loading')"
+    class="title__hero-backdrop loading"
     [src]="
       'https://image.tmdb.org/t/p/' +
       getBackropWidth() +
       heroSectionData.backdrop_path
     "
-    alt=""
-    class="title__hero-backdrop"
+    [alt]="getBackdropAlt"
+    fetchpriority="high"
+    loading="eager"
   />
   <div class="title__main-details-container">
     <img

@@ -11,7 +11,7 @@
 .card.circle {
   text-align: center;
   .card__image-container {
-    width: 100%;
+    width: 7.5rem;
     aspect-ratio: 1 /1;
     overflow: hidden;
     border-radius: 50%;
@@ -84,4 +84,15 @@
   -webkit-box-orient: vertical;
   -webkit-line-clamp: var(--card-subtitle-max-lines);
   line-clamp: var(--card-subtitle-max-lines);
+}
+
+.card.circle .card__image-container.loading {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05),
+    rgba(200, 200, 200, 0.025),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: SkeletonFade 2s linear infinite;
 }

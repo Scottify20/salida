@@ -55,7 +55,6 @@ const RELEASE_TYPES = [
 })
 export class ReleasesComponent {
   countryCodes: Country[] = [];
-  isLoading = true;
 
   releasesByCountry: ReleasesOfCountry[] = [];
   releasesByType: ReleasesByReleaseTypes = RELEASE_TYPES.reduce((acc, type) => {
@@ -129,8 +128,6 @@ export class ReleasesComponent {
           } else if (this.releasesPreferences.groupBy() === 'country') {
             this.releasesByCountry = this.groupReleasesByCountry(results);
           }
-
-          this.isLoading = false;
         },
         error: (err) => {
           console.error('Error fetching release data:', err);

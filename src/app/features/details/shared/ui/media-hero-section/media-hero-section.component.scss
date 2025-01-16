@@ -111,3 +111,14 @@ app-header-buttons {
     margin-bottom: 0;
   }
 }
+
+.title__hero-backdrop {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.075),
+    rgba(200, 200, 200, 0.035),
+    rgba(255, 255, 255, 0.075)
+  );
+  background-size: 200% 100%;
+  animation: SkeletonFade 2s linear infinite;
+}

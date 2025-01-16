@@ -22,6 +22,7 @@ import {
 import { MovieSummary } from '../../../shared/interfaces/models/tmdb/Movies';
 import { SeriesSummary } from '../../../shared/interfaces/models/tmdb/Series';
 import { PersonSummary } from '../../../shared/interfaces/models/tmdb/All';
+import { sign } from 'crypto';
 
 export type SearchType = 'all' | 'movie' | 'series' | 'person';
 
@@ -114,6 +115,8 @@ export class SearchPageService {
   }
 
   searchAll() {
+    this.allResults.isSearching.set(true);
+
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
       page: signal(this.allResults.page ? this.allResults.page + 1 : 1),
@@ -148,10 +151,14 @@ export class SearchPageService {
           total_pages: apiResults.total_pages,
           total_results: apiResults.total_results,
         };
+
+        this.allResults.isSearching.set(false);
       });
   }
 
   searchMovies() {
+    this.movieResults.isSearching.set(true);
+
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
       ...this.searchParams.movie,
@@ -166,13 +173,18 @@ export class SearchPageService {
           apiResults.results.map((movie) => this.transformMovie(movie));
 
         this.movieResults = {
+          isSearching: this.movieResults.isSearching,
           ...apiResults,
           results: [...this.movieResults.results, ...transformedResults],
         };
+
+        this.movieResults.isSearching.set(false);
       });
   }
 
   searchSeries() {
+    this.seriesResults.isSearching.set(true);
+
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
       ...this.searchParams.series,
@@ -187,13 +199,18 @@ export class SearchPageService {
           apiResults.results.map((series) => this.transformSeries(series));
 
         this.seriesResults = {
+          isSearching: this.seriesResults.isSearching,
           ...apiResults,
           results: [...this.seriesResults.results, ...transformedResults],
         };
+
+        this.seriesResults.isSearching.set(false);
       });
   }
 
   searchPeople() {
+    this.peopleResults.isSearching.set(true);
+
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
       page: signal(this.peopleResults.page ? this.peopleResults.page + 1 : 1),
@@ -203,13 +220,30 @@ export class SearchPageService {
       .searchPerson(preferences)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((apiResults) => {
+        const uniqueIds: string[] = [];
+
         const transformedResults: PersonResultCardProps[] =
           apiResults.results.map((person) => this.transformPerson(person));
 
         this.peopleResults = {
+          isSearching: this.peopleResults.isSearching,
           ...apiResults,
-          results: [...this.peopleResults.results, ...transformedResults],
+          results: [
+            ...this.peopleResults.results,
+            ...transformedResults,
+          ].filter((entity) => {
+            if (uniqueIds.indexOf(entity.id) < 0) {
+              // if id does not exist yet include it then push its id
+              uniqueIds.push(entity.id);
+              return true;
+            }
+
+            // if id already exists yet include it
+            return false;
+          }),
         };
+
+        this.peopleResults.isSearching.set(false);
       });
   }
 
@@ -379,11 +413,13 @@ export class SearchPageService {
     results: (MediaResultCardProps | PersonResultCardProps)[];
     total_pages: number;
     total_results: number;
+    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
+    isSearching: signal(false),
   };
 
   movieResults: {
@@ -391,11 +427,13 @@ export class SearchPageService {
     results: MediaResultCardProps[];
     total_pages: number;
     total_results: number;
+    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
+    isSearching: signal(false),
   };
 
   seriesResults: {
@@ -403,11 +441,13 @@ export class SearchPageService {
     results: MediaResultCardProps[];
     total_pages: number;
     total_results: number;
+    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
+    isSearching: signal(false),
   };
 
   peopleResults: {
@@ -415,11 +455,13 @@ export class SearchPageService {
     results: PersonResultCardProps[];
     total_pages: number;
     total_results: number;
+    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
+    isSearching: signal(false),
   };
 
   isMaxPageReached(type: SearchType): boolean {
@@ -452,32 +494,19 @@ export class SearchPageService {
   }
 
   private resetResults() {
-    this.movieResults = {
+    const defaultValues = {
       page: 0,
       results: [],
       total_pages: 0,
       total_results: 0,
     };
 
-    this.seriesResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
+    this.movieResults = { ...defaultValues, isSearching: signal(false) };
 
-    this.allResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
+    this.seriesResults = { ...defaultValues, isSearching: signal(false) };
 
-    this.peopleResults = {
-      page: 0,
-      results: [],
-      total_pages: 0,
-      total_results: 0,
-    };
+    this.allResults = { ...defaultValues, isSearching: signal(false) };
+
+    this.peopleResults = { ...defaultValues, isSearching: signal(false) };
   }
 }

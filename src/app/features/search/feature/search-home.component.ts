@@ -3,7 +3,7 @@ import {
   computed,
   DestroyRef,
   ElementRef,
-  signal,
+  Signal,
   ViewChild,
 } from '@angular/core';
 import { SearchBarComponent } from '../ui/search-bar/search-bar.component';
@@ -16,12 +16,13 @@ import { MediaResultCardComponent } from '../ui/media-result-card/media-result-c
 import { SearchPageService } from '../data-access/search-page.service';
 import { PersonResultCardComponent } from '../ui/person-result-card/person-result-card.component';
 import { IntersectionObserverService } from '../../../shared/services/dom/intersection-observer.service';
-import { debounceTime, Subject, tap } from 'rxjs';
+import { Subject } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   CategoryChipComponent,
   CategoryChipProps,
 } from '../ui/category-chip/category-chip.component';
+import { ResultCardSkeletonComponent } from '../ui/result-card-skeleton/result-card-skeleton.component';
 
 @Component({
   selector: 'app-search-home',
@@ -31,6 +32,7 @@ import {
     MediaResultCardComponent,
     PersonResultCardComponent,
     CategoryChipComponent,
+    ResultCardSkeletonComponent,
   ],
   templateUrl: '../ui/search-home.component.html',
   styleUrl: '../ui/search-home.component.scss',
@@ -52,9 +54,22 @@ export class SearchHomeComponent {
     private destroyRef: DestroyRef,
   ) {
     this.searchTrigger$
-      .pipe(takeUntilDestroyed(this.destroyRef), debounceTime(200))
+      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((query) => this.spService.triggerSearch(query));
   }
+
+  isSearching: Signal<boolean> = computed(() => {
+    switch (this.spService.searchParams.searchType()) {
+      case 'all':
+        return this.spService.allResults.isSearching();
+      case 'movie':
+        return this.spService.movieResults.isSearching();
+      case 'person':
+        return this.spService.peopleResults.isSearching();
+      case 'series':
+        return this.spService.seriesResults.isSearching();
+    }
+  });
 
   @ViewChild('bottomIntersectionElement')
   bottomIntersectionRef!: ElementRef;
@@ -109,6 +124,7 @@ export class SearchHomeComponent {
         text: 'All',
         onClickCallback: () => {
           this.spService.searchParams.searchType.set('all');
+          window.scrollTo({ top: 0 });
 
           if (this.spService.isNoFirstPageResultsYet('all')) {
             this.searchTrigger$.next(this.spService.searchParams.all.query());
@@ -119,6 +135,7 @@ export class SearchHomeComponent {
         text: 'Movies',
         onClickCallback: () => {
           this.spService.searchParams.searchType.set('movie');
+          window.scrollTo({ top: 0 });
 
           if (this.spService.isNoFirstPageResultsYet('movie')) {
             this.searchTrigger$.next(this.spService.searchParams.all.query());
@@ -129,6 +146,7 @@ export class SearchHomeComponent {
         text: 'Series',
         onClickCallback: () => {
           this.spService.searchParams.searchType.set('series');
+          window.scrollTo({ top: 0 });
 
           if (this.spService.isNoFirstPageResultsYet('series')) {
             this.searchTrigger$.next(this.spService.searchParams.all.query());
@@ -139,6 +157,7 @@ export class SearchHomeComponent {
         text: 'People',
         onClickCallback: () => {
           this.spService.searchParams.searchType.set('person');
+          window.scrollTo({ top: 0 });
 
           if (this.spService.isNoFirstPageResultsYet('person')) {
             this.searchTrigger$.next(this.spService.searchParams.all.query());

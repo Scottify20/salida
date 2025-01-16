@@ -14,7 +14,6 @@
   transition:
     transform 0.15s linear,
     opacity 0.15s linear;
-  background-color: rgba(255, 255, 255, 0.025);
 
   .hero-card__poster {
     width: 100%;
@@ -99,4 +98,15 @@
     aspect-ratio: 16 / 9;
     width: 75vw;
   }
+}
+
+.hero-card .hero-card__poster.loading {
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05),
+    rgba(200, 200, 200, 0.025),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: SkeletonFade 2s linear infinite;
 }

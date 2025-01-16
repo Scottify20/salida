@@ -57,6 +57,23 @@
             }
           }
         }
+
+        @if (isSearching()) {
+          <div class="results-skeleton-container">
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+            <app-result-card-skeleton></app-result-card-skeleton>
+          </div>
+        }
       </div>
     </div>
   } @else {

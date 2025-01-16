@@ -13,7 +13,9 @@
           : 'assets/icons/placeholders/Profile.svg'
       "
       [alt]="getPosterAlt()"
-      class="card__image"
+      class="card__image loading"
+      #poster
+      (load)="poster.classList.remove('loading')"
       [class]="props.poster_path ? '' : 'no-image'"
     />
   </div>

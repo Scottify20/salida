@@ -19,10 +19,10 @@ import { CollapsibleTextSectionComponent } from '../../../../../shared/component
 import removeMd from 'remove-markdown';
 
 @Component({
-    selector: 'app-reviews',
-    imports: [CommonModule, CollapsibleTextSectionComponent],
-    templateUrl: './reviews.component.html',
-    styleUrl: './reviews.component.scss'
+  selector: 'app-reviews',
+  imports: [CommonModule, CollapsibleTextSectionComponent],
+  templateUrl: './reviews.component.html',
+  styleUrl: './reviews.component.scss',
 })
 export class ReviewsComponent {
   constructor(
@@ -37,7 +37,6 @@ export class ReviewsComponent {
     this.preferencesService.preferences.details.movieAndSeriesDetails.reviews
       .reviewsSource;
   mediaData$: Observable<Movie | Series | null> = of(null);
-  isLoading = true;
 
   initializeReviewsFetching() {
     if (this.moviesDetailsService.isMovieRoute) {
@@ -67,7 +66,6 @@ export class ReviewsComponent {
         tap((reviews) => {
           if (reviews) {
             this.tmdbReviewsData = reviews;
-            this.isLoading = false;
           }
         }),
         catchError((err) => {

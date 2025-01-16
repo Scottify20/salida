@@ -1,6 +1,6 @@
 <!-- if the release dates are grouped by release type -->
 @if (releasesPreferences.groupBy() == "release-type") {
-  <div [class]="isLoading ? 'loading' : ''" class="releases release-type">
+  <div class="releases release-type">
     @for (releaseType of orderedReleaseTypes; track releaseType) {
       @if (releasesByType[releaseType][0]) {
         <div class="releases__type-container">
@@ -78,7 +78,7 @@
 <!-- if the release dates are grouped by country -->
 
 @if (releasesPreferences.groupBy() == "country") {
-  <div [class]="isLoading ? 'loading' : ''" class="releases country">
+  <div class="releases country">
     <div class="releases__type-container">
       <h4 sticky-element class="release__type-name">Country</h4>
       <div class="releases__countries-container">

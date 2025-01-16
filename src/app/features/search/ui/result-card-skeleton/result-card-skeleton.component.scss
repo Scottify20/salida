@@ -1,0 +1,23 @@
+:host {
+  height: 100%;
+  width: 100%;
+}
+
+.card {
+  border-radius: 0.5rem;
+  height: 225px;
+  background-image: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0.05),
+    rgba(200, 200, 200, 0.025),
+    rgba(255, 255, 255, 0.05)
+  );
+  background-size: 200% 100%;
+  animation: SkeletonFade 2s linear infinite;
+}
+
+@media (max-width: 599px) {
+  .card {
+    height: 140px;
+  }
+}
