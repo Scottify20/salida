@@ -7,7 +7,7 @@
     <div class="subcontainer clickable-cards">
       @for (title of props.titles; track title.id; let i = $index) {
         @if (props.maxNoOfTitles && i < props.maxNoOfTitles) {
-          <app-media-card [props]="title"></app-media-card>
+          <app-media-card [index]="i" [props]="title"></app-media-card>
         }
       }
     </div>

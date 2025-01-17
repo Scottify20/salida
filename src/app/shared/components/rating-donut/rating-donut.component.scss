@@ -1,0 +1,62 @@
+:host {
+  background-color: #242528;
+}
+
+circle {
+  fill: none;
+  stroke-width: 2.5px;
+}
+
+circle.fg {
+  transform: rotate(-90deg);
+  transform-origin: center;
+  stroke-linecap: round;
+
+  stroke-dasharray: 100;
+
+  stroke: transparent;
+
+  transition: stroke-dashoffset 1.5s ease-out;
+
+  &.green {
+    stroke: #76c476;
+  }
+
+  &.yellow {
+    stroke: #efd583;
+  }
+
+  &.red {
+    stroke: #f08686;
+  }
+}
+
+circle.bg {
+  fill: none;
+
+  stroke: #101010;
+
+  &.green {
+    stroke: #061406;
+  }
+
+  &.yellow {
+    stroke: #171203;
+  }
+  &.red {
+    stroke: #170303;
+  }
+}
+
+text {
+  transform-origin: center;
+  text-anchor: middle;
+  font-size: 0.85em;
+  font-weight: 600;
+  fill: white;
+  opacity: 85%;
+
+  &.no-rating {
+    opacity: 65%;
+  }
+}

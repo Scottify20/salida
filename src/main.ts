@@ -11,9 +11,11 @@ import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideFirebaseApp, initializeApp } from '@angular/fire/app';
 import { getAuth, provideAuth } from '@angular/fire/auth';
 import { environment } from './environments/environment';
+// import { provideNoopAnimations } from '@angular/platform-browser/animations';
 
 bootstrapApplication(AppComponent, {
   providers: [
+    // provideNoopAnimations(),
     provideHttpClient(withFetch()),
     provideRouter(
       routes,

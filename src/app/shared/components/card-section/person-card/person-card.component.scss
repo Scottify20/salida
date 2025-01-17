@@ -86,13 +86,13 @@
   line-clamp: var(--card-subtitle-max-lines);
 }
 
-.card.circle .card__image-container.loading {
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.05),
-    rgba(200, 200, 200, 0.025),
-    rgba(255, 255, 255, 0.05)
-  );
-  background-size: 200% 100%;
-  animation: SkeletonFade 2s linear infinite;
-}
+// .card.circle .card__image-container.loading {
+//   background-image: linear-gradient(
+//     to right,
+//     rgba(255, 255, 255, 0.05),
+//     rgba(200, 200, 200, 0.025),
+//     rgba(255, 255, 255, 0.05)
+//   );
+//   background-size: 200% 100%;
+//   animation: SkeletonFade 2s linear infinite;
+// }

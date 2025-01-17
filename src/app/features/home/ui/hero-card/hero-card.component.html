@@ -10,8 +10,6 @@
   @if (getImageSrcBasedOnWidth()) {
     <img
       class="hero-card__poster loading"
-      #poster
-      (load)="poster.classList.remove('loading')"
       [src]="getImageSrcBasedOnWidth()"
       [alt]="getPosterOrBackdropAlt"
       [attr.data-card-index]="cardIndex"

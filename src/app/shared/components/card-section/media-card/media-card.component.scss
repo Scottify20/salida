@@ -47,28 +47,29 @@
   line-clamp: var(--card-title-max-lines);
 }
 
-.card .card__image.loading {
-  background-image: linear-gradient(
-    to right,
-    rgba(255, 255, 255, 0.05),
-    rgba(200, 200, 200, 0.025),
-    rgba(255, 255, 255, 0.05)
-  );
-  background-size: 200% 100%;
-  animation: SkeletonFade 2s linear infinite;
-}
+// .card .card__image.loading {
+//   background-image: linear-gradient(
+//     to right,
+//     rgba(255, 255, 255, 0.05),
+//     rgba(200, 200, 200, 0.025),
+//     rgba(255, 255, 255, 0.05)
+//   );
+//   background-size: 200% 100%;
+//   animation: SkeletonFade 2s linear infinite;
+// }
 
 .card__image-container {
   position: relative;
 
-  canvas {
+  app-rating-donut {
     border-radius: 1000px;
     content: "";
     // border: 1px solid red;
     position: absolute;
-    bottom: -20px;
-    right: -20px;
+    bottom: -15px;
+    right: -15px;
     width: 40px;
     height: 40px;
+    transition: all linear 300ms;
   }
 }

@@ -1,0 +1,29 @@
+<svg height="40px" width="40px">
+  <circle class="bg" [class]="ratingColorClass" cx="20" cy="20" r="16"></circle>
+  <circle
+    class="fg"
+    [class]="ratingColorClass"
+    [style.strokeDashoffset]="
+      animate
+        ? 100 - (100 * animatedRatingForCircle()) / 10
+        : 100 - (100 * rating) / 10
+    "
+    cx="20"
+    cy="20"
+    r="16"
+  ></circle>
+  <text
+    [class]="rating <= 0 ? 'no-rating' : ''"
+    x="20"
+    y="21"
+    dominant-baseline="middle"
+  >
+    {{
+      animate
+        ? animatedRatingForText().toFixed(1)
+        : rating != 0
+          ? rating.toFixed(1)
+          : "NR"
+    }}
+  </text>
+</svg>

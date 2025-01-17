@@ -13,9 +13,7 @@
           : 'assets/icons/placeholders/Profile.svg'
       "
       [alt]="entity.name + ' profile photo'"
-      class="card__image loading"
-      #poster
-      (load)="poster.classList.remove('loading')"
+      class="card__image"
       [class]="entity.image_path ? '' : 'no-image'"
     />
   </div>
