@@ -15,8 +15,6 @@
       [src]="getImageSrcBasedOnWidth()"
       [alt]="getPosterOrBackdropAlt"
       [attr.data-card-index]="cardIndex"
-      [attr.fetchpriority]="cardIndex === 0 ? 'high' : ''"
-      [attr.loading]="cardIndex === 0 ? 'eager' : ''"
     />
   }
   <div

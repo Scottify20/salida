@@ -18,6 +18,7 @@
       (load)="poster.classList.remove('loading')"
       [class]="props.poster_path ? '' : 'no-image'"
     />
+    <canvas #ratingPie width="40px" height="40px"></canvas>
   </div>
   <div class="card__texts">
     <p class="card__title">{{ props.name || props.title }}</p>

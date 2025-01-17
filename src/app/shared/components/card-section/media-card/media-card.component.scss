@@ -57,3 +57,18 @@
   background-size: 200% 100%;
   animation: SkeletonFade 2s linear infinite;
 }
+
+.card__image-container {
+  position: relative;
+
+  canvas {
+    border-radius: 1000px;
+    content: "";
+    // border: 1px solid red;
+    position: absolute;
+    bottom: -20px;
+    right: -20px;
+    width: 40px;
+    height: 40px;
+  }
+}
