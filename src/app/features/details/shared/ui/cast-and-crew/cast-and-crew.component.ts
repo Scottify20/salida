@@ -8,10 +8,12 @@ import {
   effect,
   ElementRef,
   inject,
+  ViewChild,
+  AfterViewInit,
 } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { tap } from 'rxjs';
+import { tap, BehaviorSubject } from 'rxjs';
 
 import {
   Series,
@@ -32,6 +34,7 @@ import {
 import { TemporaryUserPreferencesService } from '../../../../../shared/services/preferences/temporary-user-preferences-service';
 import { TmdbEntityForCard } from '../../../../../shared/components/card-section/person-card/person-card.component';
 import { Router } from '@angular/router';
+import { IntersectionObserverService } from '../../../../../shared/services/dom/intersection-observer.service';
 
 @Component({
   selector: 'app-cast-and-crew',
@@ -39,11 +42,24 @@ import { Router } from '@angular/router';
   templateUrl: './cast-and-crew.component.html',
   styleUrl: './cast-and-crew.component.scss',
 })
-export class CastAndCrewComponent {
+export class CastAndCrewComponent implements AfterViewInit {
   seriesCrewSection!: CardsSectionProps;
   seriesCastSection!: CardsSectionProps;
   movieCrewSection!: CardsSectionProps;
   movieCastSection!: CardsSectionProps;
+
+  private seriesCrewEntities = new BehaviorSubject<TmdbEntityForCard[]>([]);
+  private seriesCastEntities = new BehaviorSubject<TmdbEntityForCard[]>([]);
+  private movieCrewEntities = new BehaviorSubject<TmdbEntityForCard[]>([]);
+  private movieCastEntities = new BehaviorSubject<TmdbEntityForCard[]>([]);
+
+  // Full lists for infinite scrolling
+  private fullSeriesCrew: TmdbEntityForCard[] = [];
+  private fullSeriesCast: TmdbEntityForCard[] = [];
+  private fullMovieCrew: TmdbEntityForCard[] = [];
+  private fullMovieCast: TmdbEntityForCard[] = [];
+
+  @ViewChild('bottomIntersectionElement') bottomIntersectionRef!: ElementRef;
 
   constructor(
     protected movieDetailsService: MovieDetailsService,
@@ -51,9 +67,10 @@ export class CastAndCrewComponent {
     private destroyRef: DestroyRef,
     private router: Router,
     private preferencesService: TemporaryUserPreferencesService,
+    private intersectionObserver: IntersectionObserverService,
   ) {
+    this.initializeSectionProps(); // Call here to initialize with empty arrays initially
     this.initializeMovieOrSeriesData();
-    this.initializeSectionProps();
 
     effect(() => {
       this.castOrCrew();
@@ -76,6 +93,48 @@ export class CastAndCrewComponent {
     }, 350);
   }
 
+  ngAfterViewInit() {
+    this.startObserver();
+  }
+
+  private startObserver() {
+    const element = this.bottomIntersectionRef.nativeElement as HTMLDivElement;
+    const options = { rootMargin: '2000px' };
+
+    const observerCallback = (entries: IntersectionObserverEntry[]) => {
+      if (entries[0].isIntersecting) {
+        const currentSection =
+          this.castOrCrew() === 'cast'
+            ? this.seriesCastSection
+            : this.seriesCrewSection;
+        const currentEntities = currentSection.entities.value;
+        const currentLength = currentEntities.length;
+
+        const fullList = // Get the correct full list based on castOrCrew and movie/series
+          this.castOrCrew() === 'cast'
+            ? this.seriesDetailsService.isSeriesRoute
+              ? this.fullSeriesCast
+              : this.fullMovieCast
+            : this.seriesDetailsService.isSeriesRoute
+              ? this.fullSeriesCrew
+              : this.fullMovieCrew;
+
+        const nextEntities = this.getNextEntities(fullList, currentLength);
+
+        currentSection.entities.next([...currentEntities, ...nextEntities]);
+      }
+    };
+
+    this.intersectionObserver.observe(element, observerCallback, options);
+  }
+
+  private getNextEntities(
+    fullList: TmdbEntityForCard[],
+    currentLength: number,
+  ): TmdbEntityForCard[] {
+    return fullList.slice(currentLength, currentLength + 30); // Slice from the full list
+  }
+
   castOrCrew =
     this.preferencesService.preferences.details.movieAndSeriesDetails
       .castOrCrew;
@@ -83,42 +142,53 @@ export class CastAndCrewComponent {
   seriesData: Series | undefined;
   movieData: Movie | undefined;
 
+  // ... (rest of the component code will follow in the next response)
+
   initializeSectionProps() {
+    if (this.seriesDetailsService.isSeriesRoute && this.seriesData) {
+      this.fullSeriesCrew = this.seriesData.aggregate_credits.crew.map((e) =>
+        this.getCrewMemberEntity(e, this.router),
+      );
+      this.fullSeriesCast = this.seriesData.aggregate_credits.cast.map((e) =>
+        this.getCastMemberEntity(e, this.router),
+      );
+
+      // Initialize BehaviorSubject with the first 30
+      this.seriesCrewEntities.next(this.fullSeriesCrew.slice(0, 30));
+      this.seriesCastEntities.next(this.fullSeriesCast.slice(0, 30));
+    }
+
+    if (this.movieData) {
+      this.fullMovieCrew = this.movieData.credits.crew.map((e) =>
+        this.getMovieCrewMemberEntity(e, this.router),
+      );
+      this.fullMovieCast = this.movieData.credits.cast.map((e) =>
+        this.getMovieCastMemberEntity(e, this.router),
+      );
+
+      this.movieCrewEntities.next(this.fullMovieCrew.slice(0, 30));
+      this.movieCastEntities.next(this.fullMovieCast.slice(0, 30));
+    }
+
     this.seriesCrewSection = this.createSectionProps(
       '',
       'grid',
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.crew.map((e) =>
-            this.getCrewMemberEntity(e, this.router),
-          )
-        : [],
+      this.seriesCrewEntities,
     );
     this.seriesCastSection = this.createSectionProps(
       '',
       'grid',
-      this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.cast.map((e) =>
-            this.getCastMemberEntity(e, this.router),
-          )
-        : [],
+      this.seriesCastEntities,
     );
     this.movieCrewSection = this.createSectionProps(
       '',
       'grid',
-      this.movieData
-        ? this.movieData.credits.crew.map((e) =>
-            this.getMovieCrewMemberEntity(e, this.router),
-          )
-        : [],
+      this.movieCrewEntities,
     );
     this.movieCastSection = this.createSectionProps(
       '',
       'grid',
-      this.movieData
-        ? this.movieData.credits.cast.map((e) =>
-            this.getMovieCastMemberEntity(e, this.router),
-          )
-        : [],
+      this.movieCastEntities,
     );
   }
 
@@ -140,6 +210,7 @@ export class CastAndCrewComponent {
           tap((movie) => {
             if (movie) {
               this.movieData = movie;
+              this.initializeSectionProps();
             }
           }),
         )
@@ -152,6 +223,7 @@ export class CastAndCrewComponent {
           tap((series) => {
             if (series) {
               this.seriesData = series;
+              this.initializeSectionProps();
             }
           }),
         )
@@ -162,25 +234,14 @@ export class CastAndCrewComponent {
   private createSectionProps(
     sectionTitle: string,
     layout: 'grid' | 'carousel',
-    entities: TmdbEntityForCard[],
+    entities: BehaviorSubject<TmdbEntityForCard[]>,
   ): CardsSectionProps {
     const props: CardsSectionProps = {
       sectionTitle: sectionTitle,
       layout,
       maxNoOfCards: 1000,
-      entities: [],
+      entities: entities,
     };
-
-    const initialEntities = entities.slice(0, 30);
-    props.entities = initialEntities;
-
-    setTimeout(() => {
-      props.entities.push(...entities.slice(30, 100));
-    }, 500);
-
-    setTimeout(() => {
-      props.entities.push(...entities.slice(100));
-    }, 1000);
 
     return props;
   }
@@ -245,5 +306,35 @@ export class CastAndCrewComponent {
         router.navigateByUrl(`/people/${castMember.id}/details'`);
       },
     };
+  }
+
+  get castCount(): string {
+    const isMovie = this.movieDetailsService.isMovieRoute;
+    const movieCastLength = this.movieData?.credits.cast.length;
+    const isSeries = this.seriesDetailsService.isSeriesRoute;
+    const seriesCastLength = this.seriesData?.aggregate_credits.cast.length;
+
+    if (isMovie && movieCastLength) {
+      return `Cast (${movieCastLength})`;
+    } else if (isSeries && seriesCastLength) {
+      return `Cast (${seriesCastLength})`;
+    } else {
+      return 'Cast';
+    }
+  }
+
+  get crewCount(): string {
+    const isMovie = this.movieDetailsService.isMovieRoute;
+    const movieCrewLength = this.movieData?.credits.crew.length;
+    const isSeries = this.seriesDetailsService.isSeriesRoute;
+    const seriesCrewLength = this.seriesData?.aggregate_credits.crew.length;
+
+    if (isMovie && movieCrewLength) {
+      return `Crew (${movieCrewLength})`;
+    } else if (isSeries && seriesCrewLength) {
+      return `Crew (${seriesCrewLength})`;
+    } else {
+      return 'Crew';
+    }
   }
 }

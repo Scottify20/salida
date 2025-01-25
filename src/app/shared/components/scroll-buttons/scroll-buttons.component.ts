@@ -26,7 +26,7 @@ export class ScrollButtonsComponent {
       this.setValues();
       this.startScrollListening();
       this.startResizeListening();
-    }, 200);
+    }, 500);
   }
 
   @Input({ required: true }) containerElement!: HTMLElement;

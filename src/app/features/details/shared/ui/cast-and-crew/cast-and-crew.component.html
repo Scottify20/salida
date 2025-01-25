@@ -1,5 +1,5 @@
 <h4 sticky-element class="cast-or-crew-title">
-  {{ castOrCrew() === "cast" ? "Cast" : "Crew" }}
+  {{ castOrCrew() === "cast" ? castCount : crewCount }}
 </h4>
 
 <!-- If the curret title in view is a TV Series -->
@@ -31,3 +31,5 @@
     [props]="movieCrewSection"
   ></app-people-cards-section>
 }
+
+<div #bottomIntersectionElement></div>

@@ -1,23 +1,25 @@
 <div class="title-cards-section">
   <app-section-title [props]="sectionTitleOptions"></app-section-title>
-  <div class="container">
-    @if (props.layout === "carousel") {
-      <app-scroll-buttons
-        [numberOfItems]="props.entities.length"
-        [containerElement]="cardsContainer"
-        [positionValues]="{ top: '30%', left: '0', right: '0' }"
-      ></app-scroll-buttons>
-    }
-    <!--  -->
-    <div
-      #cardsContainer
-      class="cards-container clickable-cards"
-      [class]="props.layout === 'carousel' ? 'carousel' : 'grid'"
-    >
-      @for (entity of props.entities; track entity.id; let i = $index) {
-        <app-person-card [entity]="entity" [index]="i"> </app-person-card>
+  @if (props.entities | async; as entities) {
+    <div class="container">
+      @if (props.layout === "carousel") {
+        <app-scroll-buttons
+          [numberOfItems]="entities.length"
+          [containerElement]="cardsContainer"
+          [positionValues]="{ top: '30%', left: '0', right: '0' }"
+        ></app-scroll-buttons>
       }
+      <!--  -->
+      <div
+        #cardsContainer
+        class="cards-container clickable-cards"
+        [class]="props.layout === 'carousel' ? 'carousel' : 'grid'"
+      >
+        @for (entity of entities; track entity.id; let i = $index) {
+          <app-person-card [entity]="entity" [index]="i"> </app-person-card>
+        }
+      </div>
+      <!--  -->
     </div>
-    <!--  -->
-  </div>
+  }
 </div>
