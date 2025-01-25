@@ -2,6 +2,7 @@ import {
   Component,
   computed,
   DestroyRef,
+  effect,
   ElementRef,
   Signal,
   ViewChild,
@@ -40,14 +41,6 @@ import { ResultCardSkeletonComponent } from '../ui/result-card-skeleton/result-c
 export class SearchHomeComponent {
   protected searchTrigger$ = new Subject<string>();
 
-  // TODO
-  // the genres are still numbers
-  // blank posters
-  // sticky search bar and tabs
-  // back button?
-  // categories
-  // role label for people results
-
   constructor(
     protected spService: SearchPageService,
     private intersectionObserver: IntersectionObserverService,
@@ -57,19 +50,6 @@ export class SearchHomeComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((query) => this.spService.triggerSearch(query));
   }
-
-  isSearching: Signal<boolean> = computed(() => {
-    switch (this.spService.searchParams.searchType()) {
-      case 'all':
-        return this.spService.allResults.isSearching();
-      case 'movie':
-        return this.spService.movieResults.isSearching();
-      case 'person':
-        return this.spService.peopleResults.isSearching();
-      case 'series':
-        return this.spService.seriesResults.isSearching();
-    }
-  });
 
   @ViewChild('bottomIntersectionElement')
   bottomIntersectionRef!: ElementRef;

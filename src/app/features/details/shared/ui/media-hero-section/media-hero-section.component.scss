@@ -10,11 +10,13 @@
   & *:not(.title__hero-backdrop) {
     z-index: 2;
   }
+
+  overflow: hidden;
 }
 
 app-header-buttons {
   top: 0;
-  width: 100%;
+  width: 100vw;
   max-width: var(--main-max-width);
   z-index: 1003;
   position: fixed;
@@ -57,6 +59,25 @@ app-header-buttons {
   object-fit: cover;
   height: 100%;
   width: 100%;
+
+  &:not(.blurred) {
+    opacity: 0%;
+  }
+}
+
+.title__hero-backdrop.blurred {
+  filter: blur(10px);
+
+  opacity: 100%;
+  transition: opacity 0.15s ease-out;
+
+  &.hide {
+    opacity: 0%;
+  }
+}
+
+.title__hero-backdrop.poster-fallback {
+  transform: scale(1.2);
 }
 
 .title__hero::before {
@@ -112,12 +133,12 @@ app-header-buttons {
   }
 }
 
-.title__hero-backdrop {
+.title__hero-backdrop.skeleton {
   background-image: linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.075),
-    rgba(200, 200, 200, 0.035),
-    rgba(255, 255, 255, 0.075)
+    rgba(255, 255, 255, 0.1),
+    rgba(200, 200, 200, 0.05),
+    rgba(255, 255, 255, 0.1)
   );
   background-size: 200% 100%;
   animation: SkeletonFade 2s linear infinite;

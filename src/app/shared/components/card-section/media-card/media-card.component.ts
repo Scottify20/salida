@@ -1,6 +1,5 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { MediaSummary } from '../../../interfaces/models/tmdb/All';
-import { PlatformCheckService } from '../../../services/dom/platform-check.service';
 import { RatingDonutComponent } from '../../rating-donut/rating-donut.component';
 
 export interface MediaCardProps extends MediaSummary {
@@ -15,9 +14,20 @@ export interface MediaCardProps extends MediaSummary {
   styleUrl: './media-card.component.scss',
 })
 export class MediaCardComponent {
-  constructor(private platformCheck: PlatformCheckService) {}
-
-  @Input({ required: true }) props: MediaCardProps = {} as MediaCardProps;
+  @Input({ required: true }) props: MediaCardProps = {
+    onClick: () => {},
+    media_type: 'movie',
+    id: 0,
+    backdrop_path: null,
+    overview: '',
+    poster_path: null,
+    adult: false,
+    original_language: '',
+    genre_ids: [],
+    popularity: 0,
+    vote_average: 0,
+    vote_count: 0,
+  };
 
   @Input({ required: true }) index!: number;
 

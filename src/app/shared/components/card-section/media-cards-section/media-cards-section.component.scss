@@ -18,9 +18,11 @@ app-scroll-buttons {
   transition: all 0.1s ease-in-out;
   pointer-events: none;
   opacity: 0%;
+  z-index: 100;
 }
 
 .subcontainer {
+  z-index: 99;
   display: inline-flex;
   flex-flow: row nowrap;
   column-gap: 1.5rem;
@@ -29,3 +31,13 @@ app-scroll-buttons {
   scrollbar-color: transparent transparent;
   scrollbar-width: none;
 }
+
+// @media (hover: none) {
+//   .subcontainer {
+//     scroll-snap-type: x mandatory;
+//   }
+//   app-media-card:nth-of-type(2n + 1) {
+//     scroll-snap-align: start;
+//     scroll-snap-stop: always;
+//   }
+// }

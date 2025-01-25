@@ -1,11 +1,26 @@
 <div class="title__details">
-  @if (plotSection.text) {
-    <app-collapsible-text-section
-      class="title__section single"
-      [collapsibleTextSectionProps]="plotSection"
-    ></app-collapsible-text-section>
+  @if (genres[0] || plotSection.text) {
+    <div class="title__section single plot-and-genres">
+      <!-- @if (genres[0]) {
+        <app-genres [props]="genres"></app-genres>
+      } -->
+      @if (plotSection.text) {
+        <app-collapsible-text-section
+          [collapsibleTextSectionProps]="plotSection"
+        ></app-collapsible-text-section>
+      }
+    </div>
   }
 
+  <!-- @if (genres[0] || keywordsSection.texts[0]) {
+    <div class="title__section genres-and-keywords">
+      <app-genres [props]="genres"></app-genres>
+      <app-texts-section
+        class="keywords-section single"
+        [textsSectionOptions]="keywordsSection"
+      ></app-texts-section>
+    </div>
+  } -->
   <!-- <app-ratings-section
   class="title__section single"
   [ratingsSectionOptions]="ratingsSection"

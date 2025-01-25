@@ -94,7 +94,7 @@ export class HomeComponent {
   headerButtonsProps: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/home-header/Logo-placeholder-solid.svg',
+      iconPath: 'assets/icons/branding/logo.svg',
     },
     {
       id: 'user-button',
@@ -107,7 +107,6 @@ export class HomeComponent {
     id: 'home-content-type-dropdown-picker-tab',
     text: this.homeService.selectedContentTypeName,
     callback: () => {},
-    visibleIf: () => true,
     animateArrow: true,
     arrowDirection: signal('down'),
   };

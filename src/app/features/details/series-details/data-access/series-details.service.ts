@@ -29,7 +29,7 @@ export class SeriesDetailsService {
   private _seriesData$ = new BehaviorSubject<Series | null>(null);
 
   idFromRoute: IdFromRoute = null;
-  isSeriesPickerShown$ = new BehaviorSubject<boolean | null>(null);
+  isSeriesPickerShown: WritableSignal<boolean | null> = signal(null);
   selectedSeasonSummary$ = new BehaviorSubject<SeasonSummary | null>(null);
   seasonsSummary$ = new BehaviorSubject<SeasonSummary[]>([]);
   seriesData$: Observable<Series | null> = this._seriesData$.asObservable();

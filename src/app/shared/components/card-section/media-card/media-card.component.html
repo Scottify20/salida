@@ -7,9 +7,10 @@
 >
   <div class="card__image-container">
     <img
+      [loading]="index > 6 ? 'lazy' : 'eager'"
       [src]="
         props.poster_path
-          ? 'https://image.tmdb.org/t/p/w154' + props.poster_path
+          ? 'https://image.tmdb.org/t/p/w185' + props.poster_path
           : 'assets/icons/placeholders/Profile.svg'
       "
       [alt]="getPosterAlt()"

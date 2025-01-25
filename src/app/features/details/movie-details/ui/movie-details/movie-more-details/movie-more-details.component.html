@@ -59,17 +59,25 @@
     </div>
   }
 
-  @if (boxOfficeSection.texts[0]) {
-    <div class="title__section-two-columns-container">
-      <!-- <app-texts-section
-    *ngIf="awardsSection.texts[0]"
-    class="title__section"
-    [textsSectionOptions]="awardsSection"
-  ></app-texts-section> -->
-      @if (boxOfficeSection.texts[0] != "0") {
+  @if (revenueSection.texts[0] || budgetSection.texts[0]) {
+    <div
+      class="title__section-two-columns-container"
+      [ngClass]="
+        isTextsSectionDoubleColumn(budgetSection, revenueSection)
+          ? 'double'
+          : ''
+      "
+    >
+      @if (budgetSection.texts[0] != "0") {
         <app-texts-section
           class="title__section"
-          [textsSectionOptions]="boxOfficeSection"
+          [textsSectionOptions]="budgetSection"
+        ></app-texts-section>
+      }
+      @if (revenueSection.texts[0] != "0") {
+        <app-texts-section
+          class="title__section"
+          [textsSectionOptions]="revenueSection"
         ></app-texts-section>
       }
     </div>

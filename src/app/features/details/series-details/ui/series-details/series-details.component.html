@@ -1,7 +1,9 @@
 <div class="title-details" pill-tab-parent>
-  <app-media-hero-section></app-media-hero-section>
+  <div #heroSectionCont>
+    <app-media-hero-section></app-media-hero-section>
+  </div>
 
-  <div class="title-details__tabs">
+  <div #pillTabs class="title-details__tabs">
     <!-- filler tab to keep the main tab centered -->
     <div class="title-details__filler-tab"></div>
 
@@ -47,9 +49,7 @@
       }
 
       @if (currentTabIndex === 2) {
-        <app-seasons
-          [dropdownPickerArrowDirection]="dropDownPickerTabProps.arrowDirection"
-        ></app-seasons>
+        <app-seasons></app-seasons>
       }
       @if (currentTabIndex === 3) {
         <app-reviews></app-reviews>

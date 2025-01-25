@@ -1,8 +1,14 @@
 <div class="hero">
   <app-scroll-buttons
+    [numberOfItems]="props.length"
+    [containerElement]="cardsContainer"
     [positionValues]="{ top: '40%', left: '1rem', right: '1rem' }"
   ></app-scroll-buttons>
-  <div class="hero__cards-container clickable-cards" id="hero__cards-container">
+  <div
+    #cardsContainer
+    class="hero__cards-container clickable-cards"
+    id="hero__cards-container"
+  >
     <div class="hero-card-filler"></div>
 
     @for (title of props; track title; let i = $index) {

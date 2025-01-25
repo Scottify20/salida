@@ -29,8 +29,9 @@
 .card__title {
   font-size: 1rem;
   color: var(--text-color);
-  opacity: 100%;
+
   font-weight: 300;
+  opacity: 90%;
 }
 
 .card__title {
@@ -71,5 +72,15 @@
     width: 40px;
     height: 40px;
     transition: all linear 300ms;
+  }
+}
+
+@media (max-width: 600px) {
+  .card {
+    width: 8rem;
+  }
+
+  .card__image {
+    width: 8rem;
   }
 }

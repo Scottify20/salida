@@ -19,11 +19,15 @@ circle.fg {
   transition: stroke-dashoffset 1.5s ease-out;
 
   &.green {
-    stroke: #76c476;
+    stroke: hsl(120, 78%, 73%);
+  }
+
+  &.yellow-green {
+    stroke: #bddb84;
   }
 
   &.yellow {
-    stroke: #efd583;
+    stroke: #efd683;
   }
 
   &.red {
@@ -37,7 +41,11 @@ circle.bg {
   stroke: #101010;
 
   &.green {
-    stroke: #061406;
+    stroke: #031703;
+  }
+
+  &.yellow-green {
+    stroke: #0f1406;
   }
 
   &.yellow {

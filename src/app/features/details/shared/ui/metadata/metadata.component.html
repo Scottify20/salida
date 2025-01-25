@@ -5,7 +5,11 @@
         {{ metadata.year }}
       </span>
 
-      @if (metadata.rating || metadata.runtimeOrSeasons) {
+      @if (
+        metadata.rating ||
+        (metadata.runtimeOrSeasons && metadata.runtimeOrSeasons !== "0min") ||
+          getStatusText(metadata.status)
+      ) {
         <span class="meta-divider">•</span>
       }
     }
@@ -15,14 +19,27 @@
         {{ metadata.rating }}
       </span>
 
-      @if (metadata.runtimeOrSeasons) {
+      @if (
+        (metadata.runtimeOrSeasons && metadata.runtimeOrSeasons !== "0min") ||
+        getStatusText(metadata.status)
+      ) {
         <span class="meta-divider">•</span>
       }
     }
 
-    @if (metadata.runtimeOrSeasons) {
+    @if (metadata.runtimeOrSeasons && metadata.runtimeOrSeasons !== "0min") {
       <span class="metadata-text">
         {{ metadata.runtimeOrSeasons }}
+      </span>
+
+      @if (getStatusText(metadata.status)) {
+        <span class="meta-divider">•</span>
+      }
+    }
+
+    @if (getStatusText(metadata.status); as statusText) {
+      <span class="metadata-text">
+        {{ statusText }}
       </span>
     }
   </p>

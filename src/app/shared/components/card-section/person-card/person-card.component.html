@@ -1,12 +1,13 @@
 <div
-  (click)="runCallbackOnClick(entity.callback)"
+  (click)="entity.callback()"
   tabindex="0"
-  (keydown.enter)="runCallbackOnClick(entity.callback)"
+  (keydown.enter)="entity.callback()"
   role="button"
   class="card circle"
 >
   <div class="card__image-container">
     <img
+      [loading]="index > 20 ? 'lazy' : 'eager'"
       [src]="
         entity.image_path
           ? 'https://image.tmdb.org/t/p/w154' + entity.image_path

@@ -18,7 +18,7 @@ import {
   SeriesCastCredit,
   SeriesCrewCredit,
 } from '../../../../../shared/interfaces/models/tmdb/Series';
-import { Router } from '@angular/router';
+
 import {
   Movie,
   MovieCastCredit,
@@ -31,6 +31,7 @@ import {
 } from '../../../../../shared/components/card-section/people-cards-section/people-cards-section.component';
 import { TemporaryUserPreferencesService } from '../../../../../shared/services/preferences/temporary-user-preferences-service';
 import { TmdbEntityForCard } from '../../../../../shared/components/card-section/person-card/person-card.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-cast-and-crew',
@@ -50,7 +51,6 @@ export class CastAndCrewComponent {
     private destroyRef: DestroyRef,
     private router: Router,
     private preferencesService: TemporaryUserPreferencesService,
-    private cdr: ChangeDetectorRef,
   ) {
     this.initializeMovieOrSeriesData();
     this.initializeSectionProps();
@@ -88,28 +88,36 @@ export class CastAndCrewComponent {
       '',
       'grid',
       this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.crew.map(this.getCrewMemberEntity)
+        ? this.seriesData.aggregate_credits.crew.map((e) =>
+            this.getCrewMemberEntity(e, this.router),
+          )
         : [],
     );
     this.seriesCastSection = this.createSectionProps(
       '',
       'grid',
       this.seriesDetailsService.isSeriesRoute && this.seriesData
-        ? this.seriesData.aggregate_credits.cast.map(this.getCastMemberEntity)
+        ? this.seriesData.aggregate_credits.cast.map((e) =>
+            this.getCastMemberEntity(e, this.router),
+          )
         : [],
     );
     this.movieCrewSection = this.createSectionProps(
       '',
       'grid',
       this.movieData
-        ? this.movieData.credits.crew.map(this.getMovieCrewMemberEntity)
+        ? this.movieData.credits.crew.map((e) =>
+            this.getMovieCrewMemberEntity(e, this.router),
+          )
         : [],
     );
     this.movieCastSection = this.createSectionProps(
       '',
       'grid',
       this.movieData
-        ? this.movieData.credits.cast.map(this.getMovieCastMemberEntity)
+        ? this.movieData.credits.cast.map((e) =>
+            this.getMovieCastMemberEntity(e, this.router),
+          )
         : [],
     );
   }
@@ -157,26 +165,30 @@ export class CastAndCrewComponent {
     entities: TmdbEntityForCard[],
   ): CardsSectionProps {
     const props: CardsSectionProps = {
-      sectionTitle,
+      sectionTitle: sectionTitle,
       layout,
       maxNoOfCards: 1000,
-      entities: signal([]),
+      entities: [],
     };
 
     const initialEntities = entities.slice(0, 30);
-    (props.entities as WritableSignal<TmdbEntityForCard[]>).set(
-      initialEntities,
-    );
+    props.entities = initialEntities;
 
     setTimeout(() => {
-      (props.entities as WritableSignal<TmdbEntityForCard[]>).set(entities);
-      this.cdr.detectChanges(); // Manually trigger change detection
+      props.entities.push(...entities.slice(30, 100));
     }, 500);
+
+    setTimeout(() => {
+      props.entities.push(...entities.slice(100));
+    }, 1000);
 
     return props;
   }
 
-  private getCrewMemberEntity(crewMember: SeriesCrewCredit): TmdbEntityForCard {
+  private getCrewMemberEntity(
+    crewMember: SeriesCrewCredit,
+    router: Router,
+  ): TmdbEntityForCard {
     return {
       id: crewMember.id + crewMember.department,
       name: crewMember.name,
@@ -185,37 +197,44 @@ export class CastAndCrewComponent {
         .map((job) => job.job)
         .join(' / '),
       callback: () => {
-        this.router.navigate(['/people/', crewMember.id, 'details']);
+        router.navigateByUrl(`/people/${crewMember.id}/details'`);
       },
     };
   }
 
-  private getCastMemberEntity(castMember: SeriesCastCredit): TmdbEntityForCard {
+  private getCastMemberEntity(
+    castMember: SeriesCastCredit,
+    router: Router,
+  ): TmdbEntityForCard {
     return {
       id: castMember.id + castMember.roles.join('-'),
       name: castMember.name,
       image_path: castMember.profile_path ?? null,
       otherName: (castMember as SeriesCastCredit).roles[0]?.character ?? '',
       callback: () => {
-        this.router.navigate(['/people/', castMember.id, 'details']);
+        router.navigateByUrl(`/people/${castMember.id}/details'`);
       },
     };
   }
 
-  private getMovieCrewMemberEntity(crewMember: MovieCredit): TmdbEntityForCard {
+  private getMovieCrewMemberEntity(
+    crewMember: MovieCredit,
+    router: Router,
+  ): TmdbEntityForCard {
     return {
       id: crewMember.id + crewMember.job,
       name: crewMember.name,
       image_path: crewMember.profile_path ?? null,
       otherName: crewMember.job,
       callback: () => {
-        this.router.navigate(['/people/', crewMember.id, 'details']);
+        router.navigateByUrl(`/people/${crewMember.id}/details'`);
       },
     };
   }
 
   private getMovieCastMemberEntity(
     castMember: MovieCastCredit,
+    router: Router,
   ): TmdbEntityForCard {
     return {
       id: castMember.id + castMember.character,
@@ -223,7 +242,7 @@ export class CastAndCrewComponent {
       image_path: castMember.profile_path ?? null,
       otherName: castMember.character ?? '',
       callback: () => {
-        this.router.navigate(['/people/', castMember.id, 'details']);
+        router.navigateByUrl(`/people/${castMember.id}/details'`);
       },
     };
   }

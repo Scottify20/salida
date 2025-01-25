@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, Input, ViewChild } from '@angular/core';
+import { Component, ElementRef, inject, Input } from '@angular/core';
 import { Season } from '../../../../../../shared/interfaces/models/tmdb/Series';
 import { EpisodeCardComponent } from '../episode-card/episode-card.component';
 

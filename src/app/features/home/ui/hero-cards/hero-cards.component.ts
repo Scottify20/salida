@@ -72,11 +72,18 @@ export class HeroCardsComponent implements AfterViewInit, OnDestroy {
           card.getAttribute('data-card-index') as string,
         );
 
-        if (intersectRatio >= 0.8) this.indexOfFullyVisibleCard = indexOfCard;
+        if (intersectRatio >= 0.8) {
+          this.indexOfFullyVisibleCard = indexOfCard;
+        }
 
         if (this.indexOfFullyVisibleCard !== indexOfCard) {
           card.style.transform = `scale(${0.8 + (1 - 0.8) * intersectRatio + 0.05})`;
           card.style.opacity = `${intersectRatio * 100 + 25}%`;
+        } else if (window.matchMedia('(hover: hover)').matches) {
+          if (window.scrollY < 70) {
+            card.style.transform = `scale(${Math.max(0.8, 1 * intersectRatio)})`;
+          }
+          card.style.opacity = `100%`;
         }
       };
 

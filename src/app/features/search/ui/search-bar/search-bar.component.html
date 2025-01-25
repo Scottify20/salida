@@ -2,7 +2,7 @@
   class="search-bar"
   name="search-bar-component"
   [formGroup]="searchForm"
-  (submit)="onSubmit($event)"
+  (submit)="onSubmit($event, searchInput)"
 >
   <input
     #searchInput
@@ -12,7 +12,7 @@
     placeholder="Search"
     tabindex="0"
     formControlName="searchQuery"
-    (keydown.enter)="onSubmit($event)"
+    (keydown.enter)="onSubmit($event, searchInput)"
   />
 
   @if (hasValue()) {

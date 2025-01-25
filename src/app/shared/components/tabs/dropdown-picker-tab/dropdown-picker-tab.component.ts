@@ -7,15 +7,14 @@ export interface DropDownPickerTabProps {
   text: string | (() => string) | WritableSignal<string>;
   callback: () => void;
   arrowDirection: WritableSignal<'up' | 'down'>;
-  visibleIf: () => boolean;
   animateArrow?: boolean;
 }
 
 @Component({
-    selector: 'app-dropdown-picker',
-    imports: [],
-    templateUrl: './dropdown-picker-tab.component.html',
-    styleUrl: './dropdown-picker-tab.component.scss'
+  selector: 'app-dropdown-picker',
+  imports: [],
+  templateUrl: './dropdown-picker-tab.component.html',
+  styleUrl: './dropdown-picker-tab.component.scss',
 })
 export class DropdownPickerTabComponent {
   constructor(protected extractStringService: ExtractStringService) {}
@@ -24,9 +23,6 @@ export class DropdownPickerTabComponent {
     id: '',
     text: '---',
     callback: () => {},
-    visibleIf: () => {
-      return false;
-    },
     arrowDirection: signal('down'),
   };
 

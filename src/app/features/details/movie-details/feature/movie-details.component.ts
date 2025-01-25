@@ -1,4 +1,10 @@
-import { Component, computed } from '@angular/core';
+import {
+  Component,
+  computed,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
 import { TemporaryUserPreferencesService } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import {
@@ -15,20 +21,20 @@ import {
 } from '../../../../shared/components/toggle-switch/toggle-switch.component';
 
 @Component({
-    selector: 'app-movie-details',
-    imports: [
-        MediaHeroSectionComponent,
-        PillIndexedTabsComponent,
-        MovieMoreDetailsComponent,
-        ReleasesComponent,
-        ReviewsComponent,
-        CastAndCrewComponent,
-        ToggleSwitchComponent,
-    ],
-    templateUrl: '../ui/movie-details/movie-details.component.html',
-    styleUrl: '../ui/movie-details/movie-details.component.scss'
+  selector: 'app-movie-details',
+  imports: [
+    MediaHeroSectionComponent,
+    PillIndexedTabsComponent,
+    MovieMoreDetailsComponent,
+    ReleasesComponent,
+    ReviewsComponent,
+    CastAndCrewComponent,
+    ToggleSwitchComponent,
+  ],
+  templateUrl: '../ui/movie-details/movie-details.component.html',
+  styleUrl: '../ui/movie-details/movie-details.component.scss',
 })
-export class MovieDetailsComponent {
+export class MovieDetailsComponent implements AfterViewInit {
   constructor(private preferencesService: TemporaryUserPreferencesService) {}
 
   previousTabIndex: number | null = null;
@@ -45,13 +51,19 @@ export class MovieDetailsComponent {
     tabs: [
       {
         text: 'Details',
+        onClickCallback: this.scrollToPillTabs,
       },
-      { text: 'Cast + Crew' },
+      {
+        text: 'Cast + Crew',
+        onClickCallback: this.scrollToPillTabs,
+      },
       {
         text: 'Reviews',
+        onClickCallback: this.scrollToPillTabs,
       },
       {
         text: 'Releases',
+        onClickCallback: this.scrollToPillTabs,
       },
     ],
   };
@@ -167,4 +179,30 @@ export class MovieDetailsComponent {
       },
     ],
   };
+
+  @ViewChild('pillTabs') pillTabs!: ElementRef;
+  @ViewChild('heroSectionCont') heroSection!: ElementRef;
+
+  ngAfterViewInit() {
+    this.pillIndexedTabsProps.tabs.forEach((tab) => {
+      tab.onClickCallback = this.scrollToPillTabs.bind(this);
+    });
+  }
+
+  scrollToPillTabs() {
+    const hero = this.heroSection.nativeElement as HTMLElement;
+
+    const offset = hero.offsetHeight - this.getRem() * (3.98 - 1);
+
+    if (this.pillTabs && window.scrollY > offset) {
+      window.scrollTo({
+        top: offset,
+      });
+    }
+  }
+
+  // Gets the computed font size of the document's root element in pixels.
+  private getRem() {
+    return parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
 }

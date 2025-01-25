@@ -1,5 +1,5 @@
 .title__metadataContainer {
-  margin-bottom: 0.75rem;
+  // margin-bottom: 0.75rem;
   opacity: 90%;
   display: flex;
   flex-flow: row nowrap;
@@ -13,14 +13,12 @@
     }
 
     .metadata-text.metadata-rating {
-      height: 1rem;
+      text-align: center;
       font-size: 0.7rem;
       border: 1px solid var(--text-color-subtle);
-      width: min-content;
       margin: 0 0.5em;
-      padding: 0.15em 0.25em;
+      padding: 0.2em 0.25em;
       border-radius: 0.25rem;
-      place-content: center;
     }
 
     .meta-divider {

@@ -73,8 +73,9 @@ export class SearchBarComponent {
     this.emitValue$.next('cleared-search-bar');
   }
 
-  onSubmit(event: Event) {
+  onSubmit(event: Event, searchbar: HTMLInputElement) {
     event.preventDefault();
+    searchbar.blur();
     // outputs the typed string when the search or enter button is pushed/clicked
     if (this.searchForm.valid) {
       this.emitValue$.next(this.searchForm.value.searchQuery || '');

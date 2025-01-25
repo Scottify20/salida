@@ -2,15 +2,18 @@ import {
   AfterViewInit,
   Component,
   DestroyRef,
+  effect,
   ElementRef,
   Input,
   OnDestroy,
   OnInit,
+  signal,
   ViewChild,
+  WritableSignal,
 } from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { WindowResizeService } from '../../services/dom/window-resize.service';
-import { Observable, of, Subscription, tap } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ElementPositionService } from '../../services/dom/element-position.service';
 import { CommonModule } from '@angular/common';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
@@ -20,7 +23,7 @@ export interface PopupOrBottomSheetConfig {
   anchorElementId: string | null;
   itemsType: 'texts' | 'icon-grid';
   items: PopupItem[];
-  isPopupShown$: Observable<boolean | null>;
+  isPopupShown: WritableSignal<boolean | null>;
 }
 
 export interface PopupItem {
@@ -35,10 +38,10 @@ export interface AnchoringInfo {
 }
 
 @Component({
-    selector: 'app-popup-or-bottom-sheet',
-    imports: [CommonModule],
-    templateUrl: './popup-or-bottom-sheet.component.html',
-    styleUrl: './popup-or-bottom-sheet.component.scss'
+  selector: 'app-popup-or-bottom-sheet',
+  imports: [CommonModule],
+  templateUrl: './popup-or-bottom-sheet.component.html',
+  styleUrl: './popup-or-bottom-sheet.component.scss',
 })
 export class PopupOrBottomSheetComponent
   implements OnInit, OnDestroy, AfterViewInit
@@ -49,16 +52,26 @@ export class PopupOrBottomSheetComponent
     private scrollDisabler: ScrollDisablerService,
     private platformCheckService: PlatformCheckService,
     private destroyRef: DestroyRef,
-  ) {}
+  ) {
+    if (!this.platformCheckService.isBrowser()) {
+      return;
+    }
+
+    effect(() => {
+      this.props.isPopupShown() == null
+        ? ''
+        : this.props.isPopupShown()
+          ? this.showDialog()
+          : this.hideDialog();
+    });
+  }
 
   @Input() props: PopupOrBottomSheetConfig = {
     anchorElementId: null,
     itemsType: 'texts',
     items: [],
-    isPopupShown$: of(false),
+    isPopupShown: signal(null),
   };
-
-  isPopUpShown: boolean = false;
 
   ngOnInit() {
     this.initializeResizeSubscriptions();
@@ -86,6 +99,7 @@ export class PopupOrBottomSheetComponent
   }
 
   hideDialog() {
+    this.props.isPopupShown.set(false);
     this.elemPositionService.triggerManualUpdate();
     this.dialogElement.classList.add('hide');
     this.dialogElement.classList.remove('shown');
@@ -98,18 +112,6 @@ export class PopupOrBottomSheetComponent
       return;
     }
 
-    this.props.isPopupShown$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((isPopupShown) => {
-          isPopupShown == null
-            ? ''
-            : isPopupShown
-              ? this.showDialog()
-              : this.hideDialog();
-        }),
-      )
-      .subscribe();
     this.startSeasonPickerDialogPositioner();
     this.trackAnchorElement();
   }

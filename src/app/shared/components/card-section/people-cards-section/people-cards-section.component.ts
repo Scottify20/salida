@@ -1,11 +1,4 @@
-import {
-  Component,
-  Input,
-  isSignal,
-  WritableSignal,
-  OnChanges,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, Input, WritableSignal } from '@angular/core';
 import {
   SectionTitleComponent,
   SectionTitleProps,
@@ -16,7 +9,7 @@ import { PersonCardComponent } from '../person-card/person-card.component';
 
 export interface CardsSectionProps extends SectionTitleProps {
   stacking?: boolean;
-  entities: TmdbEntityForCard[] | WritableSignal<TmdbEntityForCard[]>;
+  entities: TmdbEntityForCard[];
   layout: 'grid' | 'carousel';
   maxNoOfCards: number;
 }
@@ -24,12 +17,17 @@ export interface CardsSectionProps extends SectionTitleProps {
 export type CardSectionButtonType = 'text' | 'icon' | 'none';
 
 @Component({
-    selector: 'app-people-cards-section',
-    imports: [SectionTitleComponent, ScrollButtonsComponent, PersonCardComponent],
-    templateUrl: './people-cards-section.component.html',
-    styleUrl: './people-cards-section.component.scss'
+  selector: 'app-people-cards-section',
+  imports: [SectionTitleComponent, ScrollButtonsComponent, PersonCardComponent],
+  templateUrl: './people-cards-section.component.html',
+  styleUrl: './people-cards-section.component.scss',
 })
-export class PeopleCardsSectionComponent implements OnChanges {
+export class PeopleCardsSectionComponent {
+  ngOnInit() {
+    this.sectionTitleOptions.sectionTitle = this.props.sectionTitle;
+    this.sectionTitleOptions.viewAllButtonProps = this.props.viewAllButtonProps;
+  }
+
   @Input() props: CardsSectionProps = {
     sectionTitle: 'Section Title',
     stacking: false,
@@ -42,29 +40,4 @@ export class PeopleCardsSectionComponent implements OnChanges {
     sectionTitle: this.props.sectionTitle,
     viewAllButtonProps: this.props.viewAllButtonProps,
   };
-
-  ngOnChanges(changes: SimpleChanges): void {
-    this.sectionTitleOptions = {
-      sectionTitle: this.props.sectionTitle,
-      viewAllButtonProps: this.props.viewAllButtonProps,
-    };
-
-    if (changes['props']) {
-      this.applyAnimationLogic();
-    }
-  }
-
-  extractEntities(
-    entities: TmdbEntityForCard[] | WritableSignal<TmdbEntityForCard[]>,
-  ): TmdbEntityForCard[] {
-    if (isSignal(entities)) {
-      return entities();
-    } else {
-      return entities;
-    }
-  }
-
-  private applyAnimationLogic() {
-    // No need to update entities for animation
-  }
 }

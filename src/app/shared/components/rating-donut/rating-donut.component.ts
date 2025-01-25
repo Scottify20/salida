@@ -52,11 +52,12 @@ export class RatingDonutComponent {
     animateTextStep();
   }
 
-  get ratingColorClass(): 'green' | 'yellow' | 'red' | '' {
-    const r = this.rating;
+  get ratingColorClass(): 'green' | 'yellow-green' | 'yellow' | 'red' | '' {
+    const r = parseFloat(this.rating.toFixed(1));
 
-    if (r > 6.0) return 'green';
-    if (r >= 4.0) return 'yellow';
+    if (r >= 7) return 'green';
+    if (r >= 5) return 'yellow-green';
+    if (r > 3) return 'yellow';
     if (r > 0) return 'red';
     return '';
   }

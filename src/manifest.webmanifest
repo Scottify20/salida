@@ -1,0 +1,25 @@
+{
+  "name": "Salida",
+  "short_name": "Salida",
+  "theme_color": "#101116",
+  "background_color": "#101116",
+  "display": "standalone",
+  "start_url": "/",
+  "icons": [
+    {
+      "src": "favicon.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "512x512",
+      "type": "image/svg+xml"
+    },
+    {
+      "src": "favicon.svg",
+      "sizes": "1024x1024",
+      "type": "image/svg+xml"
+    }
+  ]
+}

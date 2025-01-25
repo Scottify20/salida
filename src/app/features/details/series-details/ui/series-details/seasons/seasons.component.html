@@ -9,10 +9,19 @@
 ></app-popup-or-bottom-sheet> -->
 
 <div class="seasons-cotainer">
-  <app-episode-group
-    *ngIf="selectedSeason == seasonData.name"
-    [seasonData]="seasonData"
-  ></app-episode-group>
+  @if (isLoading) {
+    <div class="episode-group-skeleton-container">
+      <div class="episode-group-skeleton-header"></div>
+      @for (i of [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]; track i) {
+        <app-episode-card-skeleton></app-episode-card-skeleton>
+      }
+    </div>
+  } @else {
+    <app-episode-group
+      *ngIf="selectedSeason == seasonData.name"
+      [seasonData]="seasonData"
+    ></app-episode-group>
+  }
 </div>
 <app-popup-or-bottom-sheet
   [props]="seasonPickerConfig"

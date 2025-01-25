@@ -12,15 +12,15 @@ import { PlatformCheckService } from '../../services/dom/platform-check.service'
 export interface CollapsibleTextSectionOptions {
   sectionTitle?: string; // Optional title for the section.
   text: string; // Array of text strings to display.
-  maxLines: number;
+  maxCutoffLines: number;
   restoreScrollPosition?: boolean;
 }
 
 @Component({
-    selector: 'app-collapsible-text-section',
-    imports: [CommonModule],
-    templateUrl: './collapsible-text-section.component.html',
-    styleUrl: './collapsible-text-section.component.scss'
+  selector: 'app-collapsible-text-section',
+  imports: [CommonModule],
+  templateUrl: './collapsible-text-section.component.html',
+  styleUrl: './collapsible-text-section.component.scss',
 })
 export class CollapsibleTextSectionComponent {
   constructor(private platformCheckService: PlatformCheckService) {}
@@ -28,7 +28,7 @@ export class CollapsibleTextSectionComponent {
   @Input({ required: true })
   collapsibleTextSectionProps: CollapsibleTextSectionOptions = {
     text: '',
-    maxLines: 0,
+    maxCutoffLines: 0,
   };
 
   // Computed signal: True if the text content overflows its collapsed height.
@@ -53,7 +53,7 @@ export class CollapsibleTextSectionComponent {
   animateLengthClass = computed(() => {
     const lineHeightDiff =
       this.expandedHeight() / 1.5 / this.getRem() -
-      this.collapsibleTextSectionProps.maxLines;
+      this.collapsibleTextSectionProps.maxCutoffLines;
 
     return lineHeightDiff > 20
       ? 'very-very-very-long'
@@ -100,7 +100,7 @@ export class CollapsibleTextSectionComponent {
   // Updates the calculated heights of the text container and its shadow element.
   private updateHeights() {
     this.collapsedHeight.set(
-      this.getRem() * this.collapsibleTextSectionProps.maxLines * 1.5,
+      this.getRem() * this.collapsibleTextSectionProps.maxCutoffLines * 1.5,
     );
     this.expandedHeight.set(
       this.shadowTextContainer.nativeElement.offsetHeight +

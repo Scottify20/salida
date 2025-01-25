@@ -1,4 +1,12 @@
-import { Component, computed, effect, signal } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  effect,
+  ElementRef,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
 import { TemporaryUserPreferencesService } from '../../../../shared/services/preferences/temporary-user-preferences-service';
 import {
@@ -21,19 +29,19 @@ import {
 } from '../../../../shared/components/toggle-switch/toggle-switch.component';
 
 @Component({
-    selector: 'app-series-details',
-    imports: [
-        MediaHeroSectionComponent,
-        DropdownPickerTabComponent,
-        PillIndexedTabsComponent,
-        ReviewsComponent,
-        SeasonsComponent,
-        SeriesMoreDetailsComponent,
-        CastAndCrewComponent,
-        ToggleSwitchComponent,
-    ],
-    templateUrl: '../ui/series-details/series-details.component.html',
-    styleUrl: '../ui/series-details/series-details.component.scss'
+  selector: 'app-series-details',
+  imports: [
+    MediaHeroSectionComponent,
+    DropdownPickerTabComponent,
+    PillIndexedTabsComponent,
+    ReviewsComponent,
+    SeasonsComponent,
+    SeriesMoreDetailsComponent,
+    CastAndCrewComponent,
+    ToggleSwitchComponent,
+  ],
+  templateUrl: '../ui/series-details/series-details.component.html',
+  styleUrl: '../ui/series-details/series-details.component.scss',
 })
 export class SeriesDetailsComponent {
   constructor(
@@ -49,6 +57,12 @@ export class SeriesDetailsComponent {
         4,
       );
     });
+
+    effect(() => {
+      this.seriesDetailsService.isSeriesPickerShown() === true
+        ? this.dropDownPickerTabProps.arrowDirection.set('up')
+        : this.dropDownPickerTabProps.arrowDirection.set('down');
+    });
   }
 
   previousTabIndex: number | null = null;
@@ -59,14 +73,37 @@ export class SeriesDetailsComponent {
     this.currentTabIndex = index;
   }
 
+  @ViewChild('pillTabs') pillTabs!: ElementRef;
+  @ViewChild('heroSectionCont') heroSection!: ElementRef;
+
+  ngAfterViewInit() {
+    this.pillIndexedTabsProps.tabs.forEach((tab) => {
+      tab.onClickCallback = this.scrollToPillTabs.bind(this);
+    });
+  }
+
+  scrollToPillTabs() {
+    const hero = this.heroSection.nativeElement as HTMLElement;
+
+    const offset = hero.offsetHeight - this.getRem() * (3.98 - 1);
+
+    if (this.pillTabs && window.scrollY > offset) {
+      window.scrollTo({
+        top: offset,
+      });
+    }
+  }
+
+  // Gets the computed font size of the document's root element in pixels.
+  private getRem() {
+    return parseFloat(getComputedStyle(document.documentElement).fontSize);
+  }
+
   dropDownPickerTabProps: DropDownPickerTabProps = {
     id: 'season-picker-dropdown-tab',
     text: '---', // this needs to be updated by the effect in the constructor
     callback: () => {
-      this.seriesDetailsService.isSeriesPickerShown$.next(true);
-    },
-    visibleIf: () => {
-      return false;
+      this.seriesDetailsService.isSeriesPickerShown.set(true);
     },
     arrowDirection: signal('down'),
   };

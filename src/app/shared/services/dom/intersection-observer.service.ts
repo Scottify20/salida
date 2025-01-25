@@ -1,9 +1,9 @@
 import { Injectable, NgModule, Inject, PLATFORM_ID } from '@angular/core';
 import { PlatformCheckService } from './platform-check.service';
 
-type IntersectionCallback = (
+export type IntersectionCallback = (
   entries: IntersectionObserverEntry[],
-  observer: IntersectionObserver
+  observer: IntersectionObserver,
 ) => void;
 
 @Injectable({ providedIn: 'root' })
@@ -15,12 +15,15 @@ export class IntersectionObserverService {
   observe(
     target: Element,
     callback: IntersectionCallback,
-    options?: IntersectionObserverInit
-  ) {
+    options?: IntersectionObserverInit,
+  ): IntersectionObserver | null {
     if (this.platformCheckService.isBrowser()) {
       this.observer = new IntersectionObserver(callback, options);
       this.observer.observe(target);
+      return this.observer;
     }
+
+    return null;
   }
 
   unobserve(target: Element) {

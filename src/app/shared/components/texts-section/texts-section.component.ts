@@ -5,13 +5,13 @@ import {
 } from '../section-title/section-title.component';
 
 @Component({
-    selector: 'app-texts-section',
-    imports: [SectionTitleComponent],
-    templateUrl: './texts-section.component.html',
-    styleUrl: './texts-section.component.scss'
+  selector: 'app-texts-section',
+  imports: [SectionTitleComponent],
+  templateUrl: './texts-section.component.html',
+  styleUrl: './texts-section.component.scss',
 })
 export class TextsSectionComponent implements OnChanges {
-  @Input() textsSectionOptions: TextsSectionOptions = {
+  @Input({ required: true }) textsSectionOptions: TextsSectionOptions = {
     sectionTitle: '',
     sectionTitlePlural: '',
     texts: [],

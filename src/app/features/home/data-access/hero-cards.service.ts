@@ -1,12 +1,21 @@
-import { Inject, Injectable } from '@angular/core';
+import { effect, Inject, Injectable } from '@angular/core';
 import { fromEvent, tap, throttleTime } from 'rxjs';
 import { DOCUMENT } from '@angular/common';
+import { HomeService } from './home.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class HeroCardsService {
-  constructor(@Inject(DOCUMENT) private document: Document) {}
+  constructor(
+    @Inject(DOCUMENT) private document: Document,
+    private homeService: HomeService,
+  ) {
+    effect(() => {
+      homeService.selectedContentTypeIndex();
+      this.savedHeroCardsScrollX = 0;
+    });
+  }
 
   savedHeroCardsScrollX: number = 0;
 

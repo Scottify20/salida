@@ -15,14 +15,14 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
 
 @Component({
-    selector: 'app-movie-more-details',
-    imports: [
-        CollapsibleTextSectionComponent,
-        TextsSectionComponent,
-        CommonModule,
-    ],
-    templateUrl: './movie-more-details.component.html',
-    styleUrl: './movie-more-details.component.scss'
+  selector: 'app-movie-more-details',
+  imports: [
+    CollapsibleTextSectionComponent,
+    TextsSectionComponent,
+    CommonModule,
+  ],
+  templateUrl: './movie-more-details.component.html',
+  styleUrl: './movie-more-details.component.scss',
 })
 export class MovieMoreDetailsComponent {
   constructor(
@@ -75,7 +75,7 @@ export class MovieMoreDetailsComponent {
 
     return {
       text: plot,
-      maxLines: 3,
+      maxCutoffLines: 3,
     };
   }
 
@@ -113,10 +113,10 @@ export class MovieMoreDetailsComponent {
     };
   }
 
-  awardsSection: TextsSectionOptions = {
-    sectionTitle: 'Awards',
-    texts: ['4 nominations'],
-  };
+  // awardsSection: TextsSectionOptions = {
+  //   sectionTitle: 'Awards',
+  //   texts: ['4 nominations'],
+  // };
 
   // ratingsSection: RatingsSectionOptions = {
   //   sectionTitle: 'Ratings',
@@ -157,10 +157,20 @@ export class MovieMoreDetailsComponent {
     };
   }
 
-  get boxOfficeSection(): TextsSectionOptions {
+  get budgetSection(): TextsSectionOptions {
+    const budgetAmount = this.movieData?.budget ?? 0;
+    return {
+      sectionTitle: 'Budget',
+      texts: [
+        budgetAmount > 0 ? `$ ${budgetAmount.toLocaleString('en-US')}` : '0',
+      ],
+    };
+  }
+
+  get revenueSection(): TextsSectionOptions {
     const revenueAmount = this.movieData?.revenue ?? 0;
     return {
-      sectionTitle: 'Box Office Earnings',
+      sectionTitle: 'Revenue',
       texts: [
         revenueAmount > 0 ? `$ ${revenueAmount.toLocaleString('en-US')}` : '0',
       ],

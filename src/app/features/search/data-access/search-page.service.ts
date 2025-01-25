@@ -22,7 +22,6 @@ import {
 import { MovieSummary } from '../../../shared/interfaces/models/tmdb/Movies';
 import { SeriesSummary } from '../../../shared/interfaces/models/tmdb/Series';
 import { PersonSummary } from '../../../shared/interfaces/models/tmdb/All';
-import { sign } from 'crypto';
 
 export type SearchType = 'all' | 'movie' | 'series' | 'person';
 
@@ -114,8 +113,10 @@ export class SearchPageService {
     }
   }
 
+  isSearching: WritableSignal<boolean> = signal(false);
+
   searchAll() {
-    this.allResults.isSearching.set(true);
+    this.isSearching.set(true);
 
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
@@ -138,13 +139,17 @@ export class SearchPageService {
               ),
             ),
           ].filter((entity) => {
-            if (uniqueIds.indexOf(entity.id) < 0) {
-              // if id does not exist yet include it then push its id
+            if (
+              uniqueIds.indexOf(entity.id) < 0 &&
+              ((entity as MediaResultCardProps).posterURL ||
+                (entity as PersonResultCardProps).profilePhotoURL)
+            ) {
+              // if id does not exist yet and has a poster include it then push its id
               uniqueIds.push(entity.id);
               return true;
             }
 
-            // if id already exists yet include it
+            // if id already exists or it has no poster filter it off
             return false;
           }),
           page: apiResults.page,
@@ -152,12 +157,12 @@ export class SearchPageService {
           total_results: apiResults.total_results,
         };
 
-        this.allResults.isSearching.set(false);
+        this.isSearching.set(false);
       });
   }
 
   searchMovies() {
-    this.movieResults.isSearching.set(true);
+    this.isSearching.set(true);
 
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
@@ -169,21 +174,33 @@ export class SearchPageService {
       .searchMovies(preferences)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((apiResults) => {
+        const uniqueIds: string[] = [];
+
         const transformedResults: MediaResultCardProps[] =
           apiResults.results.map((movie) => this.transformMovie(movie));
 
         this.movieResults = {
-          isSearching: this.movieResults.isSearching,
           ...apiResults,
-          results: [...this.movieResults.results, ...transformedResults],
+          results: [...this.movieResults.results, ...transformedResults].filter(
+            (entity) => {
+              if (uniqueIds.indexOf(entity.id) < 0 && entity.posterURL) {
+                // if id does not exist yet and has a poster include it then push its id
+                uniqueIds.push(entity.id);
+                return true;
+              }
+
+              // if id already exists or it has no poster filter it off
+              return false;
+            },
+          ),
         };
 
-        this.movieResults.isSearching.set(false);
+        this.isSearching.set(false);
       });
   }
 
   searchSeries() {
-    this.seriesResults.isSearching.set(true);
+    this.isSearching.set(true);
 
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
@@ -195,21 +212,34 @@ export class SearchPageService {
       .searchSeries(preferences)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((apiResults) => {
+        const uniqueIds: string[] = [];
+
         const transformedResults: MediaResultCardProps[] =
           apiResults.results.map((series) => this.transformSeries(series));
 
         this.seriesResults = {
-          isSearching: this.seriesResults.isSearching,
           ...apiResults,
-          results: [...this.seriesResults.results, ...transformedResults],
+          results: [
+            ...this.seriesResults.results,
+            ...transformedResults,
+          ].filter((entity) => {
+            if (uniqueIds.indexOf(entity.id) < 0 && entity.posterURL) {
+              // if id does not exist yet and has a poster include it then push its id
+              uniqueIds.push(entity.id);
+              return true;
+            }
+
+            // if id already exists or it has no poster filter it off
+            return false;
+          }),
         };
 
-        this.seriesResults.isSearching.set(false);
+        this.isSearching.set(false);
       });
   }
 
   searchPeople() {
-    this.peopleResults.isSearching.set(true);
+    this.isSearching.set(true);
 
     const preferences = this.convertSignalsToValue({
       ...this.searchParams.all,
@@ -226,24 +256,23 @@ export class SearchPageService {
           apiResults.results.map((person) => this.transformPerson(person));
 
         this.peopleResults = {
-          isSearching: this.peopleResults.isSearching,
           ...apiResults,
           results: [
             ...this.peopleResults.results,
             ...transformedResults,
           ].filter((entity) => {
-            if (uniqueIds.indexOf(entity.id) < 0) {
-              // if id does not exist yet include it then push its id
+            if (uniqueIds.indexOf(entity.id) < 0 && entity.profilePhotoURL) {
+              // if id does not exist yet and has a poster include it then push its id
               uniqueIds.push(entity.id);
               return true;
             }
 
-            // if id already exists yet include it
+            // if id already exists or it has no poster filter it off
             return false;
           }),
         };
 
-        this.peopleResults.isSearching.set(false);
+        this.isSearching.set(false);
       });
   }
 
@@ -413,13 +442,11 @@ export class SearchPageService {
     results: (MediaResultCardProps | PersonResultCardProps)[];
     total_pages: number;
     total_results: number;
-    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
-    isSearching: signal(false),
   };
 
   movieResults: {
@@ -427,13 +454,11 @@ export class SearchPageService {
     results: MediaResultCardProps[];
     total_pages: number;
     total_results: number;
-    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
-    isSearching: signal(false),
   };
 
   seriesResults: {
@@ -441,13 +466,11 @@ export class SearchPageService {
     results: MediaResultCardProps[];
     total_pages: number;
     total_results: number;
-    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
-    isSearching: signal(false),
   };
 
   peopleResults: {
@@ -455,13 +478,11 @@ export class SearchPageService {
     results: PersonResultCardProps[];
     total_pages: number;
     total_results: number;
-    isSearching: WritableSignal<boolean>;
   } = {
     page: 0,
     results: [],
     total_pages: 0,
     total_results: 0,
-    isSearching: signal(false),
   };
 
   isMaxPageReached(type: SearchType): boolean {
@@ -501,12 +522,12 @@ export class SearchPageService {
       total_results: 0,
     };
 
-    this.movieResults = { ...defaultValues, isSearching: signal(false) };
+    this.movieResults = { ...defaultValues };
 
-    this.seriesResults = { ...defaultValues, isSearching: signal(false) };
+    this.seriesResults = { ...defaultValues };
 
-    this.allResults = { ...defaultValues, isSearching: signal(false) };
+    this.allResults = { ...defaultValues };
 
-    this.peopleResults = { ...defaultValues, isSearching: signal(false) };
+    this.peopleResults = { ...defaultValues };
   }
 }

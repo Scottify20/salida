@@ -5,7 +5,7 @@ export interface TmdbEntityForCard {
   name: string;
   otherName?: string;
   image_path: string | null;
-  callback?: () => void;
+  callback: () => void;
   rating?: number;
 }
 
@@ -16,17 +16,13 @@ export interface TmdbEntityForCard {
   styleUrl: './person-card.component.scss',
 })
 export class PersonCardComponent {
+  @Input({ required: true }) index!: number;
   @Input({ required: true }) entity: TmdbEntityForCard = {
     name: '',
     image_path: '',
     otherName: '',
     id: 0,
     rating: 0,
+    callback: () => {},
   };
-
-  runCallbackOnClick(callback?: () => void) {
-    if (callback) {
-      callback();
-    }
-  }
 }

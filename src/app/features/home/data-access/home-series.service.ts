@@ -21,30 +21,28 @@ export class HomeSeriesService {
   ) {}
 
   getPopularSeries$(): Observable<SeriesSummary[]> {
-    return this.seriesService
-      .getPopularSeries$()
-      .pipe(
-        map((series) =>
-          series.results
-            .filter((series) =>
-              series.origin_country.some((country) =>
-                [
-                  'US',
-                  'PH',
-                  'KR',
-                  'JP',
-                  'ES',
-                  'PH',
-                  'UK',
-                  'CA',
-                  'AU',
-                  'IN',
-                ].includes(country),
-              ),
-            )
-            .map((series) => ({ ...series, media_type: 'tv' })),
-        ),
-      );
+    return this.seriesService.getPopularSeries$().pipe(
+      map((series) =>
+        series.results
+          // .filter((series) =>
+          //   series.origin_country.some((country) =>
+          //     [
+          //       'US',
+          //       'PH',
+          //       'KR',
+          //       'JP',
+          //       'ES',
+          //       'PH',
+          //       'UK',
+          //       'CA',
+          //       'AU',
+          //       'IN',
+          //     ].includes(country),
+          //   ),
+          // )
+          .map((series) => ({ ...series, media_type: 'tv' })),
+      ),
+    );
   }
 
   getSeriesFromProviders(): Observable<MediaCardsSectionProps[]> {
@@ -72,7 +70,7 @@ export class HomeSeriesService {
       }),
       map((sections) => {
         const filteredSections = sections.filter(
-          (section) => section.titles.length >= 8,
+          (section) => section.titles.length >= 6,
         );
         return filteredSections;
       }),
@@ -84,9 +82,11 @@ export class HomeSeriesService {
     seriesResponse: SeriesSummaryResults,
   ): MediaCardsSectionProps {
     return {
-      viewAllButtonProps: { onClick: () => {} },
+      id: title + '-series',
       sectionTitle: title,
       maxNoOfTitles: 20,
+      saveScrollPosition: true,
+      viewAllButtonProps: { onClick: () => {} },
       titles: seriesResponse.results.map((series) => ({
         ...series,
         media_type: 'tv',

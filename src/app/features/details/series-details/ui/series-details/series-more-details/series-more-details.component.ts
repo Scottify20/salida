@@ -13,16 +13,22 @@ import {
 } from '../../../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-config.service';
+// import { GenresComponent } from '../../../../shared/ui/genres/genres.component';
+import {
+  Genre,
+  Keyword,
+} from '../../../../../../shared/interfaces/models/tmdb/All';
 
 @Component({
-    selector: 'app-series-more-details',
-    imports: [
-        TextsSectionComponent,
-        CommonModule,
-        CollapsibleTextSectionComponent,
-    ],
-    templateUrl: './series-more-details.component.html',
-    styleUrl: './series-more-details.component.scss'
+  selector: 'app-series-more-details',
+  imports: [
+    TextsSectionComponent,
+    CommonModule,
+    CollapsibleTextSectionComponent,
+    // GenresComponent,
+  ],
+  templateUrl: './series-more-details.component.html',
+  styleUrl: './series-more-details.component.scss',
 })
 export class SeriesMoreDetailsComponent {
   constructor(
@@ -36,6 +42,7 @@ export class SeriesMoreDetailsComponent {
         tap((series) => {
           if (series) {
             this.seriesData = series;
+            this.genres = series.genres;
             this.updateCountryNames();
           }
         }),
@@ -44,6 +51,7 @@ export class SeriesMoreDetailsComponent {
   }
 
   seriesData: Series | undefined;
+  genres: Genre[] = [];
   countries: string[] = [];
 
   isTextsSectionDoubleColumn(
@@ -59,6 +67,17 @@ export class SeriesMoreDetailsComponent {
     return itemsLessThanTen() ? true : false;
   }
 
+  // get keywordsSection(): TextsSectionOptions {
+  //   const keywords =
+  //     this.seriesData?.keywords.results?.map((keyword) => keyword.name) ?? [];
+
+  //   return {
+  //     sectionTitle: '',
+  //     sectionTitlePlural: '',
+  //     texts: keywords,
+  //   };
+  // }
+
   get plotSection(): CollapsibleTextSectionOptions {
     const plot =
       this.seriesDetailsService.isSeriesRoute && this.seriesData?.overview
@@ -67,7 +86,7 @@ export class SeriesMoreDetailsComponent {
 
     return {
       text: plot,
-      maxLines: 3,
+      maxCutoffLines: 3,
     };
   }
 

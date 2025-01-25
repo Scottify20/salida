@@ -20,19 +20,17 @@ export class HomeMovieService {
   ) {}
 
   getPopularMovies$(): Observable<MovieSummary[]> {
-    return this.movieService
-      .getPopularMovies$()
-      .pipe(
-        map((movies) =>
-          movies.results
-            .filter((movie) =>
-              ['en', 'es', 'ko', 'ja', 'tl', 'hi'].includes(
-                movie.original_language,
-              ),
-            )
-            .map((movie) => ({ ...movie, media_type: 'movie' })),
-        ),
-      );
+    return this.movieService.getPopularMovies$().pipe(
+      map((movies) =>
+        movies.results
+          // .filter((movie) =>
+          //   ['en', 'es', 'ko', 'ja', 'tl', 'hi'].includes(
+          //     movie.original_language,
+          //   ),
+          // )
+          .map((movie) => ({ ...movie, media_type: 'movie' })),
+      ),
+    );
   }
 
   getMoviesInTheatres(): Observable<MediaCardsSectionProps> {
@@ -40,7 +38,7 @@ export class HomeMovieService {
       map((movies) =>
         this.transformMoviesToCardSectionProps('In Theatres', movies),
       ),
-      filter((section) => section.titles.length >= 8),
+      filter((section) => section.titles.length >= 6),
     );
   }
 
@@ -49,7 +47,7 @@ export class HomeMovieService {
       map((movies) =>
         this.transformMoviesToCardSectionProps('Upcoming', movies),
       ),
-      filter((section) => section.titles.length >= 8),
+      filter((section) => section.titles.length >= 6),
       map((movie) => ({ ...movie, media_type: 'movie' })),
     );
   }
@@ -80,7 +78,7 @@ export class HomeMovieService {
       }),
       map((sections) => {
         const filteredSections = sections.filter(
-          (section) => section.titles.length >= 8,
+          (section) => section.titles.length >= 6,
         );
         return filteredSections;
       }),
@@ -92,9 +90,11 @@ export class HomeMovieService {
     moviesResponse: MovieSummaryResults,
   ): MediaCardsSectionProps {
     return {
-      viewAllButtonProps: { onClick: () => {} },
+      id: title + '-movies',
       sectionTitle: title,
       maxNoOfTitles: 20,
+      saveScrollPosition: true,
+      viewAllButtonProps: { onClick: () => {} },
       titles: moviesResponse.results.map((movie) => ({
         ...movie,
         media_type: 'movie',

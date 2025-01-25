@@ -8,9 +8,9 @@
   height: 225px;
   background-image: linear-gradient(
     to right,
-    rgba(255, 255, 255, 0.05),
+    rgba(255, 255, 255, 0.075),
     rgba(200, 200, 200, 0.025),
-    rgba(255, 255, 255, 0.05)
+    rgba(255, 255, 255, 0.075)
   );
   background-size: 200% 100%;
   animation: SkeletonFade 2s linear infinite;

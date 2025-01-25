@@ -33,3 +33,15 @@
     transform: translateY(1.25rem);
   }
 }
+
+.plot-and-genres {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1rem;
+}
+
+.genres-and-keywords {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.25rem;
+}

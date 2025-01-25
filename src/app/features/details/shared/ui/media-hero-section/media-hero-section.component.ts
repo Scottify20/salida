@@ -2,7 +2,7 @@ import { Component, DestroyRef, signal } from '@angular/core';
 import { Genre, Image } from '../../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
-import { catchError, map, of, tap } from 'rxjs';
+import { catchError, debounceTime, fromEvent, map, of, tap } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { WindowResizeService } from '../../../../../shared/services/dom/window-resize.service';
 import { HeaderButtonsComponent } from '../../../../../shared/components/header-buttons/header-buttons.component';
@@ -13,7 +13,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ScrollDetectorService } from '../../../../../shared/services/dom/scroll-detector.service';
 import { PlatformCheckService } from '../../../../../shared/services/dom/platform-check.service';
 import { MetadataComponent } from '../metadata/metadata.component';
-import { GenresComponent } from '../genres/genres.component';
+// import { GenresComponent } from '../genres/genres.component';
 
 export interface HeroSectionData {
   mediaType: 'movie' | 'series';
@@ -29,7 +29,7 @@ export interface HeroSectionData {
     CommonModule,
     HeaderButtonsComponent,
     MetadataComponent,
-    GenresComponent,
+    // GenresComponent,
   ],
   templateUrl: './media-hero-section.component.html',
   styleUrl: './media-hero-section.component.scss',
@@ -46,10 +46,13 @@ export class MediaHeroSectionComponent {
     this.initializeHeroSectionData();
   }
 
+  isBackdropLoaded = false;
   isLoading = true;
   isResizing = false;
   windowDimensions: { width: number; height: number } | undefined;
   isHeaderBgAndTitleVisibleSig = signal(false);
+
+  // genresProps: Genre[] = [];
 
   heroSectionData: HeroSectionData = {
     mediaType: 'movie',
@@ -65,8 +68,6 @@ export class MediaHeroSectionComponent {
       : `${this.heroSectionData.title} TV Series backdrop`;
   }
 
-  genresProps: Genre[] = [];
-
   private initializeHeroSectionData() {
     if (this.movieDetailsService.isMovieRoute) {
       this.setMovieData();
@@ -80,9 +81,9 @@ export class MediaHeroSectionComponent {
     this.movieDetailsService.movieData$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap((movie) => {
-          this.genresProps = movie?.genres || [];
-        }),
+        // tap((movie) => {
+        //   this.genresProps = movie?.genres || [];
+        // }),
         map((movie) => this.mapMovieToHeroSectionData(movie)),
         tap((heroSectionData) => {
           if (heroSectionData) {
@@ -97,9 +98,9 @@ export class MediaHeroSectionComponent {
     this.seriesDetailsService.seriesData$
       .pipe(
         takeUntilDestroyed(this.destroyRef),
-        tap((series) => {
-          this.genresProps = series?.genres || [];
-        }),
+        // tap((series) => {
+        //   this.genresProps = series?.genres || [];
+        // }),
         map((series) => this.mapSeriesToHeroSectionData(series)),
         tap((data) => {
           if (data) {
@@ -152,23 +153,20 @@ export class MediaHeroSectionComponent {
       return;
     }
 
-    this.scrollDetectorService.windowScrollState$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((scrollstate) => {
-          const remInPixels = parseFloat(
-            window.getComputedStyle(document.body).fontSize,
-          );
+    fromEvent(window, 'scroll')
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((scrollState) => {
+        const remInPixels = parseFloat(
+          window.getComputedStyle(document.body).fontSize,
+        );
 
-          this.isHeaderBgAndTitleVisibleSig.set(
-            (remInPixels === 16 && window.scrollY >= 280) ||
-              (remInPixels === 14 && window.scrollY >= 250)
-              ? true
-              : false,
-          );
-        }),
-      )
-      .subscribe((scrollState) => {});
+        this.isHeaderBgAndTitleVisibleSig.set(
+          (remInPixels === 16 && window.scrollY >= 320) ||
+            (remInPixels === 14 && window.scrollY >= 250)
+            ? true
+            : false,
+        );
+      });
   }
 
   ngAfterViewInit() {

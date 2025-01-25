@@ -70,13 +70,7 @@
 }
 
 .search__results {
-  padding: 0 1rem;
-  display: flex;
-  flex-flow: column nowrap;
-  gap: 1rem;
-}
-
-.results-skeleton-container {
+  padding: 0 1rem 1rem 1rem;
   display: flex;
   flex-flow: column nowrap;
   gap: 1rem;

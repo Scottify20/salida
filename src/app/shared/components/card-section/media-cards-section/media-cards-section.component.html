@@ -2,13 +2,13 @@
   <app-section-title [props]="sectionTitleOptions"></app-section-title>
   <div class="container">
     <app-scroll-buttons
-      [positionValues]="{ top: '30%', left: '0', right: '0' }"
+      [numberOfItems]="props.titles.length"
+      [containerElement]="cardsContainer"
+      [positionValues]="{ top: '30%', left: '0' }"
     ></app-scroll-buttons>
-    <div class="subcontainer clickable-cards">
+    <div #cardsContainer class="subcontainer clickable-cards">
       @for (title of props.titles; track title.id; let i = $index) {
-        @if (props.maxNoOfTitles && i < props.maxNoOfTitles) {
-          <app-media-card [index]="i" [props]="title"></app-media-card>
-        }
+        <app-media-card [index]="i" [props]="title"></app-media-card>
       }
     </div>
   </div>

@@ -68,7 +68,7 @@ h6 {
   isolation: isolate;
 }
 
-// dialogs
+// 9. dialogs properties reset
 dialog,
 dialog:modal,
 dialog:-internal-dialog-in-top-layer {
@@ -77,4 +77,12 @@ dialog:-internal-dialog-in-top-layer {
   margin: 0;
   max-width: unset;
   max-height: unset;
+}
+
+// 10. images alt hide
+
+img {
+  text-indent: 100%;
+  white-space: nowrap;
+  // overflow: hidden;
 }

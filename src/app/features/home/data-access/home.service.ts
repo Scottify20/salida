@@ -1,10 +1,17 @@
-import { Injectable, signal, WritableSignal, computed } from '@angular/core';
+import {
+  Injectable,
+  signal,
+  WritableSignal,
+  computed,
+  effect,
+} from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HomeMovieService } from './home-movie.service';
 import { HomeSeriesService } from './home-series.service';
 import { MediaCardsSectionProps } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
 import { MediaSummary } from '../../../shared/interfaces/models/tmdb/All';
+import { CardsSectionScrollService } from '../../../shared/services/for-components/cards-section-scroll.service';
 
 type MediaTypeLabel = 'All' | 'Movies' | 'TV Shows';
 
@@ -19,7 +26,13 @@ export class HomeService {
   constructor(
     private homeMovieService: HomeMovieService,
     private homeSeriesService: HomeSeriesService,
-  ) {}
+    private cardsScrollService: CardsSectionScrollService,
+  ) {
+    effect(() => {
+      this.selectedContentTypeIndex();
+      this.cardsScrollService.resetAllScrollPositions();
+    });
+  }
 
   setContentTypeByName(newName: MediaTypeLabel) {
     this.selectedContentTypeName.set(newName);
@@ -52,10 +65,12 @@ export class HomeService {
           const sectionTitle = seriesSection.sectionTitle.toString();
           if (providerMap.has(sectionTitle)) {
             const combinedSection: MediaCardsSectionProps = {
-              viewAllButtonProps: { onClick: () => {} },
+              id: sectionTitle + '-combined',
               sectionTitle: sectionTitle,
               maxNoOfTitles: 20,
               titles: [],
+              saveScrollPosition: true,
+              viewAllButtonProps: { onClick: () => {} },
             };
 
             const movieEntities = providerMap.get(sectionTitle)!.titles;

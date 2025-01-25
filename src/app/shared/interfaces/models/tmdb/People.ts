@@ -63,13 +63,13 @@ export const KnownForDepartmentLabelEnum: Record<
   Sound: 'Sound',
   Camera: 'Photography',
   'Costume & Make-Up': 'Costume & Make-Up',
-  Directing: 'Directing',
-  Writing: 'Writing',
-  Editing: 'Editing',
+  Directing: 'Director',
+  Writing: 'Writer',
+  Editing: 'Editor',
   Lighting: 'Lighting',
   'Visual Effects': 'Visual Effects',
   Production: 'Production',
-  Crew: '',
+  Crew: 'Crew',
 };
 
 export type KnownForDepartmentKey =

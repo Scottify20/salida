@@ -14,14 +14,31 @@
 
 <div class="title__hero">
   <img
-    class="title__hero-backdrop loading"
+    #backdrop
+    class="title__hero-backdrop"
     [src]="
       'https://image.tmdb.org/t/p/' +
       getBackropWidth() +
       heroSectionData.backdrop_path
     "
     [alt]="getBackdropAlt"
+    (load)="isBackdropLoaded = true; backdrop.style.opacity = '1'"
   />
+
+  <img
+    class="title__hero-backdrop blurred skeleton"
+    [class]="isBackdropLoaded ? 'hide' : ''"
+    [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.backdrop_path"
+    [alt]=""
+  />
+  @if (!heroSectionData.backdrop_path) {
+    <img
+      class="title__hero-backdrop blurred poster-fallback"
+      [src]="'https://image.tmdb.org/t/p/w185' + heroSectionData.poster_path"
+      [alt]=""
+    />
+  }
+
   <div class="title__main-details-container">
     <img
       [src]="'https://image.tmdb.org/t/p/w300' + heroSectionData.poster_path"
@@ -30,6 +47,6 @@
     />
     <h4 class="title__title">{{ heroSectionData.title }}</h4>
     <app-metadata></app-metadata>
-    <app-genres [props]="genresProps"></app-genres>
+    <!-- <app-genres [props]="genresProps"></app-genres> -->
   </div>
 </div>

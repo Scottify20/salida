@@ -1,23 +1,7 @@
-import {
-  Component,
-  DestroyRef,
-  Input,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { Season } from '../../../../../../shared/interfaces/models/tmdb/Series';
 
-import {
-  catchError,
-  map,
-  of,
-  Subscription,
-  switchMap,
-  take,
-  takeUntil,
-  tap,
-} from 'rxjs';
+import { catchError, map, of, tap } from 'rxjs';
 import { SeriesDetailsService } from '../../../data-access/series-details.service';
 import { EpisodeGroupComponent } from '../episode-group/episode-group.component';
 import { CommonModule } from '@angular/common';
@@ -27,9 +11,15 @@ import {
   PopupOrBottomSheetConfig,
 } from '../../../../../../shared/components/popup-or-bottom-sheet/popup-or-bottom-sheet.component';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { EpisodeCardSkeletonComponent } from '../../episode-card-skeleton/episode-card-skeleton.component';
 
 @Component({
-  imports: [EpisodeGroupComponent, CommonModule, PopupOrBottomSheetComponent],
+  imports: [
+    EpisodeGroupComponent,
+    CommonModule,
+    PopupOrBottomSheetComponent,
+    EpisodeCardSkeletonComponent,
+  ],
   selector: 'app-seasons',
   templateUrl: './seasons.component.html',
   styleUrls: ['./seasons.component.scss'],
@@ -42,15 +32,11 @@ export class SeasonsComponent {
     this.initiateSeasonDataAndPicker();
   }
 
-  @Input({ required: true }) dropdownPickerArrowDirection: WritableSignal<
-    'up' | 'down'
-  > = signal('down');
-
   seasonPickerConfig: PopupOrBottomSheetConfig = {
     anchorElementId: 'season-picker-dropdown-tab',
     itemsType: 'texts',
     items: [],
-    isPopupShown$: this.seriesDetailsService.isSeriesPickerShown$,
+    isPopupShown: this.seriesDetailsService.isSeriesPickerShown,
   };
 
   seasonData: Season = {
@@ -74,7 +60,7 @@ export class SeasonsComponent {
   };
 
   selectedSeason: string | null = null;
-
+  isLoading = true;
   isFetchingFailed = false;
 
   initiateSeasonDataAndPicker() {
@@ -92,10 +78,12 @@ export class SeasonsComponent {
             const popUpItemConfig: PopupItem = {
               textContent: seasonName,
               callback: () => {
+                this.isLoading = true;
+
                 this.seriesDetailsService.selectedSeasonSummary$.next({
                   ...season,
                 });
-                this.dropdownPickerArrowDirection.set('down');
+                this.seriesDetailsService.isSeriesPickerShown.set(false);
               },
               isSelected: () => {
                 return this.selectedSeason == seasonName;
@@ -128,6 +116,7 @@ export class SeasonsComponent {
             return;
           }
           this.seasonData = seasonData;
+          this.isLoading = false;
         }),
         catchError((err) => {
           console.log(err);
@@ -136,8 +125,7 @@ export class SeasonsComponent {
       )
       .subscribe();
   }
-
   ngOnDestroy() {
-    this.seriesDetailsService.isSeriesPickerShown$.next(null);
+    this.seriesDetailsService.isSeriesPickerShown.set(null);
   }
 }

@@ -1,7 +1,7 @@
 <div
   #dialog
   class="picker-dialog fullscreen-dialog"
-  [ngClass]="this.isPopUpShown ? 'shown' : ''"
+  [class]="props.isPopupShown() ? 'shown' : ''"
 >
   <div class="dialog__backrop" (click)="hideDialog()"></div>
 
