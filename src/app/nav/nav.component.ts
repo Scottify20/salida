@@ -3,10 +3,10 @@ import { Component, Renderer2, Inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
-    selector: 'app-nav',
-    imports: [RouterModule],
-    templateUrl: './nav.component.html',
-    styleUrl: './nav.component.scss'
+  selector: 'app-nav',
+  imports: [RouterModule],
+  templateUrl: './nav.component.html',
+  styleUrl: './nav.component.scss',
 })
 export class NavComponent {
   constructor(
@@ -15,7 +15,7 @@ export class NavComponent {
     @Inject(DOCUMENT) private document: Document,
   ) {}
 
-  routesWhereNavShows: string[] = ['/', '/lists', '/search', '/trending/**'];
+  routesWhereNavShows: string[] = ['/', '/lists', '/lists/**', '/search'];
 
   navItems: {
     label: string;
@@ -26,22 +26,22 @@ export class NavComponent {
   }[] = [
     {
       label: 'Home',
-      iconSvgPathSolid: `assets/icons/nav/Home-solid.svg`,
-      iconSvgPathOutline: 'assets/icons/nav/Home-outline.svg',
+      iconSvgPathSolid: `/assets/icons/nav/Home-solid.svg`,
+      iconSvgPathOutline: '/assets/icons/nav/Home-outline.svg',
       routerPath: '/',
       exact: true,
     },
     {
       label: 'Lists',
-      iconSvgPathSolid: `assets/icons/nav/Lists-solid.svg`,
-      iconSvgPathOutline: 'assets/icons/nav/Lists-outline.svg',
+      iconSvgPathSolid: `/assets/icons/nav/Lists-solid.svg`,
+      iconSvgPathOutline: '/assets/icons/nav/Lists-outline.svg',
       routerPath: '/lists',
       exact: false,
     },
     {
       label: 'Search',
-      iconSvgPathSolid: `assets/icons/nav/Search-solid.svg`,
-      iconSvgPathOutline: 'assets/icons/nav/Search-outline.svg',
+      iconSvgPathSolid: `/assets/icons/nav/Search-solid.svg`,
+      iconSvgPathOutline: '/assets/icons/nav/Search-outline.svg',
       routerPath: '/search',
       exact: false,
     },

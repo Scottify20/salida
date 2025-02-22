@@ -53,21 +53,21 @@ interface SignupErrorMessages {
 }
 
 @Component({
-    selector: 'app-sign-up-page',
-    imports: [
-        ReactiveFormsModule,
-        CommonModule,
-        CapsLockDetectorDirective,
-        SocialsSignInComponent,
-        RouterModule,
-        ProgressIndicatorComponent,
-        DividerWithTitleComponent,
-        LoadingDotsComponent,
-        HeaderButtonsComponent,
-        LoadingModalComponent,
-    ],
-    templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
-    styleUrl: '../ui/sign-up-page/sign-up-page.component.scss'
+  selector: 'app-sign-up-page',
+  imports: [
+    ReactiveFormsModule,
+    CommonModule,
+    CapsLockDetectorDirective,
+    SocialsSignInComponent,
+    RouterModule,
+    ProgressIndicatorComponent,
+    DividerWithTitleComponent,
+    LoadingDotsComponent,
+    HeaderButtonsComponent,
+    LoadingModalComponent,
+  ],
+  templateUrl: '../ui/sign-up-page/sign-up-page.component.html',
+  styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
 })
 export class SignUpPageComponent {
   constructor(
@@ -179,7 +179,7 @@ export class SignUpPageComponent {
           this.toastsService.addToast({
             text: 'There was an error registering your data.',
             scope: 'route',
-            iconPath: 'assets/icons/toast/error.svg',
+            iconPath: '/assets/icons/toast/error.svg',
           });
           return;
         }
@@ -367,10 +367,11 @@ export class SignUpPageComponent {
   headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/Back.svg',
+      iconPath: '/assets/icons/header/Back.svg',
       onClickCallbackFn: () => {
         this.router.navigateByUrl('/');
       },
+      ariaLabel: 'Go back',
     },
   ];
 

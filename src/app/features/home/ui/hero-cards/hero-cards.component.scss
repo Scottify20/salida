@@ -1,7 +1,6 @@
 .hero {
   position: relative;
-  overflow-x: scroll;
-  overflow-y: hidden;
+  overflow: hidden;
   scroll-padding-left: 40vw;
   scrollbar-width: none;
   scrollbar-color: transparent transparent;

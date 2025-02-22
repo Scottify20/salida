@@ -1,4 +1,4 @@
-<div class="title-details" pill-tab-parent>
+<div class="title-details" #parentContainer>
   <div #heroSectionCont>
     <app-media-hero-section></app-media-hero-section>
   </div>
@@ -12,6 +12,9 @@
       class="title-details__primary-tab"
       (tabIndex)="setTabIndex($event)"
       [props]="pillIndexedTabsProps"
+      [parentContainer]="parentContainer"
+      [overflowClipper]="overflowClipper"
+      [viewsContainer]="viewsContainer"
     ></app-pill-indexed-tabs>
 
     <!-- secondary tabs for picker, toggle, etc -->
@@ -35,8 +38,8 @@
     </div>
   </div>
 
-  <div class="transition-overflow-clipper" pill-tab-overflow-clipper>
-    <div class="tabbed-components-container" pill-tab-component-transition>
+  <div class="transition-overflow-clipper" #overflowClipper>
+    <div class="tabbed-components-container" #viewsContainer>
       @if (currentTabIndex === 0) {
         <app-movie-more-details></app-movie-more-details>
       }

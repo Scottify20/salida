@@ -19,7 +19,7 @@ import {
 } from '../../../shared/components/tabs/pill-indexed-tabs/pill-indexed-tabs.component';
 import { HomeMovieService } from '../data-access/home-movie.service';
 import { map, Observable } from 'rxjs';
-import { AsyncPipe, CommonModule } from '@angular/common';
+import { AsyncPipe } from '@angular/common';
 import { HomeSeriesService } from '../data-access/home-series.service';
 import { MediaSummary } from '../../../shared/interfaces/models/tmdb/All';
 import { SeriesSummary } from '../../../shared/interfaces/models/tmdb/Series';
@@ -31,6 +31,8 @@ import {
 import { HeroCardProps } from '../ui/hero-card/hero-card.component';
 import { HeroCardsComponent } from '../ui/hero-cards/hero-cards.component';
 import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover/user-actions-menu-popover.component';
+import { MediaCardsSectionSkeletonComponent } from '../../../shared/components/card-section/media-cards-section-skeleton/media-cards-section-skeleton.component';
+import { HeroCardsSkeletonComponent } from '../ui/hero-cards-skeleton/hero-cards-skeleton.component';
 
 @Component({
   selector: 'app-home',
@@ -43,9 +45,10 @@ import { UserActionsMenuPopoverComponent } from '../ui/user-actions-menu-popover
     PopoverMenuComponent,
     PillIndexedTabsComponent,
     AsyncPipe,
-    CommonModule,
     MediaCardsSectionComponent,
     HeroCardsComponent,
+    MediaCardsSectionSkeletonComponent,
+    HeroCardsSkeletonComponent,
   ],
 })
 export class HomeComponent {
@@ -56,7 +59,6 @@ export class HomeComponent {
     private homeMovieService: HomeMovieService,
     private homeSeriesService: HomeSeriesService,
   ) {}
-  // TODO the scrollLeft of each heroCards carousel must be seperate for each content type
 
   heroCardsTitlesPropsForMoviesAndSeries$: Observable<MediaSummary[]> =
     this.homeService.getPopularMoviesAndSeries$();
@@ -94,12 +96,14 @@ export class HomeComponent {
   headerButtonsProps: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/branding/logo.svg',
+      iconPath: '/assets/icons/branding/logo.svg',
+      ariaLabel: 'Salida logo',
     },
     {
       id: 'user-button',
       type: 'icon',
       iconPath: this.userService.userPhotoUrlSig,
+      ariaLabel: 'View account options',
     },
   ];
 
@@ -143,6 +147,7 @@ export class HomeComponent {
   };
 
   pillTabProps: PillIndexedTabsProps = {
+    swipeGestures: false,
     buttonContent: 'text',
     animationType: 'fade',
     tabs: this.homeService.contentTypes.map((tabName) => ({

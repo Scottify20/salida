@@ -1,0 +1,61 @@
+.title-cards-section {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 0.75rem;
+}
+
+.skeleton-title {
+  height: 1.75rem;
+  background: var(--card-bg-color-subtle);
+  border-radius: 0.5rem;
+}
+
+.container {
+  position: relative;
+}
+
+.subcontainer {
+  overflow: hidden;
+  display: inline-flex;
+  flex-flow: row nowrap;
+  column-gap: 1.5rem;
+  width: 100%;
+  overflow: hidden;
+}
+
+.skeleton-card {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 0.75rem;
+  width: 7.5rem;
+}
+
+.skeleton-image {
+  width: 7.5rem;
+  height: calc((7.5rem * 3 / 2) - 4px);
+  background: var(--card-bg-color-subtle);
+  border-radius: 0.5rem;
+}
+
+.skeleton-text {
+  height: 2.5rem;
+  background: var(--card-bg-color-subtle);
+  border-radius: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .skeleton-card,
+  .skeleton-image {
+    width: 8rem;
+    height: unset;
+    aspect-ratio: 2/2.8202;
+  }
+
+  .title-cards-section {
+    row-gap: 1rem;
+  }
+
+  .skeleton-title {
+    height: 2rem;
+  }
+}

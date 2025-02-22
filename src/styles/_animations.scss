@@ -33,6 +33,13 @@
       }
     }
   }
+  .clickable-cards.no-transform {
+    &:hover > * {
+      &:hover {
+        transform: none;
+      }
+    }
+  }
 }
 
 @media (hover: none) {
@@ -58,7 +65,7 @@
 // other animations (for page transitions and element animations)
 
 .fade-in {
-  animation: fadeIn 0.45s ease-in forwards;
+  animation: fadeIn 0.3s ease-in forwards;
 }
 
 .slide-in-from-left {

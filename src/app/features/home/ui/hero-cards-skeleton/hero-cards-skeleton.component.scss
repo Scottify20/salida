@@ -1,0 +1,58 @@
+.hero {
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding-top: 1rem;
+}
+
+.hero__cards-container {
+  position: relative;
+  display: flex;
+  gap: 0.5rem;
+  overflow: hidden;
+  place-content: center;
+}
+
+.hero-card-skeleton {
+  flex-shrink: 0;
+  width: 65vw;
+  aspect-ratio: 1 / 1.5;
+  max-width: 720px;
+  max-height: calc(700px * 9 / 16);
+  border-radius: 1rem;
+  padding-bottom: 1rem;
+  margin-bottom: 1rem;
+}
+
+.hero-card-skeleton__poster {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  background-color: var(--card-bg-color-subtle);
+}
+
+.spacer-for-indicator {
+  height: 10.38px;
+}
+
+@media (min-width: 481px) and (max-width: 720px) {
+  .hero-card-skeleton {
+    aspect-ratio: 16 / 9;
+    width: 75vw;
+  }
+}
+
+@media (min-width: 721px) {
+  .hero-card-skeleton {
+    aspect-ratio: 16 / 9;
+    width: 75vw;
+  }
+}
+
+@media (min-width: 900px) {
+  .hero {
+    margin: 0 auto;
+  }
+}

@@ -66,7 +66,7 @@ export class UserService {
   userPhotoUrlSig = computed(() =>
     this.userSig()?.photoURL
       ? this.userSig()?.photoURL
-      : '../../../../assets/icons/home-header/User-solid.svg',
+      : '/assets/icons/home-header/User-solid.svg',
   );
 
   userPlainStringIdentifierSig = computed(
@@ -81,7 +81,7 @@ export class UserService {
       this.toastService.addToast({
         text: 'An error has occured while saving your data.',
         scope: 'route',
-        iconPath: 'assets/icons/toast/error.svg',
+        iconPath: '/assets/icons/toast/error.svg',
       });
 
       return of(null);
@@ -133,7 +133,7 @@ export class UserService {
           this.toastService.addToast({
             text: 'Authorization failed. Cannot save user data.',
             scope: 'route',
-            iconPath: 'assets/icons/toast/error.svg',
+            iconPath: '/assets/icons/toast/error.svg',
           });
           return of(null); // Return a null observable instead of making a request
         }
@@ -176,7 +176,7 @@ export class UserService {
           this.toastService.addToast({
             text: 'Cannot set username. Authorization failed.',
             scope: 'route',
-            iconPath: 'assets/icons/toast/error.svg',
+            iconPath: '/assets/icons/toast/error.svg',
           });
           return of(null); // Return a null observable instead of making a request
         }

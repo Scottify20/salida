@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /auth/login
+Disallow: /auth/signup
+Disallow: /auth/set-username
+Disallow: /search*
+Sitemap: https://salida-demo.vercel.app/sitemap.xml

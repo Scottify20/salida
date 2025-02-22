@@ -49,6 +49,9 @@ export class SeriesDetailsComponent {
     private formatService: FormatService,
     private preferencesService: TemporaryUserPreferencesService,
   ) {
+    // Ensure the popup is hidden by default
+    this.seriesDetailsService.isSeriesPickerShown.set(false);
+
     effect(() => {
       this.dropDownPickerTabProps.text = this.formatService.truncate(
         this.seriesDetailsService.selectedSeason(),
@@ -71,6 +74,14 @@ export class SeriesDetailsComponent {
   setTabIndex(index: number) {
     this.previousTabIndex = Number(this.currentTabIndex);
     this.currentTabIndex = index;
+
+    // Hide the popup when switching tabs
+    this.seriesDetailsService.isSeriesPickerShown.set(false);
+
+    // Hide the popup when switching to the episodes tab (index 2)
+    if (index === 2) {
+      this.seriesDetailsService.isSeriesPickerShown.set(false);
+    }
   }
 
   @ViewChild('pillTabs') pillTabs!: ElementRef;
@@ -109,6 +120,7 @@ export class SeriesDetailsComponent {
   };
 
   pillIndexedTabsProps: PillIndexedTabsProps = {
+    swipeGestures: true,
     buttonContent: 'text',
     animationType: 'slide',
     tabs: [

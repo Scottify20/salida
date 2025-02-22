@@ -197,15 +197,17 @@ export class MediaHeroSectionComponent {
   headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/Back.svg',
+      iconPath: '/assets/icons/header/Back.svg',
       onClickCallbackFn: () => {
         history.back();
       },
+      ariaLabel: 'Go back',
     },
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/AddToList.svg',
+      iconPath: '/assets/icons/header/AddToList.svg',
       onClickCallbackFn: () => {},
+      ariaLabel: 'Add this movie or series to a list',
     },
   ];
 

@@ -2,7 +2,11 @@
   <div class="episode__poster-and-mini-number-container">
     <p class="episode__mini-number">{{ episodeData.episode_number }}</p>
     <img
-      [src]="'https://image.tmdb.org/t/p/w300' + episodeData.still_path"
+      [src]="
+        episodeData.still_path
+          ? 'https://image.tmdb.org/t/p/w300' + episodeData.still_path
+          : ''
+      "
       alt=""
       class="episode-card__thumbnail"
     />

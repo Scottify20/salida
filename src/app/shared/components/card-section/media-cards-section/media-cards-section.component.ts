@@ -1,4 +1,10 @@
-import { Component, ElementRef, Input, ViewChild } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import {
   SectionTitleProps,
   SectionTitleComponent,
@@ -23,6 +29,7 @@ export interface MediaCardsSectionProps extends SectionTitleProps {
   imports: [SectionTitleComponent, ScrollButtonsComponent, MediaCardComponent],
   templateUrl: './media-cards-section.component.html',
   styleUrl: './media-cards-section.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MediaCardsSectionComponent {
   @Input({ required: true }) props: MediaCardsSectionProps = {
@@ -36,6 +43,7 @@ export class MediaCardsSectionComponent {
 
   sectionTitleOptions: SectionTitleProps = {
     sectionTitle: this.props.sectionTitle,
+    iconURL: this.props.iconURL,
     viewAllButtonProps: this.props.viewAllButtonProps,
   };
 
@@ -67,6 +75,7 @@ export class MediaCardsSectionComponent {
     this.props.titles.splice(this.props.maxNoOfTitles);
 
     this.sectionTitleOptions = {
+      iconURL: this.props.iconURL,
       sectionTitle: this.props.sectionTitle,
       viewAllButtonProps: this.props.viewAllButtonProps,
     };

@@ -3,6 +3,7 @@
   tabindex="0"
   role="button"
   class="header__button"
+  [attr.aria-label]="props.ariaLabel"
   [class]="
     props.type === 'text' ? 'header__button--text' : 'header__button--icon'
   "

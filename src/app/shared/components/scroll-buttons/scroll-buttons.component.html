@@ -1,6 +1,6 @@
 <div class="scroll-buttons-container">
   <div
-    (click)="this.scroll('left')"
+    (click)="scroll('left'); scrollBtnClicked.emit('left')"
     [class]="isLeftBtnVisible() ? '' : 'hide'"
     class="scroll-button scroll-button--left"
     [style]="'top:' + positionValues.top + ';left:' + positionValues.left"
@@ -16,7 +16,7 @@
   </div>
 
   <div
-    (click)="this.scroll('right')"
+    (click)="scroll('right'); scrollBtnClicked.emit('right')"
     [class]="isRightBtnVisible() ? '' : 'hide'"
     class="scroll-button scroll-button--right"
     [style]="'top:' + positionValues.top + ';right:' + positionValues.right"

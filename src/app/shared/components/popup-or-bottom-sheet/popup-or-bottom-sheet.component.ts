@@ -32,11 +32,6 @@ export interface PopupItem {
   isSelected: () => boolean;
 }
 
-export interface AnchoringInfo {
-  dialogElementRef: ElementRef | null;
-  anchorElementId: string;
-}
-
 @Component({
   selector: 'app-popup-or-bottom-sheet',
   imports: [CommonModule],
@@ -56,6 +51,9 @@ export class PopupOrBottomSheetComponent
     if (!this.platformCheckService.isBrowser()) {
       return;
     }
+
+    // Ensure the popup is hidden by default
+    this.props.isPopupShown.set(false);
 
     effect(() => {
       this.props.isPopupShown() == null
@@ -78,31 +76,43 @@ export class PopupOrBottomSheetComponent
   }
 
   ngOnDestroy() {
-    this.untrackAndUnsubscribe();
+    this.resizeObserver?.disconnect();
+    this.anchorElementPositionSubscription?.unsubscribe();
+
+    if (
+      this.isDialogAppended &&
+      this.dialogElementRef &&
+      this.dialogElementRef.nativeElement
+    ) {
+      document.body.removeChild(this.dialogElementRef.nativeElement);
+      this.isDialogAppended = false;
+    }
   }
 
-  @ViewChild('dialog') dialogElementRef!: ElementRef;
+  private isDialogAppended = false;
+  @ViewChild('dialog', { static: false }) dialogElementRef!: ElementRef;
   dialogElement!: HTMLDialogElement;
   dialogPopupElement!: HTMLDivElement;
 
+  private resizeObserver: ResizeObserver | null = null;
+
   anchorElementPosition$: Observable<DOMRect> | undefined;
-  popupElementPosition$: Observable<DOMRect> | undefined;
 
   showDialog() {
     setTimeout(() => {
       this.scrollDisabler.disableBodyScroll(
         'season-picker-popup-or-bottom-sheet',
       );
-      this.dialogElement.classList.remove('hide');
-      this.dialogElement.classList.add('shown');
+      this.dialogElement?.classList.remove('hide');
+      this.dialogElement?.classList.add('shown');
     }, 0);
   }
 
   hideDialog() {
     this.props.isPopupShown.set(false);
     this.elemPositionService.triggerManualUpdate();
-    this.dialogElement.classList.add('hide');
-    this.dialogElement.classList.remove('shown');
+    this.dialogElement?.classList.add('hide');
+    this.dialogElement?.classList.remove('shown');
     this.windowResizeService.triggerResize();
     this.scrollDisabler.enableBodyScroll('season-picker-popup-or-bottom-sheet');
   }
@@ -112,17 +122,52 @@ export class PopupOrBottomSheetComponent
       return;
     }
 
-    this.startSeasonPickerDialogPositioner();
+    if (!this.isDialogAppended && this.dialogElementRef) {
+      document.body.appendChild(this.dialogElementRef.nativeElement);
+      this.isDialogAppended = true;
+      this.startSeasonPickerDialogPositioner();
+    }
+
     this.trackAnchorElement();
   }
 
   startSeasonPickerDialogPositioner() {
-    this.dialogElement = this.dialogElementRef.nativeElement;
+    this.dialogElement = this.dialogElementRef.nativeElement; // Direct access
     this.dialogPopupElement = this.dialogElement.querySelector(
       '.dialog__arrow-and-items-container',
     ) as HTMLDivElement;
 
-    this.trackAnchorElement();
+    this.resizeObserver = new ResizeObserver(() => {
+      this.positionPopup();
+    });
+
+    this.resizeObserver.observe(this.dialogPopupElement);
+  }
+
+  private positionPopup() {
+    // Centralized Positioning Logic
+    if (!this.dialogPopupElement || !this.props.anchorElementId) return;
+
+    const anchorElement = document.getElementById(this.props.anchorElementId);
+    if (!anchorElement) return;
+
+    const anchorRect = anchorElement.getBoundingClientRect();
+    const popupRect = this.dialogPopupElement.getBoundingClientRect();
+
+    if (window.innerWidth <= 600) {
+      this.dialogPopupElement.style.top = 'unset';
+      this.dialogPopupElement.style.bottom = '0';
+      this.dialogPopupElement.style.left = '0'; // Full width for smaller screens
+      this.dialogPopupElement.style.width = '100%'; // Full width
+      this.dialogPopupElement.style.right = '0'; // Ensure it spans the full width
+      return;
+    }
+
+    const left = anchorRect.left + (anchorRect.width - popupRect.width) / 2;
+
+    this.dialogPopupElement.style.top = `${anchorRect.bottom + 8}px`; // 8px vertical offset
+    this.dialogPopupElement.style.left = `${left}px`;
+    this.dialogPopupElement.style.width = 'auto'; // Reset width
   }
 
   private anchorElementPositionSubscription: Subscription | undefined;

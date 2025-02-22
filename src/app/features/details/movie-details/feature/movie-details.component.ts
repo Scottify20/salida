@@ -46,6 +46,7 @@ export class MovieDetailsComponent implements AfterViewInit {
   }
 
   pillIndexedTabsProps: PillIndexedTabsProps = {
+    swipeGestures: true,
     buttonContent: 'text',
     animationType: 'slide',
     tabs: [
@@ -160,7 +161,7 @@ export class MovieDetailsComponent implements AfterViewInit {
         ),
         iconPathActive: '/assets/icons/toggle_switch/reviews/tmdb_active.svg',
         iconPathDisabled:
-          '/assets/icons/toggle_switch/reviews/tmdb_inactive.svg',
+          '//assets/icons/toggle_switch/reviews/tmdb_inactive.svg',
       },
       {
         onClick: () => {

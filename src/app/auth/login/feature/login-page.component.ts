@@ -37,18 +37,18 @@ interface LoginErrorMessages {
 }
 
 @Component({
-    selector: 'app-login-page',
-    imports: [
-        ReactiveFormsModule,
-        CapsLockDetectorDirective,
-        SocialsSignInComponent,
-        RouterModule,
-        LoadingDotsComponent,
-        DividerWithTitleComponent,
-        HeaderButtonsComponent,
-    ],
-    templateUrl: '../ui/login-page/login-page.component.html',
-    styleUrl: '../ui/login-page/login-page.component.scss'
+  selector: 'app-login-page',
+  imports: [
+    ReactiveFormsModule,
+    CapsLockDetectorDirective,
+    SocialsSignInComponent,
+    RouterModule,
+    LoadingDotsComponent,
+    DividerWithTitleComponent,
+    HeaderButtonsComponent,
+  ],
+  templateUrl: '../ui/login-page/login-page.component.html',
+  styleUrl: '../ui/login-page/login-page.component.scss',
 })
 export class LoginPageComponent {
   constructor(
@@ -248,7 +248,7 @@ export class LoginPageComponent {
       text: successMessage,
       scope: 'route',
       duration: 8000,
-      iconPath: 'assets/icons/toast/success.svg',
+      iconPath: '/assets/icons/toast/success.svg',
     });
 
     this.router.navigateByUrl('/');
@@ -324,10 +324,11 @@ export class LoginPageComponent {
   headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/Back.svg',
+      iconPath: '/assets/icons/header/Back.svg',
       onClickCallbackFn: () => {
         this.router.navigateByUrl('/');
       },
+      ariaLabel: 'Go back',
     },
   ];
 }

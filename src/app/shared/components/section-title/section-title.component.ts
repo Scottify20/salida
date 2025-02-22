@@ -3,6 +3,7 @@ import { ExtractStringService } from '../../services/utility/extract-string.serv
 
 export interface SectionTitleProps {
   sectionTitle: string | Signal<string | null | undefined> | (() => string);
+  iconURL?: string | null;
   sectionTitlePlural?:
     | string
     | Signal<string | null | undefined>
@@ -15,10 +16,10 @@ export type ViewAllButtonProps = {
 };
 
 @Component({
-    selector: 'app-section-title',
-    imports: [],
-    templateUrl: './section-title.component.html',
-    styleUrl: './section-title.component.scss'
+  selector: 'app-section-title',
+  imports: [],
+  templateUrl: './section-title.component.html',
+  styleUrl: './section-title.component.scss',
 })
 export class SectionTitleComponent {
   @Input({ required: true }) props: SectionTitleProps = {

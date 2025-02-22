@@ -1,0 +1,64 @@
+:host {
+  position: relative;
+  cursor: pointer;
+
+  // &:hover::after {
+  //   z-index: -1;
+  //   position: absolute;
+  //   content: "";
+  //   inset: -0.75rem;
+  //   background-color: var(--card-bg-color);
+  //   opacity: 50%;
+  //   border-radius: 0.75rem;
+  // }
+}
+
+.title-cards-section {
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 0.75rem;
+  container-type: inline-size;
+  container-name: listPreview;
+  width: 100%;
+  position: relative;
+}
+
+.container {
+  overflow: hidden;
+  gap: 0;
+  display: inline-flex;
+  // transition: all 0.3s ease-in-out 0.1s;
+}
+
+// :host:hover .container {
+//   gap: 0.5rem;
+// }
+
+// :host:hover .poster {
+//   margin-left: 0;
+//   filter: none;
+//   transform: none;
+// }
+
+.poster {
+  // transition: all 0.3s ease-in-out 0.1s;
+  $num-items: 5;
+  $overlap: -24px;
+  width: 7rem;
+  aspect-ratio: 1 / 1.5;
+  border-radius: 0.5rem;
+
+  @for $i from 1 through $num-items {
+    &:nth-child(#{$i}) {
+      z-index: $num-items - $i;
+      margin-left: $overlap * ($i - 1) + pow($i, 2) + 0px;
+      transform: scale(1 - (0.07 * $i));
+      filter: drop-shadow(3px 0 7px var(--body-bg-color))
+        brightness(calc((100 - (($i) * 5)) / 100));
+    }
+
+    &:first-child {
+      margin-left: 0;
+    }
+  }
+}

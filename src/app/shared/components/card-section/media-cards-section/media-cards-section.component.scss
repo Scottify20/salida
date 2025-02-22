@@ -27,6 +27,7 @@ app-scroll-buttons {
   flex-flow: row nowrap;
   column-gap: 1.5rem;
   overflow-x: scroll;
+  overflow-y: hidden;
   width: 100%;
   scrollbar-color: transparent transparent;
   scrollbar-width: none;

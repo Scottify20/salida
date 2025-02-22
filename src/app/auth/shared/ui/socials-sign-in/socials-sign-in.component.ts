@@ -39,7 +39,7 @@ export class SocialsSignInComponent {
             this.toastsService.addToast({
               text: 'Failed to login with Google.',
               scope: 'route',
-              iconPath: 'assets/icons/toast/error.svg',
+              iconPath: '/assets/icons/toast/error.svg',
             });
 
             return of(null);
@@ -48,7 +48,7 @@ export class SocialsSignInComponent {
           this.toastsService.addToast({
             text: 'Successfully logged in with Google.',
             scope: 'route',
-            iconPath: 'assets/icons/toast/success.svg',
+            iconPath: '/assets/icons/toast/success.svg',
           });
 
           this.attemptRegisterUserToFirestore(user);
@@ -91,7 +91,7 @@ export class SocialsSignInComponent {
     this.toastsService.addToast({
       text: errorMessage,
       scope: 'route',
-      iconPath: 'assets/icons/toast/error.svg',
+      iconPath: '/assets/icons/toast/error.svg',
     });
   }
 

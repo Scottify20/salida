@@ -41,18 +41,29 @@ export class TmdbConfigService {
     { name: 'Apple TV', id: 2 },
   ]; // Add provider names and IDs to blacklist here
 
-  private providerWhitelist: { name: string; id: number }[] = [
-    // { name: 'Netflix', id: 8 },
-    // { name: 'Google Play Movies', id: 3 },
-    { name: 'Apple TV+', id: 350 },
-    // { name: 'Amazon', id: 10 },
-    { name: 'Disney+', id: 337 },
-    { name: 'HBO Max', id: 384 },
-    { name: 'Hulu', id: 15 },
-    { name: 'Peacock', id: 386 },
-    { name: 'Paramount+', id: 531 },
-    { name: 'Crunchyroll', id: 1968 },
-  ]; // Add provider names and IDs to whitelist here
+  private providerWhitelist: { name: string; id: number; iconURL?: string }[] =
+    [
+      // { name: 'Netflix', id: 8 },
+      {
+        name: 'Google Play Movies',
+        id: 3,
+        iconURL:
+          'https://image.tmdb.org/t/p/w45/8z7rC8uIDaTM91X0ZfkRf04ydj2.jpg',
+      },
+      {
+        name: 'Apple TV+',
+        id: 350,
+        iconURL:
+          'https://image.tmdb.org/t/p/w45/2E03IAZsX4ZaUqM7tXlctEPMGWS.jpg',
+      },
+      // { name: 'Amazon', id: 10 },
+      // { name: 'Disney+', id: 337 },
+      // { name: 'HBO Max', id: 384 },
+      // { name: 'Hulu', id: 15 },
+      // { name: 'Peacock', id: 386 },
+      // { name: 'Paramount+', id: 531 },
+      // { name: 'Crunchyroll', id: 1968 },
+    ]; // Add provider names and IDs to whitelist here
 
   private providerOrderList: { id: number }[] = [
     { id: 8 }, // Netflix
@@ -74,7 +85,7 @@ export class TmdbConfigService {
   };
 
   private cachedCountries: Country[] = [];
-  private cachedWatchedProviders: CachedWatchProviders = {
+  cachedWatchedProviders: CachedWatchProviders = {
     movie: [],
     series: [],
   };
@@ -109,6 +120,30 @@ export class TmdbConfigService {
   getCountryNameFromCode(code: string): string | undefined {
     return this.cachedCountries.find((country) => country.iso_3166_1 === code)
       ?.native_name;
+  }
+
+  getProviderIconURL(
+    providerId: number,
+    type: 'movie' | 'series' = 'movie',
+  ): string | null {
+    if (!this.cachedWatchedProviders || !this.cachedWatchedProviders[type]) {
+      console.warn(`Watch providers for ${type} not yet loaded!`);
+      return null;
+    }
+
+    const provider = this.cachedWatchedProviders[type].find(
+      (provider) => provider.provider_id === providerId,
+    );
+
+    if (provider?.logo_path) {
+      return `https://image.tmdb.org/t/p/w45${provider.logo_path}`;
+    } else {
+      // Fallback to whitelist icon if available
+      const whitelistProvider = this.providerWhitelist.find(
+        (wp) => wp.id === providerId,
+      );
+      return whitelistProvider?.iconURL || null;
+    }
   }
 
   getWatchProviders(): Observable<CachedWatchProviders> {

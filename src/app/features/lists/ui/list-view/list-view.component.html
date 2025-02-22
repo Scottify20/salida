@@ -1,0 +1,55 @@
+<div class="header">
+  <div class="back-btn-and-breadcrumb">
+    <app-header-button
+      (click)="goBack()"
+      [props]="headerButtonsProps[1]"
+    ></app-header-button>
+
+    <div class="breadcrumb">
+      <h4 (click)="goHome()" class="prev">Lists</h4>
+      @if (
+        this.listsService.sourceNameFromRoute ||
+          this.listsService.sourceIdFromRoute;
+        as sourceIDOrName
+      ) {
+        <img class="arrow" src="/assets/icons/ArrowToRight.svg" alt="" />
+        <h4>
+          {{
+            sourceIDOrName
+              .toLocaleString()
+              .substring(0, 1)
+              .toLocaleUpperCase() +
+              sourceIDOrName.toLocaleString().substring(1)
+          }}
+        </h4>
+      }
+
+      @if (
+        this.listsService.listNameFromRoute ||
+          this.listsService.listIDFromRoute;
+        as listIdOrName
+      ) {
+        <img class="arrow" src="/assets/icons/ArrowToRight.svg" alt="" />
+        <h4>
+          {{
+            listIdOrName.toLocaleString().substring(0, 1).toLocaleUpperCase() +
+              listIdOrName.toLocaleString().substring(1)
+          }}
+        </h4>
+      }
+    </div>
+  </div>
+
+  @if (this.props.editable) {
+    <app-header-button
+      (click)="editList()"
+      [props]="headerButtonsProps[0]"
+    ></app-header-button>
+  }
+</div>
+
+<div class="cards-container clickable-cards">
+  @for (title of this.props.titles; track title.id; let i = $index) {
+    <app-media-card [props]="title" [index]="i"></app-media-card>
+  }
+</div>

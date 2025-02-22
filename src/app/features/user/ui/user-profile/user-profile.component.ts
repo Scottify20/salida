@@ -5,10 +5,10 @@ import { HeaderButtonProps } from '../../../../shared/components/header-button/h
 import { Router } from '@angular/router';
 
 @Component({
-    selector: 'app-user-profile',
-    imports: [HeaderButtonsComponent],
-    templateUrl: './user-profile.component.html',
-    styleUrl: './user-profile.component.scss'
+  selector: 'app-user-profile',
+  imports: [HeaderButtonsComponent],
+  templateUrl: './user-profile.component.html',
+  styleUrl: './user-profile.component.scss',
 })
 export class UserProfileComponent {
   constructor(private router: Router) {}
@@ -16,17 +16,19 @@ export class UserProfileComponent {
   headerButtons: HeaderButtonProps[] = [
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/Back.svg',
+      iconPath: '/assets/icons/header/Back.svg',
+      ariaLabel: 'Go back',
       onClickCallbackFn: () => {
         history.back();
       },
     },
     {
       type: 'icon',
-      iconPath: 'assets/icons/header/Edit.svg',
+      iconPath: '/assets/icons/header/Edit.svg',
       onClickCallbackFn: () => {
         this.router.navigateByUrl('/user/**/edit');
       },
+      ariaLabel: 'Edit profile',
     },
   ];
 }

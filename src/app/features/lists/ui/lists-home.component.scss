@@ -1,0 +1,62 @@
+:host {
+  width: 100%;
+  height: 100%;
+}
+
+.parent-container {
+  // padding-top: 0.5rem;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 1rem;
+}
+
+.header-and-tabs-container {
+  background-color: rgba(var(--body-bg-color-rgb), 0.95);
+  gap: 0.5rem;
+  z-index: 1000;
+  position: sticky;
+  top: 0;
+  padding: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  justify-content: center;
+  margin-bottom: 0.5rem;
+}
+
+app-pill-indexed-tabs {
+  margin: 0 auto;
+}
+
+.header {
+  display: flex;
+  flex-flow: row nowrap;
+  justify-content: space-between;
+  align-items: center;
+
+  h4 {
+    font-weight: 600;
+    font-size: 1.5rem;
+  }
+}
+
+.overflow-clipper {
+  height: 100;
+  min-height: calc(100vh / 4 * 3);
+  width: 100%;
+}
+
+.lists-container {
+  padding: 1rem;
+  padding-top: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .lists-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

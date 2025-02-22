@@ -159,22 +159,22 @@ export class SeriesMoreDetailsComponent {
   //   sectionTitle: 'Ratings',
   //   ratings: [
   //     {
-  //       iconPath: 'assets/icons/ratings/Imdb.svg',
+  //       iconPath: '/assets/icons/ratings/Imdb.svg',
   //       ratingValue: '8.4',
   //       providerName: 'Internet Movie Database (IMDb)',
   //     },
   //     {
-  //       iconPath: 'assets/icons/ratings/RottenTomatoes.svg',
+  //       iconPath: '/assets/icons/ratings/RottenTomatoes.svg',
   //       ratingValue: '',
   //       providerName: 'Rotten Tomatoes',
   //     },
   //     {
-  //       iconPath: 'assets/icons/ratings/Tmdb.svg',
+  //       iconPath: '/assets/icons/ratings/Tmdb.svg',
   //       ratingValue: '84%',
   //       providerName: 'The Movie Database (TMDB)',
   //     },
   //     {
-  //       iconPath: 'assets/icons/ratings/Metacritic.svg',
+  //       iconPath: '/assets/icons/ratings/Metacritic.svg',
   //       ratingValue: '',
   //       providerName: 'Metacritic',
   //     },

@@ -3,7 +3,6 @@ import { NotFoundComponent } from './not-found/not-found.component';
 import { personDetailsRoutes } from './features/details/person-details/feature/person-details.routes';
 import { HomeComponent } from './features/home/feature/home.component';
 import { loginAndSignupGuard } from './auth/shared/guards/login-and-signup.guard';
-import { setUsernameGuard } from './auth/shared/guards/set-username.guard';
 
 export const routes: Routes = [
   {
@@ -69,10 +68,55 @@ export const routes: Routes = [
   },
   {
     path: 'lists',
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./features/lists/feature/lists-home.component').then(
+            (m) => m.ListsHomeComponent,
+          ),
+      },
+      {
+        path: ':source-type/:source-idname-or-username/:list-idname',
+        loadComponent: () =>
+          import('./features/lists/ui/list-view/list-view.component').then(
+            (m) => m.ListViewComponent,
+          ),
+      },
+    ],
+  },
+  {
+    path: 'lists/:source-type/:source-idname-or-username/:list-idname',
+    children: [
+      {
+        path: 'movie/:id',
+        loadComponent: () =>
+          import(
+            './features/details/movie-details/feature/movie-details.component'
+          ).then((m) => m.MovieDetailsComponent),
+      },
+      {
+        path: 'series/:id',
+        loadComponent: () =>
+          import(
+            './features/details/series-details/feature/series-details.component'
+          ).then((m) => m.SeriesDetailsComponent),
+      },
+    ],
+  },
+  {
+    path: 'movie/:id',
     loadComponent: () =>
-      import('./features/lists/feature/lists-home.component').then(
-        (m) => m.ListsHomeComponent,
-      ),
+      import(
+        './features/details/movie-details/feature/movie-details.component'
+      ).then((m) => m.MovieDetailsComponent),
+  },
+  {
+    path: 'series/:id', // <-- Series details (general)
+    loadComponent: () =>
+      import(
+        './features/details/series-details/feature/series-details.component'
+      ).then((m) => m.SeriesDetailsComponent),
   },
   {
     path: 'search',

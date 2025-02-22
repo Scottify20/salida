@@ -7,7 +7,7 @@
   ></app-search-bar>
 </div>
 
-<div class="search__main" pill-tab-parent>
+<div class="search__main" pill-tab-parent #pillTabParent>
   @if (this.spService.searchParams.all.query() !== "") {
     <div class="tabs-container">
       <!-- filler tab to key the main tab centered -->
@@ -16,15 +16,18 @@
       <app-pill-indexed-tabs
         class="main-tabs"
         [props]="pillTabsProps"
+        [parentContainer]="pillTabParent"
+        [overflowClipper]="overflowClipper"
+        [viewsContainer]="componentViewContainer"
       ></app-pill-indexed-tabs>
 
       <div class="secondary-tabs"></div>
     </div>
 
-    <div pill-tab-overflow-clipper>
+    <div #overflowClipper>
       <div
-        class="search__results clickable-cards"
-        pill-tab-component-transition
+        class="search__results clickable-cards no-transform"
+        #componentViewContainer
       >
         @switch (spService.searchParams.searchType()) {
           @case ("all") {

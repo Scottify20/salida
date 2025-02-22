@@ -8,6 +8,7 @@ import {
   Series,
 } from '../../../../shared/interfaces/models/tmdb/Series';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ListInfo } from '../../../lists/feature/lists-home.component';
 
 export type IdFromRoute = null | number;
 
@@ -93,12 +94,27 @@ export class SeriesDetailsService {
       }),
     );
 
-  viewSeriesDetails(id: number, title: string) {
+  viewSeriesDetails(id: number, title: string, listInfo?: ListInfo) {
     const titleSlugified = ('-' + title)
       .replace(/[^\p{L}\p{N}-]/giu, '-')
-      .replace(/-{2}/, '-')
+      .replace(/-{2,}/g, '-')
       .toLowerCase();
     this._seriesData$.next(null);
+
+    if (listInfo) {
+      const { sourceType, sourceName, sourceID, listID, listName } = listInfo;
+
+      const sourceIdAndName = sourceName
+        ? `${sourceID}-${sourceName.toLocaleLowerCase()}`
+        : sourceName;
+
+      const listIDAndName = `${listID}-${listName.toLowerCase()}`;
+
+      this.router.navigateByUrl(
+        `/lists/${sourceType}/${sourceIdAndName}/${listIDAndName}/series/${id}${titleSlugified}`,
+      );
+      return;
+    }
     this.router.navigateByUrl(`/series/${id}${titleSlugified}`);
   }
 
@@ -108,7 +124,14 @@ export class SeriesDetailsService {
 
   private updateCurrentSeries() {
     const urlSegments = this.router.url.split('/');
-    const titleId = parseInt(urlSegments[2].match(/^\d*/)![0], 10);
+    let titleId: number | null = null;
+
+    if (this.router.url.includes('/lists/')) {
+      titleId = parseInt(urlSegments[6].match(/^\d+/)?.[0] || '', 10);
+    } else {
+      titleId = parseInt(urlSegments[2].match(/^\d+/)?.[0] || '', 10);
+    }
+
     this.idFromRoute = titleId;
 
     if (!isNaN(titleId) && this.isSeriesRoute) {

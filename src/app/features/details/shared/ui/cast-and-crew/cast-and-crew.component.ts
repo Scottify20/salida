@@ -2,9 +2,7 @@ import {
   Component,
   DestroyRef,
   isSignal,
-  signal,
   WritableSignal,
-  ChangeDetectorRef,
   effect,
   ElementRef,
   inject,
@@ -110,7 +108,7 @@ export class CastAndCrewComponent implements AfterViewInit {
         const currentEntities = currentSection.entities.value;
         const currentLength = currentEntities.length;
 
-        const fullList = // Get the correct full list based on castOrCrew and movie/series
+        const fullList =
           this.castOrCrew() === 'cast'
             ? this.seriesDetailsService.isSeriesRoute
               ? this.fullSeriesCast
@@ -141,8 +139,6 @@ export class CastAndCrewComponent implements AfterViewInit {
 
   seriesData: Series | undefined;
   movieData: Movie | undefined;
-
-  // ... (rest of the component code will follow in the next response)
 
   initializeSectionProps() {
     if (this.seriesDetailsService.isSeriesRoute && this.seriesData) {

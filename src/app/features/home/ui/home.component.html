@@ -9,7 +9,7 @@
 ></app-popover-menu>
 <!--  -->
 
-<div class="home" pill-tab-parent>
+<div class="home" #parentContainer>
   <div class="home__mobile-and-tablet-header-nav">
     <!-- Logo -->
     <app-header-button [props]="headerButtonsProps[0]"></app-header-button>
@@ -22,7 +22,12 @@
     <!--  -->
 
     <!-- For Tabs selection between Movies/TV shows/People -->
-    <app-pill-indexed-tabs [props]="pillTabProps"></app-pill-indexed-tabs>
+    <app-pill-indexed-tabs
+      [props]="pillTabProps"
+      [parentContainer]="parentContainer"
+      [overflowClipper]="overflowClipper"
+      [viewsContainer]="viewsContainer"
+    ></app-pill-indexed-tabs>
     <!--  -->
 
     <!-- For User Account Actions Menu -->
@@ -30,10 +35,10 @@
     <!--  -->
   </div>
 
-  <div class="home-content" pill-tab-overflow-clipper>
+  <div class="home-content" #overflowClipper>
     <div
       class="tabbed-components-container"
-      pill-tab-component-transition
+      #viewsContainer
       component-transition
     >
       <!-- Combined Movies and Series Section -->
@@ -45,35 +50,40 @@
           @if (isHeroCardProps(heroCardProps)) {
             <app-hero-cards [props]="heroCardProps"></app-hero-cards>
           }
+        } @else {
+          <app-hero-cards-skeleton></app-hero-cards-skeleton>
         }
 
-        <ng-container
-          *ngIf="moviesInTheatresProps$ | async as moviesInTheatresProps"
-        >
-          <ng-container *ngIf="moviesInTheatresProps">
-            <app-media-cards-section
-              [props]="moviesInTheatresProps"
-            ></app-media-cards-section>
-          </ng-container>
-        </ng-container>
-        <ng-container
-          *ngIf="upcomingMoviesProps$ | async as upcomingMoviesProps"
-        >
-          <ng-container *ngIf="upcomingMoviesProps">
-            <app-media-cards-section
-              [props]="upcomingMoviesProps"
-            ></app-media-cards-section>
-          </ng-container>
-        </ng-container>
-        <ng-container
-          *ngIf="moviesAndSeriesFromProvidersProps$ | async as providersProps"
-        >
-          <ng-container *ngFor="let providerProps of providersProps">
+        @if (moviesInTheatresProps$ | async; as moviesInTheatresProps) {
+          <app-media-cards-section
+            [props]="moviesInTheatresProps"
+          ></app-media-cards-section>
+        } @else {
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+        }
+        @if (upcomingMoviesProps$ | async; as upcomingMoviesProps) {
+          <app-media-cards-section
+            [props]="upcomingMoviesProps"
+          ></app-media-cards-section>
+        } @else {
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+        }
+
+        @if (moviesAndSeriesFromProvidersProps$ | async; as providersProps) {
+          @for (providerProps of providersProps; track providerProps.id) {
             <app-media-cards-section
               [props]="providerProps"
             ></app-media-cards-section>
-          </ng-container>
-        </ng-container>
+          }
+        } @else {
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+          <app-media-cards-section-skeleton></app-media-cards-section-skeleton>
+        }
       }
       <!-- Movies Section -->
       @if (homeService.selectedContentTypeName() === "Movies") {

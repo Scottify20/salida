@@ -1,10 +1,9 @@
 import {
+  ChangeDetectionStrategy,
   Component,
   computed,
   DestroyRef,
-  effect,
   ElementRef,
-  Signal,
   ViewChild,
 } from '@angular/core';
 import { SearchBarComponent } from '../ui/search-bar/search-bar.component';
@@ -14,7 +13,10 @@ import {
 } from '../../../shared/components/tabs/pill-indexed-tabs/pill-indexed-tabs.component';
 
 import { MediaResultCardComponent } from '../ui/media-result-card/media-result-card.component';
-import { SearchPageService } from '../data-access/search-page.service';
+import {
+  SearchPageService,
+  SearchType,
+} from '../data-access/search-page.service';
 import { PersonResultCardComponent } from '../ui/person-result-card/person-result-card.component';
 import { IntersectionObserverService } from '../../../shared/services/dom/intersection-observer.service';
 import { Subject } from 'rxjs';
@@ -37,6 +39,7 @@ import { ResultCardSkeletonComponent } from '../ui/result-card-skeleton/result-c
   ],
   templateUrl: '../ui/search-home.component.html',
   styleUrl: '../ui/search-home.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchHomeComponent {
   protected searchTrigger$ = new Subject<string>();
@@ -92,6 +95,7 @@ export class SearchHomeComponent {
   }
 
   pillTabsProps: PillIndexedTabsProps = {
+    swipeGestures: true,
     defaultTabIndex: computed(() => {
       return this.spService.getSearchTypeIndexInPillTabs(
         this.spService.searchParams.searchType(),
@@ -102,149 +106,153 @@ export class SearchHomeComponent {
     tabs: [
       {
         text: 'All',
-        onClickCallback: () => {
-          this.spService.searchParams.searchType.set('all');
-          window.scrollTo({ top: 0 });
-
-          if (this.spService.isNoFirstPageResultsYet('all')) {
-            this.searchTrigger$.next(this.spService.searchParams.all.query());
-          }
-        },
+        onClickCallback: this.setSearchType('all'),
       },
       {
         text: 'Movies',
-        onClickCallback: () => {
-          this.spService.searchParams.searchType.set('movie');
-          window.scrollTo({ top: 0 });
-
-          if (this.spService.isNoFirstPageResultsYet('movie')) {
-            this.searchTrigger$.next(this.spService.searchParams.all.query());
-          }
-        },
+        onClickCallback: this.setSearchType('movie'),
       },
       {
         text: 'Series',
-        onClickCallback: () => {
-          this.spService.searchParams.searchType.set('series');
-          window.scrollTo({ top: 0 });
-
-          if (this.spService.isNoFirstPageResultsYet('series')) {
-            this.searchTrigger$.next(this.spService.searchParams.all.query());
-          }
-        },
+        onClickCallback: this.setSearchType('series'),
       },
       {
         text: 'People',
-        onClickCallback: () => {
-          this.spService.searchParams.searchType.set('person');
-          window.scrollTo({ top: 0 });
-
-          if (this.spService.isNoFirstPageResultsYet('person')) {
-            this.searchTrigger$.next(this.spService.searchParams.all.query());
-          }
-        },
+        onClickCallback: this.setSearchType('person'),
       },
     ],
   };
 
+  setSearchType(type: SearchType) {
+    return () => {
+      this.spService.searchParams.searchType.set(type);
+      window.scrollTo({ top: 0 });
+
+      if (this.spService.isNoFirstPageResultsYet(type)) {
+        this.searchTrigger$.next(this.spService.searchParams.all.query());
+      }
+    };
+  }
+
   categoryChips: CategoryChipProps[] = [
     {
       label: 'Action',
-      iconURL: 'assets/icons/search/catergory-chips/Action.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Action.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Adventure',
-      iconURL: 'assets/icons/search/catergory-chips/Adventure.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Adventure.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Animation',
-      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Animation.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Biography',
+      iconURL: '/assets/icons/search/catergory-chips/Biography.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Comedy',
-      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Comedy.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Crime',
-      iconURL: 'assets/icons/search/catergory-chips/Comedy.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Crime.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Documentary',
-      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Documentary.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Drama',
-      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Drama.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Fantasy',
-      iconURL: 'assets/icons/search/catergory-chips/Fantasy.svg',
-      onClick: () => {
-        return;
-      },
-    },
-    {
-      label: 'Romance',
-      iconURL: 'assets/icons/search/catergory-chips/Romance.svg',
-      onClick: () => {
-        return;
-      },
-    },
-    {
-      label: 'Sci - Fi',
-      iconURL: 'assets/icons/search/catergory-chips/Sci-Fi.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Fantasy.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'History',
-      iconURL: 'assets/icons/search/catergory-chips/History.svg',
+      iconURL: '/assets/icons/search/catergory-chips/History.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Horror',
-      iconURL: 'assets/icons/search/catergory-chips/Horror.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Horror.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Korean',
+      iconURL: '/assets/icons/search/catergory-chips/Korean.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Mystery',
-      iconURL: 'assets/icons/search/catergory-chips/Mystery.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Mystery.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Romance',
+      iconURL: '/assets/icons/search/catergory-chips/Romance.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Sci - Fi',
+      iconURL: '/assets/icons/search/catergory-chips/Sci-Fi.svg',
+      onClick: () => {
+        return;
+      },
+    },
+    {
+      label: 'Thriller',
+      iconURL: '/assets/icons/search/catergory-chips/Thriller.svg',
       onClick: () => {
         return;
       },
     },
     {
       label: 'Western',
-      iconURL: 'assets/icons/search/catergory-chips/Drama.svg',
+      iconURL: '/assets/icons/search/catergory-chips/Western.svg',
       onClick: () => {
         return;
       },
     },
-  ];
+  ].sort((a, b) => a.label.localeCompare(b.label));
 }

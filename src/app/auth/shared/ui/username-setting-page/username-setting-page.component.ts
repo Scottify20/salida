@@ -256,7 +256,7 @@ export class UsernameSettingPageComponent {
       triggerElementIds: ['username-setting-button'],
     },
     mainContent: {
-      iconPath: 'assets/icons/dialog/profile.svg',
+      iconPath: '/assets/icons/dialog/profile.svg',
       title: 'Set Username?',
       textItems: [],
     },
@@ -300,7 +300,7 @@ export class UsernameSettingPageComponent {
       triggerElementIds: ['skip-username-setting-button'],
     },
     mainContent: {
-      iconPath: 'assets/icons/dialog/warning.svg',
+      iconPath: '/assets/icons/dialog/warning.svg',
       title: 'Skip setting username?',
       textItems: ['You can set your username later in your user profile.'],
     },
@@ -336,7 +336,7 @@ export class UsernameSettingPageComponent {
       triggerElementIds: [],
     },
     mainContent: {
-      iconPath: 'assets/icons/dialog/success.svg',
+      iconPath: '/assets/icons/dialog/success.svg',
       title: 'Account successfully created.',
       textItems: ['You can now access all of Salida’s features.'],
     },

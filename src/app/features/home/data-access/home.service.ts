@@ -65,6 +65,7 @@ export class HomeService {
           const sectionTitle = seriesSection.sectionTitle.toString();
           if (providerMap.has(sectionTitle)) {
             const combinedSection: MediaCardsSectionProps = {
+              iconURL: providerMap.get(sectionTitle)?.iconURL, // Set the iconURL here
               id: sectionTitle + '-combined',
               sectionTitle: sectionTitle,
               maxNoOfTitles: 20,
@@ -94,14 +95,14 @@ export class HomeService {
             }
             providerMap.delete(sectionTitle);
           } else if (seriesSection.titles.length >= 8) {
-            combined.push(seriesSection);
+            combined.push(seriesSection); // These already have iconURL set
           }
         });
 
         // Add remaining movie sections with at least 8 entities
         providerMap.forEach((movieSection) => {
           if (movieSection.titles.length >= 8) {
-            combined.push(movieSection);
+            combined.push(movieSection); // These already have iconURL set
           }
         });
 
@@ -129,7 +130,6 @@ export class HomeService {
             combined.push(series[i]);
           }
         }
-
         return combined;
       }),
     );

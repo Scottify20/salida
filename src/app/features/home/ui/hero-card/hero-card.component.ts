@@ -67,8 +67,10 @@ export class HeroCardComponent implements OnInit {
   getImageSrcBasedOnWidth(): string {
     if (this.platformCheck.isServer()) return '';
 
-    const baseLink = 'https://image.tmdb.org/t/p/';
-    const poster_path = this.props.poster_path || '';
+    const baseLink = this.props.poster_path
+      ? 'https://image.tmdb.org/t/p/'
+      : '';
+    const poster_path = this.props.poster_path;
     const windowWidth = window.innerWidth;
 
     if (windowWidth === 0) return '';

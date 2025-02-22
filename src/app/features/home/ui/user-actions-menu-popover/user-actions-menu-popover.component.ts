@@ -86,7 +86,7 @@ export class UserActionsMenuPopoverComponent {
         items: [
           {
             text: 'Create Account',
-            iconPath: 'assets/icons/popover/create_account.svg',
+            iconPath: '/assets/icons/popover/create_account.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? false : true;
             }),
@@ -96,7 +96,7 @@ export class UserActionsMenuPopoverComponent {
           },
           {
             text: 'Log in',
-            iconPath: 'assets/icons/popover/login.svg',
+            iconPath: '/assets/icons/popover/login.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? false : true;
             }),
@@ -121,7 +121,7 @@ export class UserActionsMenuPopoverComponent {
                 ? identifier
                 : `${identifier.substring(0, charLimit - trail.length) + trail}`;
             },
-            iconPath: 'assets/icons/popover/user.svg',
+            iconPath: '/assets/icons/popover/user.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? true : false;
             }),
@@ -134,7 +134,7 @@ export class UserActionsMenuPopoverComponent {
           },
           {
             text: 'Notifications',
-            iconPath: 'assets/icons/popover/notifications.svg',
+            iconPath: '/assets/icons/popover/notifications.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? true : false;
             }),
@@ -151,7 +151,7 @@ export class UserActionsMenuPopoverComponent {
         items: [
           {
             text: 'Settings',
-            iconPath: 'assets/icons/popover/settings.svg',
+            iconPath: '/assets/icons/popover/settings.svg',
             isVisibleIf: computed(() => {
               return this.userService.userSig() ? true : false;
             }),
@@ -162,7 +162,7 @@ export class UserActionsMenuPopoverComponent {
           },
           {
             text: 'Logout',
-            iconPath: 'assets/icons/popover/logout.svg',
+            iconPath: '/assets/icons/popover/logout.svg',
             onClickCallback: () => {
               this.firebaseAuthService.signOut();
             },

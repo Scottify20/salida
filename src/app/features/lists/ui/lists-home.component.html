@@ -1,0 +1,29 @@
+<div class="parent-container" #parentContainer>
+  <div class="header-and-tabs-container">
+    <div class="header">
+      <h4>Lists</h4>
+      <app-header-button [props]="headerButtonsProps[0]"></app-header-button>
+    </div>
+
+    <app-pill-indexed-tabs
+      [props]="pillTabProps"
+      [parentContainer]="parentContainer"
+      [overflowClipper]="overflowClipper"
+      [viewsContainer]="viewsContainer"
+    ></app-pill-indexed-tabs>
+  </div>
+
+  <div #overflowClipper class="overflow-clipper">
+    <div #viewsContainer class="lists-container">
+      @if (listSource() === "personal") {
+        Personal lists not available yet.
+        <!-- <app-list-preview></app-list-preview>
+        <app-list-preview></app-list-preview>
+        <app-list-preview></app-list-preview>
+        <app-list-preview></app-list-preview> -->
+      } @else {
+        Community lists not available yet.
+      }
+    </div>
+  </div>
+</div>

@@ -57,16 +57,19 @@ export class PageTransitionService {
     // if the route length of previous is shorter than the current url (went to a deeper route)
     if (previousLength < currentLength) {
       this.triggerSlideFromRightTransition();
+      // console.log('longer');
       return;
     }
 
     // if the route length of previous is longer than the current url (go back to a shallower route)
     if (previousLength > currentLength) {
       this.triggerSlideFromLeftTransition();
+      // console.log('shorter');
       return;
     }
 
     if (previousLength === currentLength) {
+      // console.log('same length');
       if (currentUrlSplitted.length >= 3) {
         this.triggerSlideFromRightTransition();
         return;

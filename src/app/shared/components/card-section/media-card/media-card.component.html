@@ -1,22 +1,24 @@
 <div
-  (click)="props.onClick()"
-  (keydown.enter)="props.onClick()"
+  (click)="this.handleClick()"
+  (keydown.enter)="this.handleClick()"
   tabindex="0"
   role="button"
   class="card"
 >
   <div class="card__image-container">
-    <img
-      [loading]="index > 6 ? 'lazy' : 'eager'"
-      [src]="
-        props.poster_path
-          ? 'https://image.tmdb.org/t/p/w185' + props.poster_path
-          : 'assets/icons/placeholders/Profile.svg'
-      "
-      [alt]="getPosterAlt()"
-      class="card__image"
-      [class]="props.poster_path ? '' : 'no-image'"
-    />
+    @if (props.poster_path) {
+      <img
+        [loading]="index > 6 ? 'lazy' : 'eager'"
+        [src]="
+          props.poster_path
+            ? 'https://image.tmdb.org/t/p/w185' + props.poster_path
+            : '/assets/icons/placeholders/Profile.svg'
+        "
+        [alt]="getPosterAlt()"
+        class="card__image"
+        [class]="props.poster_path ? '' : 'no-image'"
+      />
+    }
     <app-rating-donut [rating]="props.vote_average"></app-rating-donut>
   </div>
   <div class="card__texts">

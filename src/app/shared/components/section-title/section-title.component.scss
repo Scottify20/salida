@@ -39,13 +39,25 @@
   }
 }
 
-.section-header__title {
-  user-select: none;
-  z-index: 2;
-  font-size: inherit;
-  color: var(--text-color);
-  opacity: 90%;
-  font-weight: 600;
+.section-header__icon-and-title {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 0.5rem;
+  align-items: center;
+
+  .section-header__icon {
+    height: 1.75rem;
+    border-radius: 0.25rem;
+  }
+
+  .section-header__title {
+    user-select: none;
+    z-index: 2;
+    font-size: inherit;
+    color: var(--text-color);
+    opacity: 90%;
+    font-weight: 600;
+  }
 }
 
 .section-header__button {

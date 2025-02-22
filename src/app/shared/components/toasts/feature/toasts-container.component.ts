@@ -25,8 +25,8 @@ export class ToastsContainerComponent {
   ) {}
 
   commonIcons: string[] = [
-    'assets/icons/toast/close.svg',
-    'assets/icons/toast/error.svg',
+    '/assets/icons/toast/close.svg',
+    '/icons/toast/error.svg',
   ];
 
   ngOnInit() {

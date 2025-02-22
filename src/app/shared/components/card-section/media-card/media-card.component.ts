@@ -3,8 +3,9 @@ import { MediaSummary } from '../../../interfaces/models/tmdb/All';
 import { RatingDonutComponent } from '../../rating-donut/rating-donut.component';
 
 export interface MediaCardProps extends MediaSummary {
-  onClick: () => void;
+  onClick?: () => void;
   media_type: 'movie' | 'tv';
+  scaling?: 'fixed' | 'auto';
 }
 
 @Component({
@@ -27,6 +28,7 @@ export class MediaCardComponent {
     popularity: 0,
     vote_average: 0,
     vote_count: 0,
+    scaling: 'fixed',
   };
 
   @Input({ required: true }) index!: number;
@@ -35,5 +37,9 @@ export class MediaCardComponent {
     return this.props.media_type === 'movie'
       ? `${this.props.title} movie poster`
       : `${this.props.name} TV Series poster`;
+  }
+
+  handleClick() {
+    this.props.onClick ? this.props.onClick() : null;
   }
 }

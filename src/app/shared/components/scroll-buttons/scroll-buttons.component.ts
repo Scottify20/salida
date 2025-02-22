@@ -1,8 +1,9 @@
-import { Component, DestroyRef, Input, signal } from '@angular/core';
+import { Component, DestroyRef, Input, Output, signal } from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { debounceTime, fromEvent, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { WindowResizeService } from '../../services/dom/window-resize.service';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'app-scroll-buttons',
@@ -16,6 +17,8 @@ export class ScrollButtonsComponent {
     private destroyRef: DestroyRef,
     private resizeListener: WindowResizeService,
   ) {}
+
+  @Output() scrollBtnClicked = new EventEmitter<'left' | 'right'>();
 
   ngAfterViewInit() {
     if (this.platformCheck.isServer()) {

@@ -9,6 +9,8 @@
 >
   @if (getImageSrcBasedOnWidth()) {
     <img
+      [loading]="cardIndex >= 1 ? 'lazy' : 'eager'"
+      [attr.fetchpriority]="cardIndex >= 1 ? 'high' : 'auto'"
       class="hero-card__poster loading"
       [src]="getImageSrcBasedOnWidth()"
       [alt]="getPosterOrBackdropAlt"

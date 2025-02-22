@@ -60,6 +60,7 @@ export class HomeSeriesService {
               .pipe(
                 map((seriesSummaryResults: SeriesSummaryResults) =>
                   this.transformSeriesToCardSectionProps(
+                    provider.provider_id,
                     provider.provider_name,
                     seriesSummaryResults,
                   ),
@@ -78,10 +79,17 @@ export class HomeSeriesService {
   }
 
   private transformSeriesToCardSectionProps(
+    providerId: number,
     title: string,
     seriesResponse: SeriesSummaryResults,
   ): MediaCardsSectionProps {
+    const providerIcon = this.tmdbConfigService.getProviderIconURL(
+      providerId,
+      'series',
+    );
+
     return {
+      iconURL: providerIcon,
       id: title + '-series',
       sectionTitle: title,
       maxNoOfTitles: 20,

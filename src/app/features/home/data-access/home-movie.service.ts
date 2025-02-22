@@ -36,7 +36,7 @@ export class HomeMovieService {
   getMoviesInTheatres(): Observable<MediaCardsSectionProps> {
     return this.movieService.getMoviesPlayingInTheares$().pipe(
       map((movies) =>
-        this.transformMoviesToCardSectionProps('In Theatres', movies),
+        this.transformMoviesToCardSectionProps(-1, 'In Theatres', movies),
       ),
       filter((section) => section.titles.length >= 6),
     );
@@ -45,7 +45,7 @@ export class HomeMovieService {
   getUpcomingMovies(): Observable<MediaCardsSectionProps> {
     return this.movieService.getUpcomingMovies$().pipe(
       map((movies) =>
-        this.transformMoviesToCardSectionProps('Upcoming', movies),
+        this.transformMoviesToCardSectionProps(-1, 'Upcoming', movies),
       ),
       filter((section) => section.titles.length >= 6),
       map((movie) => ({ ...movie, media_type: 'movie' })),
@@ -68,6 +68,7 @@ export class HomeMovieService {
               .pipe(
                 map((movies) =>
                   this.transformMoviesToCardSectionProps(
+                    provider.provider_id,
                     provider.provider_name,
                     movies,
                   ),
@@ -86,10 +87,16 @@ export class HomeMovieService {
   }
 
   private transformMoviesToCardSectionProps(
+    providerId: number,
     title: string,
     moviesResponse: MovieSummaryResults,
   ): MediaCardsSectionProps {
+    const providerIcon = this.tmdbConfigService.getProviderIconURL(
+      providerId,
+      'series',
+    );
     return {
+      iconURL: providerIcon,
       id: title + '-movies',
       sectionTitle: title,
       maxNoOfTitles: 20,

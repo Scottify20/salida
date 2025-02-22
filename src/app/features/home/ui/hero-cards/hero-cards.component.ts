@@ -1,9 +1,15 @@
 import { CommonModule } from '@angular/common';
-import { Component, Input, AfterViewInit, OnDestroy } from '@angular/core';
+import {
+  Component,
+  Input,
+  AfterViewInit,
+  OnDestroy,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { IntersectionObserverService } from '../../../../shared/services/dom/intersection-observer.service';
 import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 import { ScrollButtonsComponent } from '../../../../shared/components/scroll-buttons/scroll-buttons.component';
-import { MediaSummary } from '../../../../shared/interfaces/models/tmdb/All';
 import {
   HeroCardComponent,
   HeroCardProps,
@@ -23,17 +29,17 @@ export class HeroCardsComponent implements AfterViewInit, OnDestroy {
     private heroCardsService: HeroCardsService,
   ) {}
 
+  @ViewChild('cardsContainer') cardsContainerRef!: ElementRef;
+
   indexOfFullyVisibleCard: number = 0;
 
   @Input({ required: true }) props: HeroCardProps[] = [];
 
   ngAfterViewInit() {
-    try {
-      this.heroCardsService.startScrollDetection();
-      this.startCardsScrollBasedAnimation();
-    } catch (error) {
-      console.error('Error during ngAfterViewInit:', error);
-    }
+    this.heroCardsService.cardsContainer = this.cardsContainerRef.nativeElement;
+    this.heroCardsService.setScrollPosition();
+    this.heroCardsService.startScrollDetection();
+    this.startCardsScrollBasedAnimation();
   }
 
   get cards(): NodeListOf<Element> | undefined {
