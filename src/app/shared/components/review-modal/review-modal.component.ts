@@ -1,4 +1,13 @@
-import { Component, effect, ElementRef, Input, signal, ViewChild, WritableSignal, inject } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  Inject,
+  Input,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
@@ -21,13 +30,13 @@ export interface ReviewModalProps {
   styleUrl: './review-modal.component.scss',
 })
 export class ReviewModalComponent {
-  private elementRef = inject(ElementRef);
-  private document = inject<Document>(DOCUMENT);
-  private platformCheckService = inject(PlatformCheckService);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  protected extractStringService = inject(ExtractStringService);
-
-  constructor() {
+  constructor(
+    private elementRef: ElementRef,
+    @Inject(DOCUMENT) private document: Document,
+    private platformCheckService: PlatformCheckService,
+    private scrollDisablerService: ScrollDisablerService,
+    protected extractStringService: ExtractStringService,
+  ) {
     // disables or enables the scrolling of the body element whenever the state of the isOpenSig changes
     effect(() => {
       if (this.props.config.isOpenSig()) {

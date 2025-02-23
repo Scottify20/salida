@@ -42,10 +42,10 @@ export type FirebaseAuthErrors = {
   providedIn: 'root',
 })
 export class FirebaseAuthService {
-  private platformCheckService = inject(PlatformCheckService);
-  private salidaAuthService = inject(SalidaAuthService);
-
-  constructor() {
+  constructor(
+    private platformCheckService: PlatformCheckService,
+    private salidaAuthService: SalidaAuthService,
+  ) {
     if (this.platformCheckService.isBrowser()) {
       this.auth = inject(Auth);
     }

@@ -1,4 +1,14 @@
-import { Component, computed, DestroyRef, ElementRef, Input, signal, Signal, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  Inject,
+  Input,
+  signal,
+  Signal,
+  ViewChild,
+} from '@angular/core';
 import { ElementPositionService } from '../../services/dom/element-position.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
 import { DOCUMENT } from '@angular/common';
@@ -52,11 +62,12 @@ export interface MenuItem {
     styleUrl: './popover-menu.component.scss'
 })
 export class PopoverMenuComponent {
-  private elementPositionService = inject(ElementPositionService);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  private document = inject<Document>(DOCUMENT);
-  private destroyRef = inject(DestroyRef);
-
+  constructor(
+    private elementPositionService: ElementPositionService,
+    private scrollDisablerService: ScrollDisablerService,
+    @Inject(DOCUMENT) private document: Document,
+    private destroyRef: DestroyRef,
+  ) {}
 
   // Input property for popover configuration
   @Input({ required: true }) props: PopoverMenuProps = {

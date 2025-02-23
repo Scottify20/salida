@@ -1,4 +1,4 @@
-import { effect, Injectable, inject, signal } from '@angular/core';
+import { effect, Injectable } from '@angular/core';
 import { fromEvent, tap, throttleTime } from 'rxjs';
 import { HomeService } from './home.service';
 
@@ -6,9 +6,7 @@ import { HomeService } from './home.service';
   providedIn: 'root',
 })
 export class HeroCardsService {
-  private homeService = inject(HomeService);
-
-  constructor() {
+  constructor(private homeService: HomeService) {
     effect(() => {
       this.homeService.selectedContentTypeIndex();
       this.savedHeroCardsScrollX = 0;
@@ -18,7 +16,6 @@ export class HeroCardsService {
   cardsContainer!: HTMLElement;
 
   savedHeroCardsScrollX: number = 0;
-  cardDetailsVisible = signal(false);
 
   startScrollDetection() {
     if (!this.cardsContainer) {
@@ -30,7 +27,6 @@ export class HeroCardsService {
         throttleTime(200),
         tap((e) => {
           this.savedHeroCardsScrollX = this.cardsContainer.scrollLeft;
-          this.cardDetailsVisible.set(true);
         }),
       )
       .subscribe();

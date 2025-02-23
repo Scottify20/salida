@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { Location } from '@angular/common';
 import { HeaderButtonsComponent } from '../../../../shared/components/header-buttons/header-buttons.component';
 import { HeaderButtonProps } from '../../../../shared/components/header-button/header-button.component';
@@ -11,8 +11,7 @@ import { Router } from '@angular/router';
   styleUrl: './user-profile.component.scss',
 })
 export class UserProfileComponent {
-  private router = inject(Router);
-
+  constructor(private router: Router) {}
 
   headerButtons: HeaderButtonProps[] = [
     {

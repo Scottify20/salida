@@ -1,4 +1,4 @@
-import { Component, DestroyRef, signal, inject } from '@angular/core';
+import { Component, DestroyRef, signal } from '@angular/core';
 import { ProgressIndicatorProps } from '../progress-indicator/progress-indicator.model';
 import { ProgressIndicatorComponent } from '../progress-indicator/progress-indicator.component';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -32,15 +32,16 @@ import { PlatformCheckService } from '../../../../shared/services/dom/platform-c
   styleUrl: './username-setting-page.component.scss',
 })
 export class UsernameSettingPageComponent {
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
-  private userService = inject(UserService);
-  private salidaAuthService = inject(SalidaAuthService);
-  private firebaseAuthService = inject(FirebaseAuthService);
-  private toastsService = inject(ToastsService);
-  private destroyRef = inject(DestroyRef);
-  private platformCheckService = inject(PlatformCheckService);
-
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private userService: UserService,
+    private salidaAuthService: SalidaAuthService,
+    private firebaseAuthService: FirebaseAuthService,
+    private toastsService: ToastsService,
+    private destroyRef: DestroyRef,
+    private platformCheckService: PlatformCheckService,
+  ) {}
 
   authErrorMessageSig = signal<{ username: string | null }>({
     username: null,

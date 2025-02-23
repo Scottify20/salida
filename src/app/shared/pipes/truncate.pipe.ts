@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform, inject } from '@angular/core';
+import { Pipe, PipeTransform } from '@angular/core';
 import { FormatService } from '../services/utility/format.service';
 
 /**
@@ -25,8 +25,7 @@ import { FormatService } from '../services/utility/format.service';
   standalone: true,
 })
 export class TruncatePipe implements PipeTransform {
-  private formatService = inject(FormatService);
-
+  constructor(private formatService: FormatService) {}
 
   transform(value: string | undefined | null, args: any[]): string {
     const leadingLimit = args.length > 0 ? parseInt(args[0], 10) : 20;

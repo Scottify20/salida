@@ -1,4 +1,4 @@
-import { Component, Input, Signal, inject } from '@angular/core';
+import { Component, Input, Signal } from '@angular/core';
 import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 export interface SectionTitleProps {
@@ -22,10 +22,10 @@ export type ViewAllButtonProps = {
   styleUrl: './section-title.component.scss',
 })
 export class SectionTitleComponent {
-  protected extractStringService = inject(ExtractStringService);
-
   @Input({ required: true }) props: SectionTitleProps = {
     sectionTitle: '-------',
     viewAllButtonProps: { onClick: () => false },
   };
+
+  constructor(protected extractStringService: ExtractStringService) {}
 }

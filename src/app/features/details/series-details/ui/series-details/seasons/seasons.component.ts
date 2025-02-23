@@ -1,10 +1,10 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import { Season } from '../../../../../../shared/interfaces/models/tmdb/Series';
 
 import { catchError, map, of, tap } from 'rxjs';
 import { SeriesDetailsService } from '../../../data-access/series-details.service';
 import { EpisodeGroupComponent } from '../episode-group/episode-group.component';
-
+import { CommonModule } from '@angular/common';
 import {
   PopupItem,
   PopupOrBottomSheetComponent,
@@ -16,18 +16,19 @@ import { EpisodeCardSkeletonComponent } from '../../episode-card-skeleton/episod
 @Component({
   imports: [
     EpisodeGroupComponent,
+    CommonModule,
     PopupOrBottomSheetComponent,
-    EpisodeCardSkeletonComponent
-],
+    EpisodeCardSkeletonComponent,
+  ],
   selector: 'app-seasons',
   templateUrl: './seasons.component.html',
   styleUrls: ['./seasons.component.scss'],
 })
 export class SeasonsComponent {
-  private seriesDetailsService = inject(SeriesDetailsService);
-  private destroyRef = inject(DestroyRef);
-
-  constructor() {
+  constructor(
+    private seriesDetailsService: SeriesDetailsService,
+    private destroyRef: DestroyRef,
+  ) {
     this.initiateSeasonDataAndPicker();
   }
 

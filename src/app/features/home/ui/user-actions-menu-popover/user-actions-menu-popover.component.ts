@@ -1,4 +1,13 @@
-import { Component, computed, DestroyRef, ElementRef, Signal, signal, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  computed,
+  DestroyRef,
+  ElementRef,
+  Inject,
+  Signal,
+  signal,
+  ViewChild,
+} from '@angular/core';
 
 import { DOCUMENT } from '@angular/common';
 import { ElementPositionService } from '../../../../shared/services/dom/element-position.service';
@@ -52,14 +61,16 @@ export interface MenuItem {
   styleUrl: './user-actions-menu-popover.component.scss',
 })
 export class UserActionsMenuPopoverComponent {
-  private elementPositionService = inject(ElementPositionService);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  private document = inject<Document>(DOCUMENT);
-  private destroyRef = inject(DestroyRef);
-  private userService = inject(UserService);
-  private firebaseAuthService = inject(FirebaseAuthService);
-  private router = inject(Router);
-
+  // Inject services
+  constructor(
+    private elementPositionService: ElementPositionService,
+    private scrollDisablerService: ScrollDisablerService,
+    @Inject(DOCUMENT) private document: Document,
+    private destroyRef: DestroyRef,
+    private userService: UserService,
+    private firebaseAuthService: FirebaseAuthService,
+    private router: Router,
+  ) {}
 
   // Input property for popover configuration
   popoverProps: PopoverProps = {

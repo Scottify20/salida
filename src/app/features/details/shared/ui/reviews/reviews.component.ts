@@ -1,4 +1,4 @@
-import { Component, ElementRef, signal, inject } from '@angular/core';
+import { Component, ElementRef, signal } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
@@ -6,7 +6,7 @@ import {
   Review,
   Reviews,
 } from '../../../../../shared/interfaces/models/tmdb/All';
-
+import { CommonModule } from '@angular/common';
 import {
   ReviewsSource,
   TemporaryUserPreferencesService,
@@ -23,16 +23,16 @@ import {
 
 @Component({
   selector: 'app-reviews',
-  imports: [ReviewComponent, ReviewModalComponent],
+  imports: [CommonModule, ReviewComponent, ReviewModalComponent],
   templateUrl: './reviews.component.html',
   styleUrl: './reviews.component.scss',
 })
 export class ReviewsComponent {
-  private seriesDetailsService = inject(SeriesDetailsService);
-  private moviesDetailsService = inject(MovieDetailsService);
-  private preferencesService = inject(TemporaryUserPreferencesService);
-
-  constructor() {
+  constructor(
+    private seriesDetailsService: SeriesDetailsService,
+    private moviesDetailsService: MovieDetailsService,
+    private preferencesService: TemporaryUserPreferencesService,
+  ) {
     this.initializeReviewsFetching();
   }
 

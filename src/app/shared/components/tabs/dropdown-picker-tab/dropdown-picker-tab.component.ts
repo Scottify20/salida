@@ -1,4 +1,4 @@
-import { Component, Input, signal, Signal, inject } from '@angular/core';
+import { Component, Input, signal, Signal } from '@angular/core';
 import { WritableSignal } from '@angular/core';
 import { ExtractStringService } from '../../../services/utility/extract-string.service';
 
@@ -17,8 +17,7 @@ export interface DropDownPickerTabProps {
   styleUrl: './dropdown-picker-tab.component.scss',
 })
 export class DropdownPickerTabComponent {
-  protected extractStringService = inject(ExtractStringService);
-
+  constructor(protected extractStringService: ExtractStringService) {}
 
   @Input({ required: true }) props: DropDownPickerTabProps = {
     id: '',

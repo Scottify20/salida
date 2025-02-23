@@ -6,7 +6,6 @@ import {
   OnDestroy,
   ViewChild,
   ElementRef,
-  inject,
 } from '@angular/core';
 import { IntersectionObserverService } from '../../../../shared/services/dom/intersection-observer.service';
 import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
@@ -24,9 +23,11 @@ import { HeroCardsService } from '../../data-access/hero-cards.service';
   styleUrl: './hero-cards.component.scss',
 })
 export class HeroCardsComponent implements AfterViewInit, OnDestroy {
-  private intersectionObserverService = inject(IntersectionObserverService);
-  private platformCheckService = inject(PlatformCheckService);
-  private heroCardsService = inject(HeroCardsService);
+  constructor(
+    private intersectionObserverService: IntersectionObserverService,
+    private platformCheckService: PlatformCheckService,
+    private heroCardsService: HeroCardsService,
+  ) {}
 
   @ViewChild('cardsContainer') cardsContainerRef!: ElementRef;
 

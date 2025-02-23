@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   catchError,
   forkJoin,
@@ -28,9 +28,10 @@ interface CachedWatchProviders {
   providedIn: 'root',
 })
 export class TmdbConfigService {
-  private http = inject(HttpClient);
-  private userPreferencesService = inject(TemporaryUserPreferencesService);
-
+  constructor(
+    private http: HttpClient,
+    private userPreferencesService: TemporaryUserPreferencesService,
+  ) {}
 
   baseUrl = `${environment.SALIDA_API_BASE_URL}/api/v1/public/tmdb`;
 

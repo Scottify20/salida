@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import {
   fromEvent,
   Observable,
@@ -19,8 +19,6 @@ import { PlatformCheckService } from './platform-check.service';
   providedIn: 'root',
 })
 export class ScrollDetectorService {
-  private platformCheck = inject(PlatformCheckService);
-
   private scrollSubject = new Subject<{
     scrollTop: number;
     scrollLeft: number;
@@ -55,7 +53,7 @@ export class ScrollDetectorService {
 
   private _subscriptions: Subscription[] = []; // To store all subscriptions
 
-  constructor() {
+  constructor(private platformCheck: PlatformCheckService) {
     if (this.platformCheck.isBrowser()) {
       const subscription = fromEvent(window, 'scroll')
         .pipe(

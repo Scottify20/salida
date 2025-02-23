@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../../shared/services/tmdb/tmdb.service';
 import { BehaviorSubject, filter, Observable } from 'rxjs';
@@ -9,10 +9,10 @@ import { ListInfo } from '../../../lists/feature/lists-home.component';
   providedIn: 'root',
 })
 export class MovieDetailsService {
-  private router = inject(Router);
-  private tmdbService = inject(TmdbService);
-
-  constructor() {
+  constructor(
+    private router: Router,
+    private tmdbService: TmdbService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {

@@ -1,9 +1,9 @@
-import { Component, DestroyRef, signal, inject } from '@angular/core';
+import { Component, DestroyRef, signal } from '@angular/core';
 import { Genre, Image } from '../../../../../shared/interfaces/models/tmdb/All';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, debounceTime, fromEvent, map, of, tap } from 'rxjs';
-
+import { CommonModule } from '@angular/common';
 import { WindowResizeService } from '../../../../../shared/services/dom/window-resize.service';
 import { HeaderButtonsComponent } from '../../../../../shared/components/header-buttons/header-buttons.component';
 import { HeaderButtonProps } from '../../../../../shared/components/header-button/header-button.component';
@@ -26,21 +26,23 @@ export interface HeroSectionData {
 @Component({
   selector: 'app-media-hero-section',
   imports: [
+    CommonModule,
     HeaderButtonsComponent,
-    MetadataComponent
-],
+    MetadataComponent,
+    // GenresComponent,
+  ],
   templateUrl: './media-hero-section.component.html',
   styleUrl: './media-hero-section.component.scss',
 })
 export class MediaHeroSectionComponent {
-  private seriesDetailsService = inject(SeriesDetailsService);
-  private movieDetailsService = inject(MovieDetailsService);
-  private windowResizeService = inject(WindowResizeService);
-  private destroyRef = inject(DestroyRef);
-  private scrollDetectorService = inject(ScrollDetectorService);
-  protected platformCheckSevice = inject(PlatformCheckService);
-
-  constructor() {
+  constructor(
+    private seriesDetailsService: SeriesDetailsService,
+    private movieDetailsService: MovieDetailsService,
+    private windowResizeService: WindowResizeService,
+    private destroyRef: DestroyRef,
+    private scrollDetectorService: ScrollDetectorService,
+    protected platformCheckSevice: PlatformCheckService,
+  ) {
     this.initializeHeroSectionData();
   }
 

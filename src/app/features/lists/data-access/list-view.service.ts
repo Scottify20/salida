@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { BehaviorSubject, filter, map, Observable, tap } from 'rxjs';
 import { ListInfo, ListSourceType } from '../feature/lists-home.component';
@@ -11,11 +11,11 @@ import { ListViewProps } from '../ui/list-view/list-view.component';
   providedIn: 'root',
 })
 export class ListViewService {
-  private router = inject(Router);
-  private movieService = inject(MovieService);
-  private movieDetailsService = inject(MovieDetailsService);
-
-  constructor() {
+  constructor(
+    private router: Router,
+    private movieService: MovieService,
+    private movieDetailsService: MovieDetailsService,
+  ) {
     this.router.events
       .pipe(filter((event) => event instanceof NavigationEnd))
       .subscribe(() => {

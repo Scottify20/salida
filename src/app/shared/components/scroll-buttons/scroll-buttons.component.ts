@@ -1,12 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  Input,
-  Output,
-  signal,
-  inject,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, DestroyRef, Input, Output, signal } from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { debounceTime, fromEvent, map } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -20,9 +12,11 @@ import { EventEmitter } from '@angular/core';
   styleUrl: './scroll-buttons.component.scss',
 })
 export class ScrollButtonsComponent {
-  private platformCheck = inject(PlatformCheckService);
-  private destroyRef = inject(DestroyRef);
-  private resizeListener = inject(WindowResizeService);
+  constructor(
+    private platformCheck: PlatformCheckService,
+    private destroyRef: DestroyRef,
+    private resizeListener: WindowResizeService,
+  ) {}
 
   @Output() scrollBtnClicked = new EventEmitter<'left' | 'right'>();
 

@@ -1,4 +1,16 @@
-import { AfterViewInit, Component, DestroyRef, effect, ElementRef, Input, OnDestroy, OnInit, signal, ViewChild, WritableSignal, inject } from '@angular/core';
+import {
+  AfterViewInit,
+  Component,
+  DestroyRef,
+  effect,
+  ElementRef,
+  Input,
+  OnDestroy,
+  OnInit,
+  signal,
+  ViewChild,
+  WritableSignal,
+} from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { WindowResizeService } from '../../services/dom/window-resize.service';
 import { Observable, Subscription } from 'rxjs';
@@ -29,13 +41,13 @@ export interface PopupItem {
 export class PopupOrBottomSheetComponent
   implements OnInit, OnDestroy, AfterViewInit
 {
-  private elemPositionService = inject(ElementPositionService);
-  private windowResizeService = inject(WindowResizeService);
-  private scrollDisabler = inject(ScrollDisablerService);
-  private platformCheckService = inject(PlatformCheckService);
-  private destroyRef = inject(DestroyRef);
-
-  constructor() {
+  constructor(
+    private elemPositionService: ElementPositionService,
+    private windowResizeService: WindowResizeService,
+    private scrollDisabler: ScrollDisablerService,
+    private platformCheckService: PlatformCheckService,
+    private destroyRef: DestroyRef,
+  ) {
     if (!this.platformCheckService.isBrowser()) {
       return;
     }

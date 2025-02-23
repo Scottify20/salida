@@ -1,4 +1,4 @@
-import { Injectable, Signal, WritableSignal, inject } from '@angular/core';
+import { Injectable, Signal, WritableSignal } from '@angular/core';
 import { ExtractStringService } from './extract-string.service';
 
 type DurationUnits = 'y' | 'mo' | 'w' | 'd' | 'h' | 'min' | 's' | 'ms';
@@ -40,8 +40,7 @@ function getDynamicMaxValue(
   providedIn: 'root',
 })
 export class FormatService {
-  private extractStringService = inject(ExtractStringService);
-
+  constructor(private extractStringService: ExtractStringService) {}
 
   /**
    * Truncates a string to a specified length and appends a trailing string if necessary.

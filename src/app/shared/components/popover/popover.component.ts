@@ -1,5 +1,17 @@
 import { CommonModule, DOCUMENT } from '@angular/common';
-import { ApplicationRef, Component, DestroyRef, ElementRef, Input, signal, Type, ViewChild, ViewContainerRef, ViewRef, inject } from '@angular/core';
+import {
+  ApplicationRef,
+  Component,
+  DestroyRef,
+  ElementRef,
+  Inject,
+  Input,
+  signal,
+  Type,
+  ViewChild,
+  ViewContainerRef,
+  ViewRef,
+} from '@angular/core';
 import { fromEvent, tap } from 'rxjs';
 
 import { PopoverProps } from './popover.interface';
@@ -15,15 +27,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
     styleUrl: './popover.component.scss'
 })
 export class PopoverComponent {
-  private destroyRef = inject(DestroyRef);
-  private router = inject(Router);
-  private elementPositionService = inject(ElementPositionService);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  private document = inject<Document>(DOCUMENT);
-  private appRef = inject(ApplicationRef);
-
   // Inject services
-  constructor() {
+  constructor(
+    private destroyRef: DestroyRef,
+    private router: Router,
+    private elementPositionService: ElementPositionService,
+    private scrollDisablerService: ScrollDisablerService,
+    @Inject(DOCUMENT) private document: Document,
+    private appRef: ApplicationRef,
+  ) {
     this.router.events
       .pipe(
         takeUntilDestroyed(this.destroyRef),

@@ -4,8 +4,6 @@ import {
   ElementRef,
   ViewChild,
   AfterViewInit,
-  inject,
-  ChangeDetectorRef,
 } from '@angular/core';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
 import { TemporaryUserPreferencesService } from '../../../../shared/services/preferences/temporary-user-preferences-service';
@@ -37,8 +35,7 @@ import {
   styleUrl: '../ui/movie-details/movie-details.component.scss',
 })
 export class MovieDetailsComponent implements AfterViewInit {
-  private preferencesService = inject(TemporaryUserPreferencesService);
-  private cdr = inject(ChangeDetectorRef);
+  constructor(private preferencesService: TemporaryUserPreferencesService) {}
 
   previousTabIndex: number | null = null;
   currentTabIndex: number = 0;
@@ -46,7 +43,6 @@ export class MovieDetailsComponent implements AfterViewInit {
   setTabIndex(index: number) {
     this.previousTabIndex = Number(this.currentTabIndex);
     this.currentTabIndex = index;
-    this.cdr.markForCheck();
   }
 
   pillIndexedTabsProps: PillIndexedTabsProps = {
@@ -198,7 +194,6 @@ export class MovieDetailsComponent implements AfterViewInit {
     this.pillIndexedTabsProps.tabs.forEach((tab) => {
       tab.onClickCallback = this.scrollToPillTabs.bind(this);
     });
-    this.cdr.markForCheck();
   }
 
   scrollToPillTabs() {

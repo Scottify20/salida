@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, ElementRef, Input, ViewChild, inject } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  Input,
+  ViewChild,
+} from '@angular/core';
 import {
   SectionTitleProps,
   SectionTitleComponent,
@@ -26,8 +32,6 @@ export interface MediaCardsSectionProps extends SectionTitleProps {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class MediaCardsSectionComponent {
-  private cardsScrollService = inject(CardsSectionScrollService);
-
   @Input({ required: true }) props: MediaCardsSectionProps = {
     layout: 'carousel',
     id: '',
@@ -42,6 +46,8 @@ export class MediaCardsSectionComponent {
     iconURL: this.props.iconURL,
     viewAllButtonProps: this.props.viewAllButtonProps,
   };
+
+  constructor(private cardsScrollService: CardsSectionScrollService) {}
 
   @ViewChild('cardsContainer') cardsContainerRef!: ElementRef;
 

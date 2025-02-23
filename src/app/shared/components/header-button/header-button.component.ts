@@ -1,4 +1,4 @@
-import { Component, Input, Signal, inject } from '@angular/core';
+import { Component, Input, Signal } from '@angular/core';
 import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 export type HeaderButtonProps = {
@@ -17,9 +17,9 @@ export type HeaderButtonProps = {
   styleUrl: './header-button.component.scss',
 })
 export class HeaderButtonComponent {
-  protected extractStringService = inject(ExtractStringService);
-
   @Input({ required: true }) props!: HeaderButtonProps;
+
+  constructor(protected extractStringService: ExtractStringService) {}
 
   callOnClickCallbackFn(callback: undefined | (() => void)) {
     if (callback) {

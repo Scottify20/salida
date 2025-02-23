@@ -1,4 +1,4 @@
-import { Component, Input, ChangeDetectorRef, DestroyRef, inject } from '@angular/core';
+import { Component, Input, ChangeDetectorRef, DestroyRef } from '@angular/core';
 import { BehaviorSubject, tap } from 'rxjs';
 import {
   SectionTitleComponent,
@@ -31,8 +31,7 @@ export type CardSectionButtonType = 'text' | 'icon' | 'none';
   styleUrl: './people-cards-section.component.scss',
 })
 export class PeopleCardsSectionComponent {
-  private destroyRef = inject(DestroyRef);
-
+  constructor(private destroyRef: DestroyRef) {}
 
   ngOnInit() {
     this.sectionTitleOptions.sectionTitle = this.props.sectionTitle;

@@ -1,12 +1,11 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ScrollDisablerService {
-  private document = inject<Document>(DOCUMENT);
-
+  constructor(@Inject(DOCUMENT) private document: Document) {}
 
   scrollLockingElementIDs: string[] = [];
 

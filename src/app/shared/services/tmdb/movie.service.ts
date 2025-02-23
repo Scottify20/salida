@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
 import { catchError, Observable, retry, shareReplay, throwError } from 'rxjs';
 import {
@@ -12,9 +12,10 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class MovieService {
-  private http = inject(HttpClient);
-  private tmdbConfig = inject(TmdbConfigService);
-
+  constructor(
+    private http: HttpClient,
+    private tmdbConfig: TmdbConfigService,
+  ) {}
 
   // Caches for different types of movie data
   private cachedMovies: { [key: string]: Observable<Movie> } = {};

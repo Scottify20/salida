@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef } from '@angular/core';
 import {
   HeaderButtonProps,
   HeaderButtonComponent,
@@ -31,10 +31,11 @@ export interface ListViewProps {
   styleUrl: './list-view.component.scss',
 })
 export class ListViewComponent {
-  private router = inject(Router);
-  protected listsService = inject(ListViewService);
-  private destroyRef = inject(DestroyRef);
-
+  constructor(
+    private router: Router,
+    protected listsService: ListViewService,
+    private destroyRef: DestroyRef,
+  ) {}
 
   ngOnInit() {
     this.listsService.listData$

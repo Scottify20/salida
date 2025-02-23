@@ -1,4 +1,4 @@
-import { Component, signal, ElementRef, inject } from '@angular/core';
+import { Component, signal, ElementRef } from '@angular/core';
 import {
   HeaderButtonProps,
   HeaderButtonComponent,
@@ -52,12 +52,13 @@ import { HeroCardsSkeletonComponent } from '../ui/hero-cards-skeleton/hero-cards
   ],
 })
 export class HomeComponent {
-  private userService = inject(UserService);
-  protected homeService = inject(HomeService);
-  private elementRef = inject(ElementRef);
-  private homeMovieService = inject(HomeMovieService);
-  private homeSeriesService = inject(HomeSeriesService);
-
+  constructor(
+    private userService: UserService,
+    protected homeService: HomeService,
+    private elementRef: ElementRef,
+    private homeMovieService: HomeMovieService,
+    private homeSeriesService: HomeSeriesService,
+  ) {}
 
   heroCardsTitlesPropsForMoviesAndSeries$: Observable<MediaSummary[]> =
     this.homeService.getPopularMoviesAndSeries$();

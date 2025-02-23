@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { fromEvent, Observable, BehaviorSubject, Subject } from 'rxjs';
 import {
   distinctUntilChanged,
@@ -13,9 +13,7 @@ import { PlatformCheckService } from './platform-check.service';
   providedIn: 'root',
 })
 export class WindowResizeService {
-  private platformCheck = inject(PlatformCheckService);
-
-  constructor() {
+  constructor(private platformCheck: PlatformCheckService) {
     if (this.platformCheck.isBrowser()) {
       fromEvent(window, 'resize')
         .pipe(

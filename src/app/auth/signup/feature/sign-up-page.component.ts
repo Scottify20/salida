@@ -1,4 +1,10 @@
-import { Component, DestroyRef, ElementRef, signal, ViewChild, inject } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  signal,
+  ViewChild,
+} from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { HeaderButtonsComponent } from '../../../shared/components/header-buttons/header-buttons.component';
 import { HeaderButtonProps } from '../../../shared/components/header-button/header-button.component';
@@ -64,14 +70,15 @@ interface SignupErrorMessages {
   styleUrl: '../ui/sign-up-page/sign-up-page.component.scss',
 })
 export class SignUpPageComponent {
-  private fb = inject(FormBuilder);
-  private firebaseAuthService = inject(FirebaseAuthService);
-  private salidaAuthService = inject(SalidaAuthService);
-  private router = inject(Router);
-  private userService = inject(UserService);
-  private toastsService = inject(ToastsService);
-  private destoryRef = inject(DestroyRef);
-
+  constructor(
+    private fb: FormBuilder,
+    private firebaseAuthService: FirebaseAuthService,
+    private salidaAuthService: SalidaAuthService,
+    private router: Router,
+    private userService: UserService,
+    private toastsService: ToastsService,
+    private destoryRef: DestroyRef,
+  ) {}
   signupForm = this.fb.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required, passwordValidator()]],

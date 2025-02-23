@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, inject } from '@angular/core';
+import { Component, ElementRef, Input } from '@angular/core';
 import { Review } from '../../../../../shared/interfaces/models/tmdb/All';
 import { DatePipe } from '@angular/common';
 
@@ -9,8 +9,7 @@ import { DatePipe } from '@angular/common';
   styleUrl: './review.component.scss',
 })
 export class ReviewComponent {
-  elementRef = inject(ElementRef);
-
+  constructor(public elementRef: ElementRef) {}
   @Input({ required: true }) props!: Review | null;
   @Input({ required: true }) isModal: boolean = false;
 }

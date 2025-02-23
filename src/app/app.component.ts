@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { NavComponent } from './nav/nav.component';
 import { ToastsContainerComponent } from './shared/components/toasts/feature/toasts-container.component';
@@ -16,11 +16,13 @@ import { UserService } from './core/user/user.service';
   styleUrl: './app.component.scss',
 })
 export class AppComponent {
-  protected platformCheckService = inject(PlatformCheckService);
-  private firebaseAuthService = inject(FirebaseAuthService);
-  private routeHistoryService = inject(RouteHistoryService);
-  private pageTransitionService = inject(PageTransitionService);
-  private userService = inject(UserService);
+  constructor(
+    protected platformCheckService: PlatformCheckService,
+    private firebaseAuthService: FirebaseAuthService,
+    private routeHistoryService: RouteHistoryService,
+    private pageTransitionService: PageTransitionService,
+    private userService: UserService,
+  ) {}
 
   ngAfterViewInit() {
     if (this.platformCheckService.isBrowser()) {

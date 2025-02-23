@@ -1,4 +1,4 @@
-import { Component, Input, inject } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { ToastsService } from '../../data-access/toasts.service';
 import { ToastItem } from '../../data-access/toast.model';
 
@@ -9,8 +9,7 @@ import { ToastItem } from '../../data-access/toast.model';
     styleUrl: './toast.component.scss'
 })
 export class ToastComponent {
-  protected toastsService = inject(ToastsService);
-
+  constructor(protected toastsService: ToastsService) {}
 
   @Input() toastProps: ToastItem = {
     text: '',

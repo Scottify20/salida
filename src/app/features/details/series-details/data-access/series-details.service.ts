@@ -1,4 +1,4 @@
-import { DestroyRef, Injectable, signal, WritableSignal, inject } from '@angular/core';
+import { DestroyRef, Injectable, signal, WritableSignal } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { TmdbService } from '../../../../shared/services/tmdb/tmdb.service';
 import { BehaviorSubject, filter, Observable, of, switchMap, tap } from 'rxjs';
@@ -16,11 +16,11 @@ export type IdFromRoute = null | number;
   providedIn: 'root',
 })
 export class SeriesDetailsService {
-  private router = inject(Router);
-  private tmdbService = inject(TmdbService);
-  private destroyRef = inject(DestroyRef);
-
-  constructor() {
+  constructor(
+    private router: Router,
+    private tmdbService: TmdbService,
+    private destroyRef: DestroyRef,
+  ) {
     this.listenForSeriesRouteVisit();
     this.listenForAllSeasonsSummary();
     this.listenForSelectedSeasonsSummary();

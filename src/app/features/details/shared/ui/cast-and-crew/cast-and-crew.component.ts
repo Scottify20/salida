@@ -42,13 +42,6 @@ import { ChipComponent } from '../../../../../shared/components/chip/chip.compon
   styleUrl: './cast-and-crew.component.scss',
 })
 export class CastAndCrewComponent implements AfterViewInit {
-  protected movieDetailsService = inject(MovieDetailsService);
-  protected seriesDetailsService = inject(SeriesDetailsService);
-  private destroyRef = inject(DestroyRef);
-  private router = inject(Router);
-  private preferencesService = inject(TemporaryUserPreferencesService);
-  private intersectionObserver = inject(IntersectionObserverService);
-
   seriesCrewSection!: CardsSectionProps;
   seriesCastSection!: CardsSectionProps;
   movieCrewSection!: CardsSectionProps;
@@ -67,7 +60,14 @@ export class CastAndCrewComponent implements AfterViewInit {
 
   @ViewChild('bottomIntersectionElement') bottomIntersectionRef!: ElementRef;
 
-  constructor() {
+  constructor(
+    protected movieDetailsService: MovieDetailsService,
+    protected seriesDetailsService: SeriesDetailsService,
+    private destroyRef: DestroyRef,
+    private router: Router,
+    private preferencesService: TemporaryUserPreferencesService,
+    private intersectionObserver: IntersectionObserverService,
+  ) {
     this.initializeSectionProps(); // Call here to initialize with empty arrays initially
     this.initializeMovieOrSeriesData();
 

@@ -1,5 +1,5 @@
 import { DOCUMENT } from '@angular/common';
-import { Component, Renderer2, inject } from '@angular/core';
+import { Component, Renderer2, Inject } from '@angular/core';
 import { Router, RouterModule } from '@angular/router';
 
 @Component({
@@ -9,10 +9,11 @@ import { Router, RouterModule } from '@angular/router';
   styleUrl: './nav.component.scss',
 })
 export class NavComponent {
-  private router = inject(Router);
-  private renderer = inject(Renderer2);
-  private document = inject<Document>(DOCUMENT);
-
+  constructor(
+    private router: Router,
+    private renderer: Renderer2,
+    @Inject(DOCUMENT) private document: Document,
+  ) {}
 
   routesWhereNavShows: string[] = ['/', '/lists', '/lists/**', '/search'];
 

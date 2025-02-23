@@ -1,4 +1,4 @@
-import { ApplicationRef, Injectable, inject } from '@angular/core';
+import { ApplicationRef, Inject, Injectable } from '@angular/core';
 import { NavigationEnd, Router } from '@angular/router';
 import { DOCUMENT } from '@angular/common';
 import { filter, tap } from 'rxjs';
@@ -8,10 +8,11 @@ import { RouteHistoryService } from './route-history.service';
   providedIn: 'root',
 })
 export class PageTransitionService {
-  private router = inject(Router);
-  private routeHistoryService = inject(RouteHistoryService);
-  private document = inject<Document>(DOCUMENT);
-
+  constructor(
+    private router: Router,
+    private routeHistoryService: RouteHistoryService,
+    @Inject(DOCUMENT) private document: Document,
+  ) {}
 
   mainElement!: HTMLElement;
   appElement!: HTMLElement;

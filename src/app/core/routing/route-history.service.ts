@@ -1,12 +1,11 @@
-import { Injectable, signal, WritableSignal, inject } from '@angular/core';
+import { Injectable, signal, WritableSignal } from '@angular/core';
 import { NavigationEnd, NavigationStart, Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RouteHistoryService {
-  private router = inject(Router);
-
+  constructor(private router: Router) {}
 
   previousRouteSig: WritableSignal<string | null> = signal('/');
   newRouteSig = signal('/');

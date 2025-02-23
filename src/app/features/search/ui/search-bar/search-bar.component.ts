@@ -1,4 +1,14 @@
-import { Component, Output, EventEmitter, Input, Signal, signal, ViewChild, ElementRef, DestroyRef, inject } from '@angular/core';
+import {
+  Component,
+  Output,
+  EventEmitter,
+  Input,
+  Signal,
+  signal,
+  ViewChild,
+  ElementRef,
+  DestroyRef,
+} from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -11,10 +21,10 @@ import { debounceTime, Subject } from 'rxjs';
   styleUrl: './search-bar.component.scss',
 })
 export class SearchBarComponent {
-  private fb = inject(FormBuilder);
-  private destroyRef = inject(DestroyRef);
-
-  constructor() {
+  constructor(
+    private fb: FormBuilder,
+    private destroyRef: DestroyRef,
+  ) {
     // subscribes to the value of the search input
     // then sets hasValue whether the search input has a value or not
     this.searchForm.valueChanges

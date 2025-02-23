@@ -1,4 +1,13 @@
-import { Component, effect, ElementRef, Input, signal, Signal, WritableSignal, inject } from '@angular/core';
+import {
+  Component,
+  effect,
+  ElementRef,
+  Inject,
+  Input,
+  signal,
+  Signal,
+  WritableSignal,
+} from '@angular/core';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { DOCUMENT } from '@angular/common';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
@@ -26,13 +35,13 @@ export interface LoadingModalProps {
     styleUrl: './loading-modal.component.scss'
 })
 export class LoadingModalComponent {
-  private platformCheckService = inject(PlatformCheckService);
-  private document = inject<Document>(DOCUMENT);
-  private scrollDisablerService = inject(ScrollDisablerService);
-  private elementRef = inject(ElementRef);
-  protected extractStringService = inject(ExtractStringService);
-
-  constructor() {
+  constructor(
+    private platformCheckService: PlatformCheckService,
+    @Inject(DOCUMENT) private document: Document,
+    private scrollDisablerService: ScrollDisablerService,
+    private elementRef: ElementRef,
+    protected extractStringService: ExtractStringService,
+  ) {
     // disables or enables the scrolling of the body element whenever the state of the isOpenSig changes
     effect(() => {
       if (this.loadingModalProps.config.isOpenSig()) {
