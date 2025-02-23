@@ -1,5 +1,9 @@
 <h4 sticky-element class="cast-or-crew-title">
-  {{ castOrCrew() === "cast" ? castCount : crewCount }}
+  @if (castOrCrew() === "cast") {
+    Cast <app-chip [props]="{ text: castCount }"></app-chip>
+  } @else {
+    Crew <app-chip [props]="{ text: crewCount }"></app-chip>
+  }
 </h4>
 
 <!-- If the curret title in view is a TV Series -->

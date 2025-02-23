@@ -1,0 +1,81 @@
+:host {
+  width: 100%;
+  height: 100%;
+  z-index: 100001;
+  inset: 0;
+  position: fixed;
+  display: grid;
+  place-content: center;
+
+  pointer-events: none;
+  & > * {
+    pointer-events: all;
+  }
+}
+
+.dialog__backdrop {
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  inset: 0;
+
+  background-color: transparent;
+  pointer-events: none;
+
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.closed {
+    pointer-events: none;
+    background-color: transparent;
+  }
+
+  &.open {
+    pointer-events: all;
+    background-color: rgba(0, 0, 0, 0.75);
+  }
+}
+
+.dialog {
+  margin: auto;
+  max-width: 800px;
+  background-color: var(--dialog-bg-color);
+  padding: 1.5rem;
+  border-radius: 1rem;
+
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1.5rem;
+  margin: 1rem;
+}
+
+.dialog__main-content-container {
+  display: flex;
+  flex-flow: column nowrap;
+  row-gap: 1rem;
+
+  align-items: center;
+
+  max-height: 75vh;
+  overflow-y: auto;
+}
+
+.dialog {
+  &:not(.open):not(.closed) {
+    opacity: 0%;
+    pointer-events: none;
+  }
+
+  &.open:not(.closed) {
+    pointer-events: all;
+    animation:
+      FadeIn 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+      ScaleUp 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+
+  &.closed:not(.open) {
+    pointer-events: none;
+    animation:
+      FadeOut 0.15s cubic-bezier(0.4, 0, 0.2, 1) forwards,
+      ScaleDown 0.2s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  }
+}

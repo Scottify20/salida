@@ -80,6 +80,7 @@ export class PillIndexedTabsComponent {
     let startX = 0;
 
     clipper.style.touchAction = 'pan-y';
+    clipper.style.minHeight = 'calc(100vh / 4 * 3)';
 
     const pointerDown$ = fromEvent<PointerEvent>(clipper, 'pointerdown', {
       capture: true,
@@ -135,7 +136,7 @@ export class PillIndexedTabsComponent {
         }
 
         const threshold = Math.min(clipper.offsetWidth / 2, 300);
-        const velocityThreshold = 0.5;
+        const velocityThreshold = 0.3;
 
         if (
           Math.abs(currentX) > threshold ||

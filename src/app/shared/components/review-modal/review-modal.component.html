@@ -1,0 +1,28 @@
+<div
+  (click)="closeDialog()"
+  #backdrop
+  class="dialog__backdrop"
+  [class]="
+    props.config.isOpenSig() == null
+      ? ''
+      : props.config.isOpenSig()
+        ? 'open'
+        : 'closed'
+  "
+></div>
+
+<div
+  #dialog
+  class="dialog"
+  [class]="
+    props.config.isOpenSig() == null
+      ? ''
+      : props.config.isOpenSig()
+        ? 'open'
+        : 'closed'
+  "
+>
+  <div class="dialog__main-content-container">
+    <app-review [props]="props.review()" [isModal]="true"></app-review>
+  </div>
+</div>

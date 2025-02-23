@@ -77,6 +77,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
             'cast',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -93,6 +94,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
             'crew',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -115,6 +117,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieDetails.releases.groupBy.set(
             'release-type',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -131,6 +134,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieDetails.releases.groupBy.set(
             'country',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -153,6 +157,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
             'tmdb',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -168,6 +173,7 @@ export class MovieDetailsComponent implements AfterViewInit {
           this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
             'salida',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>

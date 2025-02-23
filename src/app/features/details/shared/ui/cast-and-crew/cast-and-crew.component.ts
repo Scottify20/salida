@@ -33,10 +33,11 @@ import { TemporaryUserPreferencesService } from '../../../../../shared/services/
 import { TmdbEntityForCard } from '../../../../../shared/components/card-section/person-card/person-card.component';
 import { Router } from '@angular/router';
 import { IntersectionObserverService } from '../../../../../shared/services/dom/intersection-observer.service';
+import { ChipComponent } from '../../../../../shared/components/chip/chip.component';
 
 @Component({
   selector: 'app-cast-and-crew',
-  imports: [PeopleCardsSectionComponent],
+  imports: [PeopleCardsSectionComponent, ChipComponent],
   templateUrl: './cast-and-crew.component.html',
   styleUrl: './cast-and-crew.component.scss',
 })
@@ -97,7 +98,7 @@ export class CastAndCrewComponent implements AfterViewInit {
 
   private startObserver() {
     const element = this.bottomIntersectionRef.nativeElement as HTMLDivElement;
-    const options = { rootMargin: '2000px' };
+    const options = { rootMargin: '500px' };
 
     const observerCallback = (entries: IntersectionObserverEntry[]) => {
       if (entries[0].isIntersecting) {
@@ -311,11 +312,11 @@ export class CastAndCrewComponent implements AfterViewInit {
     const seriesCastLength = this.seriesData?.aggregate_credits.cast.length;
 
     if (isMovie && movieCastLength) {
-      return `Cast (${movieCastLength})`;
+      return `${movieCastLength}`;
     } else if (isSeries && seriesCastLength) {
-      return `Cast (${seriesCastLength})`;
+      return `${seriesCastLength}`;
     } else {
-      return 'Cast';
+      return '';
     }
   }
 
@@ -326,11 +327,11 @@ export class CastAndCrewComponent implements AfterViewInit {
     const seriesCrewLength = this.seriesData?.aggregate_credits.crew.length;
 
     if (isMovie && movieCrewLength) {
-      return `Crew (${movieCrewLength})`;
+      return `${movieCrewLength}`;
     } else if (isSeries && seriesCrewLength) {
-      return `Crew (${seriesCrewLength})`;
+      return `${seriesCrewLength}`;
     } else {
-      return 'Crew';
+      return '';
     }
   }
 }

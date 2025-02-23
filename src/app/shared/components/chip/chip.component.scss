@@ -1,0 +1,9 @@
+.chip {
+  text-wrap: nowrap;
+  font-size: calc(0.9rem);
+  padding: 0.36em 0.5em;
+  border-radius: 100px;
+  color: var(--text-accent-color);
+  background-color: var(--text-hightlight-accent-color);
+  width: fit-content;
+}

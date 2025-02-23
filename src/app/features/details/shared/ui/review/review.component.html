@@ -1,0 +1,43 @@
+@if (props) {
+  <div class="review" [class]="isModal ? 'is-modal' : ''">
+    @if (props.author_details.avatar_path) {
+      <img
+        [src]="
+          'https://image.tmdb.org/t/p/w185' + props.author_details.avatar_path
+        "
+        alt=""
+        class="review__profile-photo"
+      />
+    } @else {
+      <img
+        src="/assets/icons/placeholders/Profile.svg"
+        alt=""
+        class="review__profile-photo"
+      />
+    }
+
+    <div class="review__header-texts">
+      <h4 class="review__username">{{ props.author }}</h4>
+      <div class="review__rating-and-date-container">
+        @if (props.author_details.rating) {
+          <div class="review__rating-container">
+            <img
+              src="/assets/icons/ratings/Star.svg"
+              alt=""
+              class="review__rating_star"
+            />
+            <p class="review__rating-value">
+              {{ props.author_details.rating }}0%
+            </p>
+          </div>
+        }
+        <p class="review_date">
+          {{ props.created_at | date: "MMM dd, yyyy" }}
+        </p>
+      </div>
+    </div>
+    <div class="review__body" [class]="isModal ? '' : 'truncated'">
+      {{ props.content }}
+    </div>
+  </div>
+}

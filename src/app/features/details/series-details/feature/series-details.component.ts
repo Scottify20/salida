@@ -145,6 +145,7 @@ export class SeriesDetailsComponent {
           this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
             'cast',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -161,6 +162,7 @@ export class SeriesDetailsComponent {
           this.preferencesService.preferences.details.movieAndSeriesDetails.castOrCrew.set(
             'crew',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -183,6 +185,7 @@ export class SeriesDetailsComponent {
           this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
             'tmdb',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>
@@ -198,6 +201,7 @@ export class SeriesDetailsComponent {
           this.preferencesService.preferences.details.movieAndSeriesDetails.reviews.reviewsSource.set(
             'salida',
           );
+          this.scrollToPillTabs();
         },
         isActive: computed(
           () =>

@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ElementRef, signal } from '@angular/core';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { catchError, map, Observable, of, Subscription, tap } from 'rxjs';
@@ -8,19 +8,22 @@ import {
 } from '../../../../../shared/interfaces/models/tmdb/All';
 import { CommonModule } from '@angular/common';
 import {
-  ReviewsPreferences,
   ReviewsSource,
   TemporaryUserPreferencesService,
 } from '../../../../../shared/services/preferences/temporary-user-preferences-service';
 import { Movie } from '../../../../../shared/interfaces/models/tmdb/Movies';
 import { Series } from '../../../../../shared/interfaces/models/tmdb/Series';
-import { CollapsibleTextSectionComponent } from '../../../../../shared/components/collapsible-text-section/collapsible-text-section.component';
 
 import removeMd from 'remove-markdown';
+import { ReviewComponent } from '../review/review.component';
+import {
+  ReviewModalComponent,
+  ReviewModalProps,
+} from '../../../../../shared/components/review-modal/review-modal.component';
 
 @Component({
   selector: 'app-reviews',
-  imports: [CommonModule, CollapsibleTextSectionComponent],
+  imports: [CommonModule, ReviewComponent, ReviewModalComponent],
   templateUrl: './reviews.component.html',
   styleUrl: './reviews.component.scss',
 })
@@ -37,6 +40,21 @@ export class ReviewsComponent {
     this.preferencesService.preferences.details.movieAndSeriesDetails.reviews
       .reviewsSource;
   mediaData$: Observable<Movie | Series | null> = of(null);
+
+  reviewModalProps: ReviewModalProps = {
+    config: {
+      id: 'review-modal',
+      isOpenSig: signal(false),
+    },
+    review: signal(null),
+  };
+
+  showReviewModal(review: Review) {
+    setTimeout(() => {
+      this.reviewModalProps.review.set(review);
+      this.reviewModalProps.config.isOpenSig.set(true);
+    }, 25);
+  }
 
   initializeReviewsFetching() {
     if (this.moviesDetailsService.isMovieRoute) {
