@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, inject } from '@angular/core';
 import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 import { MediaSummary } from '../../../../shared/interfaces/models/tmdb/All';
 import { MovieDetailsService } from '../../../details/movie-details/data-access/movie-details.service';
@@ -15,11 +15,10 @@ export interface HeroCardProps extends MediaSummary {
   styleUrl: './hero-card.component.scss',
 })
 export class HeroCardComponent implements OnInit {
-  constructor(
-    private movieDetailsService: MovieDetailsService,
-    private seriesDetailsService: SeriesDetailsService,
-    private platformCheck: PlatformCheckService,
-  ) {}
+  private movieDetailsService = inject(MovieDetailsService);
+  private seriesDetailsService = inject(SeriesDetailsService);
+  private platformCheck = inject(PlatformCheckService);
+
   @Input() cardIndex = 0;
   @Input({ required: true }) props: MediaSummary = {
     media_type: 'movie',

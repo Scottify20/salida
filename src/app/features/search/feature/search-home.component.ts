@@ -1,11 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  computed,
-  DestroyRef,
-  ElementRef,
-  ViewChild,
-} from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, DestroyRef, ElementRef, ViewChild, inject } from '@angular/core';
 import { SearchBarComponent } from '../ui/search-bar/search-bar.component';
 import {
   PillIndexedTabsComponent,
@@ -42,13 +35,13 @@ import { ResultCardSkeletonComponent } from '../ui/result-card-skeleton/result-c
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchHomeComponent {
+  protected spService = inject(SearchPageService);
+  private intersectionObserver = inject(IntersectionObserverService);
+  private destroyRef = inject(DestroyRef);
+
   protected searchTrigger$ = new Subject<string>();
 
-  constructor(
-    protected spService: SearchPageService,
-    private intersectionObserver: IntersectionObserverService,
-    private destroyRef: DestroyRef,
-  ) {
+  constructor() {
     this.searchTrigger$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe((query) => this.spService.triggerSearch(query));

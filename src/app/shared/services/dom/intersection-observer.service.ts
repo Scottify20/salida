@@ -1,4 +1,4 @@
-import { Injectable, NgModule, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, NgModule, PLATFORM_ID, inject } from '@angular/core';
 import { PlatformCheckService } from './platform-check.service';
 
 export type IntersectionCallback = (
@@ -8,9 +8,9 @@ export type IntersectionCallback = (
 
 @Injectable({ providedIn: 'root' })
 export class IntersectionObserverService {
-  private observer: IntersectionObserver | null = null;
+  private platformCheckService = inject(PlatformCheckService);
 
-  constructor(private platformCheckService: PlatformCheckService) {}
+  private observer: IntersectionObserver | null = null;
 
   observe(
     target: Element,

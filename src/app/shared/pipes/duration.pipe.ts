@@ -1,4 +1,4 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe, PipeTransform, inject } from '@angular/core';
 import { FormatService } from '../services/utility/format.service';
 
 type DurationUnits = 'y' | 'mo' | 'w' | 'd' | 'h' | 'min' | 's' | 'ms';
@@ -26,7 +26,8 @@ type DurationUnits = 'y' | 'mo' | 'w' | 'd' | 'h' | 'min' | 's' | 'ms';
   standalone: true,
 })
 export class DurationPipe implements PipeTransform {
-  constructor(private formatService: FormatService) {}
+  private formatService = inject(FormatService);
+
 
   transform(
     value: number | string,

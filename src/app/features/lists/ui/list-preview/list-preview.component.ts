@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MediaCardProps } from '../../../../shared/components/card-section/media-card/media-card.component';
 import {
   SectionTitleProps,
@@ -24,10 +24,9 @@ export interface ListPreviewProps extends SectionTitleProps {
   styleUrl: './list-preview.component.scss',
 })
 export class ListPreviewComponent {
-  constructor(
-    private movieService: MovieService,
-    private listViewService: ListViewService,
-  ) {}
+  private movieService = inject(MovieService);
+  private listViewService = inject(ListViewService);
+
 
   // @Input({required: true}) props!:  ListPreviewProps;
   props: ListPreviewProps = {

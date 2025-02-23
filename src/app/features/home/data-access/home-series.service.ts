@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { Observable, forkJoin } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { TmdbConfigService } from '../../../shared/services/tmdb/tmdb-config.service';
@@ -14,11 +14,10 @@ import { MediaCardsSectionProps } from '../../../shared/components/card-section/
   providedIn: 'root',
 })
 export class HomeSeriesService {
-  constructor(
-    private seriesService: SeriesService,
-    private seriesDetailsService: SeriesDetailsService,
-    private tmdbConfigService: TmdbConfigService,
-  ) {}
+  private seriesService = inject(SeriesService);
+  private seriesDetailsService = inject(SeriesDetailsService);
+  private tmdbConfigService = inject(TmdbConfigService);
+
 
   getPopularSeries$(): Observable<SeriesSummary[]> {
     return this.seriesService.getPopularSeries$().pipe(

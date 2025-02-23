@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import {
   TextsSectionComponent,
   TextsSectionOptions,
@@ -31,11 +31,11 @@ import {
   styleUrl: './series-more-details.component.scss',
 })
 export class SeriesMoreDetailsComponent {
-  constructor(
-    private seriesDetailsService: SeriesDetailsService,
-    private destroyRef: DestroyRef,
-    private tmdbConfigService: TmdbConfigService,
-  ) {
+  private seriesDetailsService = inject(SeriesDetailsService);
+  private destroyRef = inject(DestroyRef);
+  private tmdbConfigService = inject(TmdbConfigService);
+
+  constructor() {
     this.seriesDetailsService.seriesData$
       .pipe(
         takeUntilDestroyed(this.destroyRef),

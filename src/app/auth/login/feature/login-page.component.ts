@@ -1,4 +1,4 @@
-import { Component, ElementRef, signal, ViewChild } from '@angular/core';
+import { Component, ElementRef, signal, ViewChild, inject } from '@angular/core';
 import { FormBuilder, Validators } from '@angular/forms';
 import { ReactiveFormsModule } from '@angular/forms';
 import { CapsLockDetectorDirective } from '../../../shared/directives/caps-lock-detector.directive';
@@ -51,13 +51,12 @@ interface LoginErrorMessages {
   styleUrl: '../ui/login-page/login-page.component.scss',
 })
 export class LoginPageComponent {
-  constructor(
-    private fb: FormBuilder,
-    private firebaseAuthService: FirebaseAuthService,
-    private salidaAuthService: SalidaAuthService,
-    private toastsService: ToastsService,
-    private router: Router,
-  ) {}
+  private fb = inject(FormBuilder);
+  private firebaseAuthService = inject(FirebaseAuthService);
+  private salidaAuthService = inject(SalidaAuthService);
+  private toastsService = inject(ToastsService);
+  private router = inject(Router);
+
 
   @ViewChild('loginButton') loginButton!: ElementRef;
 

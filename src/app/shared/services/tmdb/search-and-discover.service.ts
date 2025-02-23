@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { MultiSearchSummaryResults } from '../../interfaces/models/tmdb/All';
@@ -21,10 +21,9 @@ export interface SearchParams {
   providedIn: 'root',
 })
 export class SearchAndDiscoverService {
-  constructor(
-    private tmdbConfig: TmdbConfigService,
-    private httpClient: HttpClient,
-  ) {}
+  private tmdbConfig = inject(TmdbConfigService);
+  private httpClient = inject(HttpClient);
+
 
   searchAll({
     page,

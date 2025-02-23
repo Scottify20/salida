@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { catchError, map, Observable, of, tap } from 'rxjs';
 import { MovieDetailsService } from '../../../movie-details/data-access/movie-details.service';
 import { SeriesDetailsService } from '../../../series-details/data-access/series-details.service';
@@ -22,13 +22,13 @@ interface TitleMetadata {
   styleUrl: './metadata.component.scss',
 })
 export class MetadataComponent {
-  constructor(
-    private movieDetailsService: MovieDetailsService,
-    private seriesDetailsService: SeriesDetailsService,
-    private destroyRef: DestroyRef,
-    private tmdbConfigService: TmdbConfigService,
-    private formatService: FormatService,
-  ) {
+  private movieDetailsService = inject(MovieDetailsService);
+  private seriesDetailsService = inject(SeriesDetailsService);
+  private destroyRef = inject(DestroyRef);
+  private tmdbConfigService = inject(TmdbConfigService);
+  private formatService = inject(FormatService);
+
+  constructor() {
     this.initializeMetadataFetching();
   }
 

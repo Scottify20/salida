@@ -1,4 +1,4 @@
-import { ElementRef, Injectable } from '@angular/core';
+import { ElementRef, Injectable, inject } from '@angular/core';
 import { WindowResizeService } from './window-resize.service';
 import { BehaviorSubject, Observable, Subject, Subscription } from 'rxjs';
 import { PlatformCheckService } from './platform-check.service';
@@ -8,6 +8,10 @@ import { ScrollDetectorService } from './scroll-detector.service';
   providedIn: 'root',
 })
 export class ElementPositionService {
+  private platformCheckService = inject(PlatformCheckService);
+  private windowResizeService = inject(WindowResizeService);
+  private scrollDectectorService = inject(ScrollDetectorService);
+
   private _resizeSubscription!: Subscription;
   private _scrollSubscription!: Subscription;
   private _subscriptions: Subscription[] = [];
@@ -25,11 +29,7 @@ export class ElementPositionService {
   isResizing: boolean = false;
   windowDimensions: { width: number; height: number } = { width: 0, height: 0 };
 
-  constructor(
-    private platformCheckService: PlatformCheckService,
-    private windowResizeService: WindowResizeService,
-    private scrollDectectorService: ScrollDetectorService,
-  ) {
+  constructor() {
     // Subscribe to the combined windowResizeState$ observable and store the subscription
     this._resizeSubscription =
       this.windowResizeService.windowResizeState$.subscribe((state) => {

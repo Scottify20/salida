@@ -1,15 +1,4 @@
-import {
-  Component,
-  DestroyRef,
-  effect,
-  ElementRef,
-  Inject,
-  Input,
-  Signal,
-  signal,
-  ViewChild,
-  WritableSignal,
-} from '@angular/core';
+import { Component, DestroyRef, effect, ElementRef, Input, Signal, signal, ViewChild, WritableSignal, inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 import { ScrollDisablerService } from '../../services/dom/scroll-disabler.service';
@@ -57,14 +46,14 @@ interface DialogButton {
     styleUrl: './dialog.component.scss'
 })
 export class DialogComponent {
-  constructor(
-    private elementRef: ElementRef,
-    @Inject(DOCUMENT) private document: Document,
-    private platformCheckService: PlatformCheckService,
-    private scrollDisablerService: ScrollDisablerService,
-    private destroyRef: DestroyRef,
-    protected extractStringService: ExtractStringService,
-  ) {
+  private elementRef = inject(ElementRef);
+  private document = inject<Document>(DOCUMENT);
+  private platformCheckService = inject(PlatformCheckService);
+  private scrollDisablerService = inject(ScrollDisablerService);
+  private destroyRef = inject(DestroyRef);
+  protected extractStringService = inject(ExtractStringService);
+
+  constructor() {
     // disables or enables the scrolling of the body element whenever the state of the isOpenSig changes
     effect(() => {
       if (this.dialogProps.config.isOpenSig()) {

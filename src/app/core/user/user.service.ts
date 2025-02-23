@@ -1,4 +1,4 @@
-import { computed, Injectable, signal, WritableSignal } from '@angular/core';
+import { computed, Injectable, signal, WritableSignal, inject } from '@angular/core';
 import { User } from 'firebase/auth';
 import {
   catchError,
@@ -26,12 +26,12 @@ import { toSignal } from '@angular/core/rxjs-interop';
   providedIn: 'root',
 })
 export class UserService {
-  constructor(
-    private http: HttpClient,
-    private firebaseAuthService: FirebaseAuthService,
-    private platformCheckService: PlatformCheckService,
-    private toastService: ToastsService,
-  ) {
+  private http = inject(HttpClient);
+  private firebaseAuthService = inject(FirebaseAuthService);
+  private platformCheckService = inject(PlatformCheckService);
+  private toastService = inject(ToastsService);
+
+  constructor() {
     if (this.platformCheckService.isBrowser()) {
       authState(this.firebaseAuthService.auth)
         .pipe(

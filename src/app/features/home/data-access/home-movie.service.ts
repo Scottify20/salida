@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { MovieService } from '../../../shared/services/tmdb/movie.service';
 import {
   MovieSummary,
@@ -13,11 +13,10 @@ import { MediaCardsSectionProps } from '../../../shared/components/card-section/
   providedIn: 'root',
 })
 export class HomeMovieService {
-  constructor(
-    private movieService: MovieService,
-    private movieDetailsService: MovieDetailsService,
-    private tmdbConfigService: TmdbConfigService,
-  ) {}
+  private movieService = inject(MovieService);
+  private movieDetailsService = inject(MovieDetailsService);
+  private tmdbConfigService = inject(TmdbConfigService);
+
 
   getPopularMovies$(): Observable<MovieSummary[]> {
     return this.movieService.getPopularMovies$().pipe(

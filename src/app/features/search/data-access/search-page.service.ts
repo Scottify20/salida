@@ -1,10 +1,4 @@
-import {
-  DestroyRef,
-  effect,
-  Injectable,
-  signal,
-  WritableSignal,
-} from '@angular/core';
+import { DestroyRef, effect, Injectable, signal, WritableSignal, inject } from '@angular/core';
 import {
   SearchAndDiscoverService,
   SearchParams,
@@ -41,13 +35,13 @@ export interface ResultCardProps {
   providedIn: 'root',
 })
 export class SearchPageService {
-  constructor(
-    private searchAndDiscoverService: SearchAndDiscoverService,
-    private destroyRef: DestroyRef,
-    private seriesDetailsService: SeriesDetailsService,
-    private movieDetailsService: MovieDetailsService,
-    private preferencesService: TemporaryUserPreferencesService,
-  ) {
+  private searchAndDiscoverService = inject(SearchAndDiscoverService);
+  private destroyRef = inject(DestroyRef);
+  private seriesDetailsService = inject(SeriesDetailsService);
+  private movieDetailsService = inject(MovieDetailsService);
+  private preferencesService = inject(TemporaryUserPreferencesService);
+
+  constructor() {
     effect(() => {
       // this effect listens for changes in the searchParams
       // then resets the results for all content type

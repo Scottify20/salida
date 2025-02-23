@@ -6,6 +6,7 @@ import {
   ElementRef,
   signal,
   ViewChild,
+  inject,
 } from '@angular/core';
 import { MediaHeroSectionComponent } from '../../shared/ui/media-hero-section/media-hero-section.component';
 import { TemporaryUserPreferencesService } from '../../../../shared/services/preferences/temporary-user-preferences-service';
@@ -44,11 +45,11 @@ import {
   styleUrl: '../ui/series-details/series-details.component.scss',
 })
 export class SeriesDetailsComponent {
-  constructor(
-    protected seriesDetailsService: SeriesDetailsService,
-    private formatService: FormatService,
-    private preferencesService: TemporaryUserPreferencesService,
-  ) {
+  protected seriesDetailsService = inject(SeriesDetailsService);
+  private formatService = inject(FormatService);
+  private preferencesService = inject(TemporaryUserPreferencesService);
+
+  constructor() {
     // Ensure the popup is hidden by default
     this.seriesDetailsService.isSeriesPickerShown.set(false);
 

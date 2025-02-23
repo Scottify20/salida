@@ -1,11 +1,4 @@
-import {
-  Component,
-  computed,
-  ElementRef,
-  Input,
-  signal,
-  ViewChild,
-} from '@angular/core';
+import { Component, computed, ElementRef, Input, signal, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { PlatformCheckService } from '../../services/dom/platform-check.service';
 
@@ -23,7 +16,8 @@ export interface CollapsibleTextSectionOptions {
   styleUrl: './collapsible-text-section.component.scss',
 })
 export class CollapsibleTextSectionComponent {
-  constructor(private platformCheckService: PlatformCheckService) {}
+  private platformCheckService = inject(PlatformCheckService);
+
 
   @Input({ required: true })
   collapsibleTextSectionProps: CollapsibleTextSectionOptions = {

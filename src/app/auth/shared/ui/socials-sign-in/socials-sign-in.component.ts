@@ -1,4 +1,4 @@
-import { Component, DestroyRef, signal } from '@angular/core';
+import { Component, DestroyRef, signal, inject } from '@angular/core';
 import { FirebaseAuthService } from '../../../../core/auth/firebase-auth.service';
 import { catchError, of, take, tap } from 'rxjs';
 import { ToastsService } from '../../../../shared/components/toasts/data-access/toasts.service';
@@ -20,14 +20,13 @@ import {
   styleUrl: './socials-sign-in.component.scss',
 })
 export class SocialsSignInComponent {
-  constructor(
-    private firebaseAuthService: FirebaseAuthService,
-    private toastsService: ToastsService,
-    private router: Router,
-    private destroyRef: DestroyRef,
-    private userService: UserService,
-    private salidaAuthService: SalidaAuthService,
-  ) {}
+  private firebaseAuthService = inject(FirebaseAuthService);
+  private toastsService = inject(ToastsService);
+  private router = inject(Router);
+  private destroyRef = inject(DestroyRef);
+  private userService = inject(UserService);
+  private salidaAuthService = inject(SalidaAuthService);
+
 
   loginWithGoogle() {
     this.firebaseAuthService

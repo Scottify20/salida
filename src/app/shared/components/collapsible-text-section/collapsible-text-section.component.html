@@ -1,11 +1,12 @@
 <div class="collapsible-texts-section">
   <div class="section-header">
-    <h4
-      class="section-header__title"
-      *ngIf="collapsibleTextSectionProps.sectionTitle as sectionTitle"
-    >
-      {{ sectionTitle }}
-    </h4>
+    @if (collapsibleTextSectionProps.sectionTitle; as sectionTitle) {
+      <h4
+        class="section-header__title"
+        >
+        {{ sectionTitle }}
+      </h4>
+    }
   </div>
 
   <div
@@ -15,12 +16,12 @@
     [ngClass]="{ 'apply-transition': applyTransition }"
     [class]="animateLengthClass()"
     (click)="toggleExpanded(); applyTransition = true"
-  >
+    >
     <p
       #textElement
       class="collapsible-texts-section__text"
       [class]="isOverFlowing() ? 'overflowing' : ''"
-    >
+      >
       {{ collapsibleTextSectionProps.text }}
     </p>
   </div>
@@ -39,7 +40,7 @@
     role="button"
     class="collapsible-texts-section__expand-button"
     (click)="toggleExpanded(); applyTransition = true"
-  >
+    >
     @if (isExpanded()) {
       <!-- arrow up svg icon -->
       <svg
@@ -48,20 +49,20 @@
         viewBox="0 0 18 9"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
-      >
+        >
         <path
           d="M1 7.979L9 0.999967L17 7.979"
           stroke="FFFFFF"
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-        />
-      </svg>
-      <!-- arrow up svg icon -->
-    } @else {
-      <p>•</p>
-      <p>•</p>
-      <p>•</p>
-    }
-  </div>
-}
+          />
+        </svg>
+        <!-- arrow up svg icon -->
+      } @else {
+        <p>•</p>
+        <p>•</p>
+        <p>•</p>
+      }
+    </div>
+  }

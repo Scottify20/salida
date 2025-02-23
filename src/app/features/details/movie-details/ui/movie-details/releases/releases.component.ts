@@ -54,6 +54,13 @@ const RELEASE_TYPES = [
   styleUrl: './releases.component.scss',
 })
 export class ReleasesComponent {
+  private movieDetailsService = inject(MovieDetailsService);
+  protected tmdbConfigService = inject(TmdbConfigService);
+  private userPreferencesService = inject(TemporaryUserPreferencesService);
+  private destroyRef = inject(DestroyRef);
+  protected platformCheckService = inject(PlatformCheckService);
+  private cdr = inject(ChangeDetectorRef);
+
   countryCodes: Country[] = [];
 
   releasesByCountry: ReleasesOfCountry[] = [];
@@ -64,14 +71,7 @@ export class ReleasesComponent {
 
   orderedReleaseTypes = RELEASE_TYPES;
 
-  constructor(
-    private movieDetailsService: MovieDetailsService,
-    protected tmdbConfigService: TmdbConfigService,
-    private userPreferencesService: TemporaryUserPreferencesService,
-    private destroyRef: DestroyRef,
-    protected platformCheckService: PlatformCheckService,
-    private cdr: ChangeDetectorRef,
-  ) {
+  constructor() {
     effect(() =>
       this.releasesPreferences.groupBy() === 'release-type'
         ? this.loadMovieData()

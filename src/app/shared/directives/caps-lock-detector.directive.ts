@@ -1,17 +1,13 @@
-import {
-  Directive,
-  ElementRef,
-  Host,
-  HostListener,
-  Renderer2,
-} from '@angular/core';
+import { Directive, ElementRef, HostListener, Renderer2, inject } from '@angular/core';
 
 @Directive({
   selector: '[appCapsLockDetector]',
   standalone: true,
 })
 export class CapsLockDetectorDirective {
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
+  private el = inject(ElementRef);
+  private renderer = inject(Renderer2);
+
 
   @HostListener('keydown', ['$event'])
   onKeyDown(event: KeyboardEvent) {

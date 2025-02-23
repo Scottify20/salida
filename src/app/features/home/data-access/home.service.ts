@@ -1,10 +1,4 @@
-import {
-  Injectable,
-  signal,
-  WritableSignal,
-  computed,
-  effect,
-} from '@angular/core';
+import { Injectable, signal, WritableSignal, computed, effect, inject } from '@angular/core';
 import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HomeMovieService } from './home-movie.service';
@@ -19,15 +13,15 @@ type MediaTypeLabel = 'All' | 'Movies' | 'TV Shows';
   providedIn: 'root',
 })
 export class HomeService {
+  private homeMovieService = inject(HomeMovieService);
+  private homeSeriesService = inject(HomeSeriesService);
+  private cardsScrollService = inject(CardsSectionScrollService);
+
   contentTypes: MediaTypeLabel[] = ['All', 'Movies', 'TV Shows'];
 
   selectedContentTypeName: WritableSignal<MediaTypeLabel> = signal('All');
 
-  constructor(
-    private homeMovieService: HomeMovieService,
-    private homeSeriesService: HomeSeriesService,
-    private cardsScrollService: CardsSectionScrollService,
-  ) {
+  constructor() {
     effect(() => {
       this.selectedContentTypeIndex();
       this.cardsScrollService.resetAllScrollPositions();

@@ -1,4 +1,4 @@
-import { Component, DestroyRef } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { MovieDetailsService } from '../../../data-access/movie-details.service';
 import { Movie } from '../../../../../../shared/interfaces/models/tmdb/Movies';
 import { tap } from 'rxjs';
@@ -25,11 +25,11 @@ import { TmdbConfigService } from '../../../../../../shared/services/tmdb/tmdb-c
   styleUrl: './movie-more-details.component.scss',
 })
 export class MovieMoreDetailsComponent {
-  constructor(
-    private movieDetailsService: MovieDetailsService,
-    private destroyRef: DestroyRef,
-    private tmdbConfigService: TmdbConfigService,
-  ) {
+  private movieDetailsService = inject(MovieDetailsService);
+  private destroyRef = inject(DestroyRef);
+  private tmdbConfigService = inject(TmdbConfigService);
+
+  constructor() {
     this.movieDetailsService.movieData$
       .pipe(
         takeUntilDestroyed(this.destroyRef),

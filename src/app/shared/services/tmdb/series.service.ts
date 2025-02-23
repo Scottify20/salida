@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import {
   Observable,
   of,
@@ -21,10 +21,9 @@ import { TmdbConfigService } from './tmdb-config.service';
   providedIn: 'root',
 })
 export class SeriesService {
-  constructor(
-    private http: HttpClient,
-    private tmdbConfig: TmdbConfigService,
-  ) {}
+  private http = inject(HttpClient);
+  private tmdbConfig = inject(TmdbConfigService);
+
   private cachedSeries: { [key: string]: Observable<Series> } = {};
   private cachedTrendingSeries!: Observable<TrendingSeries>;
   private cachedSeriesSeasons: {

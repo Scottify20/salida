@@ -1,10 +1,12 @@
-import { Injectable, Inject, PLATFORM_ID } from '@angular/core';
+import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import UAParser from 'ua-parser-js';
 
 @Injectable({ providedIn: 'root' })
 export class PlatformCheckService {
-  constructor(@Inject(PLATFORM_ID) private platformId: Object) {
+  private platformId = inject<Object>(PLATFORM_ID);
+
+  constructor() {
     this.startDetectedOSAttributeInsertion();
 
     if (this.isBrowser()) {

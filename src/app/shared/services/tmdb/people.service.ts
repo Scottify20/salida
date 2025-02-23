@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { TmdbConfigService } from './tmdb-config.service';
 import { Person, TrendingPeople } from '../../interfaces/models/tmdb/People';
 import {
@@ -17,10 +17,9 @@ import { TmdbTimeWindow } from '../../interfaces/models/tmdb/All';
   providedIn: 'root',
 })
 export class PeopleService {
-  constructor(
-    private tmdbConfig: TmdbConfigService,
-    private http: HttpClient,
-  ) {}
+  private tmdbConfig = inject(TmdbConfigService);
+  private http = inject(HttpClient);
+
   private cachedPerson: { [key: string]: Observable<Person> } = {};
   private cachedTrendingPeople: { [key: string]: Observable<TrendingPeople> } =
     {};

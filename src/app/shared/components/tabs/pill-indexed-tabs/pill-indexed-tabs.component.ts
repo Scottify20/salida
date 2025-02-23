@@ -1,12 +1,4 @@
-import {
-  Component,
-  Output,
-  EventEmitter,
-  Input,
-  Signal,
-  signal,
-  DestroyRef,
-} from '@angular/core';
+import { Component, Output, EventEmitter, Input, Signal, signal, DestroyRef, inject } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   filter,
@@ -43,7 +35,8 @@ interface TabItem {
   styleUrl: './pill-indexed-tabs.component.scss',
 })
 export class PillIndexedTabsComponent {
-  constructor(private destroyRef: DestroyRef) {}
+  private destroyRef = inject(DestroyRef);
+
 
   @Input({ required: true }) props: PillIndexedTabsProps = {
     buttonContent: 'text',

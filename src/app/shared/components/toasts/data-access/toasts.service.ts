@@ -1,4 +1,4 @@
-import { ComponentRef, Injectable, ViewContainerRef } from '@angular/core';
+import { ComponentRef, Injectable, ViewContainerRef, inject } from '@angular/core';
 import { ToastComponent } from '../ui/toast/toast.component';
 import { PlatformCheckService } from '../../../services/dom/platform-check.service';
 import { ToastItem } from './toast.model';
@@ -7,7 +7,8 @@ import { ToastItem } from './toast.model';
   providedIn: 'root',
 })
 export class ToastsService {
-  constructor(private platformCheckService: PlatformCheckService) {}
+  private platformCheckService = inject(PlatformCheckService);
+
 
   toastsContainerRef!: ViewContainerRef;
 

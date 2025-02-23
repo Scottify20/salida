@@ -1,9 +1,4 @@
-import {
-  Component,
-  Renderer2,
-  ViewChild,
-  ViewContainerRef,
-} from '@angular/core';
+import { Component, Renderer2, ViewChild, ViewContainerRef, inject } from '@angular/core';
 
 import { ToastsService } from '../data-access/toasts.service';
 import { PlatformCheckService } from '../../../services/dom/platform-check.service';
@@ -15,14 +10,12 @@ import { PlatformCheckService } from '../../../services/dom/platform-check.servi
   styleUrl: '../ui/toasts-container//toasts-container.component.scss',
 })
 export class ToastsContainerComponent {
+  private toastsService = inject(ToastsService);
+  private renderer = inject(Renderer2);
+  private platformCheckService = inject(PlatformCheckService);
+
   @ViewChild('toastsContainer', { read: ViewContainerRef })
   container!: ViewContainerRef;
-
-  constructor(
-    private toastsService: ToastsService,
-    private renderer: Renderer2,
-    private platformCheckService: PlatformCheckService,
-  ) {}
 
   commonIcons: string[] = [
     '/assets/icons/toast/close.svg',

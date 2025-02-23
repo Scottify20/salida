@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { SalidaAuthErrorSource } from '../../shared/interfaces/types/api-response/SalidaError';
 import { SalidaAuthError } from '../../shared/interfaces/types/api-response/SalidaAuthError';
 
@@ -11,7 +11,8 @@ import { HttpClient } from '@angular/common/http';
   providedIn: 'root',
 })
 export class SalidaAuthService {
-  constructor(private http: HttpClient) {}
+  private http = inject(HttpClient);
+
 
   getSalidAuthErrorMessage(error: SalidaAuthError): {
     errorSource: SalidaAuthErrorSource;

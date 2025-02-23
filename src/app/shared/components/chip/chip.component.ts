@@ -1,4 +1,4 @@
-import { Component, Input, Signal } from '@angular/core';
+import { Component, Input, Signal, inject } from '@angular/core';
 import { ExtractStringService } from '../../services/utility/extract-string.service';
 
 export interface ChipProps {
@@ -13,6 +13,7 @@ export interface ChipProps {
   styleUrl: './chip.component.scss',
 })
 export class ChipComponent {
-  constructor(protected extractStringService: ExtractStringService) {}
+  protected extractStringService = inject(ExtractStringService);
+
   @Input({ required: true }) props!: ChipProps;
 }
