@@ -58,7 +58,7 @@
   position: relative;
 
   app-rating-donut {
-    border-radius: 1000px;
+    z-index: 1000;
     content: "";
     position: absolute;
     bottom: -15px;

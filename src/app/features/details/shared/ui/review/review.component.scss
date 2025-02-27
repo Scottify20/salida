@@ -1,6 +1,5 @@
 :host {
   &:not(:last-child)::after {
-    grid-area: dv;
     content: "";
     display: block;
     width: 100%;
@@ -12,15 +11,11 @@
 }
 
 .review {
-  display: grid;
+  display: flex;
+  flex-flow: column nowrap;
   place-content: center;
 
-  grid-template-columns: auto 1fr;
   column-gap: 0.75rem;
-  grid-template-areas:
-    "pp hd"
-    ". bd"
-    "dv dv";
 
   &:not(.is-modal):active {
     filter: brightness(50%);
@@ -28,21 +23,21 @@
 
   &.is-modal {
     row-gap: 0.5rem;
-    grid-template-areas:
-      "pp hd"
-      "bd bd"
-      "dv dv";
   }
 }
 
-// .review.is-modal {
-//   & .review__profile-photo,
-//   & .review__header-texts {
-//     position: sticky;
-//     top: 0;
-//     background-color: var(--dialog-bg-color);
-//   }
-// }
+.review.is-modal {
+  & .review__header {
+    position: sticky;
+    top: 0;
+    background-color: var(--dialog-bg-color);
+  }
+}
+.review__header {
+  display: flex;
+  flex-flow: row nowrap;
+  gap: 1rem;
+}
 
 .review__profile-photo {
   background-color: var(--body-bg-color);
@@ -51,7 +46,6 @@
   width: 55px;
   aspect-ratio: 1/1;
   object-fit: cover;
-  grid-area: pp;
   border-radius: 50%;
   margin-bottom: 1rem;
 }
@@ -60,7 +54,6 @@
   z-index: 996;
   margin-bottom: 1rem;
 
-  grid-area: hd;
   display: grid;
   align-items: center;
 
@@ -76,7 +69,6 @@
     align-items: center;
 
     .review__rating-container {
-      background-color: var(--accent-color);
       display: flex;
       flex-flow: row nowrap;
       align-items: center;
@@ -93,6 +85,22 @@
         color: black;
         font-weight: 700;
       }
+
+      &.green {
+        background-color: hsl(120, 78%, 73%);
+      }
+
+      &.yellow-green {
+        background-color: #bddb84;
+      }
+
+      &.yellow {
+        background-color: #efd683;
+      }
+
+      &.red {
+        background-color: #f08686;
+      }
     }
 
     .review_date {
@@ -106,6 +114,12 @@
 :host {
   --review-body-line-height: 1.5;
   --review-body-max-lines: 5;
+}
+
+.review:not(.is-modal) {
+  .review__body {
+    margin-left: calc(1rem + 55px);
+  }
 }
 
 .review__body {

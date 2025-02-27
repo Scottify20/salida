@@ -95,6 +95,7 @@ export class SeriesDetailsService {
     );
 
   viewSeriesDetails(id: number, title: string, listInfo?: ListInfo) {
+    // console.log('viewSeriesDetails called with:', id, title);
     const titleSlugified = ('-' + title)
       .replace(/[^\p{L}\p{N}-]/giu, '-')
       .replace(/-{2,}/g, '-')

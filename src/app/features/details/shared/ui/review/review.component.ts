@@ -12,4 +12,15 @@ export class ReviewComponent {
   constructor(public elementRef: ElementRef) {}
   @Input({ required: true }) props!: Review | null;
   @Input({ required: true }) isModal: boolean = false;
+
+  get ratingColorClass(): 'green' | 'yellow-green' | 'yellow' | 'red' | '' {
+    const rating = this.props?.author_details?.rating;
+    const r = parseFloat(rating?.toFixed(1) || '0') || 0;
+
+    if (r >= 7) return 'green';
+    if (r >= 5) return 'yellow-green';
+    if (r > 3) return 'yellow';
+    if (r > 0) return 'red';
+    return '';
+  }
 }

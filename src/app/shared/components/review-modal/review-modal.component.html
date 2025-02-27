@@ -23,6 +23,11 @@
   "
 >
   <div class="dialog__main-content-container">
-    <app-review [props]="props.review()" [isModal]="true"></app-review>
+    <app-review
+      [tabIndex]="0"
+      reviewinmodal
+      [props]="props.review()"
+      [isModal]="true"
+    ></app-review>
   </div>
 </div>

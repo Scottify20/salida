@@ -20,10 +20,14 @@
   >
     {{
       animate
-        ? animatedRatingForText().toFixed(1)
-        : rating != 0
-          ? rating.toFixed(1)
-          : "NR"
+        ? animatedRatingForText() === 10
+          ? "10"
+          : animatedRatingForText().toFixed(1)
+        : rating === 10
+          ? "10"
+          : rating != 0
+            ? rating.toFixed(1)
+            : "NR"
     }}
   </text>
 </svg>

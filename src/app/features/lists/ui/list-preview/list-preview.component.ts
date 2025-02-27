@@ -1,37 +1,57 @@
-import { Component } from '@angular/core';
+import { Component, Input, OnChanges, OnDestroy, OnInit } from '@angular/core';
 import { MediaCardProps } from '../../../../shared/components/card-section/media-card/media-card.component';
 import {
   SectionTitleProps,
   SectionTitleComponent,
 } from '../../../../shared/components/section-title/section-title.component';
-import { MovieSummaryResults } from '../../../../shared/interfaces/models/tmdb/Movies';
-import { map, Observable } from 'rxjs';
-import { MovieService } from '../../../../shared/services/tmdb/movie.service';
 import { ListInfo } from '../../feature/lists-home.component';
 import { ListViewService } from '../../data-access/list-view.service';
+import { CommonModule } from '@angular/common';
+import { ListsService } from '../../data-access/lists.service';
+import {
+  BehaviorSubject,
+  Observable,
+  of,
+  Subject,
+  switchMap,
+  takeUntil,
+  tap,
+} from 'rxjs';
+import { MediaSummary } from '../../../../shared/interfaces/models/tmdb/All';
+import { MovieService } from '../../../../shared/services/tmdb/movie.service';
+import { SeriesService } from '../../../../shared/services/tmdb/series.service'; // Import SeriesService
 
 export interface ListPreviewProps extends SectionTitleProps {
-  titles: MediaCardProps[];
+  titles?: MediaCardProps[]; // Make optional since it's no longer being fetched here
   id: string;
   iconURL: string;
   listInfo: ListInfo;
+  results?: MediaSummary[];
 }
 
 @Component({
   selector: 'app-list-preview',
-  imports: [SectionTitleComponent],
+  imports: [SectionTitleComponent, CommonModule],
   templateUrl: './list-preview.component.html',
   styleUrl: './list-preview.component.scss',
 })
-export class ListPreviewComponent {
+export class ListPreviewComponent implements OnInit, OnChanges, OnDestroy {
   constructor(
-    private movieService: MovieService,
     private listViewService: ListViewService,
+    private listsService: ListsService,
+    private movieService: MovieService,
+    private seriesService: SeriesService, // Inject SeriesService
   ) {}
 
-  // @Input({required: true}) props!:  ListPreviewProps;
+  private _listInfo = new BehaviorSubject<ListInfo | undefined>(undefined);
+  @Input() set listInfo(value: ListInfo | undefined) {
+    this._listInfo.next(value);
+  }
+  get listInfo(): ListInfo | undefined {
+    return this._listInfo.value;
+  }
+
   props: ListPreviewProps = {
-    titles: [],
     id: '',
     iconURL: 'assets/icons/lists/list-icon/eye.svg',
     sectionTitle: 'List Name',
@@ -45,59 +65,90 @@ export class ListPreviewComponent {
     viewAllButtonProps: { onClick: () => {} },
   };
 
-  viewList() {
-    this.listViewService.viewList(this.props.listInfo);
-  }
-
   sectionTitleOptions: SectionTitleProps = {
-    sectionTitle: this.props.sectionTitle,
-    viewAllButtonProps: this.props.viewAllButtonProps,
-    iconURL: this.props.iconURL,
+    sectionTitle: '',
+    viewAllButtonProps: { onClick: () => {} },
+    iconURL: '',
   };
 
+  private destroy$ = new Subject<void>();
+  public results$ = new BehaviorSubject<MediaSummary[]>([]);
+
   ngOnInit() {
-    this.getMoviesInTheatres().subscribe((props) => {
-      this.props = props;
-    });
+    this._listInfo
+      .pipe(
+        tap((listInfo) => {
+          if (!listInfo) {
+            return;
+          }
+          this.props = {
+            ...this.props,
+            listInfo: listInfo,
+            sectionTitle: listInfo?.listName || '',
+          };
+          this.sectionTitleOptions = {
+            sectionTitle: this.props.sectionTitle,
+            viewAllButtonProps: {
+              onClick: () => this.viewList(),
+            },
+            iconURL: this.props.iconURL,
+          };
+        }),
+        switchMap((listInfo) => {
+          if (!listInfo) {
+            return of(null);
+          }
+          // Fetch the list data using the ListsService or MovieService based on listInfo
+          return this.fetchListData(listInfo);
+        }),
+        takeUntil(this.destroy$),
+      )
+      .subscribe((data) => {
+        if (data && data.results) {
+          this.results$.next(data.results);
+        }
+      });
   }
 
   ngOnChanges(): void {
-    this.sectionTitleOptions = {
-      sectionTitle: this.props.sectionTitle,
-      viewAllButtonProps: this.props.viewAllButtonProps,
-    };
+    // this.updateProps(); // Keep updateProps, it will update on every change
   }
 
-  getMoviesInTheatres(): Observable<ListPreviewProps> {
-    return this.movieService
-      .getMoviesPlayingInTheares$()
-      .pipe(
-        map((movies) =>
-          this.transformMoviesToCardSectionProps('In Theatres', movies),
-        ),
-      );
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
-  private transformMoviesToCardSectionProps(
-    title: string,
-    moviesResponse: MovieSummaryResults,
-  ): ListPreviewProps {
-    return {
-      id: title + '-movies',
-      sectionTitle: title,
-      iconURL: '',
-      viewAllButtonProps: { onClick: () => {} },
-      titles: moviesResponse.results.map((movie) => ({
-        ...movie,
-        media_type: 'movie',
-      })),
-      listInfo: {
-        sourceType: 'provider',
-        sourceName: 'Netflix',
-        sourceID: 8,
-        listName: 'Movies',
-        listID: 0,
-      },
-    };
+  fetchListData(listInfo: ListInfo): Observable<any> {
+    // Example: Fetch movies from a watch provider
+    if (listInfo.sourceType === 'provider') {
+      if (listInfo.listName === 'movies') {
+        return this.movieService.getMoviesFromWatchProvider$(
+          listInfo.sourceID ?? 0, // Use MovieService
+          1,
+        );
+      } else if (listInfo.listName === 'series') {
+        return this.seriesService.getSeriesFromWatchProvider$(
+          // Use SeriesService
+          listInfo.sourceID ?? 0,
+          1,
+        );
+      }
+    } else if (listInfo.sourceType === 'home') {
+      if (listInfo.listName === 'movies') {
+        if (listInfo.listID === 1) {
+          return this.movieService.getMoviesPlayingInTheares$();
+        } else if (listInfo.listID === 2) {
+          return this.movieService.getUpcomingMovies$();
+        }
+      }
+    }
+    return of(null);
+  }
+
+  viewList() {
+    if (this.listInfo) {
+      this.listViewService.viewList(this.listInfo);
+    }
   }
 }

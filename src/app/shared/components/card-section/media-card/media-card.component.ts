@@ -1,11 +1,14 @@
 import { Component, Input } from '@angular/core';
 import { MediaSummary } from '../../../interfaces/models/tmdb/All';
 import { RatingDonutComponent } from '../../rating-donut/rating-donut.component';
+import { ListInfo } from '../../../../features/lists/feature/lists-home.component';
 
 export interface MediaCardProps extends MediaSummary {
-  onClick?: () => void;
+  onClick?: (listInfo?: ListInfo) => void;
   media_type: 'movie' | 'tv';
   scaling?: 'fixed' | 'auto';
+  listInfo?: ListInfo;
+  watch_provider_id?: number | null;
 }
 
 @Component({

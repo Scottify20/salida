@@ -9,6 +9,8 @@ import {
   SeriesSummaryResults,
 } from '../../../shared/interfaces/models/tmdb/Series';
 import { MediaCardsSectionProps } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
+import { ListViewService } from '../../lists/data-access/list-view.service';
+import { ListInfo } from '../../lists/feature/lists-home.component';
 
 @Injectable({
   providedIn: 'root',
@@ -18,6 +20,7 @@ export class HomeSeriesService {
     private seriesService: SeriesService,
     private seriesDetailsService: SeriesDetailsService,
     private tmdbConfigService: TmdbConfigService,
+    private listViewService: ListViewService,
   ) {}
 
   getPopularSeries$(): Observable<SeriesSummary[]> {
@@ -88,19 +91,37 @@ export class HomeSeriesService {
       'series',
     );
 
+    let listInfo: ListInfo;
+
+    listInfo = {
+      sourceType: 'provider',
+      sourceName: title,
+      sourceID: providerId,
+      listName: 'series',
+      listID: 0,
+    };
+
     return {
-      iconURL: providerIcon,
+      iconURL: providerIcon ? providerIcon : undefined,
       id: title + '-series',
       sectionTitle: title,
       maxNoOfTitles: 20,
       saveScrollPosition: true,
-      viewAllButtonProps: { onClick: () => {} },
+      viewAllButtonProps: {
+        onClick: () => this.listViewService.viewList(listInfo),
+      },
       titles: seriesResponse.results.map((series) => ({
         ...series,
         media_type: 'tv',
+        sourceType: 'provider',
+        sourceID: providerId,
         onClick: () => {
-          this.seriesDetailsService.viewSeriesDetails(series.id, series.name);
+          this.seriesDetailsService.viewSeriesDetails(
+            series.id,
+            series.name as string,
+          );
         },
+        watch_provider_id: providerId,
       })),
     };
   }

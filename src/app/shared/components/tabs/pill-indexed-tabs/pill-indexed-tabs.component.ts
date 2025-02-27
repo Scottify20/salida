@@ -8,16 +8,7 @@ import {
   DestroyRef,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import {
-  filter,
-  fromEvent,
-  map,
-  pairwise,
-  switchMap,
-  takeUntil,
-  tap,
-  throttleTime,
-} from 'rxjs';
+import { filter, fromEvent, map, switchMap, takeUntil, tap } from 'rxjs';
 
 export interface PillIndexedTabsProps {
   buttonContent: TabButtonContent;
@@ -78,7 +69,12 @@ export class PillIndexedTabsComponent {
     let tabSwitched = false;
     let isSwiping = false;
     let startX = 0;
+    let initialX = 0; // Store initial X position
 
+    const initialHorizontalThreshold = 5; // Threshold to initiate swipe
+    let isThresholdPassed = false;
+
+    clipper.style.width = '100%';
     clipper.style.touchAction = 'pan-y';
     clipper.style.minHeight = 'calc(100vh / 4 * 3)';
 
@@ -90,14 +86,16 @@ export class PillIndexedTabsComponent {
       filter((e) => {
         const x = e.clientX;
         const viewportWidth = window.innerWidth;
-        return x > 40 && x < viewportWidth - 40;
+        return x > 60 && x < viewportWidth - 60;
       }),
       tap((event) => {
         isSwiping = true;
         startX = event.clientX;
+        initialX = event.clientX; // Store initial X
         currentX = 0;
         velocityX = 0;
         tabSwitched = false;
+        isThresholdPassed = false; // Reset the threshold flag
         clipper.style.position = 'relative';
         viewsContainer.style.userSelect = 'none';
         viewsContainer.style.pointerEvents = 'none';
@@ -110,11 +108,32 @@ export class PillIndexedTabsComponent {
       takeUntilDestroyed(this.destroyRef),
       filter((e) => e.pointerType === 'touch' && isSwiping),
       map((curr) => {
-        const dx = curr.clientX - startX;
-        velocityX = dx * 0.3;
-        startX = curr.clientX;
-        return dx;
+        let dx = 0;
+        const initialSwipeDistance = Math.abs(curr.clientX - initialX); // Initial swipe distance
+        const significantMoveThreshold = 2;
+
+        if (
+          !isThresholdPassed &&
+          initialSwipeDistance > initialHorizontalThreshold
+        ) {
+          isThresholdPassed = true;
+          startX = curr.clientX; // Reset startX to current position when threshold is passed
+          dx = 0; // set dx to zero so that the translate doesnt jump
+        }
+
+        if (isThresholdPassed) {
+          const moveDelta = curr.clientX - startX;
+          if (Math.abs(moveDelta) > significantMoveThreshold) {
+            dx = moveDelta;
+            velocityX = dx * 0.3;
+            startX = curr.clientX; // Update startX only when there's a significant movement
+          }
+        }
+
+        return { dx, initialSwipeDistance, currClientX: curr.clientX };
       }),
+      filter(() => isThresholdPassed), // Only allow if threshold is passed
+      map(({ dx }) => dx),
     );
 
     const pointerUp$ = fromEvent<PointerEvent>(clipper, 'pointerup', {

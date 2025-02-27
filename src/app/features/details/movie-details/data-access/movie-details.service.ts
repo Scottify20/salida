@@ -30,6 +30,7 @@ export class MovieDetailsService {
   movieData$: Observable<Movie | null> = this._movieData$.asObservable();
 
   viewMovieDetails(id: number, title: string, listInfo?: ListInfo) {
+    // console.log('viewMovieDetails called with:', id, title);
     const titleSlugified = ('-' + title)
       .replace(/[^\p{L}\p{N}-]/giu, '-')
       .replace(/-{2,}/g, '-')

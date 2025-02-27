@@ -37,6 +37,7 @@ export interface MediaSummary extends BaseMedia {
   name?: string; // For series
   original_name?: string; // For series
   origin_country?: string[]; // For series
+  watch_provider_id?: number | null;
 }
 
 export interface PersonSummary {

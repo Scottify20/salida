@@ -7,33 +7,22 @@
 
     <div class="breadcrumb">
       <h4 (click)="goHome()" class="prev">Lists</h4>
-      @if (
-        this.listsService.sourceNameFromRoute ||
-          this.listsService.sourceIdFromRoute;
-        as sourceIDOrName
-      ) {
+      @if (this.listsService.currentSourceName$ | async; as sourceName) {
         <img class="arrow" src="/assets/icons/ArrowToRight.svg" alt="" />
         <h4>
           {{
-            sourceIDOrName
-              .toLocaleString()
-              .substring(0, 1)
-              .toLocaleUpperCase() +
-              sourceIDOrName.toLocaleString().substring(1)
+            sourceName.toLocaleString().substring(0, 1).toLocaleUpperCase() +
+              sourceName.toLocaleString().substring(1)
           }}
         </h4>
       }
 
-      @if (
-        this.listsService.listNameFromRoute ||
-          this.listsService.listIDFromRoute;
-        as listIdOrName
-      ) {
+      @if (this.listsService.currentListName$ | async; as listName) {
         <img class="arrow" src="/assets/icons/ArrowToRight.svg" alt="" />
         <h4>
           {{
-            listIdOrName.toLocaleString().substring(0, 1).toLocaleUpperCase() +
-              listIdOrName.toLocaleString().substring(1)
+            listName.toLocaleString().substring(0, 1).toLocaleUpperCase() +
+              listName.toLocaleString().substring(1)
           }}
         </h4>
       }
@@ -48,8 +37,9 @@
   }
 </div>
 
-<div class="cards-container clickable-cards">
+<div #cardsContainer class="cards-container clickable-cards">
   @for (title of this.props.titles; track title.id; let i = $index) {
     <app-media-card [props]="title" [index]="i"></app-media-card>
   }
 </div>
+<div #intersectionTarget></div>

@@ -1,12 +1,14 @@
 <div class="title-cards-section">
   <app-section-title [props]="sectionTitleOptions"></app-section-title>
   <div class="container" (click)="viewList()">
-    @for (title of props.titles.slice(0, 5); track title.id; let i = $index) {
-      <img
-        class="poster"
-        [src]="'https://image.tmdb.org/t/p/w185' + title.poster_path"
-        alt=""
-      />
+    @for (title of results$ | async; track title.id; let i = $index) {
+      @if (i < 5) {
+        <img
+          class="poster"
+          [src]="'https://image.tmdb.org/t/p/w185' + title.poster_path"
+          alt=""
+        />
+      }
     }
   </div>
 </div>

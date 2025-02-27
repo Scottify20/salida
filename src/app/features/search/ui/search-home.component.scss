@@ -85,13 +85,6 @@
   margin: 0 auto;
   width: 100%;
   max-width: 500px;
-
-  & > *:nth-child(1n) {
-    order: 0;
-  }
-  & > *:nth-child(2n) {
-    order: 1;
-  }
 }
 
 @media (min-width: 768px) {
@@ -99,13 +92,6 @@
     grid-template-columns: repeat(3, 1fr);
     max-width: 720px;
     grid-auto-flow: row;
-
-    & > *:nth-child(1n) {
-    }
-    & > *:nth-child(2n) {
-    }
-    & > *:nth-child(3n) {
-    }
   }
 }
 

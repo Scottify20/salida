@@ -1,4 +1,11 @@
-import { Component, DestroyRef } from '@angular/core';
+import {
+  Component,
+  DestroyRef,
+  ElementRef,
+  ViewChild,
+  AfterViewInit,
+  OnDestroy,
+} from '@angular/core';
 import {
   HeaderButtonProps,
   HeaderButtonComponent,
@@ -7,15 +14,14 @@ import {
   MediaCardProps,
   MediaCardComponent,
 } from '../../../../shared/components/card-section/media-card/media-card.component';
-import { MovieSummaryResults } from '../../../../shared/interfaces/models/tmdb/Movies';
-import { MediaCardsSectionProps } from '../../../../shared/components/card-section/media-cards-section/media-cards-section.component';
-import { filter, map, Observable } from 'rxjs';
-import { MovieService } from '../../../../shared/services/tmdb/movie.service';
-import { MovieDetailsService } from '../../../details/movie-details/data-access/movie-details.service';
+import { combineLatest } from 'rxjs';
 import { Router } from '@angular/router';
-import { ListsService } from '../../data-access/lists.service';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ListViewService } from '../../data-access/list-view.service';
+import { AsyncPipe } from '@angular/common';
+import { tap, take, switchMap } from 'rxjs';
+import { IntersectionObserverService } from '../../../../shared/services/dom/intersection-observer.service';
+import { PlatformCheckService } from '../../../../shared/services/dom/platform-check.service';
 
 export interface ListViewProps {
   listName: string;
@@ -26,26 +32,72 @@ export interface ListViewProps {
 
 @Component({
   selector: 'app-list-view',
-  imports: [HeaderButtonComponent, MediaCardComponent],
+  imports: [HeaderButtonComponent, MediaCardComponent, AsyncPipe],
   templateUrl: './list-view.component.html',
   styleUrl: './list-view.component.scss',
 })
-export class ListViewComponent {
+export class ListViewComponent implements AfterViewInit, OnDestroy {
   constructor(
     private router: Router,
     protected listsService: ListViewService,
     private destroyRef: DestroyRef,
+    private intersectionObserverService: IntersectionObserverService,
+    private platformCheckService: PlatformCheckService,
   ) {}
 
+  @ViewChild('cardsContainer') cardsContainer!: ElementRef;
+  @ViewChild('intersectionTarget') intersectionTarget!: ElementRef;
+
+  private loading = false;
+
   ngOnInit() {
-    this.listsService.listData$
+    combineLatest([this.listsService.listData$, this.listsService.isEditable$])
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((data) => {
+      .subscribe(([data, isEditable]) => {
         if (data) {
-          this.props.titles = data.titles;
-          this.props.editable = true;
+          this.props.listName = data.listName;
+          this.props.editable = isEditable;
         }
       });
+
+    this.listsService.listResults$
+      .pipe(
+        takeUntilDestroyed(this.destroyRef),
+        tap((results) => {
+          // console.log('New titles appended:', results); // Console log the updated titles
+        }),
+      )
+      .subscribe((results) => {
+        this.props.titles = results.map((result) => ({
+          ...result,
+          media_type: result.media_type || 'movie', // Provide a default value
+        }));
+      });
+
+    this.listsService.currentListName$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((listName) => {
+        this.props.listName = listName;
+      });
+  }
+
+  ngAfterViewInit(): void {
+    if (this.platformCheckService.isBrowser()) {
+      this.observeElement();
+    }
+  }
+
+  ngOnDestroy(): void {
+    if (
+      this.platformCheckService.isBrowser() &&
+      this.intersectionTarget &&
+      this.intersectionObserverService
+    ) {
+      this.intersectionObserverService.unobserve(
+        this.intersectionTarget.nativeElement,
+      );
+      this.intersectionObserverService.disconnect();
+    }
   }
 
   props: ListViewProps = {
@@ -77,4 +129,51 @@ export class ListViewComponent {
       ariaLabel: 'Go back to previous page',
     },
   ];
+
+  observeElement() {
+    if (!this.intersectionTarget) {
+      return;
+    }
+
+    this.intersectionObserverService.observe(
+      this.intersectionTarget.nativeElement,
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            this.loadMoreData();
+          }
+        });
+      },
+      {
+        rootMargin: '200px',
+        threshold: 1,
+      },
+    );
+  }
+
+  loadMoreData(): void {
+    if (this.loading) {
+      return;
+    }
+
+    this.loading = true;
+
+    this.listsService.currentPage$
+      .pipe(
+        take(1),
+        takeUntilDestroyed(this.destroyRef),
+        switchMap((currentPage) => {
+          return this.listsService.totalPages$.pipe(
+            take(1),
+            tap((totalPages) => {
+              if (currentPage < totalPages) {
+                this.listsService.setCurrentPage(currentPage + 1);
+              }
+              this.loading = false;
+            }),
+          );
+        }),
+      )
+      .subscribe();
+  }
 }

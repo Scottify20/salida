@@ -12,6 +12,11 @@ import { HomeSeriesService } from './home-series.service';
 import { MediaCardsSectionProps } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
 import { MediaSummary } from '../../../shared/interfaces/models/tmdb/All';
 import { CardsSectionScrollService } from '../../../shared/services/for-components/cards-section-scroll.service';
+import { ListViewService } from '../../lists/data-access/list-view.service'; // Import ListViewService
+import {
+  ListInfo,
+  ListSourceType,
+} from '../../lists/feature/lists-home.component'; // Import ListInfo
 
 type MediaTypeLabel = 'All' | 'Movies' | 'TV Shows';
 
@@ -27,6 +32,7 @@ export class HomeService {
     private homeMovieService: HomeMovieService,
     private homeSeriesService: HomeSeriesService,
     private cardsScrollService: CardsSectionScrollService,
+    private listViewService: ListViewService, // Inject ListViewService
   ) {
     effect(() => {
       this.selectedContentTypeIndex();
@@ -64,17 +70,38 @@ export class HomeService {
         series.forEach((seriesSection) => {
           const sectionTitle = seriesSection.sectionTitle.toString();
           if (providerMap.has(sectionTitle)) {
+            const movieSection = providerMap.get(sectionTitle)!;
+
+            // Extract provider ID from movieSection or seriesSection
+            const providerId = movieSection.iconURL
+              ? movieSection.titles[0]['watch_provider_id']
+              : seriesSection.iconURL
+                ? seriesSection.titles[0]['watch_provider_id']
+                : null;
+
+            const listInfo: ListInfo = {
+              sourceType: 'provider',
+              sourceName: sectionTitle,
+              sourceID: providerId !== undefined ? providerId : null, // Use the extracted providerId
+              listName: 'all',
+              listID: 0,
+            };
+
             const combinedSection: MediaCardsSectionProps = {
-              iconURL: providerMap.get(sectionTitle)?.iconURL, // Set the iconURL here
+              iconURL: movieSection.iconURL, // Set the iconURL here
               id: sectionTitle + '-combined',
               sectionTitle: sectionTitle,
               maxNoOfTitles: 20,
               titles: [],
               saveScrollPosition: true,
-              viewAllButtonProps: { onClick: () => {} },
+              viewAllButtonProps: {
+                onClick: () => {
+                  this.listViewService.viewList(listInfo);
+                },
+              },
             };
 
-            const movieEntities = providerMap.get(sectionTitle)!.titles;
+            const movieEntities = movieSection.titles;
             const seriesEntities = seriesSection.titles;
 
             const maxLength = Math.max(
@@ -119,15 +146,20 @@ export class HomeService {
       map(({ movies, series }) => {
         const combined: MediaSummary[] = [];
 
-        const maxLengthOfResults = Math.max(movies.length, series.length);
+        let movieIndex = 0;
+        let seriesIndex = 0;
 
-        for (let i = 0; i < maxLengthOfResults; i++) {
-          if (combined.length < 5) {
-            combined.push(movies[i]);
+        while (
+          combined.length < 5 &&
+          (movieIndex < movies.length || seriesIndex < series.length)
+        ) {
+          if (movieIndex < movies.length) {
+            combined.push(movies[movieIndex]);
+            movieIndex++;
           }
-
-          if (combined.length < 5) {
-            combined.push(series[i]);
+          if (seriesIndex < series.length && combined.length < 5) {
+            combined.push(series[seriesIndex]);
+            seriesIndex++;
           }
         }
         return combined;

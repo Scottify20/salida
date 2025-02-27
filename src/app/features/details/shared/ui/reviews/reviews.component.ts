@@ -44,7 +44,7 @@ export class ReviewsComponent {
   reviewModalProps: ReviewModalProps = {
     config: {
       id: 'review-modal',
-      isOpenSig: signal(false),
+      isOpenSig: signal(null),
     },
     review: signal(null),
   };

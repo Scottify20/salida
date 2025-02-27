@@ -8,6 +8,8 @@ import { MovieDetailsService } from '../../details/movie-details/data-access/mov
 import { map, Observable, forkJoin, switchMap, filter } from 'rxjs';
 import { TmdbConfigService } from '../../../shared/services/tmdb/tmdb-config.service';
 import { MediaCardsSectionProps } from '../../../shared/components/card-section/media-cards-section/media-cards-section.component';
+import { ListViewService } from '../../lists/data-access/list-view.service';
+import { ListInfo } from '../../lists/feature/lists-home.component';
 
 @Injectable({
   providedIn: 'root',
@@ -17,18 +19,16 @@ export class HomeMovieService {
     private movieService: MovieService,
     private movieDetailsService: MovieDetailsService,
     private tmdbConfigService: TmdbConfigService,
+    private listViewService: ListViewService,
   ) {}
 
   getPopularMovies$(): Observable<MovieSummary[]> {
     return this.movieService.getPopularMovies$().pipe(
       map((movies) =>
-        movies.results
-          // .filter((movie) =>
-          //   ['en', 'es', 'ko', 'ja', 'tl', 'hi'].includes(
-          //     movie.original_language,
-          //   ),
-          // )
-          .map((movie) => ({ ...movie, media_type: 'movie' })),
+        movies.results.map((movie) => ({
+          ...movie,
+          media_type: 'movie' as const,
+        })),
       ),
     );
   }
@@ -36,7 +36,7 @@ export class HomeMovieService {
   getMoviesInTheatres(): Observable<MediaCardsSectionProps> {
     return this.movieService.getMoviesPlayingInTheares$().pipe(
       map((movies) =>
-        this.transformMoviesToCardSectionProps(-1, 'In Theatres', movies),
+        this.transformMoviesToCardSectionProps(null, 'In Theatres', movies),
       ),
       filter((section) => section.titles.length >= 6),
     );
@@ -45,10 +45,9 @@ export class HomeMovieService {
   getUpcomingMovies(): Observable<MediaCardsSectionProps> {
     return this.movieService.getUpcomingMovies$().pipe(
       map((movies) =>
-        this.transformMoviesToCardSectionProps(-1, 'Upcoming', movies),
+        this.transformMoviesToCardSectionProps(null, 'Upcoming', movies),
       ),
       filter((section) => section.titles.length >= 6),
-      map((movie) => ({ ...movie, media_type: 'movie' })),
     );
   }
 
@@ -87,28 +86,56 @@ export class HomeMovieService {
   }
 
   private transformMoviesToCardSectionProps(
-    providerId: number,
+    providerId: number | null,
     title: string,
     moviesResponse: MovieSummaryResults,
   ): MediaCardsSectionProps {
     const providerIcon = this.tmdbConfigService.getProviderIconURL(
-      providerId,
+      providerId || 0,
       'series',
     );
-    return {
+
+    let listInfo: ListInfo;
+
+    if (title === 'In Theatres' || title === 'Upcoming') {
+      listInfo = {
+        sourceType: 'home',
+        sourceName: title,
+        sourceID: null,
+        listName: 'movies',
+        listID: title === 'In Theatres' ? 1 : 2,
+      };
+    } else {
+      listInfo = {
+        sourceType: 'provider',
+        sourceName: title,
+        sourceID: providerId,
+        listName: 'movies',
+        listID: 0,
+      };
+    }
+
+    const props: MediaCardsSectionProps = {
       iconURL: providerIcon,
       id: title + '-movies',
       sectionTitle: title,
       maxNoOfTitles: 20,
       saveScrollPosition: true,
-      viewAllButtonProps: { onClick: () => {} },
+      viewAllButtonProps: {
+        onClick: () => this.listViewService.viewList(listInfo),
+      },
       titles: moviesResponse.results.map((movie) => ({
         ...movie,
         media_type: 'movie',
         onClick: () => {
-          this.movieDetailsService.viewMovieDetails(movie.id, movie.title);
+          this.movieDetailsService.viewMovieDetails(
+            movie.id,
+            movie.title as string,
+          );
         },
+        watch_provider_id: providerId !== undefined ? providerId : null,
       })),
     };
+    return props;
   }
 }

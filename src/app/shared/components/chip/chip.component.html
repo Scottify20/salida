@@ -1,3 +1,5 @@
-<div class="chip" (click)="props.onClickFn ? props.onClickFn() : null">
-  {{ this.extractStringService.extract(props.text) }}
-</div>
+@if (this.extractStringService.extract(props.text); as text) {
+  <div class="chip" (click)="props.onClickFn ? props.onClickFn() : null">
+    {{ text }}
+  </div>
+}

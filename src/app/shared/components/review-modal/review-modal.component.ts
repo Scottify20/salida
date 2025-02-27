@@ -49,6 +49,7 @@ export class ReviewModalComponent {
 
   @ViewChild('dialog') dialogRef!: ElementRef;
   @ViewChild('backdrop') backdropRef!: ElementRef | undefined;
+
   @Input({ required: true }) props: ReviewModalProps = {
     config: {
       id: '',
