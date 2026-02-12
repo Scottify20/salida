@@ -44,5 +44,6 @@ export class MediaCardComponent {
 
   handleClick() {
     this.props.onClick ? this.props.onClick() : null;
+    // this.props.onClick ? this.props.onClick() : console.log('MediaCard clicked, but no onClick handler provided');
   }
 }

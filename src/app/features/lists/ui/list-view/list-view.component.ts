@@ -50,36 +50,56 @@ export class ListViewComponent implements AfterViewInit, OnDestroy {
 
   private loading = false;
 
+  // ngOnInit() {
+  //   combineLatest([this.listsService.listData$, this.listsService.isEditable$])
+  //     .pipe(takeUntilDestroyed(this.destroyRef))
+  //     .subscribe(([data, isEditable]) => {
+  //       if (data) {
+  //         this.props.listName = data.listName;
+  //         this.props.editable = isEditable;
+  //       }
+  //     });
+
+  //   this.listsService.listResults$
+  //     .pipe(
+  //       takeUntilDestroyed(this.destroyRef),
+  //       tap((results) => {
+  //         // console.log('New titles appended:', results); // Console log the updated titles
+  //       }),
+  //     )
+  //     .subscribe((results) => {
+  //       this.props.titles = results.map((result) => ({
+  //         ...result,
+  //         media_type: result.media_type || 'movie', // Provide a default value
+  //       }));
+  //     });
+
+  //   this.listsService.currentListName$
+  //     .pipe(takeUntilDestroyed(this.destroyRef))
+  //     .subscribe((listName) => {
+  //       this.props.listName = listName;
+  //     });
+  // }
+
   ngOnInit() {
-    combineLatest([this.listsService.listData$, this.listsService.isEditable$])
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(([data, isEditable]) => {
-        if (data) {
-          this.props.listName = data.listName;
-          this.props.editable = isEditable;
-        }
-      });
-
-    this.listsService.listResults$
-      .pipe(
-        takeUntilDestroyed(this.destroyRef),
-        tap((results) => {
-          // console.log('New titles appended:', results); // Console log the updated titles
-        }),
-      )
-      .subscribe((results) => {
-        this.props.titles = results.map((result) => ({
-          ...result,
-          media_type: result.media_type || 'movie', // Provide a default value
-        }));
-      });
-
+  combineLatest([
+    this.listsService.listData$, 
+    this.listsService.isEditable$,
     this.listsService.currentListName$
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe((listName) => {
-        this.props.listName = listName;
-      });
-  }
+  ])
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe(([data, isEditable, listName]) => {
+      if (data) {
+        this.props = {
+          ...this.props,
+          listName: listName || data.listName,
+          id: data.id,
+          titles: data.titles,
+          editable: isEditable,
+        };
+      }
+    });
+}
 
   ngAfterViewInit(): void {
     if (this.platformCheckService.isBrowser()) {
@@ -145,7 +165,7 @@ export class ListViewComponent implements AfterViewInit, OnDestroy {
         });
       },
       {
-        rootMargin: '200px',
+        rootMargin: '500px',
         threshold: 1,
       },
     );
